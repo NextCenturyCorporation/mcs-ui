@@ -3,6 +3,10 @@ FROM node:10
 # Create app directory
 WORKDIR /usr/src/app
 
+# Create Arguments
+ARG PORT_ARG=9100
+ENV PORT=$PORT_ARG
+
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
@@ -15,5 +19,5 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 9100
-CMD [ "node", "server.js" ]
+EXPOSE $PORT_ARG
+CMD [ "node", "server.accounts.js" ]
