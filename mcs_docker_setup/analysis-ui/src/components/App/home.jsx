@@ -2,10 +2,7 @@ import React from 'react';
 import ResultsChart from './resultsChart';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import {ToggleButton, ButtonGroup, ToggleButtonGroup} from 'react-bootstrap';
-
-//import $ from 'jquery';
-//import _ from "lodash";
+import {ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
 
 const homeStatsQuery = "getHomeStats";
 
@@ -39,8 +36,6 @@ class HomePage extends React.Component {
     }
 
     handleNumPercentChange(val) {
-        console.log(val);
-
         this.setState({
             numPercentToggle: val[1]
         });
