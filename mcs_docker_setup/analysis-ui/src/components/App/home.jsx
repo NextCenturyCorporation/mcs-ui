@@ -102,15 +102,11 @@ class HomePage extends React.Component {
                                         if (loading) return <div>No stats yet</div> 
                                         if (error) return <div>Error</div>
                                         
-                                        console.log(data[homeStatsQuery]);
                                         let homeStats = data[homeStatsQuery];
 
                                         let scoreChartData = homeStats.statsByScore;
                                         let passiveData = homeStats.statsByTestType.passiveCorrect;
                                         let interactiveData = homeStats.statsByTestType.interactiveCorrect;
-
-                                        console.log("Score:", scoreChartData);
-                                        console.log("Passive:", passiveData);
 
                                         if(this.state.numPercentToggle === 'percent') {
                                             scoreChartData = homeStats.statsByScorePercent;

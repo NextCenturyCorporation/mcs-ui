@@ -246,7 +246,6 @@ const mcsResolvers = {
                 },
                 {"$group": 
                     {"_id": {
-                        "eval": "$eval", 
                         "correct": "$score.score", 
                         "performer": "$performer", 
                         "category_type": "$category_type", 
