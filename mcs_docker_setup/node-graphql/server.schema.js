@@ -96,7 +96,8 @@ const mcsTypeDefs = gql`
 
   type homeStatsObject {
       statsByTestType: JSON,
-      statsByScore: JSON
+      statsByScore: JSON,
+      statsByScorePercent: JSON
   }
 
   type Query {
@@ -229,7 +230,9 @@ const mcsResolvers = {
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            statsObj["statsByScore"] = statsByScore(scoreStats);
+            const statsByScoreObject = statsByScore(scoreStats);
+            statsObj["statsByScore"] = statsByScoreObject["byNumber"];
+            statsObj["statsByScorePercent"] = statsByScoreObject["byPercent"];
 
             testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$group": 

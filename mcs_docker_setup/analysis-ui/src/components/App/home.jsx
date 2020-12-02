@@ -2,6 +2,8 @@ import React from 'react';
 import ResultsChart from './resultsChart';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import {ToggleButton, ButtonGroup, ToggleButtonGroup} from 'react-bootstrap';
+
 //import $ from 'jquery';
 //import _ from "lodash";
 
@@ -12,6 +14,7 @@ const get_home_stats = gql`
         getHomeStats {
             statsByScore
             statsByTestType
+            statsByScorePercent
         }
     }`;
 
@@ -21,15 +24,25 @@ class HomePage extends React.Component {
         super();
 
         this.state = {
-            totalPercentToggle: 'Plausibility'
+            totalPercentToggle: 'Test Type',
+            numPercentToggle: 'number'
         }
 
         this.handlePassiveChange = this.handlePassiveChange.bind(this);
+        this.handleNumPercentChange = this.handleNumPercentChange.bind(this);
     }
 
     handlePassiveChange(event) {
         this.setState({
             totalPercentToggle: event.target.value
+        });
+    }
+
+    handleNumPercentChange(val) {
+        console.log(val);
+
+        this.setState({
+            numPercentToggle: val[1]
         });
     }
 
@@ -44,42 +57,60 @@ class HomePage extends React.Component {
                         console.log(data[homeStatsQuery]);
                         let homeStats = data[homeStatsQuery];
 
+                        let scoreChartData = homeStats.statsByScore;
+                        let passiveData = homeStats.statsByTestType.passiveCorrect;
+                        let interactiveData = homeStats.statsByTestType.interactiveCorrect;
+
+                        if(this.state.numPercentToggle === 'percent') {
+                            scoreChartData = homeStats.statsByScorePercent;
+                            passiveData = homeStats.statsByTestType.passiveCorrectPercent;
+                            interactiveData = homeStats.statsByTestType.interactiveCorrectPercent;
+                        }
+
                         // Values For By Scores Chart
-                        const byScoreLength = homeStats.statsByScore.length - 1;
-                        let byScoreKeys = Object.keys(homeStats.statsByScore[byScoreLength]);
+                        const byScoreLength = scoreChartData.length - 1;
+                        let byScoreKeys = Object.keys(scoreChartData[byScoreLength]);
                         byScoreKeys.shift();
-                        const byScoreMaxValue = homeStats.statsByScore[byScoreLength][byScoreKeys[0]] + homeStats.statsByScore[byScoreLength - 1][byScoreKeys[0]];
+                        const byScoreMaxValue = this.state.numPercentToggle === 'percent' ? 100 : scoreChartData[byScoreLength][byScoreKeys[0]] + scoreChartData[byScoreLength - 1][byScoreKeys[0]];
 
                         // Values for Test Type Interactive
-                        const interactiveLength = homeStats.statsByTestType.interactiveTotal.length - 1;
-                        let interactiveKeys = Object.keys(homeStats.statsByTestType.interactiveTotal[interactiveLength]);
+                        const interactiveLength = interactiveData.length - 1;
+                        let interactiveKeys = Object.keys(interactiveData[interactiveLength]);
                         interactiveKeys.shift();
-                        const interactiveMaxValue = homeStats.statsByTestType.interactiveTotal[interactiveLength][interactiveKeys[0]];
+                        const interactiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats.statsByTestType.interactiveTotal;
 
                         // Values for By Test Type
-                        const passiveLength = homeStats.statsByTestType.passiveTotal.length - 1;
-                        let passiveKeys = Object.keys(homeStats.statsByTestType.passiveTotal[passiveLength]);
+                        const passiveLength = passiveData.length - 1;
+                        let passiveKeys = Object.keys(passiveData[passiveLength]);
                         passiveKeys.shift();
-                        const passiveMaxValue = homeStats.statsByTestType.passiveTotal[passiveLength][passiveKeys[0]];
+                        const passiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats.statsByTestType.passiveTotal;
 
                         return (
                             <div className="home-container">
-                                <div>
-                                    Evaluation Chooser %/Num Chooser
+                                <div className="home-navigation-container">
+                                    <div className="evaluation-selector-container">
+                                        Evaluation: "Evaluation Selector Here"
+                                    </div>
+                                    <div className="toggle-percent-number-container">
+                                        <ToggleButtonGroup type="checkbox" value={this.state.numPercentToggle} onChange={this.handleNumPercentChange}>
+                                            <ToggleButton variant="secondary" value={"number"}># Number</ToggleButton>
+                                            <ToggleButton variant="secondary" value={"percent"}>% Percent</ToggleButton>
+                                        </ToggleButtonGroup>
+                                    </div>
                                 </div>
                                 <div className='chart-home-container'>
                                     <div className='chart-header'>
                                         <h4>Passive</h4> 
-                                        <select className="form-control chart-selector" onChange={this.handlePassiveChange}>
-                                            <option>Plausibility</option>
+                                        <select className="form-control chart-selector" onChange={this.handlePassiveChange} value={this.state.totalPercentToggle}>
                                             <option>Test Type</option>
+                                            <option>Plausibility</option>
                                         </select>
                                     </div>
                                     {this.state.totalPercentToggle === 'Plausibility' &&
-                                        <ResultsChart chartKeys={byScoreKeys} chartData={homeStats.statsByScore} chartIndex={"score_type"} maxVal={byScoreMaxValue}/>
+                                        <ResultsChart chartKeys={byScoreKeys} chartData={scoreChartData} chartIndex={"score_type"} maxVal={byScoreMaxValue}/>
                                     }
                                     {this.state.totalPercentToggle === 'Test Type' &&
-                                        <ResultsChart chartKeys={passiveKeys} chartData={homeStats.statsByTestType.passiveCorrect} chartIndex={"test_type"} maxVal={passiveMaxValue}/>
+                                        <ResultsChart chartKeys={passiveKeys} chartData={passiveData} chartIndex={"test_type"} maxVal={passiveMaxValue}/>
                                     }
                                 </div>
 
@@ -87,7 +118,7 @@ class HomePage extends React.Component {
                                     <div className='chart-header'>
                                         <h4>Interactive</h4> 
                                     </div>
-                                    <ResultsChart chartKeys={interactiveKeys} chartData={homeStats.statsByTestType.interactiveCorrect} chartIndex={"test_type"} maxVal={interactiveMaxValue}/>
+                                    <ResultsChart chartKeys={interactiveKeys} chartData={interactiveData} chartIndex={"test_type"} maxVal={interactiveMaxValue}/>
                                 </div>
                             </div>
                         )

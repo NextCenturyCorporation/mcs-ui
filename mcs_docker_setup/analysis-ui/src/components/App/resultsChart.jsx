@@ -1,6 +1,14 @@
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 
+const formatCategoryTypeString = function(catTypeString) {
+    const words = catTypeString.split("_");
+
+    return words.map((word) => { 
+        return word[0].toUpperCase() + word.substring(1); 
+    }).join(" ");
+}
+
 const ValueOutside = ({ bars }) => {
     return bars.map((bar) => {
       const {
@@ -43,6 +51,7 @@ const MyResponsiveBar = ({ data, keys, chartIndex, maxVal}) => {
             legendPosition: 'middle',
             legendOffset: 32
         }}
+        axisLeft={{ format: v => formatCategoryTypeString(v) }}
         enableGridY={false}
         enableGridX={true}
         colors={["#00A0D2", "#444D5D", "#D95555"]}
