@@ -36,6 +36,11 @@ class HomePage extends React.Component {
     }
 
     handleNumPercentChange(val) {
+<<<<<<< HEAD
+=======
+        console.log(val);
+
+>>>>>>> Add toggle for percent/number
         this.setState({
             numPercentToggle: val[1]
         });
