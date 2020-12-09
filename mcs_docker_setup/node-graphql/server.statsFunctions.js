@@ -20,13 +20,13 @@ const statsByScore = function(scoreStats){
     let scoreOverallIncorrect = {"score_type": "Overall Incorrect"};
     let scorePlausibleCorrect = {"score_type": "Plausible Correct"};
     let scorePlausibleIncorrect = {"score_type": "Plausible Incorrect"};
-    let scoreImpluasibleCorrect = {"score_type": "Implausible Correct"};
+    let scoreImplausibleCorrect = {"score_type": "Implausible Correct"};
     let scoreImplausibleIncorrect = {"score_type": "Implausible Incorrect"};
 
     for(let i=0; i < scoreStats.length; i++) {
         if(scoreStats[i]._id.plausibililty === 0 && scoreStats[i]._id.category === "observation") {
             if(scoreStats[i]._id.correct === 1) {
-                updateScoreObject(scoreImpluasibleCorrect, scoreOverallCorrect, scoreStats[i]);
+                updateScoreObject(scoreImplausibleCorrect, scoreOverallCorrect, scoreStats[i]);
             } else {
                 updateScoreObject(scoreImplausibleIncorrect, scoreOverallIncorrect, scoreStats[i]);
             }
@@ -40,7 +40,7 @@ const statsByScore = function(scoreStats){
     }
 
     return [scoreOverallCorrect, scoreOverallIncorrect, scorePlausibleCorrect,
-        scorePlausibleIncorrect, scoreImpluasibleCorrect, scoreImplausibleIncorrect].reverse();
+        scorePlausibleIncorrect, scoreImplausibleCorrect, scoreImplausibleIncorrect].reverse();
 }
 
 const updateTestTypeScoreObj = function(testTypeArray, statObj) {
