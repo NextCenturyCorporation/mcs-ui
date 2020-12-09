@@ -588,6 +588,11 @@ ol, ul {
     margin-left: 15px;
 }
 
+.eval-selector {
+    margin-left: 15px;
+    margin-top: -5px;
+}
+
 .home-navigation-container {
     display: flex;
     justify-content: space-between;
@@ -597,6 +602,7 @@ ol, ul {
 .evaluation-selector-container {
     margin-left: 35px;
     padding-top: 10px;
+    display: flex;
 }
 
 .toggle-percent-number-container {

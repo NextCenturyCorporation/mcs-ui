@@ -118,7 +118,7 @@ const mcsTypeDefs = gql`
     getAllHistoryFields: keysObject
     getAllSceneFields: keysObject,
     createComplexQuery(queryObject: JSON): [JSON]
-    getHomeStats: homeStatsObject
+    getHomeStats(eval: String): homeStatsObject
   }
 
   type Mutation {
@@ -219,9 +219,13 @@ const mcsResolvers = {
             let statsObj = {};
 
             scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
+                {"$match": 
+                    {
+                      "eval": args.eval,
+                    },
+                },
                 {"$group": 
                     {"_id": {
-                        "eval": "$eval", 
                         "correct": "$score.score", 
                         "plausibililty": "$score.ground_truth",
                         "performer": "$performer", 
@@ -235,9 +239,13 @@ const mcsResolvers = {
             statsObj["statsByScorePercent"] = statsByScoreObject["byPercent"];
 
             testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
+                {"$match": 
+                    {
+                      "eval": args.eval,
+                    },
+                },
                 {"$group": 
                     {"_id": {
-                        "eval": "$eval", 
                         "correct": "$score.score", 
                         "performer": "$performer", 
                         "category_type": "$category_type", 
