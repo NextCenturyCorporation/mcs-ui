@@ -1,23 +1,18 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import _ from "lodash";
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 const GET_FIELD_AGG = gql`
     query getFieldAggregation($fieldName: String!){
-        getFieldAggregation(fieldName: $fieldName) {
-            key
-        }
+        getFieldAggregation(fieldName: $fieldName) 
   }`;
 
 const GET_HISTORY_FIELD_AGG = gql`
     query getHistorySceneFieldAggregation($fieldName: String!){
-        getHistorySceneFieldAggregation(fieldName: $fieldName) {
-            key
-        }
+        getHistorySceneFieldAggregation(fieldName: $fieldName) 
   }`;
 
 const GET_SUBMISSION_AGG = gql`
@@ -82,7 +77,7 @@ class DropListItems extends React.Component {
                     let dropdownOptions = [];
                     
                     if(data !== undefined && dataName !== "getSubmissionFieldAggregation") {
-                        dropdownOptions = _.map(data[dataName], 'key');
+                        dropdownOptions = data[dataName];
                     } else if (data !== undefined ) {
                         for(let i=0; i < data[dataName].length; i++) {
                             dropdownOptions.push(data[dataName][i].key.performer + "/" + data[dataName][i].key.submission);
