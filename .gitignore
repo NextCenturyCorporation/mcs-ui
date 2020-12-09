@@ -2,3 +2,6 @@
 
 # Neon
 mcs_docker_setup/neon-jan-2020*
+
+# AWS Keys
+mcs_docker_setup/node-graphql/account-configs.js

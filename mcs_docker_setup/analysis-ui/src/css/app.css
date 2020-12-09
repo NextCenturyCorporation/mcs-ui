@@ -569,7 +569,7 @@ ol, ul {
     box-shadow: 0 0 3px #ccc;
     border-radius: 15px;
     background-color: #ffffff;
-    margin: 25px;
+    margin: 10px 25px;
 }
 
 .flex-chart-center {
@@ -586,4 +586,19 @@ ol, ul {
 
 .chart-selector {
     margin-left: 15px;
+}
+
+.home-navigation-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 25px 0 0;
+}
+
+.evaluation-selector-container {
+    margin-left: 35px;
+    padding-top: 10px;
+}
+
+.toggle-percent-number-container {
+    margin-left: auto;
 }

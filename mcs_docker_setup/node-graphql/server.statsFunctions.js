@@ -13,6 +13,15 @@ const updateScoreObject = function(scoreObject, scoreTotalObject, statObj) {
     }
 }
 
+const calculatePercentObjectByScore = function(scoreObj, forTotalObj, percentObject) {
+    for( const prop in scoreObj) {
+        if(prop !== "score_type") {
+            const calculatedPercent = scoreObj[prop] / (scoreObj[prop] + forTotalObj[prop]) * 100;
+            percentObject[prop] = Math.round(calculatedPercent);
+        }
+    }
+}
+
 const statsByScore = function(scoreStats){
     scoreStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
 
@@ -39,8 +48,28 @@ const statsByScore = function(scoreStats){
         }
     }
 
-    return [scoreOverallCorrect, scoreOverallIncorrect, scorePlausibleCorrect,
+    let statsByScoreObject = {};
+    statsByScoreObject["byNumber"] = [scoreOverallCorrect, scoreOverallIncorrect, scorePlausibleCorrect,
         scorePlausibleIncorrect, scoreImplausibleCorrect, scoreImplausibleIncorrect].reverse();
+
+    let percentScoreOverallCorrect = {"score_type": "Overall Correct"};
+    let percentScoreOverallIncorrect = {"score_type": "Overall Incorrect"};
+    let percentScorePlausibleCorrect = {"score_type": "Plausible Correct"};
+    let percentScorePlausibleIncorrect = {"score_type": "Plausible Incorrect"};
+    let percentScoreImplausibleCorrect = {"score_type": "Implausible Correct"};
+    let percentScoreImplausibleIncorrect = {"score_type": "Implausible Incorrect"};
+
+    calculatePercentObjectByScore(scoreOverallCorrect, scoreOverallIncorrect, percentScoreOverallCorrect);
+    calculatePercentObjectByScore(scoreOverallIncorrect, scoreOverallCorrect, percentScoreOverallIncorrect);
+    calculatePercentObjectByScore(scorePlausibleCorrect, scorePlausibleIncorrect, percentScorePlausibleCorrect);
+    calculatePercentObjectByScore(scorePlausibleIncorrect, scorePlausibleCorrect, percentScorePlausibleIncorrect);
+    calculatePercentObjectByScore(scoreImplausibleCorrect, scoreImplausibleIncorrect, percentScoreImplausibleCorrect);
+    calculatePercentObjectByScore(scoreImplausibleIncorrect, scoreImplausibleCorrect, percentScoreImplausibleIncorrect);
+
+    statsByScoreObject["byPercent"] = [percentScoreOverallCorrect, percentScoreOverallIncorrect, percentScorePlausibleCorrect,
+        percentScorePlausibleIncorrect, percentScoreImplausibleCorrect, percentScoreImplausibleIncorrect].reverse();
+
+    return statsByScoreObject;
 }
 
 const updateTestTypeScoreObj = function(testTypeArray, statObj) {
@@ -75,18 +104,42 @@ const sortScoreArray = function(scoreArray) {
     return scoreArray;
 }
 
+const calculateTotalTests = function(totalsObj) {
+    let highestTotal = 0;
+    for(const prop in totalsObj) {
+        if(totalsObj[prop] > highestTotal) {
+            highestTotal = totalsObj[prop];
+        }
+    }
+
+    return highestTotal;
+}
+
+const calculatePercentObjectByTestType = function(scoreObj, totalObj, percentObject) {
+    for( const prop in totalObj) {
+        if(prop !== "test_type") {
+            const calculatedPercent = scoreObj[prop] / totalObj[prop] * 100;
+            percentObject[prop] = Math.round(calculatedPercent);
+        }
+    }
+}
+
 const statsByTestType = function(testTypeStats){
     testTypeStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
 
     let passiveScoresCorrect = [];
     let interactiveScoresCorrect = [];
+    let passiveScoresCorrectPercent = [];
+    let interactiveScoresCorrectPercent = [];
     let passiveScoresTotal= [];
     let interactiveScoresTotal = [];
 
     let interactiveOverallCorrect = {"test_type": "Overall"};
     let passiveOverallCorrect = {"test_type": "Overall"};
-    let interactiveOverallTotal = {"test_type": "Overall"};
-    let passiveOverallTotal = {"test_type": "Overall"};
+    let interactiveOverallCorrectPercent = {"test_type": "Overall"};
+    let passiveOverallCorrectPercent = {"test_type": "Overall"};
+    let interactiveOverallTotal = {};
+    let passiveOverallTotal = {};
 
     for(let i=0; i < testTypeStats.length; i++) {
         const performer = testTypeStats[i]._id.performer;
@@ -107,11 +160,30 @@ const statsByTestType = function(testTypeStats){
         }
     }
 
+    passiveScoresCorrect = sortScoreArray(passiveScoresCorrect);
+    for(let j=0; j < passiveScoresCorrect.length; j++) {
+        let newObj = {"test_type": passiveScoresCorrect[j]["test_type"]};
+        calculatePercentObjectByTestType(passiveScoresCorrect[j], passiveScoresTotal[j], newObj);
+        passiveScoresCorrectPercent.push(newObj);
+    }
+
+    interactiveScoresCorrect = sortScoreArray(interactiveScoresCorrect);
+    for(let j=0; j < interactiveScoresCorrect.length; j++) {
+        let newObj = {"test_type": interactiveScoresCorrect[j]["test_type"]};
+        calculatePercentObjectByTestType(interactiveScoresCorrect[j], interactiveScoresTotal[j], newObj);
+        interactiveScoresCorrectPercent.push(newObj);
+    }
+
+    calculatePercentObjectByTestType(interactiveOverallCorrect, interactiveOverallTotal, interactiveOverallCorrectPercent);
+    calculatePercentObjectByTestType(passiveOverallCorrect, passiveOverallTotal, passiveOverallCorrectPercent);
+
     const typeStatsObj = {
-        passiveCorrect: [passiveOverallCorrect].concat(sortScoreArray(passiveScoresCorrect)).reverse(),
-        passiveTotal: [passiveOverallTotal].concat(sortScoreArray(passiveScoresTotal)).reverse(),
-        interactiveCorrect: [interactiveOverallCorrect].concat(sortScoreArray(interactiveScoresCorrect)).reverse(),
-        interactiveTotal: [interactiveOverallTotal].concat(sortScoreArray(interactiveScoresTotal)).reverse()
+        passiveCorrect: [passiveOverallCorrect].concat(passiveScoresCorrect).reverse(),
+        passiveTotal: calculateTotalTests(passiveOverallTotal),
+        interactiveCorrect: [interactiveOverallCorrect].concat(interactiveScoresCorrect).reverse(),
+        interactiveTotal: calculateTotalTests(interactiveOverallTotal),
+        passiveCorrectPercent: [passiveOverallCorrectPercent].concat(passiveScoresCorrectPercent).reverse(),
+        interactiveCorrectPercent: [interactiveOverallCorrectPercent].concat(interactiveScoresCorrectPercent).reverse()
     }
 
     return typeStatsObj;
