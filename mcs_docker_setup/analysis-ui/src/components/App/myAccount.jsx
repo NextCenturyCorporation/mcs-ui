@@ -2,6 +2,7 @@ import React from 'react';
 import {withRouter} from 'react-router-dom';
 import { accountsPassword } from '../../services/accountsService';
 import $ from 'jquery';
+import '../../css/my-account.css';
 
 class MyAccountPage extends React.Component {
 
