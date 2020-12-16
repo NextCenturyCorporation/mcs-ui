@@ -400,8 +400,7 @@ ol, ul {
 
 .query-line {
     padding: 0px 20px;
-    width: 900px;
-    display: inline-block;
+    display: flexs;
 }
 
 .query-line .btn-outline-secondary {

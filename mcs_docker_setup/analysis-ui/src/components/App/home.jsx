@@ -49,6 +49,13 @@ class HomePage extends React.Component {
         });
     }
 
+    shouldComponentUpdate(nextProps, nextState) { 
+        if (this.state === nextState) { 
+          return false;
+        }
+        return true;
+    }
+
     selectEvaluation(event) {
         this.setState({
             currentEval: event.target.value
@@ -67,7 +74,7 @@ class HomePage extends React.Component {
                     const defaultOption = evalOptions[0];
 
                     if(this.state.currentEval === '') {
-                        this.state.currentEval = defaultOption;
+                        this.setState({currentEval: defaultOption});
                     }
 
                     return (

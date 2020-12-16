@@ -45,7 +45,7 @@ const Results = ({queryObj}) => {
         <Query query={create_complex_query} variables={{"queryObject": mongoQuerySyntax}} fetchPolicy={'network-only'}>
         {
             ({ loading, error, data }) => {
-                if (loading) return <div>No comments yet</div> 
+                if (loading) return <div>Results are currently loading ... </div> 
                 if (error) return <div>Error</div>
                 
                 console.log(data);
