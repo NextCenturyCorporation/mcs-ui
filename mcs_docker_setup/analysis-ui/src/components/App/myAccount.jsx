@@ -56,6 +56,10 @@ class MyAccountPage extends React.Component {
                 await accountsPassword.changePassword(this.state.currentPassword, this.state.newPassword);
                 $("#pwd-change-feedback").removeClass("feedback-display");
                 $("#success-pwd-change").removeClass("display-none");
+
+                this.setState({currentPassword: ""});
+                this.setState({newPassword: ""});
+                this.setState({confirmNewPassword: ""});
             } catch (err) {
                 $("#pwd-change-feedback").addClass("feedback-display");
                 $("#success-pwd-change").addClass("display-none")
