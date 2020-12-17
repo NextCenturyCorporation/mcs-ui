@@ -15,7 +15,6 @@ services:
       - ./dist:/var/www:ro
       - ./resources/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./resources/htpasswd:/etc/nginx/htpasswd:ro
-      - ./resources/config.yaml:/var/www/app/config/config.yaml
   neon-dash-staging:
     container_name: neon-dash-staging
     image: nginx:alpine
@@ -27,7 +26,6 @@ services:
       - ./dist:/var/www:ro
       - ./resources/nginx-staging.conf:/etc/nginx/conf.d/default.conf:ro
       - ./resources/htpasswd:/etc/nginx/htpasswd:ro
-      - ./resources/config-staging.yaml:/var/www/app/config/config.yaml
   analysis-ui:
     container_name: analysis-ui
     image: analysis-ui

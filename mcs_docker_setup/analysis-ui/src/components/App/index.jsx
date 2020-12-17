@@ -4,7 +4,7 @@ import Results from './results';
 import HomePage from './home';
 import Scenes from './scenes';
 import EvalHeader from './header';
-import ComplexQueryBuilder from './queryBuilder';
+import QueryPage from './queryPage';
 import CommentsComponent from './comments';
 import {Router, Switch, Route, Link} from 'react-router-dom';
 import LoginApp from './login';
@@ -52,7 +52,7 @@ function QueryBuilder({newState}) {
         history.push('/login');
     }
 
-    return <ComplexQueryBuilder/>
+    return <QueryPage currentUser={newState.currentUser}/>
 }
 
 function Home({newState}) {

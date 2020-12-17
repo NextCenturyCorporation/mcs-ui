@@ -2,6 +2,7 @@ import React from 'react';
 import QueryLineItem from './queryLine';
 import Button from 'react-bootstrap/Button';
 import QueryResults from './queryResults';
+import SaveQuery from './saveQuery';
 
 class ComplexQueryBuilder extends React.Component {
 
@@ -9,25 +10,43 @@ class ComplexQueryBuilder extends React.Component {
         super();
 
         this.queryLineHandler = this.queryLineHandler.bind(this);
+        this.clearQuery = this.clearQuery.bind(this);
 
         this.querylineCounter = 1;
         this.queryObject={};
+        this.showModal = false;
 
-        const currentRowNumber = this.querylineCounter.valueOf();
-
-        this.displayQueryLines = [<div className="query-item" key={'query-item-' + this.querylineCounter}>
-            <QueryLineItem querylineCounter={this.querylineCounter} queryLineHandler={this.queryLineHandler}/>
-            <Button variant="outline-secondary" onClick={() => this.removeQueryRow(currentRowNumber)}>Remove</Button>
-        </div>];
+        this.displayQueryLines = [this.getBaseQueryLine(this.querylineCounter.valueOf())];
 
         this.state = {
             showDisplayQueryLines: this.displayQueryLines,
-            stateQueryObject: {}
+            stateQueryObject: {},
+            showModal: false
         }
+    }
+
+    getBaseQueryLine = (currentRowNumber) => {
+        return <div className="query-item" key={'query-item-' + this.querylineCounter}>
+            <QueryLineItem querylineCounter={this.querylineCounter} queryLineHandler={this.queryLineHandler}/>
+            <Button variant="outline-secondary" onClick={() => this.removeQueryRow(currentRowNumber)}>Remove</Button></div>;
     }
 
     submitSearch = () => {
         this.setState({stateQueryObject: this.queryObject});
+    }
+
+    clearQuery = () => {
+        this.querylineCounter += 1;
+        this.queryObject={};
+        this.displayQueryLines = [this.getBaseQueryLine(this.querylineCounter.valueOf())];
+
+        this.setState({
+            saveQueryObject: {},
+            stateQueryObject: {},
+            showDisplayQueryLines: this.displayQueryLines
+        });
+
+        this.props.updateQueryNameHandler(this.props.queryId, "Query " + this.props.queryId);
     }
 
     removeQueryRow = (querylineCounter) => {
@@ -49,11 +68,7 @@ class ComplexQueryBuilder extends React.Component {
 
     addQueryRow = () => {
         this.querylineCounter += 1;
-        const currentRowNumber = this.querylineCounter.valueOf();
-        this.displayQueryLines.push(<div className="query-item" key={'query-item-' + this.querylineCounter}>
-            <QueryLineItem querylineCounter={this.querylineCounter} queryLineHandler={this.queryLineHandler}/>
-            <Button variant="outline-secondary" onClick={() => this.removeQueryRow(currentRowNumber)}>Remove</Button>
-        </div>);
+        this.displayQueryLines.push(this.getBaseQueryLine(this.querylineCounter.valueOf()));
         this.setState({
             showDisplayQueryLines : this.displayQueryLines
         });
@@ -61,12 +76,23 @@ class ComplexQueryBuilder extends React.Component {
 
     queryLineHandler(lineCounter, qlObj) {
         this.queryObject[lineCounter] = qlObj;
+
+        this.setState({saveQueryObject: this.queryObject});
     }
 
     render() {
         return (
             <div>
-                <h3>Query Builder</h3>
+                <div className="query-controls">
+                    <SaveQuery queryObj={this.state.saveQueryObject} currentUser={this.props.currentUser}
+                        queryId={this.props.queryId} updateQueryNameHandler={this.props.updateQueryNameHandler}/>
+                    <a href="#clearQueryLink" onClick={this.clearQuery} className="icon-link">
+                        <span className="material-icons icon-margin-left">
+                            settings_backup_restore
+                        </span>
+                        <span className="icon-link-text">Clear</span>
+                    </a>
+                </div>
                 <div className="query-builder-holder">
                     {this.displayQueryLines}
                 </div>

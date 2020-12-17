@@ -100,6 +100,14 @@ const mcsTypeDefs = gql`
       statsByScorePercent: JSON
   }
 
+  type savedQueryObj {
+    user: JSON, 
+    queryObj: JSON, 
+    name: String, 
+    description: String,
+    createdDate: Float
+  }
+
   type Query {
     msc_eval: [Source]
     getEvalHistory(testType: String, sceneNum: String) : [History]
@@ -119,6 +127,7 @@ const mcsTypeDefs = gql`
     getAllSceneFields: keysObject,
     createComplexQuery(queryObject: JSON): [JSON]
     getHomeStats(eval: String): homeStatsObject
+    getSavedQueries: [savedQueryObj]
   }
 
   type Mutation {
@@ -126,6 +135,7 @@ const mcsTypeDefs = gql`
     saveCommentByTestAndScene(testType: String, sceneNum: String, createdDate: String, text: String, userName: String) : NewComment
     updateSceneHistoryRemoveFlag(testType: String, sceneNum: String, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(testType: String, sceneNum: String, flagInterest: Boolean) : updateObject
+    saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
   }
 `;
 
@@ -189,6 +199,10 @@ const mcsResolvers = {
         },
         getAllSceneFields: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_scenes_keys').findOne();
+        },
+        getSavedQueries: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').find()
+                .toArray().then(result => {return result});
         },
         createComplexQuery: async(obj, args, context, infow)=> {
             async function getComplexResults() {
@@ -295,7 +309,16 @@ const mcsResolvers = {
                 {$set: {"flags.interest": args["flagInterest"]}},
                 {multi: true}
             );
-        }
+        },
+        saveQuery: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').insert({
+                user: args["user"],
+                queryObj: args["queryObj"],
+                name: args["name"],
+                description: args["description"],
+                createdDate: args["createdDate"]
+            });
+        },
     },
     StringOrFloat: new GraphQLScalarType({
         name: "StringOrFloat",
