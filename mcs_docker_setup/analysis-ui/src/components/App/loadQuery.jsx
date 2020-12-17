@@ -37,7 +37,7 @@ function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
                 <Query query={LOAD_SAVED_QUERIES} fetchPolicy={'network-only'}>
                 {
                     ({ loading, error, data }) => {
-                        if (loading) return <div>No comments yet</div> 
+                        if (loading) return <div>Loading ...</div> 
                         if (error) return <div>Error</div>
                         
                         let queries = data[getSavedQueriesName];

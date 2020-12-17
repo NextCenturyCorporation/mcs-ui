@@ -14,6 +14,7 @@ const create_complex_query = gql`
     }`;
 
 const convertToMongoQuery = function(queryObj) {
+    console.log("Conver to Mongo", queryObj);
     let mongoQuery = {};
     for(const queryKey in queryObj) {
        if(queryObj[queryKey]["fieldType"].toLowerCase() === 'scene') {
@@ -27,8 +28,6 @@ const convertToMongoQuery = function(queryObj) {
 }
 
 const Results = ({queryObj}) => {
-    const mongoQuerySyntax = convertToMongoQuery(queryObj);
-
     const checkKeyExcludedHeader = (objectKey, key) => {
         if(!excludeFields.includes(objectKey)) {
             return <th key={'results_column_header_' + key}>{objectKey}</th>;
@@ -42,13 +41,12 @@ const Results = ({queryObj}) => {
     }
 
     return (
-        <Query query={create_complex_query} variables={{"queryObject": mongoQuerySyntax}} fetchPolicy={'network-only'}>
+        <Query query={create_complex_query} variables={{"queryObject": queryObj}} fetchPolicy={'network-only'}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Results are currently loading ... </div> 
                 if (error) return <div>Error</div>
                 
-                console.log(data);
                 let resultsData = data[complexQueryName];
 
                 console.log(resultsData);
@@ -87,7 +85,7 @@ const Results = ({queryObj}) => {
 
 const ResultsTable =({queryObj}) => {
     if(_.isEmpty(queryObj)) {
-        return(<div>Select a query to search, to see results.</div>);
+        return(<div>Enter some parameters to see query results.</div>);
     } else {
         return(<Results queryObj={queryObj}/>)
     }
@@ -98,7 +96,7 @@ class QueryResults extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="query-results-holder">
                 <h4>Query Results</h4>
                 <ResultsTable queryObj={this.props.queryObj}/>
             </div>

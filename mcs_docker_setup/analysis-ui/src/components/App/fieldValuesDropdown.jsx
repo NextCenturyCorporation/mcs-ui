@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import Dropdown from 'react-dropdown';
+import Select from 'react-select';
 
 const historyFieldQueryName = "getHistorySceneFieldAggregation";
 const sceneFieldQueryName = "getSceneFieldAggregation";
@@ -16,20 +16,42 @@ const scene_field_aggregation= gql`
         getSceneFieldAggregation(fieldName: $fieldName) 
   }`;
 
+const convertArrayToArrayObject = (arrayToConvert) => {
+    let newArray = [];
+    for(let i=0; i < arrayToConvert.length; i++) {
+        newArray.push({value: arrayToConvert[i], label: arrayToConvert[i]});
+    }
+
+    return newArray.sort((a, b) => (a.label > b.label) ? 1 : -1);
+};
+
+const BasicFieldDropDown = ({onSelectHandler, options, isDisabled}) => {
+    return(
+        <div className="query-collection-selector">
+            <div className="query-builder-label">Value</div>
+            <Select
+                onChange={onSelectHandler}
+                options={options}
+                placeholder="Select a value..."
+                isDisabled={isDisabled}
+            />
+        </div>
+    );
+}
+
 const HistoryFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
     return (
         <Query query={history_field_aggregation} variables={{"fieldName": fieldName}} fetchPolicy={'network-only'}>
         {
             ({ loading, error, data }) => {
-                if (loading) return <div>No comments yet</div> 
+                if (loading) return <div>Loading ...</div> 
                 if (error) return <div>Error</div>
                 
-                let emptyOptions = [""]
-                const options = emptyOptions.concat(data[historyFieldQueryName].sort());
-                const defaultOption = options[0];
+                const historyData = data[historyFieldQueryName];
+                const options = convertArrayToArrayObject(historyData);
 
                 return (
-                    <Dropdown options={options} onChange={selectFieldValueHandler} value={defaultOption} placeholder="Select a value." />
+                    <BasicFieldDropDown onSelectHandler={selectFieldValueHandler} options={options} isDisabled={false}/>
                 )
             }
         }
@@ -42,15 +64,14 @@ const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
         <Query query={scene_field_aggregation} variables={{"fieldName": fieldName}} fetchPolicy={'network-only'}>
         {
             ({ loading, error, data }) => {
-                if (loading) return <div>No comments yet</div> 
+                if (loading) return <div>Loading ...</div> 
                 if (error) return <div>Error</div>
                 
-                let emptyOptions = [""]
-                const options = emptyOptions.concat(data[sceneFieldQueryName].sort());
-                const defaultOption = options[0];
+                const sceneData = data[sceneFieldQueryName];
+                const options = convertArrayToArrayObject(sceneData);
 
                 return (
-                    <Dropdown options={options} onChange={selectFieldValueHandler} value={defaultOption} placeholder="Select a value." />
+                    <BasicFieldDropDown onSelectHandler={selectFieldValueHandler} options={options} isDisabled={false}/>
                 )
             }
         }
@@ -59,12 +80,12 @@ const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
 }
 
 const FieldDropdownSelector =({fieldType, fieldName, selectFieldValueHandler}) => {
-    if(fieldType.toLowerCase() === 'history' && fieldName !== "") {
+    if(fieldType.indexOf('mcs_history') > -1 && fieldName !== "") {
         return(<HistoryFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler}/>);
-    } else if (fieldType.toLowerCase() === 'scene' && fieldName !== "") {
+    } else if (fieldType.indexOf('mcs_scenes') > -1 && fieldName !== "") {
         return(<SceneFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler}/>);
     } else {
-        return(<Dropdown options={[]}/>)
+        return(<BasicFieldDropDown options={{}} isDisabled={true}/>)
     }
 };
 
@@ -77,9 +98,34 @@ class FieldValuesDropdown extends React.Component {
 
     render() {
         return (
-            <div className="query-field-value-selector">
-                <FieldDropdownSelector fieldType={this.props.fieldType} fieldName={this.props.fieldName} selectFieldValueHandler={this.props.selectFieldValueHandler}/>
-            </div>
+            <>
+                {this.props.functionOperator === "equals" &&
+                    <div className="query-field-value-selector">
+                        <FieldDropdownSelector fieldType={this.props.fieldType} fieldName={this.props.fieldName} selectFieldValueHandler={this.props.selectDropDownValue}/>
+                    </div>
+                }
+                {(this.props.functionOperator === "contains" || this.props.functionOperator === "does_not_contain" ||
+                    this.props.functionOperator === "greater_than" || this.props.functionOperator === "less_than") &&
+                    <div className="query-field-value-selector">
+                        <div className="query-builder-label">Value</div>
+                        <input className="form-control query-field-input" placeholder="Enter a value..." type="text" onChange={this.props.selectFieldValueHandler1}/>
+                    </div>
+                }
+                {(this.props.functionOperator === "between" || this.props.functionOperator === "and" ||
+                    this.props.functionOperator === "or") &&
+                    <>
+                        <div className="query-field-value-selector">
+                            <div className="query-builder-label">Value 1</div>
+                            <input className="form-control query-field-input" placeholder="Enter a value..." type="text" onChange={this.props.selectFieldValueHandler1}/>
+                        </div>
+                        <div className="query-multi-operator">{this.props.functionOperator}</div>
+                        <div className="query-field-value-selector">
+                            <div className="query-builder-label">Value 2</div>
+                            <input className="form-control query-field-input" placeholder="Enter a value..." type="text" onChange={this.props.selectFieldValueHandler2}/>
+                        </div>
+                    </>
+                }
+            </>
         );
     }
 }

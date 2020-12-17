@@ -21,6 +21,12 @@ class QueryPage extends React.Component {
         this.updateQueryNameHandler = this.updateQueryNameHandler.bind(this);
         this.loadQueryHandler = this.loadQueryHandler.bind(this);
         this.updateQueryObjForTab = this.updateQueryObjForTab.bind(this);
+
+        if(this.props !== null & this.props.currentUser !== null) {
+            if(this.props.currentUser.queryBuilderState !== undefined && this.props.currentUser.queryBuilderState !== null) {
+                this.state = this.props.currentUser.queryBuilderState;
+            }
+        }
     }
 
     addTab = (event) => {
@@ -34,6 +40,8 @@ class QueryPage extends React.Component {
             totalTab: this.state.totalTab+1, 
             queryTabs: newArray
         });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     updateQueryNameHandler = (queryId, newQueryName) => {
@@ -47,6 +55,8 @@ class QueryPage extends React.Component {
         this.setState({ 
             queryTabs: newArray
         });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     loadQueryHandler = (queryObj) => {
@@ -67,6 +77,8 @@ class QueryPage extends React.Component {
         this.setState({ 
             queryTabs: newArray
         });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     changeQueryTab = (objectKey) => {
@@ -78,6 +90,8 @@ class QueryPage extends React.Component {
         $('#tabObj_button_' + objectKey ).toggleClass( "active" );
 
         this.setState({ currentTab: objectKey});
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     render() {

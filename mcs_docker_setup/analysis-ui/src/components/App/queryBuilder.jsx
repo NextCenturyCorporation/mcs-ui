@@ -1,9 +1,29 @@
 import React from 'react';
 import QueryLineItem from './queryLine';
-import Button from 'react-bootstrap/Button';
 import QueryResults from './queryResults';
 import SaveQuery from './saveQuery';
 
+const ParamDisplayByOperator =({queryLine}) => {
+    if(queryLine.functionOperator === "between" || queryLine.functionOperator === "and" || queryLine.functionOperator === "or") {
+        return(
+            <>
+                <div className="query-field-param">{queryLine.fieldValue1}</div>
+                <span className="material-icons query-param-spacer">add</span>
+                <div className="query-field-param-operator">{queryLine.functionOperator}</div>
+                <span className="material-icons query-param-spacer">add</span>
+                <div className="query-field-param">{queryLine.fieldValue2}</div>
+            </>
+        );
+    } else {
+        return(
+            <>
+                <div className="query-field-param-operator">{queryLine.functionOperator}</div>
+                <span className="material-icons query-param-spacer">add</span>
+                <div className="query-field-param">{queryLine.fieldValue1}</div>
+            </>
+        );
+    }
+}
 class ComplexQueryBuilder extends React.Component {
 
     constructor() {
@@ -12,67 +32,20 @@ class ComplexQueryBuilder extends React.Component {
         this.queryLineHandler = this.queryLineHandler.bind(this);
         this.clearQuery = this.clearQuery.bind(this);
 
-        //this.querylineCounter = 1;
-        //this.queryObject={};
-        this.showModal = false;
-
-        //this.displayQueryLines = [this.getBaseQueryLine(this.querylineCounter.valueOf())];
-
         this.state = {
-            //showDisplayQueryLines: this.displayQueryLines,
-            //stateQueryObject: {},
             showModal: false
         }
     }
 
-    // getBaseQueryLine = (currentRowNumber) => {
-    //     return <div className="query-item" key={'query-item-' + this.querylineCounter}>
-    //         <QueryLineItem querylineCounter={this.querylineCounter} queryLineHandler={this.queryLineHandler}/>
-    //         <Button variant="outline-secondary" onClick={() => this.removeQueryRow(currentRowNumber)}>Remove</Button></div>;
-    // }
-
-    submitSearch = () => {
-        // this.setState({stateQueryObject: this.queryObject});
-    }
-
     clearQuery = () => {
-        // this.querylineCounter += 1;
-        // this.queryObject={};
-        // this.displayQueryLines = [this.getBaseQueryLine(this.querylineCounter.valueOf())];
-
-        // this.setState({
-        //     saveQueryObject: {},
-        //     stateQueryObject: {},
-        //     showDisplayQueryLines: this.displayQueryLines
-        // });
-
-        // this.props.updateQueryNameHandler(this.props.queryId, "Query " + this.props.queryId);
         this.props.updateQueryObjForTab([], this.props.queryId, "Query " + this.props.queryId);
     }
 
-    removeQueryRow = (querylineCounter) => {
-        // console.log(this.queryObject);
-        // for(let i=0; i < this.displayQueryLines.length; i++) {
-        //     if(this.displayQueryLines[i]["key"] === 'query-item-' + querylineCounter) {
-        //         this.displayQueryLines.splice(i,1);
-        //     }
-        // }
+    removeQueryRow = (key) => {
+        let newArray = this.props.saveQueryObject.concat();
+        newArray.splice(key, 1);
 
-        // if(querylineCounter in this.queryObject) {
-        //     delete this.queryObject[querylineCounter];
-        // }
-
-        // this.setState({
-        //     showDisplayQueryLines : this.displayQueryLines
-        // });
-    }
-
-    addQueryRow = () => {
-        // this.querylineCounter += 1;
-        // this.displayQueryLines.push(this.getBaseQueryLine(this.querylineCounter.valueOf()));
-        // this.setState({
-        //     showDisplayQueryLines : this.displayQueryLines
-        // });
+        this.props.updateQueryObjForTab(newArray, this.props.queryId);
     }
 
     queryLineHandler(qlObj) {
@@ -96,28 +69,31 @@ class ComplexQueryBuilder extends React.Component {
                     </a>
                 </div>
                 <div className="query-builder-holder">
-                    <div>
-                        Tool for adding lines to Query:
-                        <div className="query-item">
-                            <QueryLineItem queryLineHandler={this.queryLineHandler}/>
-                            <Button variant="outline-secondary">Remove</Button>
-                        </div>
+                    <div className="query-parameter-header">Add New Parameter:</div>
+                    <div className="query-parameter-adder">
+                        <QueryLineItem queryLineHandler={this.queryLineHandler}/>
                     </div>
-                    <div>
+                    <div className="query-parameters-holder">
                         {this.props.saveQueryObject.map((queryLine, key) => 
-                            <div key={'query_parameter_' + key}>fieldType: {queryLine.fieldType}, fieldName: {queryLine.fieldName}, 
-                                fieldValue : {queryLine.fieldValue} </div>
+                            <div key={'query_parameter_' + key} className="query-added-parameter">
+                                <a href="#removeAddedParam" onClick={() => this.removeQueryRow(key)} className="remove-param-link">
+                                    <span className="material-icons query-line-remove-icon">
+                                        clear
+                                    </span>
+                                </a>
+                                <div className="query-field-param">{queryLine.fieldType}</div>
+                                <span className="material-icons query-param-spacer">add</span>
+                                <div className="query-field-param">{queryLine.fieldName}</div>
+                                <span className="material-icons query-param-spacer">add</span>
+                                <ParamDisplayByOperator queryLine={queryLine}/>
+                            </div>
                         )}
+                        {this.props.saveQueryObject.length === 0 &&
+                            <div className="no-query-params">No search parameters added yet.</div>
+                        }
                     </div>
-                    {/* {this.displayQueryLines} */}
                 </div>
-                <div>
-                    {/* <Button variant="outline-secondary" onClick={this.addQueryRow}>Add</Button> */}
-                    {/* <Button variant="outline-secondary" onClick={this.submitSearch}>Search</Button> */}
-                </div>
-                <div>
-                    <QueryResults queryObj={this.props.saveQueryObject}/>
-                </div>
+                <QueryResults queryObj={this.props.saveQueryObject}/>
             </div>
         );
     }

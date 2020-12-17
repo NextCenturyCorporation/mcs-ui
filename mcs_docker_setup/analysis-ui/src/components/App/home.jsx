@@ -67,7 +67,7 @@ class HomePage extends React.Component {
             <Query query={history_field_aggregation} variables={{"fieldName": "eval"}} fetchPolicy={'network-only'}>
             {
                 ({ loading, error, data }) => {
-                    if (loading) return <div>No comments yet</div> 
+                    if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
                     const evalOptions = data[historyFieldQueryName].sort();

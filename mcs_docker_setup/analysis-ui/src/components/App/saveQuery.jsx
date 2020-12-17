@@ -14,7 +14,7 @@ const SAVE_QUERY = gql`
 function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQueryNameHandler}) {
     const [queryName, setQueryName] = useState("");
     const [queryDesc, setQueryDesc] = useState("");
-    const [saveQuerryCall] = useMutation(SAVE_QUERY);
+    const [saveQueryCall] = useMutation(SAVE_QUERY);
 
     const resetSaveForm = () => {
         setQueryName("");
@@ -22,7 +22,7 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
     }
 
     const saveQuery = () => {
-        saveQuerryCall({ variables: { 
+        saveQueryCall({ variables: { 
             user: currentUser,
             queryObj: queryObj,
             name: queryName,

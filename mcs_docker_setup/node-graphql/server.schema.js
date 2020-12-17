@@ -1,7 +1,8 @@
 const { gql } = require('apollo-server');
-const {mcsDB} = require('./server.mongo');
+const { mcsDB } = require('./server.mongo');
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
+const { createComplexMongoQuery } = require('./server.mongoSyntax');
 
 const mcsTypeDefs = gql`
   scalar JSON
@@ -89,11 +90,6 @@ const mcsTypeDefs = gql`
     failures: JSON
   }
 
-  type keysObject {
-      _id: String
-      keys: [String]
-  }
-
   type homeStatsObject {
       statsByTestType: JSON,
       statsByScore: JSON,
@@ -106,6 +102,11 @@ const mcsTypeDefs = gql`
     name: String, 
     description: String,
     createdDate: Float
+  }
+
+  type dropDownObj {
+      value: String
+      label: String
   }
 
   type Query {
@@ -123,11 +124,12 @@ const mcsTypeDefs = gql`
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
-    getAllHistoryFields: keysObject
-    getAllSceneFields: keysObject,
+    getAllHistoryFields: [dropDownObj]
+    getAllSceneFields: [dropDownObj],
     createComplexQuery(queryObject: JSON): [JSON]
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
+    getScenesAndHistoryTypes: [dropDownObj]
   }
 
   type Mutation {
@@ -190,23 +192,52 @@ const mcsResolvers = {
         getFieldAggregation: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').distinct(args["fieldName"]).then(result => {return result});
         },
+        getScenesAndHistoryTypes: async(obj, args, context, infow) => {
+            let returnArray = [];
+            const historyEvals = await mcsDB.db.collection('mcs_history').distinct("eval");
+            for(let i=0; i < historyEvals.length; i++) {
+                returnArray.push({label: historyEvals[i], value: "mcs_history." + historyEvals[i]});
+            }
+
+            const sceneEvals = await mcsDB.db.collection('mcs_scenes').distinct("eval");
+            for(let i=0; i < sceneEvals.length; i++) {
+                returnArray.push({label: sceneEvals[i], value: "mcs_scenes." + sceneEvals[i]});
+            }
+            
+            return returnArray;
+        },
         getSubmissionFieldAggregation: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').aggregate([{$group: {_id: '$performer', submission: {$addToSet: '$submission'}}}])
                 .toArray().then(result => {return result});
         },
         getAllHistoryFields: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_history_keys').findOne();
+            let returnArray = [];
+            const results =  await mcsDB.db.collection('mcs_history_keys').findOne();
+            const historyKeys = results.keys;
+            for(let i=0; i < historyKeys.length; i++) {
+                returnArray.push({label: historyKeys[i], value: historyKeys[i]});
+            }
+
+            return returnArray;
         },
         getAllSceneFields: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_scenes_keys').findOne();
+            let returnArray = [];
+            const results =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
+            const sceneKeys = results.keys;
+            for(let i=0; i < sceneKeys.length; i++) {
+                returnArray.push({label: sceneKeys[i], value: sceneKeys[i]});
+            }
+
+            return returnArray;
         },
         getSavedQueries: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('savedQueries').find()
                 .toArray().then(result => {return result});
         },
         createComplexQuery: async(obj, args, context, infow)=> {
+            mongoQueryObject = createComplexMongoQuery(args['queryObject']);
+
             async function getComplexResults() {
-                console.log(args);
                 const historyKeys = await mcsDB.db.collection('mcs_history_keys').findOne();
 
                 let projectionObj = {scene: "$mcsScenes"};
@@ -214,18 +245,15 @@ const mcsResolvers = {
                     projectionObj[historyKeys["keys"][i]] = 1;
                 }
 
-                console.log(projectionObj);
-
                 return mcsDB.db.collection('mcs_history').aggregate([
                     {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                     {$unwind:'$mcsScenes'},
-                    {$match: args['queryObject']},
+                    {$match: mongoQueryObject},
                     {$project: projectionObj}
                 ]).toArray();
             }
 
             results = await getComplexResults();
-            console.log("Results", results);
 
             return results;
         },
@@ -326,10 +354,6 @@ const mcsResolvers = {
         serialize(value) {
           if (typeof value !== "string" && typeof value !== "number") {
             throw new Error("Value must be either a String or an Int");
-          }
-    
-          if (typeof value === "number" && !Number.isInteger(value)) {
-            throw new Error("Number value must be an Int");
           }
     
           return value;
