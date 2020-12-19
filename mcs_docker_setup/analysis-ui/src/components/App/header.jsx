@@ -4,6 +4,8 @@ import gql from 'graphql-tag';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+//import {Router, Switch, Route, Link, useParams, useLocation, withRouter} from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const GET_FIELD_AGG = gql`
     query getFieldAggregation($fieldName: String!){
@@ -34,7 +36,16 @@ class ListItem extends React.Component {
         } else {
             this.props.state[this.props.stateName] = this.props.item;
         }
+
+        // TODO: MCS-466: last value in each dropdown are what is saved to state -- manually select for now
+        if(this.props.state["test_type"] === "pair_9_traversal") {
+            this.props.state["test_type"] = 'object_permanence';
+        }
         
+        if(this.props.state["scene_num"] === "0250") {
+            this.props.state['scene_num'] = '0001';
+        }
+
         const urlBasePath = window.location.href.split('?')[0];
         let params = ""
         // Property List for Eval 1
@@ -45,10 +56,14 @@ class ListItem extends React.Component {
             params = "?test_type=" + this.props.state["test_type"] + "&scene_num=" + this.props.state["scene_num"];
         }
 
-        const newLocation = urlBasePath + params;
+        // TODO: MCS-466: make sure this still works once menu is changed 
+        //const newLocation = urlBasePath + params;
+        const newLocation = '/analysis' + params
 
         return (
-            <NavDropdown.Item id={this.props.stateName + "_" + this.props.itemKey} href={newLocation}>{this.props.item}</NavDropdown.Item>
+            <LinkContainer to={newLocation}>
+                <NavDropdown.Item id={this.props.stateName + "_" + this.props.itemKey}>{this.props.item}</NavDropdown.Item>
+            </LinkContainer>
         )
     }
 }
