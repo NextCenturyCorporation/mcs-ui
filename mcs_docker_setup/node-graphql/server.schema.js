@@ -358,14 +358,14 @@ const mcsResolvers = {
         description: "A String or a Float union type",
         serialize(value) {
           if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-            throw new Error("Value must be either a String or an Int");
+            throw new Error("Value must be either a String, Boolean, or an Int");
           }
     
           return value;
         },
         parseValue(value) {
           if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-            throw new Error("Value must be either a String or an Int");
+            throw new Error("Value must be either a String, Boolean, or an Int");
           }
 
           return value;
@@ -376,7 +376,7 @@ const mcsResolvers = {
             case Kind.STRING: return ast.value;
             case Kind.BOOLEAN: return ast.value;
             default:
-              throw new Error("Value must be either a String or a Float");
+              throw new Error("Value must be either a String, Boolean, or a Float");
           }
         }
     })
