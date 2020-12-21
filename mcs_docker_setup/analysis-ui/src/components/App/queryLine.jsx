@@ -84,7 +84,9 @@ class QueryLineItem extends React.Component {
         super(props);
         this.state = {
             fieldType: "",
+            fieldTypeLabel: "",
             fieldName: "",
+            fieldNameLabel: "",
             fieldValue1: "",
             fieldValue2: "",
             functionOperator: "equals",
@@ -100,11 +102,11 @@ class QueryLineItem extends React.Component {
     }
 
     selectCollection = (event) => {
-        this.setState({ fieldType: event.value});
+        this.setState({ fieldType: event.value, fieldTypeLabel: event.label});
     }
 
     selectField = (event) => {
-        this.setState({fieldName: event.value});
+        this.setState({fieldName: event.value, fieldNameLabel: event.label});
     }
 
     selectDropDownValue = (event) => {

@@ -7,11 +7,11 @@ const ParamDisplayByOperator =({queryLine}) => {
     if(queryLine.functionOperator === "between" || queryLine.functionOperator === "and" || queryLine.functionOperator === "or") {
         return(
             <>
-                <div className="query-field-param">{queryLine.fieldValue1}</div>
+                <div className="query-field-param">{queryLine.fieldValue1.toString()}</div>
                 <span className="material-icons query-param-spacer">add</span>
                 <div className="query-field-param-operator">{queryLine.functionOperator}</div>
                 <span className="material-icons query-param-spacer">add</span>
-                <div className="query-field-param">{queryLine.fieldValue2}</div>
+                <div className="query-field-param">{queryLine.fieldValue2.toString()}</div>
             </>
         );
     } else {
@@ -19,7 +19,7 @@ const ParamDisplayByOperator =({queryLine}) => {
             <>
                 <div className="query-field-param-operator">{queryLine.functionOperator}</div>
                 <span className="material-icons query-param-spacer">add</span>
-                <div className="query-field-param">{queryLine.fieldValue1}</div>
+                <div className="query-field-param">{queryLine.fieldValue1.toString()}</div>
             </>
         );
     }
@@ -81,9 +81,9 @@ class ComplexQueryBuilder extends React.Component {
                                         clear
                                     </span>
                                 </a>
-                                <div className="query-field-param">{queryLine.fieldType}</div>
+                                <div className="query-field-param">{queryLine.fieldTypeLabel}</div>
                                 <span className="material-icons query-param-spacer">add</span>
-                                <div className="query-field-param">{queryLine.fieldName}</div>
+                                <div className="query-field-param">{queryLine.fieldNameLabel}</div>
                                 <span className="material-icons query-param-spacer">add</span>
                                 <ParamDisplayByOperator queryLine={queryLine}/>
                             </div>

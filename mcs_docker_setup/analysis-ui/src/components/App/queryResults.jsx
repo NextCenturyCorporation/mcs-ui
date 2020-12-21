@@ -13,20 +13,6 @@ const create_complex_query = gql`
         createComplexQuery(queryObject: $queryObject) 
     }`;
 
-const convertToMongoQuery = function(queryObj) {
-    console.log("Conver to Mongo", queryObj);
-    let mongoQuery = {};
-    for(const queryKey in queryObj) {
-       if(queryObj[queryKey]["fieldType"].toLowerCase() === 'scene') {
-           mongoQuery[scenesCollectionName + "." + queryObj[queryKey]["fieldName"]] = queryObj[queryKey]["fieldValue"];
-       } else {
-           mongoQuery[queryObj[queryKey]["fieldName"]] = queryObj[queryKey]["fieldValue"];
-       }
-    }
-
-    return mongoQuery;
-}
-
 const Results = ({queryObj}) => {
     const checkKeyExcludedHeader = (objectKey, key) => {
         if(!excludeFields.includes(objectKey)) {

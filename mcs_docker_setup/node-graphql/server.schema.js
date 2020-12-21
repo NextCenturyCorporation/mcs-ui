@@ -3,6 +3,7 @@ const { mcsDB } = require('./server.mongo');
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
+const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields, sceneFieldLabelMap } = require('./server.fieldMappings');
 
 const mcsTypeDefs = gql`
   scalar JSON
@@ -215,7 +216,9 @@ const mcsResolvers = {
             const results =  await mcsDB.db.collection('mcs_history_keys').findOne();
             const historyKeys = results.keys;
             for(let i=0; i < historyKeys.length; i++) {
-                returnArray.push({label: historyKeys[i], value: historyKeys[i]});
+                if(!historyExcludeFields.includes(historyKeys[i])) {
+                    returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
+                }
             }
 
             return returnArray;
@@ -225,7 +228,9 @@ const mcsResolvers = {
             const results =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
             const sceneKeys = results.keys;
             for(let i=0; i < sceneKeys.length; i++) {
-                returnArray.push({label: sceneKeys[i], value: sceneKeys[i]});
+                if(!sceneExcludeFields.includes(sceneKeys[i])) {
+                    returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
+                }
             }
 
             return returnArray;
@@ -352,14 +357,14 @@ const mcsResolvers = {
         name: "StringOrFloat",
         description: "A String or a Float union type",
         serialize(value) {
-          if (typeof value !== "string" && typeof value !== "number") {
+          if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
             throw new Error("Value must be either a String or an Int");
           }
     
           return value;
         },
         parseValue(value) {
-          if (typeof value !== "string" && typeof value !== "number") {
+          if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
             throw new Error("Value must be either a String or an Int");
           }
 
@@ -369,6 +374,7 @@ const mcsResolvers = {
           switch (ast.kind) {
             case Kind.FLOAT: return parseFloat(ast.value);
             case Kind.STRING: return ast.value;
+            case Kind.BOOLEAN: return ast.value;
             default:
               throw new Error("Value must be either a String or a Float");
           }
