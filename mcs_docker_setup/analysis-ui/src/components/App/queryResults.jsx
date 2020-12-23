@@ -2,11 +2,9 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
+import QueryResultsTable from './queryResultsTable';
 
 const complexQueryName = "createComplexQuery";
-const scenesCollectionName = "mcsScenes";
-
-const excludeFields = ["steps", "scene"]
 
 const create_complex_query = gql`
     query createComplexQuery($queryObject: JSON!) {
@@ -14,17 +12,6 @@ const create_complex_query = gql`
     }`;
 
 const Results = ({queryObj}) => {
-    const checkKeyExcludedHeader = (objectKey, key) => {
-        if(!excludeFields.includes(objectKey)) {
-            return <th key={'results_column_header_' + key}>{objectKey}</th>;
-        }
-    }
-    
-    const checkKeyExcludedCell = (objectKey, key, objKey, resultObj) => {
-        if(!excludeFields.includes(objectKey)) {
-            return <td key={'results_' + key + "_" + objKey}>{JSON.stringify(resultObj[objectKey])}</td>;
-        }
-    }
 
     return (
         <Query query={create_complex_query} variables={{"queryObject": queryObj}} fetchPolicy={'network-only'}>
@@ -33,9 +20,21 @@ const Results = ({queryObj}) => {
                 if (loading) return <div>Results are currently loading ... </div> 
                 if (error) return <div>Error</div>
                 
-                let resultsData = data[complexQueryName];
+                let resultsData = data[complexQueryName].results;
 
-                console.log(resultsData);
+                let columns = [];
+                let noneOption = [{value: "", label: "None"}];
+                let optionsToAdd = [];
+                for (const key in data[complexQueryName].historyMap) {
+                    columns.push({dataKey: key, title: data[complexQueryName].historyMap[key]});
+                    optionsToAdd.push({value: key, label: data[complexQueryName].historyMap[key]});
+                }
+                for (const key in data[complexQueryName].sceneMap) {
+                    columns.push({dataKey: "scene." + key, title: data[complexQueryName].sceneMap[key]});
+                    optionsToAdd.push({value: "scene." + key, label: data[complexQueryName].sceneMap[key]});
+                }
+
+                const options = noneOption.concat(optionsToAdd.sort((a, b) => (a.label > b.label) ? 1 : -1));
 
                 if(resultsData.length === 0) {
                     return (
@@ -43,23 +42,14 @@ const Results = ({queryObj}) => {
                     );
                 } else {
                     return (
-                        <div>
-                            <table border="1">
-                                <thead>
-                                    <tr>
-                                        {Object.keys(resultsData[0]).map((objectKey, key) => 
-                                            checkKeyExcludedHeader(objectKey, key))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {resultsData.map((resultObj, key) => 
-                                        <tr className="result-row" key={'result_row_' + key}>
-                                            {Object.keys(resultObj).map((objectKey, objKey) => 
-                                                checkKeyExcludedCell(objectKey, key, objKey, resultObj))}
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="query-results-holder">
+                            <div className="query-results-header">
+                                <h5>Query Results</h5>
+                                <div className="query-num-results">
+                                    Display: {resultsData.length} Results
+                                </div>
+                            </div>
+                            <QueryResultsTable columns={columns} rows={resultsData} groupByOptions={options}/>
                         </div>
                     );
                 }
@@ -83,7 +73,6 @@ class QueryResults extends React.Component {
     render() {
         return (
             <div className="query-results-holder">
-                <h4>Query Results</h4>
                 <ResultsTable queryObj={this.props.queryObj}/>
             </div>
         );

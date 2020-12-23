@@ -5,6 +5,8 @@ const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
 const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields, sceneFieldLabelMap } = require('./server.fieldMappings');
 
+let complexQueryProjectionObject = null;
+
 const mcsTypeDefs = gql`
   scalar JSON
 
@@ -127,7 +129,7 @@ const mcsTypeDefs = gql`
     getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
     getAllHistoryFields: [dropDownObj]
     getAllSceneFields: [dropDownObj],
-    createComplexQuery(queryObject: JSON): [JSON]
+    createComplexQuery(queryObject: JSON): JSON
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
@@ -243,24 +245,38 @@ const mcsResolvers = {
             mongoQueryObject = createComplexMongoQuery(args['queryObject']);
 
             async function getComplexResults() {
-                const historyKeys = await mcsDB.db.collection('mcs_history_keys').findOne();
+                if(complexQueryProjectionObject === null ){
+                    const historyKeys = await mcsDB.db.collection('mcs_history_keys').findOne();
+                    const sceneKeys =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
 
-                let projectionObj = {scene: "$mcsScenes"};
-                for(let i=0; i < historyKeys["keys"].length; i++) {
-                    projectionObj[historyKeys["keys"][i]] = 1;
+                    let projectionObj = {};
+
+                    for(let j=0; j < sceneKeys["keys"].length; j++) {
+                        if(!sceneExcludeFields.includes(sceneKeys["keys"][j])) {
+                            projectionObj["scene." + sceneKeys["keys"][j]] = "$mcsScenes." + sceneKeys["keys"][j];
+                        }
+                    }
+                    //let projectionObj = {scene: "$mcsScenes"};
+                    for(let i=0; i < historyKeys["keys"].length; i++) {
+                        if(!historyExcludeFields.includes(historyKeys["keys"][i])) {
+                            projectionObj[historyKeys["keys"][i]] = 1;
+                        }
+                    }
+
+                    complexQueryProjectionObject = projectionObj;
                 }
 
                 return mcsDB.db.collection('mcs_history').aggregate([
                     {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                     {$unwind:'$mcsScenes'},
                     {$match: mongoQueryObject},
-                    {$project: projectionObj}
+                    {$project: complexQueryProjectionObject}
                 ]).toArray();
             }
 
-            results = await getComplexResults();
+            let results = await getComplexResults();
 
-            return results;
+            return {results: results, sceneMap: sceneFieldLabelMap, historyMap: historyFieldLabelMap};
         },
         getHomeStats: async(obj, args, context, infow)=> {
             let statsObj = {};
