@@ -29,6 +29,13 @@ import userImage from '../../img/account_icon.png';
 const history = createBrowserHistory();
 
 const AnalysisUI = ({newState}) => {
+    let params = queryString.parse(window.location.search);
+
+    if(params.test_type && params.scene_num) {
+        newState.test_type = params.test_type;
+        newState.scene_num = params.scene_num;
+    }
+
     if(newState.currentUser == null) {
         history.push('/login');
     }
@@ -65,7 +72,12 @@ function Home({newState}) {
 
 function Login({newState, userLoginHandler}) {
     if(newState.currentUser !== null) {
-        history.push("/");
+
+        if(newState.test_type && newState.scene_num) {
+            history.push("/analysis?test_type=" + newState.test_type + "&scene_num=" + newState.scene_num);
+        } else {
+            history.push("/");
+        }
     }
 
     return <LoginApp userLoginHandler={userLoginHandler}/>;
