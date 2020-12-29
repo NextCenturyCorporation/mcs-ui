@@ -28,7 +28,7 @@ import userImage from '../../img/account_icon.png';
 
 const history = createBrowserHistory();
 
-const AnalysisUI = ({newState}) => {
+const AnalysisUI = ({newState, updateHandler}) => {
     let params = queryString.parse(window.location.search);
 
     if(params.test_type && params.scene_num) {
@@ -43,11 +43,11 @@ const AnalysisUI = ({newState}) => {
     return <div>
         <div className="layout">
 
-            <EvalHeader state={newState}/>
+            <EvalHeader state={newState} updateHandler={updateHandler}/>
 
             <div className="layout-board">
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { (newState.test_type !== undefined && newState.test_type !== null) && <Scenes value={newState}/> }
+                { (newState.test_type !== undefined && newState.test_type !== null) && (newState.scene_num !== undefined && newState.scene_num !== null) && <Scenes value={newState}/> }
                 { newState.showComments &&  <CommentsComponent state={newState}/> }
             </div>
         </div>
@@ -102,9 +102,12 @@ export class App extends React.Component {
         this.state = queryString.parse(window.location.search);
         this.state.currentUser = null;
         this.state.showComments = (process.env.REACT_APP_COMMENTS_ON.toLowerCase() === 'true' || process.env.REACT_APP_COMMENTS_ON === '1');
+        this.state.test_type = null;
+        this.state.scene_num = null;
     
         this.logout = this.logout.bind(this);
         this.userLoginHandler = this.userLoginHandler.bind(this);
+        this.updateHandler = this.updateHandler.bind(this);
     }
 
     async componentDidMount() {
@@ -135,6 +138,10 @@ export class App extends React.Component {
 
     userLoginHandler(userObject) {
         this.setState({ currentUser: userObject });
+    }
+
+    updateHandler(key, item) {
+        this.setState({ [key]: item });
     }
 
     render() {
@@ -178,7 +185,7 @@ export class App extends React.Component {
                             <QueryBuilder newState={this.state}/>
                         </Route>
                         <Route exact path="/analysis">
-                            <AnalysisUI newState={this.state}/>
+                            <AnalysisUI newState={this.state} updateHandler={this.updateHandler}/>
                         </Route>
                         <Route path="/login">
                             <Login newState={this.state} userLoginHandler={this.userLoginHandler}/>

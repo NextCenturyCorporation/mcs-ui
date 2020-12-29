@@ -263,7 +263,7 @@ class Scenes extends React.Component {
                                                 <div className="flags-holder">
                                                     <FlagCheckboxMutation state={this.state} currentState={currentState}/>
                                                 </div>
-                                                { (scenesByPerformer[this.state.currentPerformer][0]["category"] === "observation") && 
+                                                { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "observation") && 
                                                     <div>
                                                         <div className="movie-holder">
                                                             <div className="movie-left-right">
@@ -301,7 +301,7 @@ class Scenes extends React.Component {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
+                                                            {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
                                                                 <tr key={'peformer_score_row_' + key}>
                                                                     <td>{scoreObj.scene_part_num}</td>
                                                                     <td>{scoreObj.score.classification}</td>
@@ -322,7 +322,7 @@ class Scenes extends React.Component {
                                                         <button key={"scene_button_" + key} className={this.state.currentSceneNum === key ? 'btn btn-primary active' : 'btn btn-secondary'} id={"scene_btn_" + key} type="button" onClick={() => this.changeScene(key)}>Scene {key+1}</button>
                                                     )}
                                                 </div>
-                                                    { (scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
+                                                    { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
                                                         <div className="movie-steps-holder">
                                                             <div className="interactive-movie-holder">
                                                                 <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
