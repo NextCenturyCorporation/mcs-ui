@@ -44,7 +44,7 @@ class ListItem extends React.Component {
         const urlBasePath = window.location.href.split('?')[0];
         let params = ""
     
-        // Property List for Eval 1 - TODO: MCS-466: fix for Eval 1
+        // Property List for Eval 1 - TODO: MCS-492: fix for Eval 1 Data?
         if(this.props.state["perf"] !== undefined && this.props.state["perf"] !== null) {
             params = "?perf=" + this.props.state["perf"] + "&subm=" + this.props.state["subm"] + "&block=" + this.props.state["block"] + "&test=" + this.props.state["test"];
         } else {
