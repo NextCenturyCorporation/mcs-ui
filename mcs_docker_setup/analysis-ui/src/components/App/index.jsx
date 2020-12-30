@@ -31,8 +31,11 @@ const history = createBrowserHistory();
 const AnalysisUI = ({newState, updateHandler}) => {
     let params = queryString.parse(window.location.search);
 
-    if(params.test_type && params.scene_num) {
+    if(params.test_type) {
         newState.test_type = params.test_type;
+    }
+
+    if(params.scene_num) {
         newState.scene_num = params.scene_num;
     }
 
@@ -75,6 +78,10 @@ function Login({newState, userLoginHandler}) {
 
         if(newState.test_type && newState.scene_num) {
             history.push("/analysis?test_type=" + newState.test_type + "&scene_num=" + newState.scene_num);
+        } else if(newState.test_type) {
+            history.push("/analysis?test_type=" + newState.test_type);
+        } else if(newState.scene_num) {
+            history.push("/analysis?scene_num=" + newState.scene_num);
         } else {
             history.push("/");
         }
