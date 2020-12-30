@@ -151,6 +151,21 @@ export class App extends React.Component {
         this.setState({ [key]: item });
     }
 
+    getAnalysisUIPath() {
+        let analysisPath = '/analysis';
+
+        if((this.state['test_type'] !== null && this.state['test_type'] !== undefined) && 
+            (this.state['scene_num'] !== null && this.state['scene_num'] !== undefined)) {
+            analysisPath += "?test_type=" + this.state['test_type'] + "&scene_num=" + this.state['scene_num']
+        } else if(this.state['test_type'] !== null && this.state['test_type'] !== undefined) {
+            analysisPath += "?test_type=" + this.state['test_type'];
+        } else if(this.state['scene_num'] !== null && this.state['scene_num'] !== undefined) {
+            analysisPath += "?scene_num=" + this.state['scene_num'] ;
+        }
+
+        return analysisPath;
+    }
+
     render() {
         const {currentUser} = this.state;
         return (
@@ -169,7 +184,7 @@ export class App extends React.Component {
                                     <Link className="nav-link" to="/query">Query Builder</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/analysis">Analysis</Link>
+                                    <Link className="nav-link" to={this.getAnalysisUIPath()}>Analysis</Link>
                                 </li>
                             </ul>
                             <ul className="navbar-nav ml-auto">
@@ -191,7 +206,7 @@ export class App extends React.Component {
                         <Route exact path="/query">
                             <QueryBuilder newState={this.state}/>
                         </Route>
-                        <Route exact path="/analysis">
+                        <Route path="/analysis">
                             <AnalysisUI newState={this.state} updateHandler={this.updateHandler}/>
                         </Route>
                         <Route path="/login">
