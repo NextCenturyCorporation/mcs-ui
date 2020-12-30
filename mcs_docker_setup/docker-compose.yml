@@ -68,6 +68,8 @@ services:
       - mongo
     networks:
       - neon-net
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
   node-server-staging:
     container_name: node-graphql-staging
     image: node-graphql-staging
@@ -81,6 +83,8 @@ services:
       - mongo
     networks:
       - neon-net
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
   mongo: 
     image: 'mongo'
     container_name: mcs-mongo

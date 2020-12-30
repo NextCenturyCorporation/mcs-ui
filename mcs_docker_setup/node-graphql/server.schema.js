@@ -1,7 +1,11 @@
 const { gql } = require('apollo-server');
-const {mcsDB} = require('./server.mongo');
+const { mcsDB } = require('./server.mongo');
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
+const { createComplexMongoQuery } = require('./server.mongoSyntax');
+const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields, sceneFieldLabelMap } = require('./server.fieldMappings');
+
+let complexQueryProjectionObject = null;
 
 const mcsTypeDefs = gql`
   scalar JSON
@@ -89,11 +93,6 @@ const mcsTypeDefs = gql`
     failures: JSON
   }
 
-  type keysObject {
-      _id: String
-      keys: [String]
-  }
-
   type homeStatsObject {
       statsByTestType: JSON,
       statsByScore: JSON,
@@ -106,6 +105,11 @@ const mcsTypeDefs = gql`
     name: String, 
     description: String,
     createdDate: Float
+  }
+
+  type dropDownObj {
+      value: String
+      label: String
   }
 
   type Query {
@@ -123,11 +127,12 @@ const mcsTypeDefs = gql`
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
-    getAllHistoryFields: keysObject
-    getAllSceneFields: keysObject,
-    createComplexQuery(queryObject: JSON): [JSON]
+    getAllHistoryFields: [dropDownObj]
+    getAllSceneFields: [dropDownObj],
+    createComplexQuery(queryObject: JSON): JSON
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
+    getScenesAndHistoryTypes: [dropDownObj]
   }
 
   type Mutation {
@@ -190,44 +195,88 @@ const mcsResolvers = {
         getFieldAggregation: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').distinct(args["fieldName"]).then(result => {return result});
         },
+        getScenesAndHistoryTypes: async(obj, args, context, infow) => {
+            let returnArray = [];
+            const historyEvals = await mcsDB.db.collection('mcs_history').distinct("eval");
+            for(let i=0; i < historyEvals.length; i++) {
+                returnArray.push({label: historyEvals[i], value: "mcs_history." + historyEvals[i]});
+            }
+
+            const sceneEvals = await mcsDB.db.collection('mcs_scenes').distinct("eval");
+            for(let i=0; i < sceneEvals.length; i++) {
+                returnArray.push({label: sceneEvals[i], value: "mcs_scenes." + sceneEvals[i]});
+            }
+            
+            return returnArray;
+        },
         getSubmissionFieldAggregation: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').aggregate([{$group: {_id: '$performer', submission: {$addToSet: '$submission'}}}])
                 .toArray().then(result => {return result});
         },
         getAllHistoryFields: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_history_keys').findOne();
+            let returnArray = [];
+            const results =  await mcsDB.db.collection('mcs_history_keys').findOne();
+            const historyKeys = results.keys;
+            for(let i=0; i < historyKeys.length; i++) {
+                if(!historyExcludeFields.includes(historyKeys[i])) {
+                    returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
+                }
+            }
+
+            return returnArray;
         },
         getAllSceneFields: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_scenes_keys').findOne();
+            let returnArray = [];
+            const results =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
+            const sceneKeys = results.keys;
+            for(let i=0; i < sceneKeys.length; i++) {
+                if(!sceneExcludeFields.includes(sceneKeys[i])) {
+                    returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
+                }
+            }
+
+            return returnArray;
         },
         getSavedQueries: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('savedQueries').find()
                 .toArray().then(result => {return result});
         },
         createComplexQuery: async(obj, args, context, infow)=> {
+            mongoQueryObject = createComplexMongoQuery(args['queryObject']);
+
             async function getComplexResults() {
-                console.log(args);
-                const historyKeys = await mcsDB.db.collection('mcs_history_keys').findOne();
+                if(complexQueryProjectionObject === null ){
+                    const historyKeys = await mcsDB.db.collection('mcs_history_keys').findOne();
+                    const sceneKeys =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
 
-                let projectionObj = {scene: "$mcsScenes"};
-                for(let i=0; i < historyKeys["keys"].length; i++) {
-                    projectionObj[historyKeys["keys"][i]] = 1;
+                    let projectionObj = {};
+
+                    for(let j=0; j < sceneKeys["keys"].length; j++) {
+                        if(!sceneExcludeFields.includes(sceneKeys["keys"][j])) {
+                            projectionObj["scene." + sceneKeys["keys"][j]] = "$mcsScenes." + sceneKeys["keys"][j];
+                        }
+                    }
+                    //let projectionObj = {scene: "$mcsScenes"};
+                    for(let i=0; i < historyKeys["keys"].length; i++) {
+                        if(!historyExcludeFields.includes(historyKeys["keys"][i])) {
+                            projectionObj[historyKeys["keys"][i]] = 1;
+                        }
+                    }
+
+                    complexQueryProjectionObject = projectionObj;
                 }
-
-                console.log(projectionObj);
 
                 return mcsDB.db.collection('mcs_history').aggregate([
                     {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                     {$unwind:'$mcsScenes'},
-                    {$match: args['queryObject']},
-                    {$project: projectionObj}
+                    {$match: mongoQueryObject},
+                    {$project: complexQueryProjectionObject}
                 ]).toArray();
             }
 
-            results = await getComplexResults();
-            console.log("Results", results);
+            let results = await getComplexResults();
 
-            return results;
+            return {results: results, sceneMap: sceneFieldLabelMap, historyMap: historyFieldLabelMap};
         },
         getHomeStats: async(obj, args, context, infow)=> {
             let statsObj = {};
@@ -324,19 +373,15 @@ const mcsResolvers = {
         name: "StringOrFloat",
         description: "A String or a Float union type",
         serialize(value) {
-          if (typeof value !== "string" && typeof value !== "number") {
-            throw new Error("Value must be either a String or an Int");
-          }
-    
-          if (typeof value === "number" && !Number.isInteger(value)) {
-            throw new Error("Number value must be an Int");
+          if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+            throw new Error("Value must be either a String, Boolean, or an Int");
           }
     
           return value;
         },
         parseValue(value) {
-          if (typeof value !== "string" && typeof value !== "number") {
-            throw new Error("Value must be either a String or an Int");
+          if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+            throw new Error("Value must be either a String, Boolean, or an Int");
           }
 
           return value;
@@ -345,8 +390,9 @@ const mcsResolvers = {
           switch (ast.kind) {
             case Kind.FLOAT: return parseFloat(ast.value);
             case Kind.STRING: return ast.value;
+            case Kind.BOOLEAN: return ast.value;
             default:
-              throw new Error("Value must be either a String or a Float");
+              throw new Error("Value must be either a String, Boolean, or a Float");
           }
         }
     })
