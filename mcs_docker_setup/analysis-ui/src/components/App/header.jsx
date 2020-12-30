@@ -139,10 +139,14 @@ class EvalNav extends React.Component {
         } else {
             return(
                 <Nav className="mr-auto">
-                    <NavDropdown title={"Test Type: " + (this.props.state.test_type === null ? 'None' : this.props.state.test_type)} id="basic-nav-dropdown">
+                    <NavDropdown title={"Test Type: " + (
+                        (this.props.state.test_type === undefined || this.props.state.test_type === null) ? "None" : this.props.state.test_type)}
+                        id="basic-nav-dropdown">
                         <DropListItems fieldName={"test_type"} stateName={"test_type"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
-                    <NavDropdown title={"Test Number: " + (this.props.state.scene_num === null ? 'None' : this.props.state.scene_num)} id="basic-nav-dropdown">
+                    <NavDropdown title={"Test Number: " + (
+                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        id="basic-nav-dropdown">
                         <DropListItems fieldName={"scene_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
                 </Nav>
