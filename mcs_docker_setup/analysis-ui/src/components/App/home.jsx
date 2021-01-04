@@ -49,6 +49,13 @@ class HomePage extends React.Component {
         });
     }
 
+    shouldComponentUpdate(nextProps, nextState) { 
+        if (this.state === nextState) { 
+          return false;
+        }
+        return true;
+    }
+
     selectEvaluation(event) {
         this.setState({
             currentEval: event.target.value
@@ -60,14 +67,14 @@ class HomePage extends React.Component {
             <Query query={history_field_aggregation} variables={{"fieldName": "eval"}} fetchPolicy={'network-only'}>
             {
                 ({ loading, error, data }) => {
-                    if (loading) return <div>No comments yet</div> 
+                    if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
                     const evalOptions = data[historyFieldQueryName].sort();
                     const defaultOption = evalOptions[0];
 
                     if(this.state.currentEval === '') {
-                        this.state.currentEval = defaultOption;
+                        this.setState({currentEval: defaultOption});
                     }
 
                     return (

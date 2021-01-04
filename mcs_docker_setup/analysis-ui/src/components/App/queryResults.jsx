@@ -2,56 +2,39 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
+import QueryResultsTable from './queryResultsTable';
 
 const complexQueryName = "createComplexQuery";
-const scenesCollectionName = "mcsScenes";
-
-const excludeFields = ["steps", "scene"]
 
 const create_complex_query = gql`
     query createComplexQuery($queryObject: JSON!) {
         createComplexQuery(queryObject: $queryObject) 
     }`;
 
-const convertToMongoQuery = function(queryObj) {
-    let mongoQuery = {};
-    for(const queryKey in queryObj) {
-       if(queryObj[queryKey]["fieldType"].toLowerCase() === 'scene') {
-           mongoQuery[scenesCollectionName + "." + queryObj[queryKey]["fieldName"]] = queryObj[queryKey]["fieldValue"];
-       } else {
-           mongoQuery[queryObj[queryKey]["fieldName"]] = queryObj[queryKey]["fieldValue"];
-       }
-    }
-
-    return mongoQuery;
-}
-
 const Results = ({queryObj}) => {
-    const mongoQuerySyntax = convertToMongoQuery(queryObj);
-
-    const checkKeyExcludedHeader = (objectKey, key) => {
-        if(!excludeFields.includes(objectKey)) {
-            return <th key={'results_column_header_' + key}>{objectKey}</th>;
-        }
-    }
-    
-    const checkKeyExcludedCell = (objectKey, key, objKey, resultObj) => {
-        if(!excludeFields.includes(objectKey)) {
-            return <td key={'results_' + key + "_" + objKey}>{JSON.stringify(resultObj[objectKey])}</td>;
-        }
-    }
 
     return (
-        <Query query={create_complex_query} variables={{"queryObject": mongoQuerySyntax}} fetchPolicy={'network-only'}>
+        <Query query={create_complex_query} variables={{"queryObject": queryObj}} fetchPolicy={'network-only'}>
         {
             ({ loading, error, data }) => {
-                if (loading) return <div>No comments yet</div> 
+                if (loading) return <div>Results are currently loading ... </div> 
                 if (error) return <div>Error</div>
                 
-                console.log(data);
-                let resultsData = data[complexQueryName];
+                let resultsData = data[complexQueryName].results;
 
-                console.log(resultsData);
+                let columns = [];
+                let noneOption = [{value: "", label: "None"}];
+                let optionsToAdd = [];
+                for (const key in data[complexQueryName].historyMap) {
+                    columns.push({dataKey: key, title: data[complexQueryName].historyMap[key]});
+                    optionsToAdd.push({value: key, label: data[complexQueryName].historyMap[key]});
+                }
+                for (const key in data[complexQueryName].sceneMap) {
+                    columns.push({dataKey: "scene." + key, title: data[complexQueryName].sceneMap[key]});
+                    optionsToAdd.push({value: "scene." + key, label: data[complexQueryName].sceneMap[key]});
+                }
+
+                const options = noneOption.concat(optionsToAdd.sort((a, b) => (a.label > b.label) ? 1 : -1));
 
                 if(resultsData.length === 0) {
                     return (
@@ -59,23 +42,14 @@ const Results = ({queryObj}) => {
                     );
                 } else {
                     return (
-                        <div>
-                            <table border="1">
-                                <thead>
-                                    <tr>
-                                        {Object.keys(resultsData[0]).map((objectKey, key) => 
-                                            checkKeyExcludedHeader(objectKey, key))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {resultsData.map((resultObj, key) => 
-                                        <tr className="result-row" key={'result_row_' + key}>
-                                            {Object.keys(resultObj).map((objectKey, objKey) => 
-                                                checkKeyExcludedCell(objectKey, key, objKey, resultObj))}
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="query-results-holder">
+                            <div className="query-results-header">
+                                <h5>Query Results</h5>
+                                <div className="query-num-results">
+                                    Display: {resultsData.length} Results
+                                </div>
+                            </div>
+                            <QueryResultsTable columns={columns} rows={resultsData} groupByOptions={options}/>
                         </div>
                     );
                 }
@@ -87,7 +61,7 @@ const Results = ({queryObj}) => {
 
 const ResultsTable =({queryObj}) => {
     if(_.isEmpty(queryObj)) {
-        return(<div>Select a query to search, to see results.</div>);
+        return(<div>Enter some parameters to see query results.</div>);
     } else {
         return(<Results queryObj={queryObj}/>)
     }
@@ -98,8 +72,7 @@ class QueryResults extends React.Component {
 
     render() {
         return (
-            <div>
-                <h4>Query Results</h4>
+            <div className="query-results-holder">
                 <ResultsTable queryObj={this.props.queryObj}/>
             </div>
         );

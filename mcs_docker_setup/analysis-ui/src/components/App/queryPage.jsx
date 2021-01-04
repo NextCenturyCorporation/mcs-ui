@@ -8,7 +8,11 @@ class QueryPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            queryTabs: [{id: 1, name: "Query 1", saveQueryObject: null}],
+            queryTabs: [{
+                id: 1, 
+                name: "Query 1", 
+                tabQueryObj: []
+            }],
             currentTab: 1,
             totalTab: 1
         };
@@ -16,16 +20,28 @@ class QueryPage extends React.Component {
         this.addTab = this.addTab.bind(this);
         this.updateQueryNameHandler = this.updateQueryNameHandler.bind(this);
         this.loadQueryHandler = this.loadQueryHandler.bind(this);
+        this.updateQueryObjForTab = this.updateQueryObjForTab.bind(this);
+
+        if(this.props !== null & this.props.currentUser !== null) {
+            if(this.props.currentUser.queryBuilderState !== undefined && this.props.currentUser.queryBuilderState !== null) {
+                this.state = this.props.currentUser.queryBuilderState;
+            }
+        }
     }
 
     addTab = (event) => {
-        let newArray = this.state.queryTabs.concat({id: this.state.totalTab+1, 
-            name: "Query " + (this.state.totalTab+1)});
+        let newArray = this.state.queryTabs.concat({
+            id: this.state.totalTab+1, 
+            name: "Query " + (this.state.totalTab+1),
+            tabQueryObj: []
+        });
 
         this.setState({ 
             totalTab: this.state.totalTab+1, 
             queryTabs: newArray
         });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     updateQueryNameHandler = (queryId, newQueryName) => {
@@ -39,12 +55,30 @@ class QueryPage extends React.Component {
         this.setState({ 
             queryTabs: newArray
         });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     loadQueryHandler = (queryObj) => {
-        // TODO MCS-463 - The code to load a query obj will change a bunch with
-        //    new design, add hooks here to load the saved query obj into current tab
-        console.log("handler", queryObj);
+        this.updateQueryObjForTab(queryObj.queryObj, this.state.currentTab, queryObj.name);
+    }
+
+    updateQueryObjForTab = (queryObj, queryId, tabName) => {
+        let newArray = this.state.queryTabs.concat();
+        for(let i=0; i < newArray.length; i++) {
+            if(newArray[i].id === queryId) {
+                newArray[i].tabQueryObj = queryObj;
+                if(tabName !== undefined) {
+                    newArray[i].name = tabName;
+                }
+            }
+        } 
+
+        this.setState({ 
+            queryTabs: newArray
+        });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     changeQueryTab = (objectKey) => {
@@ -56,6 +90,8 @@ class QueryPage extends React.Component {
         $('#tabObj_button_' + objectKey ).toggleClass( "active" );
 
         this.setState({ currentTab: objectKey});
+
+        this.props.currentUser["queryBuilderState"] = this.state;
     }
 
     render() {
@@ -81,8 +117,8 @@ class QueryPage extends React.Component {
                 <div className="query-tab-contents">
                     {this.state.queryTabs.map((tabObj, key) => 
                         <div key={'query_tab_' + key} className={tabObj.id === this.state.currentTab ? null : 'd-none'}>
-                            <ComplexQueryBuilder queryId={tabObj.id} saveQueryObject={tabObj.saveQueryObject} currentUser={this.props.currentUser} 
-                                updateQueryNameHandler={this.updateQueryNameHandler}/>
+                            <ComplexQueryBuilder queryId={tabObj.id} saveQueryObject={tabObj.tabQueryObj} currentUser={this.props.currentUser} 
+                                updateQueryNameHandler={this.updateQueryNameHandler} updateQueryObjForTab={this.updateQueryObjForTab}/>
                         </div>
                     )}
                 </div>   
