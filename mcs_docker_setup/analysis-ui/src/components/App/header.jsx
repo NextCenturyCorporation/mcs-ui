@@ -34,11 +34,13 @@ class ListItem extends React.Component {
     }
 
     render() {
+        /*
+        TODO: MCS-492: Fix for eval 1 data?
         if(this.props.item.includes('/')) {
             let perfSubm = this.props.item.split('/');
             this.props.state["perf"] = perfSubm[0];
             this.props.state['subm'] = perfSubm[1];
-        } 
+        } */
 
         // TODO: MCS-466: Move URL logic to parent?
         const urlBasePath = window.location.href.split('?')[0];
