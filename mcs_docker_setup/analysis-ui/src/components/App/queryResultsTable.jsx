@@ -19,6 +19,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
+import {Link} from 'react-router-dom';
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -178,6 +179,10 @@ class QueryResultsTable extends React.Component {
         this.setState({groupBy: event.value});
     }
     
+    getAnalysisPageURL = (item) => {
+        return "/analysis?test_type=" + item.scene.test_type + "&scene_num=" + item.scene.scene_num
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -198,6 +203,10 @@ class QueryResultsTable extends React.Component {
                     <Table>
                         <TableHead>
                             <TableRow>
+                                <TableCell key='result_table_cell_link' className="results-table-header-cell">
+                                    Analysis Page Link
+                                </TableCell>
+
                                 {columnData.map((item, key) => (
                                     <TableCell key={'result_table_cell_' + key} className="results-table-header-cell">
                                         <TableSortLabel active={sortBy === item.dataKey} direction={sortOrder} 
@@ -214,6 +223,14 @@ class QueryResultsTable extends React.Component {
                                         groupedData.slice(this.state.page * this.state.rowsPerPage, 
                                             this.state.page * this.state.rowsPerPage + this.state.rowsPerPage) : groupedData).map((rowItem, rowKey) => (
                                         <TableRow key={'table_row_' + rowKey}>
+                                            <TableCell key={'table_cell_' + rowKey + "_link"}>
+                                                <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
+                                                    <div className="table-cell-wrap-text">
+                                                        <Link to={this.getAnalysisPageURL(rowItem)} target="_blank">View Details</Link>
+                                                    </div>
+                                                </ToolTipWithStyles>
+                                            </TableCell>
+
                                             {columnData.map((columnItem, columnKey) => (
                                                 <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
                                                     <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>

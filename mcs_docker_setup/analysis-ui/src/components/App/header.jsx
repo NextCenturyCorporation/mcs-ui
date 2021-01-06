@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const GET_FIELD_AGG = gql`
     query getFieldAggregation($fieldName: String!){
@@ -26,29 +27,54 @@ const GET_SUBMISSION_AGG = gql`
   }`;
 
 class ListItem extends React.Component {
+
+    updateState(item, stateName) {
+        this.props.state[stateName] = item;
+        this.props.updateHandler(stateName, item);
+    }
+
     render() {
+        /*
+        TODO: MCS-492: Fix for eval 1 data?
         if(this.props.item.includes('/')) {
             let perfSubm = this.props.item.split('/');
             this.props.state["perf"] = perfSubm[0];
             this.props.state['subm'] = perfSubm[1];
-        } else {
-            this.props.state[this.props.stateName] = this.props.item;
-        }
-        
+        } */
+
+        // TODO: MCS-466: Move URL logic to parent?
         const urlBasePath = window.location.href.split('?')[0];
         let params = ""
-        // Property List for Eval 1
+    
+        // Property List for Eval 1 - TODO: MCS-492: fix for Eval 1 Data?
         if(this.props.state["perf"] !== undefined && this.props.state["perf"] !== null) {
             params = "?perf=" + this.props.state["perf"] + "&subm=" + this.props.state["subm"] + "&block=" + this.props.state["block"] + "&test=" + this.props.state["test"];
-        } else if(this.props.state["test_type"] !== undefined && this.props.state["test_type"] !== null) {
+        } else {
             // Property List for Eval 2 Going Forward
-            params = "?test_type=" + this.props.state["test_type"] + "&scene_num=" + this.props.state["scene_num"];
+            if(this.props.stateName === 'test_type') {
+                if(this.props.state["scene_num"] !== undefined && this.props.state["scene_num"] !== null) {
+                    params = "?test_type=" + this.props.item + "&scene_num=" + this.props.state["scene_num"];
+                } else {
+                    params = "?test_type=" + this.props.item;
+                }
+            } else if(this.props.stateName == 'scene_num') {
+                if(this.props.state["test_type"] !== undefined && this.props.state["test_type"] !== null) {
+                    params = "?test_type=" + this.props.state["test_type"] + "&scene_num=" + this.props.item;
+                } else {
+                    params = "?scene_num=" + this.props.item;
+                }
+            }
         }
 
-        const newLocation = urlBasePath + params;
+        const newLocation = '/analysis' + params;
 
         return (
-            <NavDropdown.Item id={this.props.stateName + "_" + this.props.itemKey} href={newLocation}>{this.props.item}</NavDropdown.Item>
+            <LinkContainer to={newLocation}>
+                <NavDropdown.Item id={this.props.stateName + "_" + this.props.itemKey}
+                    onSelect={(selectedKey) => this.updateState(this.props.item, this.props.stateName)}>
+                    {this.props.item}
+                </NavDropdown.Item>
+            </LinkContainer>
         )
     }
 }
@@ -86,7 +112,7 @@ class DropListItems extends React.Component {
 
                     return (
                         dropdownOptions.map((item,key) =>
-                            <ListItem stateName={this.props.stateName} state={this.props.state} item={item} itemKey={key} key={this.props.stateName + "_" + key}/>
+                            <ListItem stateName={this.props.stateName} state={this.props.state} item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
                         )
                     )
                 }
@@ -102,24 +128,28 @@ class EvalNav extends React.Component {
             return(
                 <Nav className="mr-auto">
                     <NavDropdown title={"Performer/Submission: " + this.props.state.perf + "/" + this.props.state.subm} id="basic-nav-dropdown">
-                        <DropListItems fieldName={"submission"} stateName={"subm"} state={this.props.state}/>
+                        <DropListItems fieldName={"submission"} stateName={"subm"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
                     <NavDropdown title={"Block: " + this.props.state.block} id="basic-nav-dropdown">
-                        <DropListItems fieldName={"block"} stateName={"block"} state={this.props.state}/>
+                        <DropListItems fieldName={"block"} stateName={"block"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
                     <NavDropdown title={"Test: " + this.props.state.test} id="basic-nav-dropdown">
-                        <DropListItems fieldName={"test"} stateName={"test"} state={this.props.state}/>
+                        <DropListItems fieldName={"test"} stateName={"test"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
                 </Nav>
             );
         } else {
             return(
                 <Nav className="mr-auto">
-                    <NavDropdown title={"Test Type: " + this.props.state.test_type} id="basic-nav-dropdown">
-                        <DropListItems fieldName={"test_type"} stateName={"test_type"} state={this.props.state}/>
+                    <NavDropdown title={"Test Type: " + (
+                        (this.props.state.test_type === undefined || this.props.state.test_type === null) ? "None" : this.props.state.test_type)}
+                        id="basic-nav-dropdown">
+                        <DropListItems fieldName={"test_type"} stateName={"test_type"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
-                    <NavDropdown title={"Test Number: " + this.props.state.scene_num} id="basic-nav-dropdown">
-                        <DropListItems fieldName={"scene_num"} stateName={"scene_num"} state={this.props.state}/>
+                    <NavDropdown title={"Test Number: " + (
+                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        id="basic-nav-dropdown">
+                        <DropListItems fieldName={"scene_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
                 </Nav>
             );
@@ -128,13 +158,14 @@ class EvalNav extends React.Component {
 }
 
 class EvalHeader extends React.Component {
+
     render() {
         return (
             <Navbar variant="dark" expand="lg">
                 <Navbar.Brand href="#home">MCS Analysis</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <EvalNav state={this.props.state}/>
+                    <EvalNav state={this.props.state} updateHandler={this.props.updateHandler}/>
                 </Navbar.Collapse>
             </Navbar>
         );

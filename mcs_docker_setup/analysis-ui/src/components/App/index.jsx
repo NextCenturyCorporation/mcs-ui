@@ -28,7 +28,17 @@ import userImage from '../../img/account_icon.png';
 
 const history = createBrowserHistory();
 
-const AnalysisUI = ({newState}) => {
+const AnalysisUI = ({newState, updateHandler}) => {
+    let params = queryString.parse(window.location.search);
+
+    if(params.test_type) {
+        newState.test_type = params.test_type;
+    }
+
+    if(params.scene_num) {
+        newState.scene_num = params.scene_num;
+    }
+
     if(newState.currentUser == null) {
         history.push('/login');
     }
@@ -36,11 +46,11 @@ const AnalysisUI = ({newState}) => {
     return <div>
         <div className="layout">
 
-            <EvalHeader state={newState}/>
+            <EvalHeader state={newState} updateHandler={updateHandler}/>
 
             <div className="layout-board">
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { (newState.test_type !== undefined && newState.test_type !== null) && <Scenes value={newState}/> }
+                { (newState.test_type !== undefined && newState.test_type !== null) && (newState.scene_num !== undefined && newState.scene_num !== null) && <Scenes value={newState}/> }
                 { newState.showComments &&  <CommentsComponent state={newState}/> }
             </div>
         </div>
@@ -65,7 +75,16 @@ function Home({newState}) {
 
 function Login({newState, userLoginHandler}) {
     if(newState.currentUser !== null) {
-        history.push("/");
+
+        if(newState.test_type && newState.scene_num) {
+            history.push("/analysis?test_type=" + newState.test_type + "&scene_num=" + newState.scene_num);
+        } else if(newState.test_type) {
+            history.push("/analysis?test_type=" + newState.test_type);
+        } else if(newState.scene_num) {
+            history.push("/analysis?scene_num=" + newState.scene_num);
+        } else {
+            history.push("/");
+        }
     }
 
     return <LoginApp userLoginHandler={userLoginHandler}/>;
@@ -90,9 +109,12 @@ export class App extends React.Component {
         this.state = queryString.parse(window.location.search);
         this.state.currentUser = null;
         this.state.showComments = (process.env.REACT_APP_COMMENTS_ON.toLowerCase() === 'true' || process.env.REACT_APP_COMMENTS_ON === '1');
+        this.state.test_type = null;
+        this.state.scene_num = null;
     
         this.logout = this.logout.bind(this);
         this.userLoginHandler = this.userLoginHandler.bind(this);
+        this.updateHandler = this.updateHandler.bind(this);
     }
 
     async componentDidMount() {
@@ -125,6 +147,25 @@ export class App extends React.Component {
         this.setState({ currentUser: userObject });
     }
 
+    updateHandler(key, item) {
+        this.setState({ [key]: item });
+    }
+
+    getAnalysisUIPath() {
+        let analysisPath = '/analysis';
+
+        if((this.state['test_type'] !== null && this.state['test_type'] !== undefined) && 
+            (this.state['scene_num'] !== null && this.state['scene_num'] !== undefined)) {
+            analysisPath += "?test_type=" + this.state['test_type'] + "&scene_num=" + this.state['scene_num']
+        } else if(this.state['test_type'] !== null && this.state['test_type'] !== undefined) {
+            analysisPath += "?test_type=" + this.state['test_type'];
+        } else if(this.state['scene_num'] !== null && this.state['scene_num'] !== undefined) {
+            analysisPath += "?scene_num=" + this.state['scene_num'] ;
+        }
+
+        return analysisPath;
+    }
+
     render() {
         const {currentUser} = this.state;
         return (
@@ -143,7 +184,7 @@ export class App extends React.Component {
                                     <Link className="nav-link" to="/query">Query Builder</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/analysis">Analysis</Link>
+                                    <Link className="nav-link" to={this.getAnalysisUIPath()}>Analysis</Link>
                                 </li>
                             </ul>
                             <ul className="navbar-nav ml-auto">
@@ -165,8 +206,8 @@ export class App extends React.Component {
                         <Route exact path="/query">
                             <QueryBuilder newState={this.state}/>
                         </Route>
-                        <Route exact path="/analysis">
-                            <AnalysisUI newState={this.state}/>
+                        <Route path="/analysis">
+                            <AnalysisUI newState={this.state} updateHandler={this.updateHandler}/>
                         </Route>
                         <Route path="/login">
                             <Login newState={this.state} userLoginHandler={this.userLoginHandler}/>
