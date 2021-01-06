@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server');
 const { mcsDB } = require('./server.mongo');
+const mongoDb = require("mongodb");
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
@@ -94,9 +95,7 @@ const mcsTypeDefs = gql`
   }
 
   type homeStatsObject {
-      statsByTestType: JSON,
-      statsByScore: JSON,
-      statsByScorePercent: JSON
+      stats: JSON
   }
 
   type savedQueryObj {
@@ -104,7 +103,8 @@ const mcsTypeDefs = gql`
     queryObj: JSON, 
     name: String, 
     description: String,
-    createdDate: Float
+    createdDate: Float,
+    _id: String
   }
 
   type dropDownObj {
@@ -141,6 +141,8 @@ const mcsTypeDefs = gql`
     updateSceneHistoryRemoveFlag(testType: String, sceneNum: String, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(testType: String, sceneNum: String, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
+    updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
+    deleteQuery(_id: String) : savedQueryObj
   }
 `;
 
@@ -219,7 +221,11 @@ const mcsResolvers = {
             const historyKeys = results.keys;
             for(let i=0; i < historyKeys.length; i++) {
                 if(!historyExcludeFields.includes(historyKeys[i])) {
-                    returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
+                    if (historyKeys[i] in historyFieldLabelMap) {
+                        returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
+                    } else {
+                        returnArray.push({label: historyKeys[i], value: historyKeys[i]});
+                    }
                 }
             }
 
@@ -231,7 +237,11 @@ const mcsResolvers = {
             const sceneKeys = results.keys;
             for(let i=0; i < sceneKeys.length; i++) {
                 if(!sceneExcludeFields.includes(sceneKeys[i])) {
-                    returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
+                    if (sceneKeys[i] in sceneFieldLabelMap) {
+                        returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
+                    } else {
+                        returnArray.push({label: sceneKeys[i], value: sceneKeys[i]});
+                    }
                 }
             }
 
@@ -279,8 +289,6 @@ const mcsResolvers = {
             return {results: results, sceneMap: sceneFieldLabelMap, historyMap: historyFieldLabelMap};
         },
         getHomeStats: async(obj, args, context, infow)=> {
-            let statsObj = {};
-
             scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
@@ -292,15 +300,16 @@ const mcsResolvers = {
                         "correct": "$score.score", 
                         "plausibililty": "$score.ground_truth",
                         "performer": "$performer", 
-                        "category": "$category"
+                        "category": "$category",
+                        "test_type": "$test_type",
+                        "metadata": "$metadata"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            const statsByScoreObject = statsByScore(scoreStats);
-            statsObj["statsByScore"] = statsByScoreObject["byNumber"];
-            statsObj["statsByScorePercent"] = statsByScoreObject["byPercent"];
+            let statsByScoreObject = statsByScore(scoreStats);
 
+            //return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
             testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
@@ -312,14 +321,21 @@ const mcsResolvers = {
                         "correct": "$score.score", 
                         "performer": "$performer", 
                         "category_type": "$category_type", 
-                        "category": "$category"
+                        "category": "$category",
+                        "test_type": "$test_type",
+                        "metadata": "$metadata"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
             let testTypeScores = statsByTestType(testTypeStats);
 
-            statsObj["statsByTestType"] = testTypeScores;
+            let stats = {
+                ...statsByScoreObject,
+                ...testTypeScores
+            };
+
+            let statsObj = {stats: stats};
 
             return statsObj;
         }
@@ -360,14 +376,31 @@ const mcsResolvers = {
             );
         },
         saveQuery: async (obj, args, context, infow) => {
-            return await mcsDB.db.collection('savedQueries').insert({
+            let queryObj;
+            
+            await mcsDB.db.collection('savedQueries').insertOne({
                 user: args["user"],
                 queryObj: args["queryObj"],
                 name: args["name"],
                 description: args["description"],
                 createdDate: args["createdDate"]
+            }).then( result => {
+                queryObj = result.ops[0];
             });
+
+            return queryObj;
         },
+        updateQuery: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').update({_id: mongoDb.ObjectID(args["_id"])}, {$set: {
+                queryObj: args["queryObj"],
+                name: args["name"],
+                description: args["description"],
+                createdDate: args["createdDate"]
+            }});
+        },
+        deleteQuery: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').remove({_id:  mongoDb.ObjectID(args["_id"])});
+        }
     },
     StringOrFloat: new GraphQLScalarType({
         name: "StringOrFloat",

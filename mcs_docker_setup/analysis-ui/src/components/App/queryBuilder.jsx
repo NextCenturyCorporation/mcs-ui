@@ -2,6 +2,7 @@ import React from 'react';
 import QueryLineItem from './queryLine';
 import QueryResults from './queryResults';
 import SaveQuery from './saveQuery';
+import CancelPresentation from '@material-ui/icons/CancelPresentation';
 
 const ParamDisplayByOperator =({queryLine}) => {
     if(queryLine.functionOperator === "between" || queryLine.functionOperator === "and" || queryLine.functionOperator === "or") {
@@ -31,6 +32,7 @@ class ComplexQueryBuilder extends React.Component {
 
         this.queryLineHandler = this.queryLineHandler.bind(this);
         this.clearQuery = this.clearQuery.bind(this);
+        this.closeTab = this.closeTab.bind(this);
 
         this.state = {
             showModal: false
@@ -38,7 +40,7 @@ class ComplexQueryBuilder extends React.Component {
     }
 
     clearQuery = () => {
-        this.props.updateQueryObjForTab([], this.props.queryId, "Query " + this.props.queryId);
+        this.props.updateQueryObjForTab([], this.props.queryId, "Query " + this.props.queryId, "");
     }
 
     removeQueryRow = (key) => {
@@ -55,6 +57,10 @@ class ComplexQueryBuilder extends React.Component {
         this.props.updateQueryObjForTab(newArray, this.props.queryId);
     }
 
+    closeTab = () => {
+        this.props.closeQueryTab(this.props.queryId);
+    }
+
     render() {
         return (
             <div>
@@ -62,11 +68,15 @@ class ComplexQueryBuilder extends React.Component {
                     <SaveQuery queryObj={this.props.saveQueryObject} currentUser={this.props.currentUser}
                         queryId={this.props.queryId} updateQueryNameHandler={this.props.updateQueryNameHandler}/>
                     <a href="#clearQueryLink" onClick={this.clearQuery} className="icon-link">
-                        <span className="material-icons icon-margin-left">
-                            settings_backup_restore
-                        </span>
+                        <span className="material-icons icon-margin-left">settings_backup_restore</span>
                         <span className="icon-link-text">Clear</span>
                     </a>
+                    {this.props.numberTabs > 1 && 
+                        <a href="#closeTabLink" onClick={this.closeTab} className="icon-link close-tab-link">
+                            <CancelPresentation/>
+                            <span className="icon-link-text-close">Close</span>
+                        </a>
+                    }
                 </div>
                 <div className="query-builder-holder">
                     <div className="query-parameter-header">Add New Parameter:</div>

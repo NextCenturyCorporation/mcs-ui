@@ -13,6 +13,7 @@ const LOAD_SAVED_QUERIES = gql`
             queryObj
             description
             createdDate
+            _id
         }
     }`;
 

@@ -658,12 +658,23 @@ ol, ul {
 
 .chart-header {
     display: flex;
-    padding: 5px 0 0 25px;
+    padding: 5px 0 0 20px;
     position: absolute;
 }
 
 .chart-selector {
     margin-left: 15px;
+}
+
+.chart-header-label {
+    margin-top: 9px;
+}
+
+.chart-header-select {
+    margin-top: 5px;
+    width: 185px;
+    margin-left: 8px;
+    font-size: 12px;
 }
 
 .eval-selector {
@@ -679,8 +690,16 @@ ol, ul {
 
 .evaluation-selector-container {
     margin-left: 35px;
-    padding-top: 10px;
     display: flex;
+}
+
+.evaluation-selector-label {
+    margin-top: 7px;
+    margin-right: 10px;
+}
+
+.evaluation-selector-holder {
+    width: 250px;
 }
 
 .toggle-percent-number-container {
@@ -754,9 +773,20 @@ ol, ul {
     margin-right: 20px;
 }
 
+.icon-link-text-close {
+    position: relative;
+    left: 5px;
+    margin-right: 20px;
+}
+
 .query-controls {
     padding: 10px 25px;
     margin-bottom: 10px;
+    display: flex;
+}
+
+.close-tab-link {
+    margin-left: auto;
 }
 
 .saved-query-table {
