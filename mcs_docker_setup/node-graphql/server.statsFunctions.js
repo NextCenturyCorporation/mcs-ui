@@ -318,6 +318,8 @@ const calculatePercentObjectByTestType = function(scoreObj, totalObj, percentObj
 const statsByTestType = function(testTypeStats){
     testTypeStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
 
+    // Needs a big refactor
+    
     // Passive Total Objects
     let passiveScoresCorrect = [];
     let passiveScoresCorrectPercent = [];
