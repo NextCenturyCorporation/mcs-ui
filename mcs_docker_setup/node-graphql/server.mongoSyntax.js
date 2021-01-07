@@ -78,7 +78,7 @@ const createComplexMongoQuery = function(queryObj){
           }
     }
 
-    console.log(mongoQueryObj);
+    //console.log(mongoQueryObj);
 
     return mongoQueryObj;
 }

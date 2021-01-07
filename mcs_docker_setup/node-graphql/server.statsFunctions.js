@@ -63,9 +63,6 @@ const statsByScore = function(scoreStats){
     let agentScoreImplausibleCorrectMetadata2 = {"test_type": "Unexpected Correct"};
     let agentScoreImplausibleIncorrectMetadata2 = {"test_type": "Unexpected Incorrect"};
 
-
-    console.log(scoreStats);
-
     for(let i=0; i < scoreStats.length; i++) {
         if(scoreStats[i]._id.plausibililty === 0 && (scoreStats[i]._id.category === "observation" || scoreStats[i]._id.category === "passive")) {
             if(scoreStats[i]._id.correct === 1) {
