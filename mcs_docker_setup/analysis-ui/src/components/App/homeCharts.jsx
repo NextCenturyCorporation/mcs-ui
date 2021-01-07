@@ -143,6 +143,7 @@ class HomeCharts extends React.Component {
                                 agentOptions.push({value: "expectedMetadata2_null_expectedPercentMetadata2", label: "Metadata 2 by Expected"});
                             }
 
+                            // Might need to revisit using the dropdown and splits this way.
                             const passiveSplit = this.state.passiveToggle.value.split("_");
                             let passiveData = homeStats.stats[passiveSplit[0]];
 
