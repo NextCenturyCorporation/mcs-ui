@@ -158,7 +158,7 @@ const statsByScore = function(scoreStats){
         agentScorePlausibleIncorrect, agentScoreImplausibleCorrect, agentScoreImplausibleIncorrect].reverse();
     statsByScoreObject["expectedMetadata1"] = [agentScoreOverallCorrectMetadata1, agentScoreOverallIncorrectMetadata1, agentScorePlausibleCorrectMetadata1,
         agentScorePlausibleIncorrectMetadata1, agentScoreImplausibleCorrectMetadata1, agentScoreImplausibleIncorrectMetadata1].reverse();
-    statsByScoreObject["expectedMetadata2"] = [scoreOverallCorrectMetadata2, scoreOverallIncorrectMetadata2, scorePlausibleCorrectMetadata2,
+    statsByScoreObject["expectedMetadata2"] = [agentScoreOverallCorrectMetadata2, agentScoreOverallIncorrectMetadata2, agentScorePlausibleCorrectMetadata2,
         agentScorePlausibleIncorrectMetadata2, agentScoreImplausibleCorrectMetadata2, agentScoreImplausibleIncorrectMetadata2].reverse();
 
     let percentScoreOverallCorrect = {"test_type": "Overall Correct"};
