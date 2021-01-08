@@ -417,7 +417,8 @@ const sceneFieldLabelMap = {
     "goal.sceneInfo.obstacleTrained": "Obstacle Trained",
     "goal.sceneInfo.targetBehind": "Target Behind",
     "goal.sceneInfo.occludersTrained": "Occluders Trained",
-    "goal.sceneInfo.targetHidden": "Target Hidden"
+    "goal.sceneInfo.targetHidden": "Target Hidden",
+    "goal.sceneInfo.id": "Cube ID"
 };
 
 
