@@ -33,7 +33,7 @@ const ValueOutside = ({ bars }) => {
     });
   };
 
-const MyResponsiveBar = ({ data, keys, chartIndex, maxVal}) => {
+const MyResponsiveBar = ({ data, keys, chartIndex, maxVal, legendLabel}) => {
     return <ResponsiveBar 
         data={data} 
         keys={keys} 
@@ -47,9 +47,9 @@ const MyResponsiveBar = ({ data, keys, chartIndex, maxVal}) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'Number of Tests',
+            legend: legendLabel,
             legendPosition: 'middle',
-            legendOffset: 32
+            legendOffset: 36
         }}
         axisLeft={{ format: v => formatCategoryTypeString(v) }}
         enableGridY={false}
@@ -98,7 +98,7 @@ class ResultsChart extends React.Component {
         return (
             <div style={this.state.styles} className="flex-chart-center">
                 <div style={{ height: "450px", width: "900px" }}>
-                    <MyResponsiveBar data={this.props.chartData} keys={this.props.chartKeys} chartIndex={this.props.chartIndex} maxVal={this.props.maxVal}/>
+                    <MyResponsiveBar data={this.props.chartData} keys={this.props.chartKeys} chartIndex={this.props.chartIndex} maxVal={this.props.maxVal} legendLabel={this.props.legendLabel}/>
                 </div>
           </div>
         );

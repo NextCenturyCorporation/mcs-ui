@@ -266,7 +266,7 @@ const mcsResolvers = {
                             projectionObj["scene." + sceneKeys["keys"][j]] = "$mcsScenes." + sceneKeys["keys"][j];
                         }
                     }
-                    //let projectionObj = {scene: "$mcsScenes"};
+
                     for(let i=0; i < historyKeys["keys"].length; i++) {
                         if(!historyExcludeFields.includes(historyKeys["keys"][i])) {
                             projectionObj[historyKeys["keys"][i]] = 1;
@@ -276,12 +276,22 @@ const mcsResolvers = {
                     complexQueryProjectionObject = projectionObj;
                 }
 
-                return mcsDB.db.collection('mcs_history').aggregate([
-                    {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
-                    {$unwind:'$mcsScenes'},
-                    {$match: mongoQueryObject},
-                    {$project: complexQueryProjectionObject}
-                ]).toArray();
+                if(mongoQueryObject.sceneQueryObj === undefined || Object.keys(mongoQueryObject.sceneQueryObj).length === 0) {
+                    return mcsDB.db.collection('mcs_history').aggregate([
+                        {$match: mongoQueryObject.historyQuery},
+                        {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                        {$unwind:'$mcsScenes'},
+                        {$project: complexQueryProjectionObject}
+                    ]).toArray();
+                } else {
+                    return mcsDB.db.collection('mcs_history').aggregate([
+                        {$match: mongoQueryObject.historyQuery},
+                        {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                        {$unwind:'$mcsScenes'},
+                        {$match: mongoQueryObject.sceneQueryObj},
+                        {$project: complexQueryProjectionObject}
+                    ]).toArray();
+                }
             }
 
             let results = await getComplexResults();

@@ -153,10 +153,19 @@ class HomeCharts extends React.Component {
                             const agentSplit = this.state.agentToggle.value.split("_");
                             let agentData = homeStats.stats[agentSplit[0]];
 
+                            //
+                            let passiveLegendLabel = "Number of Correct Tests";
+                            let interactiveLegendLabel = "Number Goal Achieved Tests";
+                            let agentLegendLabel = "Number of Correct Tests";
+
                             if(this.state.numPercentToggle === 'percent') {
                                 passiveData = homeStats.stats[passiveSplit[2]];
                                 interactiveData = homeStats.stats[interactiveSplit[2]];
                                 agentData = homeStats.stats[agentSplit[2]];
+
+                                passiveLegendLabel = "% Correct Tests";
+                                interactiveLegendLabel = "% Goal Achieved Tests";
+                                agentLegendLabel = "% Correct Tests";
                             }
 
                             // Values for By Test Type
@@ -164,7 +173,8 @@ class HomeCharts extends React.Component {
                             let passiveKeys = Object.keys(passiveData[passiveLength]);
                             passiveKeys.shift();
                             let passiveMaxValue;
-                            if(homeStats.stats[passiveSplit[1]] === "null") {
+                            if(passiveSplit[1] === "null") {
+                                passiveLegendLabel = this.state.numPercentToggle === 'percent' ? "% Plausibility Tests" : "Number of Plausibility Tests";
                                 passiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : passiveData[passiveLength][passiveKeys[0]] + passiveData[passiveLength - 1][passiveKeys[0]];
                             } else {
                                 passiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats.stats[passiveSplit[1]];
@@ -181,7 +191,8 @@ class HomeCharts extends React.Component {
                             let agentKeys = Object.keys(agentData[agentLength]);
                             agentKeys.shift();
                             let agentMaxValue;
-                            if(homeStats.stats[agentSplit[1]] === "null") {
+                            if(agentSplit[1] === "null") {
+                                agentLegendLabel = this.state.numPercentToggle === 'percent' ? "% Expectness Tests" : "Number of Expectness Tests";
                                 agentMaxValue = this.state.numPercentToggle === 'percent' ? 100 : agentData[agentLength][agentKeys[0]] + agentData[agentLength - 1][agentKeys[0]];
                             } else {
                                 agentMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats.stats[agentSplit[1]];
@@ -202,7 +213,7 @@ class HomeCharts extends React.Component {
                                                 />
                                             </div>
                                         </div>
-                                        <ResultsChart chartKeys={passiveKeys} chartData={passiveData} chartIndex={"test_type"} maxVal={passiveMaxValue}/>
+                                        <ResultsChart chartKeys={passiveKeys} chartData={passiveData} chartIndex={"test_type"} maxVal={passiveMaxValue} legendLabel={passiveLegendLabel}/>
                                     </div>
 
                                     <div className='chart-home-container'>
@@ -218,7 +229,7 @@ class HomeCharts extends React.Component {
                                                 />
                                             </div>
                                         </div>
-                                        <ResultsChart chartKeys={interactiveKeys} chartData={interactiveData} chartIndex={"test_type"} maxVal={interactiveMaxValue}/>
+                                        <ResultsChart chartKeys={interactiveKeys} chartData={interactiveData} chartIndex={"test_type"} maxVal={interactiveMaxValue} legendLabel={interactiveLegendLabel}/>
                                     </div>
 
                                     {agentOptions.length > 0 && 
@@ -235,7 +246,7 @@ class HomeCharts extends React.Component {
                                                 />
                                             </div>
                                         </div>
-                                        <ResultsChart chartKeys={agentKeys} chartData={agentData} chartIndex={"test_type"} maxVal={agentMaxValue}/>
+                                        <ResultsChart chartKeys={agentKeys} chartData={agentData} chartIndex={"test_type"} maxVal={agentMaxValue} legendLabel={agentLegendLabel}/>
                                     </div>
                                     }
                                 </div>
