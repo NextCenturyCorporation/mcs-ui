@@ -3,6 +3,7 @@ import queryString from 'query-string';
 import Results from './results';
 import HomePage from './home';
 import Scenes from './scenes';
+import ScenesEval3 from './scenesEval3';
 import EvalHeader from './header';
 import QueryPage from './queryPage';
 import CommentsComponent from './comments';
@@ -31,17 +32,30 @@ const history = createBrowserHistory();
 const AnalysisUI = ({newState, updateHandler}) => {
     let params = queryString.parse(window.location.search);
 
-    if(params.test_type) {
-        newState.test_type = params.test_type;
-    }
 
-    if(params.scene_num) {
-        newState.scene_num = params.scene_num;
+    if(params.eval) {
+        newState.eval = params.eval;
+
+        if(params.test_type) {
+            newState.test_type = params.test_type;
+        } else if(params.category_type) {
+            newState.category_type = params.category_type;
+        }
+    
+        if(params.scene_num) {
+            newState.scene_num = params.scene_num;
+        }
     }
 
     if(newState.currentUser == null) {
         history.push('/login');
     }
+
+    let hasEval =  (newState.eval !== undefined && newState.eval !== null)
+    let isEval3 = hasEval && newState.eval.includes("3");
+    let hasCatType = (newState.category_type !== undefined && newState.category_type !== null)
+    let hasTestType = (newState.test_type !== undefined && newState.test_type !== null)
+    let hasSceneNum = (newState.scene_num !== undefined && newState.scene_num !== null)
 
     return <div>
         <div className="layout">
@@ -50,7 +64,8 @@ const AnalysisUI = ({newState, updateHandler}) => {
 
             <div className="layout-board">
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { (newState.test_type !== undefined && newState.test_type !== null) && (newState.scene_num !== undefined && newState.scene_num !== null) && <Scenes value={newState}/> }
+                { (!isEval3) && hasTestType && hasSceneNum && <Scenes value={newState}/> }
+                { isEval3 && hasCatType && hasSceneNum && <ScenesEval3 value={newState}/> }
                 { newState.showComments &&  <CommentsComponent state={newState}/> }
             </div>
         </div>
@@ -75,13 +90,20 @@ function Home({newState}) {
 
 function Login({newState, userLoginHandler}) {
     if(newState.currentUser !== null) {
+        if(newState.eval) {
+            let analysisString = "/analysis?eval=" + newState.eval;
 
-        if(newState.test_type && newState.scene_num) {
-            history.push("/analysis?test_type=" + newState.test_type + "&scene_num=" + newState.scene_num);
-        } else if(newState.test_type) {
-            history.push("/analysis?test_type=" + newState.test_type);
-        } else if(newState.scene_num) {
-            history.push("/analysis?scene_num=" + newState.scene_num);
+            if(newState.test_type) {
+                analysisString += "&test_type=" + newState.test_type;
+            } else if(newState.category_type) {
+                analysisString += "&category_type=" + newState.category_type;
+            } 
+
+            if(newState.scene_num) {
+                analysisString += "&scene_num=" + newState.scene_num;
+            } 
+
+            history.push(analysisString);
         } else {
             history.push("/");
         }
@@ -109,6 +131,7 @@ export class App extends React.Component {
         this.state = queryString.parse(window.location.search);
         this.state.currentUser = null;
         this.state.showComments = (process.env.REACT_APP_COMMENTS_ON.toLowerCase() === 'true' || process.env.REACT_APP_COMMENTS_ON === '1');
+        this.state.category_type = null;
         this.state.test_type = null;
         this.state.scene_num = null;
     
@@ -147,20 +170,47 @@ export class App extends React.Component {
         this.setState({ currentUser: userObject });
     }
 
+    doesStateHaveEval() {
+        return this.state['eval'] !== null && this.state['eval'] !== undefined;
+    }
+
+    doesStateHaveTestType() {
+        return this.state['test_type'] !== null && this.state['test_type'] !== undefined;
+    }
+
+    doesStateHaveCategoryType() {
+        return this.state['category_type'] !== null && this.state['category_type'] !== undefined;
+    }
+
+    doesStateHaveSceneNum() {
+        return this.state['scene_num'] !== null && this.state['scene_num'] !== undefined;
+    }
+
     updateHandler(key, item) {
-        this.setState({ [key]: item });
+        if(key === 'test_type' && this.doesStateHaveCategoryType()) {
+            this.setState({ [key]: item, category_type: null, scene_num: null});
+        } else if(key === 'category_type' && this.doesStateHaveTestType()) {
+            this.setState({ [key]: item, test_type: null, scene_num: null});
+        } else {
+            this.setState({ [key]: item });
+        }
     }
 
     getAnalysisUIPath() {
         let analysisPath = '/analysis';
 
-        if((this.state['test_type'] !== null && this.state['test_type'] !== undefined) && 
-            (this.state['scene_num'] !== null && this.state['scene_num'] !== undefined)) {
-            analysisPath += "?test_type=" + this.state['test_type'] + "&scene_num=" + this.state['scene_num']
-        } else if(this.state['test_type'] !== null && this.state['test_type'] !== undefined) {
-            analysisPath += "?test_type=" + this.state['test_type'];
-        } else if(this.state['scene_num'] !== null && this.state['scene_num'] !== undefined) {
-            analysisPath += "?scene_num=" + this.state['scene_num'] ;
+        if(this.doesStateHaveEval()) {
+            analysisPath += "?eval=" + this.state['eval'];
+
+            if(this.doesStateHaveTestType()) {
+                analysisPath += "&test_type=" + this.state['test_type'];
+            } else if(this.doesStateHaveCategoryType()) {
+                analysisPath += "&category_type=" + this.state['category_type'];
+            }
+
+            if(this.doesStateHaveSceneNum()) {
+                analysisPath += "&scene_num=" + this.state['scene_num'] ;
+            }
         }
 
         return analysisPath;

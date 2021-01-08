@@ -115,7 +115,9 @@ const mcsTypeDefs = gql`
   type Query {
     msc_eval: [Source]
     getEvalHistory(testType: String, sceneNum: String) : [History]
+    getEval3History(categoryType: String, sceneNum: Int) : [History]
     getEvalScene(testType: String, sceneNum: String) : [Scene]
+    getEval3Scene(categoryType: String, sceneNum: Int) : [Scene]
     getEvalByTest(test: String) : [Source]
     getEvalByBlock(block: String) : [Source]
     getEvalBySubmission(submission: String) : [Source]
@@ -123,9 +125,9 @@ const mcsTypeDefs = gql`
     getEvalAnalysis(test: String, block: String, submission: String, performer: String) : [Source]
     getComments(test: String, block: String, submission: String, performer: String) : [Comment]
     getCommentsByTestAndScene(testType: String, sceneNum: String) : [NewComment]
-    getFieldAggregation(fieldName: String) : [String]
+    getFieldAggregation(fieldName: String, eval: String) : [String]
     getSubmissionFieldAggregation: [SubmissionPerformer]
-    getHistorySceneFieldAggregation(fieldName: String) : [StringOrFloat]
+    getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
     getAllHistoryFields: [dropDownObj]
     getAllSceneFields: [dropDownObj],
@@ -153,15 +155,32 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getEvalHistory: async(obj, args, context, infow) => {
+            // Eval 2
             return await mcsDB.db.collection('mcs_history').find({'test_type': args["testType"], 'scene_num': args["sceneNum"]})
                 .toArray().then(result => {return result});
         },
+        getEval3History: async(obj, args, context, infow) => {
+            // Eval 3
+            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'scene_num': args["sceneNum"]})
+                .toArray().then(result => {return result});
+        },
         getEvalScene: async(obj, args, context, infow) => {
+            // Eval 2
             return await mcsDB.db.collection('mcs_scenes').find({'test_type': args["testType"], 'scene_num': args["sceneNum"]})
                 .toArray().then(result => {return result});
         },
+        getEval3Scene: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('mcs_scenes').find({'goal.sceneInfo.tertiaryType': args["categoryType"], 'sceneNumber': args["sceneNum"]})
+                .toArray().then(result => {return result});
+        },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
+            //return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
+            if(args["eval"]) {
+                return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
+            } else {
+                return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
+            }
+            //return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
         },
         getSceneFieldAggregation: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_scenes').distinct(args["fieldName"]).then(result => {return result});
@@ -195,7 +214,12 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getFieldAggregation: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('msc_eval').distinct(args["fieldName"]).then(result => {return result});
+            if(args["eval"]) {
+                return await mcsDB.db.collection('msc_eval').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
+            } else {
+                return await mcsDB.db.collection('msc_eval').distinct(args["fieldName"]).then(result => {return result});
+            }
+            //return await mcsDB.db.collection('msc_eval').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
         },
         getScenesAndHistoryTypes: async(obj, args, context, infow) => {
             let returnArray = [];
