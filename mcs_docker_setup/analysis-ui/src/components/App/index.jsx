@@ -187,6 +187,11 @@ export class App extends React.Component {
     }
 
     updateHandler(key, item) {
+
+        if(key === 'eval') {
+            this.setState({ [key]: item, category_type: null, test_type: null, scene_num: null});
+        }
+
         if(key === 'test_type' && this.doesStateHaveCategoryType()) {
             this.setState({ [key]: item, category_type: null, scene_num: null});
         } else if(key === 'category_type' && this.doesStateHaveTestType()) {

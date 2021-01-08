@@ -183,7 +183,8 @@ class QueryResultsTable extends React.Component {
         if(item.scene.test_type && item.scene.scene_num) {
             return "/analysis?eval=eval2_history&test_type=" + item.scene.test_type + "&scene_num=" + item.scene.scene_num;
         } else {
-            return "/analysis?eval=Evaluation%203%20Results&category_type=" + item.category_type + "&scene_num=" + item.scene_num;
+            // Eval 3 - use category_type & scene_part_num instead of scene_num
+            return "/analysis?eval=Evaluation%203%20Results&category_type=" + item.category_type + "&scene_num=" + item.scene_part_num;
         }
     }
 

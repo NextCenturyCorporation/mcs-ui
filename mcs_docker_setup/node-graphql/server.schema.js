@@ -160,8 +160,9 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getEval3History: async(obj, args, context, infow) => {
-            // Eval 3
-            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'scene_num': args["sceneNum"]})
+            // Eval 3 - scene_part_num is actually the field we need
+            // TODO: redo ingest/fix scene_num?
+            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'scene_part_num': args["sceneNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
@@ -170,7 +171,9 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getEval3Scene: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_scenes').find({'goal.sceneInfo.tertiaryType': args["categoryType"], 'sceneNumber': args["sceneNum"]})
+            // Eval 3 - sequenceNumber is actually the field we need
+            // TODO: redo ingest/fix sceneNumber/sequenceNumber?
+            return await mcsDB.db.collection('mcs_scenes').find({'goal.sceneInfo.tertiaryType': args["categoryType"], 'sequenceNumber': args["sceneNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {

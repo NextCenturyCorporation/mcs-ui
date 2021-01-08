@@ -131,7 +131,10 @@ class DropListItems extends React.Component {
             variablesToQuery['eval'] = null;
         }
 
-        if((this.props.fieldName === 'test_type' || this.props.fieldName === 'category_type' || this.props.fieldName === 'scene_num') && this.props.state.eval) {
+        // For eval 3, scene_num_part is actually what we expect to be scene_num in Mongo
+        // (keeping "scene_num" as state name though)
+        if((this.props.fieldName === 'test_type' || this.props.fieldName === 'category_type' ||
+            this.props.fieldName === 'scene_num' || this.props.fieldName === 'scene_part_num') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
             queryName = GET_HISTORY_FIELD_AGG_WITH_EVAL;
             dataName = "getHistorySceneFieldAggregation";
@@ -212,11 +215,19 @@ class EvalNav extends React.Component {
                         <DropListItems fieldName={"test_type"} stateName={"test_type"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>}
 
-                    {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
+                    {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("2")) &&
                     <NavDropdown title={"Test Number: " + (
                         (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
                         id="basic-nav-dropdown">
                         <DropListItems fieldName={"scene_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                    </NavDropdown>}
+
+
+                    {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("3")) &&
+                    <NavDropdown title={"Scene Number: " + (
+                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        id="basic-nav-dropdown">
+                        <DropListItems fieldName={"scene_part_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>}
                 </Nav>
             );
