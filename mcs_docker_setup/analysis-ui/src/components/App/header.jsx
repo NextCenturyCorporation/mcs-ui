@@ -34,7 +34,6 @@ const GET_SUBMISSION_AGG = gql`
 class ListItem extends React.Component {
 
     updateState(item, stateName) {
-
         this.props.state[stateName] = item;
         this.props.updateHandler(stateName, item);
     }
@@ -224,7 +223,7 @@ class EvalNav extends React.Component {
 
 
                     {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("3")) &&
-                    <NavDropdown title={"Scene Number: " + (
+                    <NavDropdown title={"Test Number: " + (
                         (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
                         id="basic-nav-dropdown">
                         <DropListItems fieldName={"scene_part_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
