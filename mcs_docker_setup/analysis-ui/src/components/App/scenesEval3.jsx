@@ -54,6 +54,8 @@ const mcs_scene= gql`
 const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
+
+// TODO: Merge back in with Scenes view
 class ScenesEval3 extends React.Component {
 
     constructor(props) {
@@ -222,12 +224,6 @@ class ScenesEval3 extends React.Component {
     }
 
     render() {
-        //console.log(this.props.value);
-        //console.log(parseInt(this.props.value.scene_num));
-        //this.props.value.category_type
-        //parseInt(
-
-
         return (
             <Query query={mcs_history} variables={
                 {"categoryType":  this.props.value.category_type, 
