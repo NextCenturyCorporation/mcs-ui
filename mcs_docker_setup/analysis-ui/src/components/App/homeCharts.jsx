@@ -110,7 +110,7 @@ class HomeCharts extends React.Component {
                                 passiveOptions.push({value: "plausibleTotal_null_plausiblePercentTotal", label: "Total by Plausibility"});
                             }
                             if (homeStats.stats.passiveTotalMetadata1 > 0) {
-                                passiveOptions.push({value: "passiveCorrectMetadata1_passiveTotallMetadata1_passiveCorrectPercentMetadata1", label: "Metadata 1"});
+                                passiveOptions.push({value: "passiveCorrectMetadata1_passiveTotalMetadata1_passiveCorrectPercentMetadata1", label: "Metadata 1"});
                                 passiveOptions.push({value: "plausibleMetadata1_null_plausiblePercentMetadata1", label: "Metadata 1 by Plausibility"});
                             }
                             if (homeStats.stats.passiveTotalMetadata2 > 0) {
