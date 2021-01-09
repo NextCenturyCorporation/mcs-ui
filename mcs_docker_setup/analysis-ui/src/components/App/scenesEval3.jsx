@@ -3,14 +3,14 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
 import $ from 'jquery';
-import FlagCheckboxMutation from './flagCheckboxMutation';
+//import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 
 const historyQueryName = "getEval3History";
 const sceneQueryName = "getEval3Scene";
 
 let constantsObject = {};
-let currentState = {};
+//let currentState = {};
 let currentStep = 0;
 
 const mcs_history = gql`

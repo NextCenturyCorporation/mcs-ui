@@ -92,7 +92,7 @@ class ListItem extends React.Component {
                 }
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
-            } else if(hasEvalState && this.props.stateName == 'scene_num') {
+            } else if(hasEvalState && this.props.stateName === 'scene_num') {
                 if(hasTestTypeState) {
                     paramsToAppend += "&test_type=" + this.props.state["test_type"];
                 } else if(hasCatTypeState) {
