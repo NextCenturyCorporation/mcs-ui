@@ -117,7 +117,7 @@ const mcsTypeDefs = gql`
     getEvalHistory(testType: String, sceneNum: String) : [History]
     getEval3History(categoryType: String, sceneNum: Int) : [History]
     getEvalScene(testType: String, sceneNum: String) : [Scene]
-    getEval3Scene(categoryType: String, sceneNum: Int) : [Scene]
+    getEval3Scene(sceneName: String, sceneNum: Int) : [Scene]
     getEvalByTest(test: String) : [Source]
     getEvalByBlock(block: String) : [Source]
     getEvalBySubmission(submission: String) : [Source]
@@ -173,7 +173,7 @@ const mcsResolvers = {
         getEval3Scene: async(obj, args, context, infow) => {
             // Eval 3 - sequenceNumber is actually the field we need
             // TODO: redo ingest/fix sceneNumber/sequenceNumber?
-            return await mcsDB.db.collection('mcs_scenes').find({'goal.sceneInfo.tertiaryType': args["categoryType"], 'sequenceNumber': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'sequenceNumber': args["sceneNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {

@@ -33,8 +33,8 @@ const mcs_history = gql`
   }`;
 
 const mcs_scene= gql`
-    query getEval3Scene($categoryType: String, $sceneNum: Int){
-        getEval3Scene(categoryType: $categoryType, sceneNum: $sceneNum) {
+    query getEval3Scene($sceneName: String, $sceneNum: Int){
+        getEval3Scene(sceneName: $sceneName, sceneNum: $sceneNum) {
             name
             ceilingMaterial
             floorMaterial
@@ -223,6 +223,10 @@ class ScenesEval3 extends React.Component {
         }
     }
 
+    getSceneNamePrefix = (name) => {
+        return name.substring(0, name.indexOf('_')) + '*';
+    }
+
     render() {
         return (
             <Query query={mcs_history} variables={
@@ -244,11 +248,17 @@ class ScenesEval3 extends React.Component {
                     setConstants("Eval3");
                     
                     console.log(scenesByPerformer);
+                    let sceneNamePrefix = null;
 
-                    if(performerList.length > 0) {
+                    if((evals !== null && evals !== undefined && evals.length > 0) &&
+                        evals[0].name !== null && evals[0].name !== undefined) {
+                        sceneNamePrefix = this.getSceneNamePrefix(evals[0].name);
+                    }
+
+                    if(performerList.length > 0 && sceneNamePrefix !== null) {
                         return (
                             <Query query={mcs_scene} variables={
-                                {"categoryType": this.props.value.category_type, 
+                                {"sceneName": sceneNamePrefix, 
                                 "sceneNum": parseInt(this.props.value.scene_num)
                                 }}>
                             {
@@ -288,9 +298,9 @@ class ScenesEval3 extends React.Component {
                                                             {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
                                                                 <tr key={'peformer_score_row_' + key}>
                                                                     <td>
-                                                                        <button key={"scene_button_" + scoreObj.scene_num - 1} 
+                                                                        <button key={"scene_button_" + scoreObj.scene_num} 
                                                                             className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                        id={"scene_btn_" + scoreObj.scene_num - 1} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
+                                                                        id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
                                                                     </td>
                                                                     <td>{scoreObj.score.classification}</td>
                                                                     <td>{scoreObj.score.score_description}</td>
