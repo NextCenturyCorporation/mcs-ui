@@ -265,26 +265,6 @@ class ScenesEval3 extends React.Component {
                                     if(scenesInOrder.length > 0) {
                                         return (
                                             <div>
-                                                <div className="flags-holder">
-                                                    <FlagCheckboxMutation state={this.state} currentState={currentState}/>
-                                                </div>
-                                                { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "observation") && 
-                                                    <div>
-                                                        <div className="movie-holder">
-                                                            <div className="movie-left-right">
-                                                                <div className="movie-text"><b>Scene 1:</b>&nbsp;&nbsp;{scenesInOrder[0].answer.choice}</div>
-                                                                <div className="movie-text"><b>Scene 3:</b>&nbsp;&nbsp;{scenesInOrder[2].answer.choice}</div>
-                                                            </div>
-                                                            <div className="movie-center">
-                                                                <video src={constantsObject["moviesBucket"] + this.props.value.test_type + "-" + this.props.value.scene_num + constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
-                                                            </div>
-                                                            <div className="movie-left-right">
-                                                                <div className="movie-text"><b>Scene 2:</b>&nbsp;&nbsp;{scenesInOrder[1].answer.choice}</div>
-                                                                <div className="movie-text"><b>Scene 4:</b>&nbsp;&nbsp;{scenesInOrder[3].answer.choice}</div>
-                                                            </div>
-                                                        </div>
-                                                    </div> 
-                                                }
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
                                                 </div>
@@ -297,10 +277,9 @@ class ScenesEval3 extends React.Component {
                                                     <table className="score-table">
                                                         <thead>
                                                             <tr>
-                                                                <th>Scene Number</th>
+                                                                <th>Select Scene</th>
                                                                 <th>Answer</th>
                                                                 <th>Score</th>
-                                                                <th>Adjusted Confidence</th>
                                                                 <th>Confidence</th>
                                                                 <th>MSE</th>
                                                             </tr>
@@ -308,10 +287,13 @@ class ScenesEval3 extends React.Component {
                                                         <tbody>
                                                             {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
                                                                 <tr key={'peformer_score_row_' + key}>
-                                                                    <td>{scoreObj.scene_num}</td>
+                                                                    <td>
+                                                                        <button key={"scene_button_" + scoreObj.scene_num - 1} 
+                                                                            className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                        id={"scene_btn_" + scoreObj.scene_num - 1} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
+                                                                    </td>
                                                                     <td>{scoreObj.score.classification}</td>
                                                                     <td>{scoreObj.score.score_description}</td>
-                                                                    <td>{scoreObj.score.adjusted_confidence}</td>
                                                                     <td>{scoreObj.score.confidence}</td>
                                                                     <td>{scoreObj.score.mse_loss}</td>
                                                                 </tr>
@@ -320,12 +302,7 @@ class ScenesEval3 extends React.Component {
                                                     </table>
                                                 </div>
                                                 <div className="scenes_header">
-                                                    <h3>Scenes</h3>
-                                                </div>
-                                                <div className="scene-group btn-group" role="group">
-                                                    {scenesInOrder.map((scene, key) =>
-                                                        <button key={"scene_button_" + key} className={this.state.currentSceneNum === key ? 'btn btn-primary active' : 'btn btn-secondary'} id={"scene_btn_" + key} type="button" onClick={() => this.changeScene(key)}>Scene {key+1}</button>
-                                                    )}
+                                                    <h3>View Selected Scene Info</h3>
                                                 </div>
                                                     { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
                                                         <div className="movie-steps-holder">
