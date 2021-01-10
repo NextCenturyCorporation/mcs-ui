@@ -6,12 +6,45 @@ import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 
-const historyQueryName = "getEval3History";
+const historyQueryName = "createComplexQuery";
+const historyQueryResults = "results";
 const sceneQueryName = "getEval3Scene";
 
 let constantsObject = {};
 //let currentState = {};
 let currentStep = 0;
+
+const projectionObject = {
+    "eval": 1,
+    "performer": 1,
+    "name": 1,
+    "test_type": 1,
+    "scene_num": 1,
+    "scene_part_num": 1,
+    "score.classification": 1,
+    "score.confidence": 1,
+    "score.score": 1,
+    "score.ground_truth": 1,
+    "score.mse": 1,
+    "score.score_description": 1,
+    "score.reward": 1,
+    "steps": 1,
+    "flags": 1,
+    "metadata": 1,
+    "step_counter": 1,
+    "category": 1,
+    "category_type": 1,
+    "category_pair": 1,
+    "fullFilename": 1,
+    "filename": 1,
+    "fileTimestamp": 1,
+    "scene.goal.sceneInfo.id": "$mcsScenes.goal.sceneInfo.id"
+}
+
+const create_complex_query = gql`
+    query createComplexQuery($queryObject: JSON!, $projectionObject: JSON!) {
+        createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
+    }`;
 
 const mcs_history = gql`
     query getEval3History($categoryType: String!, $sceneNum: Int!){
@@ -55,7 +88,7 @@ const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
-// TODO: Merge back in with Scenes view
+// TODO: Merge back in with Scenes view?
 class ScenesEval3 extends React.Component {
 
     constructor(props) {
@@ -65,8 +98,8 @@ class ScenesEval3 extends React.Component {
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentSceneNum: props.value.scene_part_num !== undefined ? parseInt(props.value.scene_part_num) - 1 : 0,
             currentObjectNum: 0,
-            flagRemove: false,
-            flagInterest: false,
+            //flagRemove: false,
+            //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
             sceneNum: props.value.scene_num
@@ -80,12 +113,13 @@ class ScenesEval3 extends React.Component {
             });
         }
 
+        /*
         if(this.state.currentPerformer === "" && firstEval !== null && firstEval !== undefined) {
             this.setState({
                 flagRemove: firstEval["flags"]["remove"],
                 flagInterest: firstEval["flags"]["interest"]
             });
-        }
+        }*/
     }
 
     changePerformer = (performerKey, performer) => {
@@ -227,19 +261,56 @@ class ScenesEval3 extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
+    getSceneHistoryQueryObject = (categoryType, sceneNum) => {
+        return [
+            {
+                fieldType: "mcs_history.Evaluation 3 Results",
+                fieldTypeLabel: "Evaluation 3 Results",
+                fieldName: "category_type",
+                fieldNameLabel: "Test Type",
+                fieldValue1: categoryType,
+                fieldValue2: "",
+                functionOperator: "contains",
+                collectionDropdownToggle: 1
+            },
+            {
+                fieldType: "mcs_history.Evaluation 3 Results",
+                fieldTypeLabel: "Evaluation 3 Results",
+                fieldName: "scene_part_num",
+                fieldNameLabel: "Scene Number",
+                fieldValue1: parseInt(sceneNum),
+                fieldValue2: "",
+                functionOperator: "equals",
+                collectionDropdownToggle: 1
+            }
+        ]
+    }
+
+    getSceneInfoId = (sceneObj) => {
+        if(sceneObj.scene.goal.sceneInfo.id.length > 0) {
+            return sceneObj.scene.goal.sceneInfo.id[0];
+        } else {
+            return "";
+        }
+    }
+
     render() {
         return (
-            <Query query={mcs_history} variables={
-                {"categoryType":  this.props.value.category_type, 
-                "sceneNum": parseInt(this.props.value.scene_num), 
+            <Query query={create_complex_query} variables={
+                {
+                    "queryObject":  this.getSceneHistoryQueryObject(
+                        this.props.value.category_type,
+                        this.props.value.scene_num
+                    ), 
+                    "projectionObject": JSON.parse(JSON.stringify(projectionObject))
                 }} fetchPolicy='network-only'>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
                     
-                    const evals = data[historyQueryName];
-                    console.log(evals);
+                    const evals = data[historyQueryName][historyQueryResults];
+                    //console.log(evals);
                     let scenesByPerformer = _.sortBy(evals, "scene_part_num");
                     scenesByPerformer = _.groupBy(scenesByPerformer, "performer");
                     let performerList = Object.keys(scenesByPerformer);
@@ -247,7 +318,7 @@ class ScenesEval3 extends React.Component {
                     
                     setConstants("Eval3");
                     
-                    console.log(scenesByPerformer);
+                    //console.log(scenesByPerformer);
                     let sceneNamePrefix = null;
 
                     if((evals !== null && evals !== undefined && evals.length > 0) &&
@@ -267,11 +338,10 @@ class ScenesEval3 extends React.Component {
                                     if (error) return <div>Error</div>
                                     
                                     const scenes = data[sceneQueryName];
-                                    console.log(scenes);
+                                    //console.log(scenes);
                                     const scenesInOrder = _.sortBy(scenes, "scene_part_num");
                                     this.initializeStepView();
 
-                                    
                                     if(scenesInOrder.length > 0) {
                                         return (
                                             <div>
@@ -288,6 +358,7 @@ class ScenesEval3 extends React.Component {
                                                         <thead>
                                                             <tr>
                                                                 <th>Select Scene</th>
+                                                                <th>Id</th>
                                                                 <th>Answer</th>
                                                                 <th>Score</th>
                                                                 <th>Confidence</th>
@@ -302,6 +373,7 @@ class ScenesEval3 extends React.Component {
                                                                             className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
                                                                         id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
                                                                     </td>
+                                                                    <td>{this.getSceneInfoId(scoreObj)}</td>
                                                                     <td>{scoreObj.score.classification}</td>
                                                                     <td>{scoreObj.score.score_description}</td>
                                                                     <td>{scoreObj.score.confidence}</td>
