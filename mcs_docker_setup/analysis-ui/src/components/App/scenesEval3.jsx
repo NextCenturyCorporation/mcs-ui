@@ -302,7 +302,7 @@ class ScenesEval3 extends React.Component {
                         this.props.value.category_type,
                         this.props.value.scene_num
                     ), 
-                    "projectionObject": JSON.parse(JSON.stringify(projectionObject))
+                    "projectionObject": projectionObject
                 }} fetchPolicy='network-only'>
             {
                 ({ loading, error, data }) => {
@@ -343,6 +343,11 @@ class ScenesEval3 extends React.Component {
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
+
+                                        if(scenesInOrder.length < this.state.currentSceneNum) {
+                                            this.state.currentSceneNum = 0;
+                                        }
+
                                         return (
                                             <div>
                                                 <div className="scores_header">
