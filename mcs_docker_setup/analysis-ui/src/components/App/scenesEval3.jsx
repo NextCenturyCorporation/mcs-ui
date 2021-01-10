@@ -344,7 +344,7 @@ class ScenesEval3 extends React.Component {
 
                                     if(scenesInOrder.length > 0) {
 
-                                        if(scenesInOrder.length < this.state.currentSceneNum) {
+                                        if(scenesInOrder.length - 1 < this.state.currentSceneNum) {
                                             this.state.currentSceneNum = 0;
                                         }
 
