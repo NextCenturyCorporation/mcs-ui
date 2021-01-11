@@ -6,45 +6,12 @@ import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 
-const historyQueryName = "createComplexQuery";
-const historyQueryResults = "results";
+const historyQueryName = "getEval3History";
 const sceneQueryName = "getEval3Scene";
 
 let constantsObject = {};
 //let currentState = {};
 let currentStep = 0;
-
-const projectionObject = {
-    "eval": 1,
-    "performer": 1,
-    "name": 1,
-    "test_type": 1,
-    "scene_num": 1,
-    "scene_part_num": 1,
-    "score.classification": 1,
-    "score.confidence": 1,
-    "score.score": 1,
-    "score.ground_truth": 1,
-    "score.mse": 1,
-    "score.score_description": 1,
-    "score.reward": 1,
-    "steps": 1,
-    "flags": 1,
-    "metadata": 1,
-    "step_counter": 1,
-    "category": 1,
-    "category_type": 1,
-    "category_pair": 1,
-    "fullFilename": 1,
-    "filename": 1,
-    "fileTimestamp": 1,
-    "scene.goal.sceneInfo.id": "$mcsScenes.goal.sceneInfo.id"
-}
-
-const create_complex_query = gql`
-    query createComplexQuery($queryObject: JSON!, $projectionObject: JSON!) {
-        createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
-    }`;
 
 const mcs_history = gql`
     query getEval3History($categoryType: String!, $sceneNum: Int!){
@@ -62,6 +29,8 @@ const mcs_history = gql`
             category
             category_type
             category_pair
+            scene_goal_id
+            metadata
         }
   }`;
 
@@ -294,14 +263,6 @@ class ScenesEval3 extends React.Component {
         ]
     }
 
-    getSceneInfoId = (sceneObj) => {
-        if(sceneObj.scene.goal.sceneInfo.id.length > 0) {
-            return sceneObj.scene.goal.sceneInfo.id[0];
-        } else {
-            return "";
-        }
-    }
-
     checkIfScenesExist = (scenesByPerformer) =>{
         return scenesByPerformer && scenesByPerformer[this.state.currentMetadataLevel]
             && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer];
@@ -321,20 +282,16 @@ class ScenesEval3 extends React.Component {
 
     render() {
         return (
-            <Query query={create_complex_query} variables={
-                {
-                    "queryObject":  this.getSceneHistoryQueryObject(
-                        this.props.value.category_type,
-                        this.props.value.scene_num
-                    ), 
-                    "projectionObject": projectionObject
+            <Query query={mcs_history} variables={
+                {   "categoryType":  this.props.value.category_type,
+                    "sceneNum": parseInt(this.props.value.scene_num)
                 }} fetchPolicy='network-only'>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
                     
-                    const evals = data[historyQueryName][historyQueryResults];
+                    const evals = data[historyQueryName];
                     //console.log(evals);
 
                     let sortedScenes =  _.sortBy(evals, "scene_part_num");
@@ -421,7 +378,7 @@ class ScenesEval3 extends React.Component {
                                                         <thead>
                                                             <tr>
                                                                 <th>Select Scene</th>
-                                                                <th>Id</th>
+                                                                <th>Goal Id</th>
                                                                 <th>Answer</th>
                                                                 <th>Score</th>
                                                                 <th>Confidence</th>
@@ -436,7 +393,7 @@ class ScenesEval3 extends React.Component {
                                                                             className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
                                                                         id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
                                                                     </td>
-                                                                    <td>{this.getSceneInfoId(scoreObj)}</td>
+                                                                    <td>{scoreObj.scene_goal_id}</td>
                                                                     <td>{scoreObj.score.classification}</td>
                                                                     <td>{scoreObj.score.score_description}</td>
                                                                     <td>{scoreObj.score.confidence}</td>
@@ -473,7 +430,7 @@ class ScenesEval3 extends React.Component {
                                                 <div className="scene-table-div">
                                                     <table>
                                                         <tbody>
-                                                            {Object.keys(scenesInOrder[this.state.currentSceneNum]).map((objectKey, key) => 
+                                                            {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && Object.keys(scenesInOrder[this.state.currentSceneNum]).map((objectKey, key) => 
                                                                 this.checkSceneObjectKey(scenesInOrder[this.state.currentSceneNum], objectKey, key))}
                                                         </tbody>
                                                     </table>
@@ -482,7 +439,7 @@ class ScenesEval3 extends React.Component {
                                                     </div>
                                                     <div className="object-nav">
                                                         <ul className="nav nav-tabs">
-                                                            {scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
+                                                            {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
                                                                 <li className="nav-item" key={'object_tab_' + key}>
                                                                     <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
                                                                 </li>
@@ -492,7 +449,7 @@ class ScenesEval3 extends React.Component {
                                                     <div className="object-contents">
                                                         <table>
                                                             <tbody>
-                                                                {Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
+                                                                {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
                                                                     <tr key={'object_tab_' + key}>
                                                                         <td className="bold-label">{objectKey}:</td>
                                                                         <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>

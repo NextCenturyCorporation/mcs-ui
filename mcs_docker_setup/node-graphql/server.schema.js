@@ -65,6 +65,8 @@ const mcsTypeDefs = gql`
     category: String
     category_type: String
     category_pair: String
+    scene_goal_id: String
+    metadata: String
   }
 
   type Scene {
@@ -131,7 +133,7 @@ const mcsTypeDefs = gql`
     getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
     getAllHistoryFields: [dropDownObj]
     getAllSceneFields: [dropDownObj],
-    createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
+    createComplexQuery(queryObject: JSON): JSON
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
@@ -280,12 +282,6 @@ const mcsResolvers = {
         },
         createComplexQuery: async(obj, args, context, infow)=> {
             mongoQueryObject = createComplexMongoQuery(args['queryObject']);
-
-            if(args['projectionObject']) {
-                complexQueryProjectionObject = args['projectionObject'];
-            } else {
-                complexQueryProjectionObject = null;
-            }
 
             async function getComplexResults() {
                 if(complexQueryProjectionObject === null ){
