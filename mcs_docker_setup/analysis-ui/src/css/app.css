@@ -266,7 +266,7 @@ ol, ul {
     padding: 20px;
 }
 
-.performer-group, .score-table-div, .scene-group, .scene-table-div {
+.performer-group, .metadata-group, .score-table-div, .scene-group, .scene-table-div {
     display: flex;
     margin: 5px 10px 10px 10px;
 }

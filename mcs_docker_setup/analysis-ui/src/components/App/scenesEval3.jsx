@@ -94,8 +94,8 @@ class ScenesEval3 extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPerformerKey: 0,
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
+            currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
             currentSceneNum: props.value.scene_part_num !== undefined ? parseInt(props.value.scene_part_num) - 1 : 0,
             currentObjectNum: 0,
             //flagRemove: false,
@@ -104,6 +104,14 @@ class ScenesEval3 extends React.Component {
             categoryType: props.value.category_type,
             sceneNum: props.value.scene_num
         };
+    }
+
+    setInitialMetadataLevel = (metadata) => {
+        if(this.state.currentMetadataLevel === "") {
+            this.setState({
+                currentMetadataLevel: metadata
+            });
+        }
     }
 
     setInitialPerformer = (performer, firstEval) => {
@@ -122,8 +130,8 @@ class ScenesEval3 extends React.Component {
         }*/
     }
 
-    changePerformer = (performerKey, performer) => {
-        this.setState({ currentPerformerKey: performerKey, currentPerformer: performer});
+    setStateObject(key, value) {
+        this.setState({[key]: value});
     }
 
     changeScene = (sceneNum) => {
@@ -294,6 +302,23 @@ class ScenesEval3 extends React.Component {
         }
     }
 
+    checkIfScenesExist = (scenesByPerformer) =>{
+        return scenesByPerformer && scenesByPerformer[this.state.currentMetadataLevel]
+            && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer];
+    }
+
+    getPrettyMetadataLabel = (metadata) => {
+        if(metadata === 'level1') {
+            return "Level 1";
+        }
+        
+        if(metadata === 'level2') {
+            return "Level 2";
+        }
+
+        return metadata;
+    }
+
     render() {
         return (
             <Query query={create_complex_query} variables={
@@ -311,22 +336,34 @@ class ScenesEval3 extends React.Component {
                     
                     const evals = data[historyQueryName][historyQueryResults];
                     //console.log(evals);
-                    let scenesByPerformer = _.sortBy(evals, "scene_part_num");
-                    scenesByPerformer = _.groupBy(scenesByPerformer, "performer");
-                    let performerList = Object.keys(scenesByPerformer);
+
+                    let sortedScenes =  _.sortBy(evals, "scene_part_num");
+                    let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
+                    let metadataList = Object.keys(scenesByMetadata);
+                    let performerList = _.uniq(_.map(sortedScenes, "performer"));
+
+                    let initialMetadataLevel = metadataList[0];
+
+                    this.setInitialMetadataLevel(initialMetadataLevel);
+
+                    let scenesByPerformer = _.reduce(scenesByMetadata, function(result, value, key) {
+                        result[key] = _.groupBy(value, "performer");                     
+                        return result;
+                    }, {});
+                    
                     this.setInitialPerformer(performerList[0], evals[0]);
                     
                     setConstants("Eval3");
                     
                     //console.log(scenesByPerformer);
                     let sceneNamePrefix = null;
-
+                    
                     if((evals !== null && evals !== undefined && evals.length > 0) &&
                         evals[0].name !== null && evals[0].name !== undefined) {
                         sceneNamePrefix = this.getSceneNamePrefix(evals[0].name);
                     }
 
-                    if(performerList.length > 0 && sceneNamePrefix !== null) {
+                    if(metadataList.length > 0 && performerList.length > 0 && sceneNamePrefix !== null) {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"sceneName": sceneNamePrefix, 
@@ -345,7 +382,15 @@ class ScenesEval3 extends React.Component {
                                     if(scenesInOrder.length > 0) {
 
                                         if(scenesInOrder.length - 1 < this.state.currentSceneNum) {
-                                            this.state.currentSceneNum = 0;
+                                            this.changeScene(0);
+                                        }
+
+                                        if(metadataList.indexOf(this.state.currentMetadataLevel) === -1) {             
+                                            this.setStateObject('currentMetadataLevel', metadataList[0]);
+                                        }
+
+                                        if(performerList.indexOf(this.state.currentPerformer) === -1) {
+                                            this.setStateObject('currentPerformer', performerList[0]);
                                         }
 
                                         return (
@@ -353,9 +398,22 @@ class ScenesEval3 extends React.Component {
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
                                                 </div>
+                                                <div className="metadata-group btn-group" role="group">
+                                                    {metadataList.map((metadataLvl, key) =>
+                                                        <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                            id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
+                                                            onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
+                                                                {this.getPrettyMetadataLabel(metadataLvl)}
+                                                        </button>
+                                                    )}
+                                                </div>
                                                 <div className="performer-group btn-group" role="group">
                                                     {performerList.map((performer, key) =>
-                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'} id={'toggle_performer_' + key} key={'toggle_' + performer} type="button" onClick={() => this.changePerformer(key, performer)}>{performer}</button>
+                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                            id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
+                                                            onClick={() => this.setStateObject('currentPerformer', performer)}>
+                                                                {performer}
+                                                        </button>
                                                     )}
                                                 </div>
                                                 <div className="score-table-div">
@@ -371,7 +429,7 @@ class ScenesEval3 extends React.Component {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
+                                                            {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].map((scoreObj, key) => 
                                                                 <tr key={'peformer_score_row_' + key}>
                                                                     <td>
                                                                         <button key={"scene_button_" + scoreObj.scene_num} 
@@ -391,7 +449,7 @@ class ScenesEval3 extends React.Component {
                                                 <div className="scenes_header">
                                                     <h3>View Selected Scene Info</h3>
                                                 </div>
-                                                    { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
+                                                    { (this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] === "interactive") && 
                                                         <div className="movie-steps-holder">
                                                             <div className="interactive-movie-holder">
                                                                 <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
@@ -400,7 +458,7 @@ class ScenesEval3 extends React.Component {
                                                                 <h5>Performer Steps:</h5>
                                                                 <div className="steps-container">
                                                                         <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                    {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
+                                                                    {scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
                                                                         <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
                                                                             {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
                                                                         </div>
