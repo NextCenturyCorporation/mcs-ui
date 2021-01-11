@@ -319,7 +319,7 @@ const mcsResolvers = {
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            let statsByScoreObject = statsByScore(scoreStats, false);
+            let statsByScoreObject = {};//statsByScore(scoreStats, false);
             let weighedStatsByScoreObject = statsByScore(scoreStats, true);
 
             //return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});

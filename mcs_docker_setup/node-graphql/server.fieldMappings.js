@@ -9,10 +9,20 @@ const historyExcludeFields = [
     "steps.args.receptacleObjectId",
     "steps.args.rotaion",
     "steps.args.rotation",
+    "steps.args.objectImageCoordsX",
+    "steps.args.objectImageCoordsY",
     "steps.stepNumber",
     "test_type",
     "url_string",
-    "steps.output.reward"
+    "steps.output.reward",
+    "steps.violations_xy_list",
+    "steps.violations_xy_list.x",
+    "steps.violations_xy_list.y",
+    "fileTimestamp",
+    "filename",
+    "fullFilename",
+    "steps.confidence",
+    "steps.classification"
 ];
 
 const historyFieldLabelMap = {
@@ -32,7 +42,13 @@ const historyFieldLabelMap = {
     "score.score_description" : "Score Accuracy",
     "step_counter": "Total Steps",
     "steps.action" : "Performer Actions",
-    "steps.output.return_status": "Step Output Status"
+    "steps.output.return_status": "Step Output Status",
+    "score.reward": "Score Reward",
+    "metadata": "Metadata Level",
+    "score.weighted_score_worth": "Weighted Score Value",
+    "score.weighted_confidence": "Weighted Confidence",
+    "score.weighted_score": "Weighted Score",
+    "scene_goal_id": "Cube/Scene Goal ID"
 };
 
 const sceneExcludeFields = [
