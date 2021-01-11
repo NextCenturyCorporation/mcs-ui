@@ -38,7 +38,7 @@ const BasicFieldDropDown = ({onSelectHandler, options, isDisabled}) => {
 
 const HistoryFieldDropDown = ({onSelectHandler}) => {
     return (
-        <Query query={all_history_fields} fetchPolicy={'network-only'}>
+        <Query query={all_history_fields}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 
@@ -57,7 +57,7 @@ const HistoryFieldDropDown = ({onSelectHandler}) => {
 
 const SceneFieldDropDown = ({onSelectHandler}) => {
     return (
-        <Query query={all_scene_fields} fetchPolicy={'network-only'}>
+        <Query query={all_scene_fields}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 

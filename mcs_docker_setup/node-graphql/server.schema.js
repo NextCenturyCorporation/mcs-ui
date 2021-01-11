@@ -95,7 +95,8 @@ const mcsTypeDefs = gql`
   }
 
   type homeStatsObject {
-      stats: JSON
+      stats: JSON,
+      weightedStats: JSON
   }
 
   type savedQueryObj {
@@ -276,7 +277,7 @@ const mcsResolvers = {
                     complexQueryProjectionObject = projectionObj;
                 }
 
-                if(mongoQueryObject.sceneQueryObj === undefined || Object.keys(mongoQueryObject.sceneQueryObj).length === 0) {
+                if(Object.keys(mongoQueryObject.sceneQuery).length === 0) {
                     return mcsDB.db.collection('mcs_history').aggregate([
                         {$match: mongoQueryObject.historyQuery},
                         {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
@@ -288,7 +289,7 @@ const mcsResolvers = {
                         {$match: mongoQueryObject.historyQuery},
                         {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                         {$unwind:'$mcsScenes'},
-                        {$match: mongoQueryObject.sceneQueryObj},
+                        {$match: mongoQueryObject.sceneQuery},
                         {$project: complexQueryProjectionObject}
                     ]).toArray();
                 }
@@ -299,7 +300,7 @@ const mcsResolvers = {
             return {results: results, sceneMap: sceneFieldLabelMap, historyMap: historyFieldLabelMap};
         },
         getHomeStats: async(obj, args, context, infow)=> {
-            scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
+            let scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
                       "eval": args.eval,
@@ -312,15 +313,17 @@ const mcsResolvers = {
                         "performer": "$performer", 
                         "category": "$category",
                         "test_type": "$test_type",
-                        "metadata": "$metadata"
+                        "metadata": "$metadata",
+                        "weight": "$score.weighted_score_worth"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            let statsByScoreObject = statsByScore(scoreStats);
+            let statsByScoreObject = statsByScore(scoreStats, false);
+            let weighedStatsByScoreObject = statsByScore(scoreStats, true);
 
             //return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
-            testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
+            let testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
                       "eval": args.eval,
@@ -333,19 +336,29 @@ const mcsResolvers = {
                         "category_type": "$category_type", 
                         "category": "$category",
                         "test_type": "$test_type",
-                        "metadata": "$metadata"
+                        "metadata": "$metadata",
+                        "weight": "$score.weighted_score_worth"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            let testTypeScores = statsByTestType(testTypeStats);
+            let testTypeScores = statsByTestType(testTypeStats, false);
+            let weightedTestTypeScores = statsByTestType(testTypeStats, true);
 
             let stats = {
                 ...statsByScoreObject,
                 ...testTypeScores
             };
 
-            let statsObj = {stats: stats};
+            let weightedStats = {
+                ...weighedStatsByScoreObject,
+                ...weightedTestTypeScores
+            }
+
+            let statsObj = {
+                stats: stats,
+                weightedStats: weightedStats
+            };
 
             return statsObj;
         }

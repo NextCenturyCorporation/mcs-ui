@@ -14,7 +14,7 @@ class HomePage extends React.Component {
 
     render() {
         return (
-            <Query query={history_field_aggregation} variables={{"fieldName": "eval"}} fetchPolicy={'network-only'}>
+            <Query query={history_field_aggregation} variables={{"fieldName": "eval"}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 

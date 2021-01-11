@@ -10,7 +10,8 @@ const homeStatsQuery = "getHomeStats";
 const get_home_stats = gql`
     query getHomeStats($eval: String!){
         getHomeStats(eval: $eval) {
-            stats
+            stats,
+            weightedStats
         }
     }`;
 
@@ -25,10 +26,12 @@ class HomeCharts extends React.Component {
             currentEval: props.evaluationOptions[0],
             passiveToggle: {value: "passiveCorrect_passiveTotal_passiveCorrectPercent", label: "Total"},
             interactiveToggle: {value: "interactiveCorrect_interactiveTotal_interactiveCorrectPercent", label: "Total"},
-            agentToggle: {value: "agentCorrect_agentTotal_agentCorrectPercent", label: "Total"}
+            agentToggle: {value: "agentCorrect_agentTotal_agentCorrectPercent", label: "Total"},
+            passiveWeightedToggle: 'weightedStats'
         }
 
         this.handleNumPercentChange = this.handleNumPercentChange.bind(this);
+        this.handlePassiveWeightedToggle = this.handlePassiveWeightedToggle.bind(this);
         this.selectEvaluation = this.selectEvaluation.bind(this);
         this.selectAgentToggle = this.selectAgentToggle.bind(this);
         this.selectInteractiveToggle = this.selectInteractiveToggle.bind(this);
@@ -36,8 +39,22 @@ class HomeCharts extends React.Component {
     }
 
     handleNumPercentChange(val) {
+        if(val.length === 0) {
+            return;
+        }
+
         this.setState({
             numPercentToggle: val[1]
+        });
+    }
+
+    handlePassiveWeightedToggle(val) {
+        if(val.length === 0) {
+            return;
+        }
+        
+        this.setState({
+            passiveWeightedToggle: val[1]
         });
     }
 
@@ -94,7 +111,7 @@ class HomeCharts extends React.Component {
                     </div>
                 </div>
                 {this.state.currentEval !== '' &&
-                    <Query query={get_home_stats} variables={{"eval": this.state.currentEval.value}} fetchPolicy={'network-only'}>
+                    <Query query={get_home_stats} variables={{"eval": this.state.currentEval.value}}>
                     {
                         ({ loading, error, data }) => {
                             if (loading) return <div>No stats yet</div> 
@@ -105,15 +122,15 @@ class HomeCharts extends React.Component {
                             let passiveOptions = [], interactiveOptions = [], agentOptions = [];
 
                             // Build Passive Options Drop Down
-                            if(homeStats.stats.passiveTotal > 0) {
+                            if(homeStats[this.state.passiveWeightedToggle].passiveTotal > 0) {
                                 passiveOptions.push({value: "passiveCorrect_passiveTotal_passiveCorrectPercent", label: "Total"});
                                 passiveOptions.push({value: "plausibleTotal_null_plausiblePercentTotal", label: "Total by Plausibility"});
                             }
-                            if (homeStats.stats.passiveTotalMetadata1 > 0) {
+                            if (homeStats[this.state.passiveWeightedToggle].passiveTotalMetadata1 > 0) {
                                 passiveOptions.push({value: "passiveCorrectMetadata1_passiveTotalMetadata1_passiveCorrectPercentMetadata1", label: "Metadata 1"});
                                 passiveOptions.push({value: "plausibleMetadata1_null_plausiblePercentMetadata1", label: "Metadata 1 by Plausibility"});
                             }
-                            if (homeStats.stats.passiveTotalMetadata2 > 0) {
+                            if (homeStats[this.state.passiveWeightedToggle].passiveTotalMetadata2 > 0) {
                                 passiveOptions.push({value: "passiveCorrectMetadata2_passiveTotalMetadata2_passiveCorrectPercentMetadata2", label: "Metadata 2"});
                                 passiveOptions.push({value: "plausibleMetadata2_null_plausiblePercentMetadata2", label: "Metadata 2 by Plausibility"});
                             }
@@ -145,7 +162,7 @@ class HomeCharts extends React.Component {
 
                             // Might need to revisit using the dropdown and splits this way.
                             const passiveSplit = this.state.passiveToggle.value.split("_");
-                            let passiveData = homeStats.stats[passiveSplit[0]];
+                            let passiveData = homeStats[this.state.passiveWeightedToggle][passiveSplit[0]];
 
                             const interactiveSplit = this.state.interactiveToggle.value.split("_");
                             let interactiveData = homeStats.stats[interactiveSplit[0]];
@@ -159,7 +176,7 @@ class HomeCharts extends React.Component {
                             let agentLegendLabel = "Number of Correct Tests";
 
                             if(this.state.numPercentToggle === 'percent') {
-                                passiveData = homeStats.stats[passiveSplit[2]];
+                                passiveData = homeStats[this.state.passiveWeightedToggle][passiveSplit[2]];
                                 interactiveData = homeStats.stats[interactiveSplit[2]];
                                 agentData = homeStats.stats[agentSplit[2]];
 
@@ -177,7 +194,7 @@ class HomeCharts extends React.Component {
                                 passiveLegendLabel = this.state.numPercentToggle === 'percent' ? "% Plausibility Tests" : "Number of Plausibility Tests";
                                 passiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : passiveData[passiveLength][passiveKeys[0]] + passiveData[passiveLength - 1][passiveKeys[0]];
                             } else {
-                                passiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats.stats[passiveSplit[1]];
+                                passiveMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats[this.state.passiveWeightedToggle][passiveSplit[1]];
                             } 
 
                             // Values for Interactive
@@ -211,6 +228,12 @@ class HomeCharts extends React.Component {
                                                     options={passiveOptions}
                                                     defaultValue={this.state.passiveToggle}
                                                 />
+                                            </div>
+                                            <div className="chart-weight-toggle">
+                                                <ToggleButtonGroup type="checkbox" value={this.state.passiveWeightedToggle} onChange={this.handlePassiveWeightedToggle}>
+                                                    <ToggleButton variant="secondary" value={"weightedStats"}>Cube</ToggleButton>
+                                                    <ToggleButton variant="secondary" value={"stats"}>Non Cube</ToggleButton>
+                                                </ToggleButtonGroup>
                                             </div>
                                         </div>
                                         <ResultsChart chartKeys={passiveKeys} chartData={passiveData} chartIndex={"test_type"} maxVal={passiveMaxValue} legendLabel={passiveLegendLabel}/>
