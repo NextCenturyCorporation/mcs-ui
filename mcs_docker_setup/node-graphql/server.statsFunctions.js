@@ -7,9 +7,10 @@ const updateScoreObject = function(scoreObject, scoreTotalObject, statObj, score
     }
 
     if(scoreObject[performer] !== undefined) {
-        console.log(scoreObject.test_type, performer, scoreObject[performer], statObj.count, scoreWeight);
+        console.log(scoreObject.test_type, performer, scoreObject[performer], statObj.count, scoreWeight, statObj._id.metadata);
         scoreObject[performer] = scoreObject[performer] + (statObj.count * scoreWeight);
     } else {
+        console.log(scoreObject.test_type, performer, 0, statObj.count, scoreWeight, statObj._id.metadata);
         scoreObject[performer] = statObj.count * scoreWeight;
     }
 }

@@ -231,8 +231,8 @@ class HomeCharts extends React.Component {
                                             </div>
                                             <div className="chart-weight-toggle">
                                                 <ToggleButtonGroup type="checkbox" value={this.state.passiveWeightedToggle} onChange={this.handlePassiveWeightedToggle}>
-                                                    <ToggleButton variant="secondary" value={"weightedStats"}>Cube</ToggleButton>
-                                                    <ToggleButton variant="secondary" value={"stats"}>Non Cube</ToggleButton>
+                                                    <ToggleButton variant="secondary" value={"weightedStats"}>Weighted</ToggleButton>
+                                                    <ToggleButton variant="secondary" value={"stats"}>Unweighted</ToggleButton>
                                                 </ToggleButtonGroup>
                                             </div>
                                         </div>
