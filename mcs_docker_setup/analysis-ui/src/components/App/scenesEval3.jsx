@@ -12,6 +12,7 @@ const sceneQueryName = "getEval3Scene";
 let constantsObject = {};
 //let currentState = {};
 let currentStep = 0;
+let currentTime = 0;
 
 const mcs_history = gql`
     query getEval3History($categoryType: String!, $sceneNum: Int!){
@@ -31,6 +32,8 @@ const mcs_history = gql`
             category_pair
             scene_goal_id
             metadata
+            filename
+            fileTimestamp
         }
   }`;
 
@@ -194,10 +197,12 @@ class ScenesEval3 extends React.Component {
                     this.checkSceneObjectKey(scene["goal"], goalObjectKey, goalKey, "goal."))
             );
         } else if(objectKey === 'name') {
+            // comment out link to download scene for now
+            // (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)
             return (
                 <tr key={'scene_prop_' + key}>
                     <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{this.convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
+                    <td className="scene-text">{this.convertValueToString(scene[objectKey])}</td>
                 </tr>
             );
         }
@@ -206,9 +211,10 @@ class ScenesEval3 extends React.Component {
     highlightStep = (e) => {
         // First one is at 0.2 
         let currentTimeNum = Math.floor(document.getElementById("interactiveMoviePlayer").currentTime + 0.8);
-        if(currentTimeNum !== currentStep) {
+        if(currentTimeNum !== currentTime) {
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            currentStep = currentTimeNum;
+            currentTime = currentTimeNum;
+            currentStep = Math.floor(currentTimeNum * 20);
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
             if(document.getElementById("stepHolder" + currentStep) !== null) {
                 document.getElementById("stepHolder" + currentStep).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
@@ -226,10 +232,13 @@ class ScenesEval3 extends React.Component {
     }
 
     goToVideoLocation = (jumpTime) => {
+        // videos for eval 3 are faster than eval 2 -- 20 (I think?) actions per second
+        let timeToJumpTo = Math.floor(jumpTime / 20);
         if( document.getElementById("interactiveMoviePlayer") !== null) {
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
             currentStep = jumpTime;
-            document.getElementById("interactiveMoviePlayer").currentTime = jumpTime;
+            currentTime = timeToJumpTo;
+            document.getElementById("interactiveMoviePlayer").currentTime = timeToJumpTo;
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
         }
     }
@@ -264,8 +273,8 @@ class ScenesEval3 extends React.Component {
     }
 
     checkIfScenesExist = (scenesByPerformer) =>{
-        return scenesByPerformer && scenesByPerformer[this.state.currentMetadataLevel]
-            && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer];
+        return scenesByPerformer !== undefined && scenesByPerformer[this.state.currentMetadataLevel] !== undefined
+            && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer] !== undefined;
     }
 
     getPrettyMetadataLabel = (metadata) => {
@@ -277,7 +286,15 @@ class ScenesEval3 extends React.Component {
             return "Level 2";
         }
 
+        if(metadata === 'oracle') {
+            return "Oracle"
+        }
+
         return metadata;
+    }
+
+    getSceneHistoryItem = (scenesByPerformer) => {
+        return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum];
     }
 
     render() {
@@ -352,6 +369,53 @@ class ScenesEval3 extends React.Component {
 
                                         return (
                                             <div>
+                                                { this.checkIfScenesExist(scenesByPerformer) &&
+                                                    scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] === "passive" && 
+                                                    <div>
+                                                        <div className="eval3-movies">
+                                                            <div>
+                                                                <div><b>Scene:</b> {this.state.currentSceneNum + 1}</div>
+                                                                <video src={constantsObject["moviesBucket"] +
+                                                                    this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                    "_visual_" +
+                                                                    this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                    constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
+                                                            </div>
+                                                            <div>
+                                                                <div><b>Top Down Plot</b></div>
+                                                                <video src={constantsObject["moviesBucket"] +
+                                                                    this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                    "_topdown_" +
+                                                                    this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                    constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="scene-text">Links for other videos:</div>
+                                                            <div className="scene-text">
+                                                                <a href={constantsObject["moviesBucket"] +
+                                                                    this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                    "_heatmap_" +
+                                                                    this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                    constantsObject["movieExtension"]} target="_blank">Heatmap</a>
+                                                            </div>
+                                                            <div className="scene-text">
+                                                                <a href={constantsObject["moviesBucket"] +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                        "_depth_" +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                        constantsObject["movieExtension"]} target="_blank">Depth</a>
+                                                            </div>
+                                                            {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
+                                                            <div className="scene-text">
+                                                                <a href={constantsObject["moviesBucket"] +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                        "_segmentation_" +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                        constantsObject["movieExtension"]} target="_blank">Segmentation</a>
+                                                            </div>}
+                                                    </div> 
+                                                }
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
                                                 </div>
@@ -407,25 +471,55 @@ class ScenesEval3 extends React.Component {
                                                     <h3>View Selected Scene Info</h3>
                                                 </div>
                                                     { (this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] === "interactive") && 
-                                                        <div className="movie-steps-holder">
-                                                            <div className="interactive-movie-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
-                                                            </div>
-                                                            <div className="steps-holder">
-                                                                <h5>Performer Steps:</h5>
-                                                                <div className="steps-container">
-                                                                        <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                    {scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
-                                                                        <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
-                                                                            {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
-                                                                        </div>
-                                                                    )}
+                                                        <div>
+                                                            <div className="movie-steps-holder">
+                                                                <div className="interactive-movie-holder">
+                                                                    <video id="interactiveMoviePlayer" src={
+                                                                        constantsObject["moviesBucket"] +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                        "_visual_" +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                        constantsObject["movieExtension"]
+                                                                    } width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+                                                                </div>
+                                                                <div className="steps-holder">
+                                                                    <h5>Performer Steps:</h5>
+                                                                    <div className="steps-container">
+                                                                            <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
+                                                                        {scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
+                                                                            <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
+                                                                                {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="top-down-holder">
+                                                                    <video id="interactiveMoviePlayer" src={
+                                                                        constantsObject["moviesBucket"] +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                        "_topdown_" +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                        constantsObject["movieExtension"]
+                                                                    } width="500" height="350" controls="controls" autoPlay={false}/>
                                                                 </div>
                                                             </div>
-                                                            <div className="top-down-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
+                                                            <div className="scene-text">Links for other videos:</div>
+                                                            <div className="scene-text">
+                                                                <a href={constantsObject["moviesBucket"] +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                        "_depth_" +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                        constantsObject["movieExtension"]} target="_blank">Depth</a>
                                                             </div>
-                                                        </div> 
+                                                            {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
+                                                            <div className="scene-text">
+                                                                <a href={constantsObject["moviesBucket"] +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
+                                                                        "_segmentation_" +
+                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
+                                                                        constantsObject["movieExtension"]} target="_blank">Segmentation</a>
+                                                            </div>} 
+                                                        </div>
                                                     }
                                                 <div className="scene-table-div">
                                                     <table>

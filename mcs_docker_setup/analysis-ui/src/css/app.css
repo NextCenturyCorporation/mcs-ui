@@ -248,6 +248,12 @@ ol, ul {
     margin-bottom: 25px;
 }
 
+.eval3-movies {
+    margin: 15px;
+    display: flex;
+    align-items: center;
+}
+
 .scores_header {
     display: flex;
     margin: 10px 10px 0 10px;

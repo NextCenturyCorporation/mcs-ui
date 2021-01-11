@@ -67,6 +67,8 @@ const mcsTypeDefs = gql`
     category_pair: String
     scene_goal_id: String
     metadata: String
+    filename: String
+    fileTimestamp: String
   }
 
   type Scene {
