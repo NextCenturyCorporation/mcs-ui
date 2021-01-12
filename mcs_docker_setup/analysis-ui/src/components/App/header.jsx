@@ -63,7 +63,6 @@ class ListItem extends React.Component {
             let paramsToAppend = '';
 
             if(this.props.stateName === 'eval') {
-                // TODO: MCS-504
                 if(hasTestTypeState) {
                     paramsToAppend += "&test_type=" + this.props.state["test_type"];
                 } else if(hasCatTypeState) {
@@ -71,6 +70,7 @@ class ListItem extends React.Component {
                 }
     
                 if(hasSceneNumState) {
+                    // TODO: revisit calling param "scene_num" for eval 3 (should probably be "seq_num")
                     paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
                 }
                 params = "?eval=" + this.props.item + paramsToAppend;
@@ -132,6 +132,7 @@ class DropListItems extends React.Component {
 
         // For eval 3, scene_num_part is actually what we expect to be scene_num in Mongo
         // (keeping "scene_num" as state name though)
+        // TODO: revisit URL/parameter names for eval 3
         if((this.props.fieldName === 'test_type' || this.props.fieldName === 'category_type' ||
             this.props.fieldName === 'scene_num' || this.props.fieldName === 'scene_part_num') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
@@ -173,9 +174,9 @@ class DropListItems extends React.Component {
 
 class EvalNav extends React.Component {
 
-    // eval2_history
-    // Evaluation 3 Results
-    
+    // TODO: consider querying only the scene_nums that are applicable for the category type in eval 3 data,
+    // make sure the numbers that appear make sense based on type/eval
+
     render() {
         if(this.props.state.perf !== undefined && this.props.state.perf !== null) {
             return(
