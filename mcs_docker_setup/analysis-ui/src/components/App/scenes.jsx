@@ -328,7 +328,7 @@ class Scenes extends React.Component {
                                                                 <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
                                                             </div>
                                                             <div className="steps-holder">
-                                                                <h5>Peformer Steps:</h5>
+                                                                <h5>Performer Steps:</h5>
                                                                 <div className="steps-container">
                                                                         <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
                                                                     {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
