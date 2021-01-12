@@ -209,8 +209,7 @@ class ScenesEval3 extends React.Component {
     }
 
     highlightStep = (e) => {
-        // First one is at 0.2 
-        let currentTimeNum = Math.floor(document.getElementById("interactiveMoviePlayer").currentTime + 0.8);
+        let currentTimeNum = document.getElementById("interactiveMoviePlayer").currentTime;
         if(currentTimeNum !== currentTime) {
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
             currentTime = currentTimeNum;
@@ -231,14 +230,16 @@ class ScenesEval3 extends React.Component {
         }
     }
 
-    goToVideoLocation = (jumpTime) => {
-        // videos for eval 3 are faster than eval 2 -- 20 (I think?) actions per second
-        let timeToJumpTo = Math.floor(jumpTime / 20);
+    goToVideoLocation = (currentAction) => {
+        // videos for eval 3 are faster than eval 2 -- 20 actions/frames per second
+        let timeToJumpTo = (currentAction + 1) / 20;
+
         if( document.getElementById("interactiveMoviePlayer") !== null) {
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            currentStep = jumpTime;
+            currentStep = currentAction;
             currentTime = timeToJumpTo;
-            document.getElementById("interactiveMoviePlayer").currentTime = timeToJumpTo;
+            document.getElementById("interactiveMoviePlayer").currentTime = currentTime;
+
             $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
         }
     }
@@ -486,7 +487,7 @@ class ScenesEval3 extends React.Component {
                                                                     <h5>Performer Steps:</h5>
                                                                     <div className="steps-container">
                                                                             <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                        {scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
+                                                                            {this.getSceneHistoryItem(scenesByPerformer).steps.map((stepObject, key) => 
                                                                             <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
                                                                                 {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
                                                                             </div>
