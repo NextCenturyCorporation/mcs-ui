@@ -15,17 +15,15 @@ const Eval2 = {
 };
 
 const Eval3 = {
-    // TODO: MCS-504: fix
-    // all in same bucket now...yay
     moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
     interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
     topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
     movieExtension: ".mp4",
     // ??? sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
-    sceneExtension: "-debug.json",
+    sceneExtension: "_debug.json",
 
     performerPrefixMapping: {
-        "IBM-MIT-Harvard-Stanford": "mitibm_",
+        "IBM-MIT-Harvard-Stanford": "mit_",
         "OPICS (OSU, UU, NYU)": "opics_",
         "MESS-UCBerkeley": "mess_",
     }
