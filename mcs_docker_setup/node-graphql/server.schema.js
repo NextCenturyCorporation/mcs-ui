@@ -4,7 +4,8 @@ const mongoDb = require("mongodb");
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
-const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields, sceneFieldLabelMap } = require('./server.fieldMappings');
+const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyExcludeFieldsTable, 
+    sceneExcludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
 
 let complexQueryProjectionObject = null;
 
@@ -263,13 +264,13 @@ const mcsResolvers = {
                     let projectionObj = {};
 
                     for(let j=0; j < sceneKeys["keys"].length; j++) {
-                        if(!sceneExcludeFields.includes(sceneKeys["keys"][j])) {
+                        if(!sceneExcludeFieldsTable.includes(sceneKeys["keys"][j])) {
                             projectionObj["scene." + sceneKeys["keys"][j]] = "$mcsScenes." + sceneKeys["keys"][j];
                         }
                     }
 
                     for(let i=0; i < historyKeys["keys"].length; i++) {
-                        if(!historyExcludeFields.includes(historyKeys["keys"][i])) {
+                        if(!historyExcludeFieldsTable.includes(historyKeys["keys"][i])) {
                             projectionObj[historyKeys["keys"][i]] = 1;
                         }
                     }
@@ -297,7 +298,7 @@ const mcsResolvers = {
 
             let results = await getComplexResults();
 
-            return {results: results, sceneMap: sceneFieldLabelMap, historyMap: historyFieldLabelMap};
+            return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
         getHomeStats: async(obj, args, context, infow)=> {
             let scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
