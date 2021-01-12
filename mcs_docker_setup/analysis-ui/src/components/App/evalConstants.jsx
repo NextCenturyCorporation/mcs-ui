@@ -19,7 +19,7 @@ const Eval3 = {
     interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
     topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
     movieExtension: ".mp4",
-    // ??? sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-3-scenes/",
     sceneExtension: "_debug.json",
 
     performerPrefixMapping: {

@@ -197,12 +197,10 @@ class ScenesEval3 extends React.Component {
                     this.checkSceneObjectKey(scene["goal"], goalObjectKey, goalKey, "goal."))
             );
         } else if(objectKey === 'name') {
-            // comment out link to download scene for now
-            // (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)
             return (
                 <tr key={'scene_prop_' + key}>
                     <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{this.convertValueToString(scene[objectKey])}</td>
+                    <td className="scene-text">{this.convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
                 </tr>
             );
         }
