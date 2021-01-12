@@ -57,6 +57,7 @@ const AnalysisUI = ({newState, updateHandler}) => {
     let hasTestType = (newState.test_type !== undefined && newState.test_type !== null)
     let hasSceneNum = (newState.scene_num !== undefined && newState.scene_num !== null)
 
+    // TODO: Fix comments for eval 3
     return <div>
         <div className="layout">
 
@@ -66,7 +67,7 @@ const AnalysisUI = ({newState, updateHandler}) => {
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
                 { (!isEval3) && hasTestType && hasSceneNum && <Scenes value={newState}/> }
                 { isEval3 && hasCatType && hasSceneNum && <ScenesEval3 value={newState}/> }
-                { newState.showComments &&  <CommentsComponent state={newState}/> }
+                { newState.showComments && (!isEval3) && <CommentsComponent state={newState}/> }
             </div>
         </div>
     </div>;
