@@ -295,7 +295,23 @@ class ScenesEval3 extends React.Component {
     }
 
     getSceneHistoryItem = (scenesByPerformer) => {
-        return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum];
+        if(scenesByPerformer !== undefined && scenesByPerformer !== null) {
+            return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum];
+        }
+    }
+
+    getVideoFileName = (scenesByPerformer, videoCategory) => {
+        let sceneItem = this.getSceneHistoryItem(scenesByPerformer);
+
+        if(sceneItem !== undefined && sceneItem !== null) {
+            return constantsObject["moviesBucket"] +
+                sceneItem.filename +
+                videoCategory +
+                sceneItem.fileTimestamp +
+                constantsObject["movieExtension"];
+        } else  {
+            return "";
+        }
     }
 
     render() {
@@ -376,44 +392,25 @@ class ScenesEval3 extends React.Component {
                                                         <div className="eval3-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum + 1}</div>
-                                                                <video src={constantsObject["moviesBucket"] +
-                                                                    this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                    "_visual_" +
-                                                                    this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                    constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video src={this.getVideoFileName(scenesByPerformer, "_visual_")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video src={constantsObject["moviesBucket"] +
-                                                                    this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                    "_topdown_" +
-                                                                    this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                    constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video src={this.getVideoFileName(scenesByPerformer, "_topdown_")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                         </div>
 
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={constantsObject["moviesBucket"] +
-                                                                    this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                    "_heatmap_" +
-                                                                    this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                    constantsObject["movieExtension"]} target="_blank">Heatmap</a>
+                                                                <a href={
+                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank">Heatmap</a>
                                                             </div>
                                                             <div className="scene-text">
-                                                                <a href={constantsObject["moviesBucket"] +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                        "_depth_" +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                        constantsObject["movieExtension"]} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={constantsObject["moviesBucket"] +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                        "_segmentation_" +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                        constantsObject["movieExtension"]} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
                                                             </div>}
                                                     </div> 
                                                 }
@@ -476,12 +473,7 @@ class ScenesEval3 extends React.Component {
                                                             <div className="movie-steps-holder">
                                                                 <div className="interactive-movie-holder">
                                                                     <video id="interactiveMoviePlayer" src={
-                                                                        constantsObject["moviesBucket"] +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                        "_visual_" +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                        constantsObject["movieExtension"]
-                                                                    } width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+                                                                        this.getVideoFileName(scenesByPerformer, "_visual_")} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
                                                                 </div>
                                                                 <div className="steps-holder">
                                                                     <h5>Performer Steps:</h5>
@@ -496,29 +488,16 @@ class ScenesEval3 extends React.Component {
                                                                 </div>
                                                                 <div className="top-down-holder">
                                                                     <video id="interactiveMoviePlayer" src={
-                                                                        constantsObject["moviesBucket"] +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                        "_topdown_" +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                        constantsObject["movieExtension"]
-                                                                    } width="500" height="350" controls="controls" autoPlay={false}/>
+                                                                        this.getVideoFileName(scenesByPerformer, "_topdown_")} width="500" height="350" controls="controls" autoPlay={false}/>
                                                                 </div>
                                                             </div>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={constantsObject["moviesBucket"] +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                        "_depth_" +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                        constantsObject["movieExtension"]} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={constantsObject["moviesBucket"] +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).filename +
-                                                                        "_segmentation_" +
-                                                                        this.getSceneHistoryItem(scenesByPerformer).fileTimestamp +
-                                                                        constantsObject["movieExtension"]} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
                                                             </div>} 
                                                         </div>
                                                     }
