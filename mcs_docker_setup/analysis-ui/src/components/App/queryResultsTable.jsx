@@ -260,7 +260,7 @@ class QueryResultsTable extends React.Component {
                                                             {this.groups[key] ? "expand_more" : "chevron_right"}
                                                         </Icon>
                                                     </IconButton>
-                                                    <span>{key + " (" + groupedData[key].length + ")"}</span>
+                                                    <span>{key + " (" + groupedData[key].length +  " - " + ((groupedData[key].length/rows.length*100).toFixed(1)) + "%)"}</span>
                                                 </TableCell>
                                             </TableRow>
 

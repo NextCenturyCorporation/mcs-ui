@@ -1,9 +1,11 @@
 const { gql } = require('apollo-server');
 const { mcsDB } = require('./server.mongo');
+const mongoDb = require("mongodb");
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
-const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields, sceneFieldLabelMap } = require('./server.fieldMappings');
+const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyExcludeFieldsTable, 
+    sceneExcludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
 
 let complexQueryProjectionObject = null;
 
@@ -94,9 +96,8 @@ const mcsTypeDefs = gql`
   }
 
   type homeStatsObject {
-      statsByTestType: JSON,
-      statsByScore: JSON,
-      statsByScorePercent: JSON
+      stats: JSON,
+      weightedStats: JSON
   }
 
   type savedQueryObj {
@@ -104,7 +105,8 @@ const mcsTypeDefs = gql`
     queryObj: JSON, 
     name: String, 
     description: String,
-    createdDate: Float
+    createdDate: Float,
+    _id: String
   }
 
   type dropDownObj {
@@ -141,6 +143,8 @@ const mcsTypeDefs = gql`
     updateSceneHistoryRemoveFlag(testType: String, sceneNum: String, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(testType: String, sceneNum: String, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
+    updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
+    deleteQuery(_id: String) : savedQueryObj
   }
 `;
 
@@ -219,7 +223,11 @@ const mcsResolvers = {
             const historyKeys = results.keys;
             for(let i=0; i < historyKeys.length; i++) {
                 if(!historyExcludeFields.includes(historyKeys[i])) {
-                    returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
+                    if (historyKeys[i] in historyFieldLabelMap) {
+                        returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
+                    } else {
+                        returnArray.push({label: historyKeys[i], value: historyKeys[i]});
+                    }
                 }
             }
 
@@ -231,7 +239,11 @@ const mcsResolvers = {
             const sceneKeys = results.keys;
             for(let i=0; i < sceneKeys.length; i++) {
                 if(!sceneExcludeFields.includes(sceneKeys[i])) {
-                    returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
+                    if (sceneKeys[i] in sceneFieldLabelMap) {
+                        returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
+                    } else {
+                        returnArray.push({label: sceneKeys[i], value: sceneKeys[i]});
+                    }
                 }
             }
 
@@ -252,13 +264,13 @@ const mcsResolvers = {
                     let projectionObj = {};
 
                     for(let j=0; j < sceneKeys["keys"].length; j++) {
-                        if(!sceneExcludeFields.includes(sceneKeys["keys"][j])) {
+                        if(!sceneExcludeFieldsTable.includes(sceneKeys["keys"][j])) {
                             projectionObj["scene." + sceneKeys["keys"][j]] = "$mcsScenes." + sceneKeys["keys"][j];
                         }
                     }
-                    //let projectionObj = {scene: "$mcsScenes"};
+
                     for(let i=0; i < historyKeys["keys"].length; i++) {
-                        if(!historyExcludeFields.includes(historyKeys["keys"][i])) {
+                        if(!historyExcludeFieldsTable.includes(historyKeys["keys"][i])) {
                             projectionObj[historyKeys["keys"][i]] = 1;
                         }
                     }
@@ -266,22 +278,30 @@ const mcsResolvers = {
                     complexQueryProjectionObject = projectionObj;
                 }
 
-                return mcsDB.db.collection('mcs_history').aggregate([
-                    {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
-                    {$unwind:'$mcsScenes'},
-                    {$match: mongoQueryObject},
-                    {$project: complexQueryProjectionObject}
-                ]).toArray();
+                if(Object.keys(mongoQueryObject.sceneQuery).length === 0) {
+                    return mcsDB.db.collection('mcs_history').aggregate([
+                        {$match: mongoQueryObject.historyQuery},
+                        {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                        {$unwind:'$mcsScenes'},
+                        {$project: complexQueryProjectionObject}
+                    ]).toArray();
+                } else {
+                    return mcsDB.db.collection('mcs_history').aggregate([
+                        {$match: mongoQueryObject.historyQuery},
+                        {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                        {$unwind:'$mcsScenes'},
+                        {$match: mongoQueryObject.sceneQuery},
+                        {$project: complexQueryProjectionObject}
+                    ]).toArray();
+                }
             }
 
             let results = await getComplexResults();
 
-            return {results: results, sceneMap: sceneFieldLabelMap, historyMap: historyFieldLabelMap};
+            return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
         getHomeStats: async(obj, args, context, infow)=> {
-            let statsObj = {};
-
-            scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
+            let scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
                       "eval": args.eval,
@@ -292,16 +312,18 @@ const mcsResolvers = {
                         "correct": "$score.score", 
                         "plausibililty": "$score.ground_truth",
                         "performer": "$performer", 
-                        "category": "$category"
+                        "category": "$category",
+                        "test_type": "$test_type",
+                        "metadata": "$metadata",
+                        "weight": "$score.weighted_score_worth"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            const statsByScoreObject = statsByScore(scoreStats);
-            statsObj["statsByScore"] = statsByScoreObject["byNumber"];
-            statsObj["statsByScorePercent"] = statsByScoreObject["byPercent"];
+            let statsByScoreObject = statsByScore(scoreStats, false);
+            let weighedStatsByScoreObject = statsByScore(scoreStats, true);
 
-            testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
+            let testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
                       "eval": args.eval,
@@ -312,14 +334,31 @@ const mcsResolvers = {
                         "correct": "$score.score", 
                         "performer": "$performer", 
                         "category_type": "$category_type", 
-                        "category": "$category"
+                        "category": "$category",
+                        "test_type": "$test_type",
+                        "metadata": "$metadata",
+                        "weight": "$score.weighted_score_worth"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            let testTypeScores = statsByTestType(testTypeStats);
+            let testTypeScores = statsByTestType(testTypeStats, false);
+            let weightedTestTypeScores = statsByTestType(testTypeStats, true);
 
-            statsObj["statsByTestType"] = testTypeScores;
+            let stats = {
+                ...statsByScoreObject,
+                ...testTypeScores
+            };
+
+            let weightedStats = {
+                ...weighedStatsByScoreObject,
+                ...weightedTestTypeScores
+            }
+
+            let statsObj = {
+                stats: stats,
+                weightedStats: weightedStats
+            };
 
             return statsObj;
         }
@@ -360,14 +399,31 @@ const mcsResolvers = {
             );
         },
         saveQuery: async (obj, args, context, infow) => {
-            return await mcsDB.db.collection('savedQueries').insert({
+            let queryObj;
+            
+            await mcsDB.db.collection('savedQueries').insertOne({
                 user: args["user"],
                 queryObj: args["queryObj"],
                 name: args["name"],
                 description: args["description"],
                 createdDate: args["createdDate"]
+            }).then( result => {
+                queryObj = result.ops[0];
             });
+
+            return queryObj;
         },
+        updateQuery: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').update({_id: mongoDb.ObjectID(args["_id"])}, {$set: {
+                queryObj: args["queryObj"],
+                name: args["name"],
+                description: args["description"],
+                createdDate: args["createdDate"]
+            }});
+        },
+        deleteQuery: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').remove({_id:  mongoDb.ObjectID(args["_id"])});
+        }
     },
     StringOrFloat: new GraphQLScalarType({
         name: "StringOrFloat",

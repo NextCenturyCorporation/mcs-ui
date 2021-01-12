@@ -41,7 +41,7 @@ const BasicFieldDropDown = ({onSelectHandler, options, isDisabled}) => {
 
 const HistoryFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
     return (
-        <Query query={history_field_aggregation} variables={{"fieldName": fieldName}} fetchPolicy={'network-only'}>
+        <Query query={history_field_aggregation} variables={{"fieldName": fieldName}}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 
@@ -61,7 +61,7 @@ const HistoryFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
 
 const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
     return (
-        <Query query={scene_field_aggregation} variables={{"fieldName": fieldName}} fetchPolicy={'network-only'}>
+        <Query query={scene_field_aggregation} variables={{"fieldName": fieldName}}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 

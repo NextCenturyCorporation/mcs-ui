@@ -26,7 +26,6 @@ class LoginApp extends React.Component {
     createAccount = async() => {
         $("#create-account-feedback").removeClass("feedback-display");
         try {
-            console.log(this.state);
             let results = await accountsPassword.createUser({
                 username: this.state.createUserName,
                 password: this.state.createPassword,

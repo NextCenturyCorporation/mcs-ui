@@ -14,7 +14,7 @@ const create_complex_query = gql`
 const Results = ({queryObj}) => {
 
     return (
-        <Query query={create_complex_query} variables={{"queryObject": queryObj}} fetchPolicy={'network-only'}>
+        <Query query={create_complex_query} variables={{"queryObject": queryObj}}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Results are currently loading ... </div> 

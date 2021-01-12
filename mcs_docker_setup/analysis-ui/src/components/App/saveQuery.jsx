@@ -4,10 +4,12 @@ import Button from 'react-bootstrap/Button';
 import {useMutation} from 'react-apollo';
 import gql from 'graphql-tag';
 
+const SAVE_QUERY_NAME = "saveQuery";
 const SAVE_QUERY = gql`
     mutation saveQuery($user: JSON!, $queryObj: JSON!, $name: String!, $description: String!, $createdDate: Float!){
         saveQuery(user: $user, queryObj: $queryObj, name: $name, description: $description, createdDate: $createdDate) {
             name
+            _id
         }
   }`;
 
@@ -28,10 +30,11 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
             name: queryName,
             description: queryDesc,
             createdDate: (new Date()).valueOf()
-        } });
-        updateQueryNameHandler(queryId, queryName);
-        resetSaveForm();
-        onHide();
+        } }).then((result) => {
+            updateQueryNameHandler(queryId, queryName, result.data[SAVE_QUERY_NAME]["_id"]);
+            resetSaveForm();
+            onHide();
+        });
     };
 
     const closeModal = () => {

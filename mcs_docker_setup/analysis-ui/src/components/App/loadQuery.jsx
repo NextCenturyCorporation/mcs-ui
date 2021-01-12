@@ -13,6 +13,7 @@ const LOAD_SAVED_QUERIES = gql`
             queryObj
             description
             createdDate
+            _id
         }
     }`;
 
@@ -34,7 +35,7 @@ function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
                 <Modal.Title id="contained-modal-title-vcenter-load">Load Query</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Query query={LOAD_SAVED_QUERIES} fetchPolicy={'network-only'}>
+                <Query query={LOAD_SAVED_QUERIES}>
                 {
                     ({ loading, error, data }) => {
                         if (loading) return <div>Loading ...</div> 

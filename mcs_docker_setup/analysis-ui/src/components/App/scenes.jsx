@@ -225,7 +225,7 @@ class Scenes extends React.Component {
             <Query query={mcs_history} variables={
                 {"testType": this.props.value.test_type, 
                 "sceneNum": this.props.value.scene_num
-                }} fetchPolicy='network-only'>
+                }}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
