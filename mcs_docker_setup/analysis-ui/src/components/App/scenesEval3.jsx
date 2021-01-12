@@ -48,11 +48,9 @@ const mcs_scene= gql`
             performerStart
             objects
             goal
-            answer
             eval
-            test_type
-            scene_num
-            scene_part_num
+            sceneNumber
+            sequenceNumber
         }
   }`;
 

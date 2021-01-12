@@ -85,6 +85,8 @@ const mcsTypeDefs = gql`
     test_type: String
     scene_num: String
     scene_part_num: String
+    sequenceNumber: Int
+    sceneNumber: Int
   }
 
   type SubmissionPerformer {
