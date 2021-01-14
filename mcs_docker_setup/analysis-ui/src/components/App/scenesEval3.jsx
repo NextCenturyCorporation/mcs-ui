@@ -43,29 +43,6 @@ const create_complex_query = gql`
         createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
     }`;
 
-const mcs_history = gql`
-    query getEval3History($categoryType: String!, $sceneNum: Int!){
-        getEval3History(categoryType: $categoryType, sceneNum: $sceneNum) {
-            eval
-            performer
-            name
-            test_type
-            scene_num
-            scene_part_num
-            score
-            steps
-            flags
-            step_counter
-            category
-            category_type
-            category_pair
-            scene_goal_id
-            metadata
-            filename
-            fileTimestamp
-        }
-  }`;
-
 const mcs_scene= gql`
     query getEval3Scene($sceneName: String, $sceneNum: Int){
         getEval3Scene(sceneName: $sceneName, sceneNum: $sceneNum) {
@@ -470,14 +447,14 @@ class ScenesEval3 extends React.Component {
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
-                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank">Heatmap</a>
+                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>}
                                                     </div> 
                                                 }
@@ -541,11 +518,11 @@ class ScenesEval3 extends React.Component {
                                                             </div>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>} 
                                                         </div>
                                                     }

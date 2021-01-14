@@ -87,6 +87,7 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired
 };
 
+// TODO: rename to be more generic?
 class QueryResultsTable extends React.Component {
     constructor(props) {
         super(props);
