@@ -7,13 +7,41 @@ import $ from 'jquery';
 import {EvalConstants} from './evalConstants';
 import QueryResultsTable from "./queryResultsTable";
 
-const historyQueryName = "getEval3History";
+const historyQueryName = "createComplexQuery";
+const historyQueryResults = "results";
 const sceneQueryName = "getEval3Scene";
 
 let constantsObject = {};
 //let currentState = {};
 let currentStep = 0;
 let currentTime = 0;
+ 
+const projectionObject = {
+    "eval": 1,
+    "performer": 1,
+    "name": 1,
+    "test_type": 1,
+    "scene_num": 1,
+    "scene_part_num": 1,
+    "scene_goal_id": 1,
+    "score": 1,
+    "steps": 1,
+    "flags": 1,
+    "metadata": 1,
+    "step_counter": 1,
+    "category": 1,
+    "category_type": 1,
+    "category_pair": 1,
+    "fullFilename": 1,
+    "filename": 1,
+    "fileTimestamp": 1,
+    "scene.goal.sceneInfo.slices": "$mcsScenes.goal.sceneInfo.slices"
+}
+
+const create_complex_query = gql`
+    query createComplexQuery($queryObject: JSON!, $projectionObject: JSON!) {
+        createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
+    }`;
 
 const mcs_history = gql`
     query getEval3History($categoryType: String!, $sceneNum: Int!){
@@ -62,6 +90,7 @@ const setConstants = function(evalNum) {
 const tableCols = [
     { dataKey: 'scene_num', title: 'Scene' },
     { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'scene.goal.sceneInfo.slices', title: 'Slices'},
     { dataKey: 'score.classification', title: 'Answer' },
     { dataKey: 'score.score_description', title: 'Score'},
     { dataKey: 'score.confidence', title: 'Confidence' },
@@ -343,22 +372,27 @@ class ScenesEval3 extends React.Component {
             includeButton: true, 
             columnKey: 'scene_num', 
             currentValue: this.state.currentSceneNum,
+            displayItemFullText: true,
             buttonClickHandler: this.updateSceneFromTable,
             buttonClassHandler: this.getButtonClass,
             buttonLabelHandler: this.getSceneButtonLabel
         };
 
         return (
-            <Query query={mcs_history} variables={
-                {   "categoryType":  this.props.value.category_type,
-                    "sceneNum": parseInt(this.props.value.scene_num)
+            <Query query={create_complex_query} variables={
+                {
+                    "queryObject":  this.getSceneHistoryQueryObject(
+                        this.props.value.category_type,
+                        this.props.value.scene_num
+                    ), 
+                    "projectionObject": projectionObject
                 }} fetchPolicy='network-only'>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
                     
-                    const evals = data[historyQueryName];
+                    const evals = data[historyQueryName][historyQueryResults];
                     //console.log(evals);
 
                     let sortedScenes =  _.sortBy(evals, "scene_part_num");

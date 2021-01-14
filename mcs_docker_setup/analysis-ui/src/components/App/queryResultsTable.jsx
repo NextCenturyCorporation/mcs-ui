@@ -204,6 +204,65 @@ class QueryResultsTable extends React.Component {
         }
     }
 
+    convertArrayToString = (arrayToConvert) => {
+        let newStr = "";
+        for(let i=0; i < arrayToConvert.length; i++) {
+            newStr = newStr + this.convertValueToString(arrayToConvert[i]);
+
+            if(i < arrayToConvert.length -1) {
+                newStr = newStr + ", ";
+            }
+        }
+
+        return newStr;
+    }
+
+    convertValueToString = (valueToConvert) => {
+        if(Array.isArray(valueToConvert) && valueToConvert !== null) {
+            return this.convertArrayToString(valueToConvert);
+        }
+
+        if(typeof valueToConvert === 'object' && valueToConvert !== null) {
+            return this.convertObjectToString(valueToConvert);
+        }
+
+        if(valueToConvert === true) {
+            return "true";
+        } 
+
+        if(valueToConvert === false) {
+            return "false";
+        } 
+
+        if(!isNaN(valueToConvert)) {
+            return Math.floor(valueToConvert * 100) / 100;
+        }
+
+        return valueToConvert;
+    }
+
+    displayItemText(row, dataKey) {
+        let item = _.get(row, dataKey);
+        
+        if(item !== undefined && item !== null) {
+            return this.convertValueToString(item);
+        } else {
+            return "";
+        }
+    }
+
+    getToolTipTextForTable = (rowItem, key) => {
+        return this.displayItemText(rowItem, key);
+    }
+
+    getCellTextClass = () => {
+        if(this.props.displayOptions && this.props.displayOptions.displayItemFullText === true) {
+            return "";
+        } else {
+            return "table-cell-wrap-text";
+        }
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -251,7 +310,7 @@ class QueryResultsTable extends React.Component {
                                                 this.props.displayOptions.showAnalysisPageLink === true && 
                                                 <TableCell key={'table_cell_' + rowKey + "_link"}>
                                                     <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
-                                                        <div className="table-cell-wrap-text">
+                                                        <div className={this.getCellTextClass()}>
                                                             <Link to={this.getAnalysisPageURL(rowItem)} target="_blank">View Details</Link>
                                                         </div>
                                                     </ToolTipWithStyles>
@@ -261,7 +320,7 @@ class QueryResultsTable extends React.Component {
                                             {columnData.map((columnItem, columnKey) => (
                                                 <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
                                                     <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>
-                                                        <div className="table-cell-wrap-text">
+                                                        <div className={this.getCellTextClass()}>
                                                             {this.props.displayOptions !== undefined &&
                                                                 this.props.displayOptions.includeButton === true && 
                                                                 columnItem.dataKey === this.props.displayOptions.columnKey &&
@@ -271,13 +330,13 @@ class QueryResultsTable extends React.Component {
                                                                 id={columnItem.dataKey + "_btn_" + _.get(rowItem, columnItem.dataKey)} 
                                                                 type="button"
                                                                 onClick={() => this.props.displayOptions.buttonClickHandler(_.get(rowItem, columnItem.dataKey))}>
-                                                                    {this.getButtonText(_.get(rowItem, columnItem.dataKey))}
+                                                                    {this.getButtonText(this.displayItemText(rowItem, columnItem.dataKey))}
                                                             </button>}
                                                             {((this.props.displayOptions === undefined ||
                                                                 this.props.displayOptions.includeButton !== true) ||
                                                                 (this.props.displayOptions.includeButton === true && 
                                                                 columnItem.dataKey !== this.props.displayOptions.columnKey)) &&
-                                                                _.get(rowItem, columnItem.dataKey)
+                                                                this.displayItemText(rowItem, columnItem.dataKey)
                                                             }
                                                         </div>
                                                     </ToolTipWithStyles>
@@ -312,7 +371,7 @@ class QueryResultsTable extends React.Component {
                                                     {columnData.map((columnItem, columnKey) => (
                                                         <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
                                                             <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>
-                                                                <div className="table-cell-wrap-text">
+                                                                <div className={this.getCellTextClass()}>
                                                                     {_.get(rowItem, columnItem.dataKey)}
                                                                 </div>
                                                             </ToolTipWithStyles>
