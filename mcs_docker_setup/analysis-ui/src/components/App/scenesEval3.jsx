@@ -91,14 +91,14 @@ const tableCols = [
     { dataKey: 'scene_num', title: 'Scene' },
     { dataKey: 'scene_goal_id', title: 'Goal ID'},
     { dataKey: 'scene.goal.sceneInfo.slices', title: 'Slices'},
-    { dataKey: 'score.classification', title: 'Answer' },
+    { dataKey: 'score.classification', title: 'Classification' },
     { dataKey: 'score.score_description', title: 'Score'},
     { dataKey: 'score.confidence', title: 'Confidence' }
 ]
 
 const groupingOptions = [
     { value: '', label: 'None' },
-    { value: 'score.classification', label: 'Answer' },
+    { value: 'score.classification', label: 'Classification' },
     { value: 'score.score_description', label: 'Score'},
     { value: 'score.confidence', label: 'Confidence' }
 ]
