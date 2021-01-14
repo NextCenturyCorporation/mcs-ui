@@ -20,6 +20,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
+import PerformanceStatistics from './performanceStatistics';
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -256,7 +257,7 @@ class QueryResultsTable extends React.Component {
                             }
                             {this.state.groupBy !== "" && 
                                 <>
-                                    {Object.keys(groupedData).map(key => {return (
+                                    {Object.keys(groupedData).sort().map(key => {return (
                                         <React.Fragment key={"react_frag_row_" + key}>
                                             <TableRow key={"grouped_table_row_" + key}>
                                                 <TableCell colSpan={columnData.length} onClick={this.expandRow.bind(null, key)}>
@@ -265,7 +266,10 @@ class QueryResultsTable extends React.Component {
                                                             {this.groups[key] ? "expand_more" : "chevron_right"}
                                                         </Icon>
                                                     </IconButton>
-                                                    <span>{key + " (" + groupedData[key].length +  " - " + ((groupedData[key].length/rows.length*100).toFixed(1)) + "%)"}</span>
+                                                    <span>
+                                                        {key + " (" + groupedData[key].length +  " - " + ((groupedData[key].length/rows.length*100).toFixed(1)) + "%)"}
+                                                    </span>
+                                                    <PerformanceStatistics resultsData={groupedData[key]}/>
                                                 </TableCell>
                                             </TableRow>
 
