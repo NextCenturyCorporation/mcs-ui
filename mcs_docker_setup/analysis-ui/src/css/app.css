@@ -831,6 +831,14 @@ ol, ul {
     align-self: flex-end;
 }
 
+.query-num-performance {
+    color: #646464;
+    font-size: 12px;
+    margin: 0 0 8px 20px;
+    align-self: flex-end;
+    display: inline-block;
+}
+
 .results-group-chooser {
     top: -75px;
     right: 30px;
