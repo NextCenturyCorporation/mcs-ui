@@ -138,7 +138,8 @@ const mcsTypeDefs = gql`
     getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
     getAllHistoryFields: [dropDownObj]
-    getAllSceneFields: [dropDownObj],
+    getAllSceneFields: [dropDownObj]
+    getCollectionFields(collectionName: String): [dropDownObj]
     createComplexQuery(queryObject: JSON): JSON
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
@@ -192,7 +193,11 @@ const mcsResolvers = {
             }
         },
         getSceneFieldAggregation: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_scenes').distinct(args["fieldName"]).then(result => {return result});
+            if(args["eval"]) {
+                return await mcsDB.db.collection('mcs_scenes').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
+            } else {
+                return await mcsDB.db.collection('mcs_scenes').distinct(args["fieldName"]).then(result => {return result});
+            }
         },
         getEvalByTest: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({'test': args["test"]})
@@ -273,6 +278,30 @@ const mcsResolvers = {
                         returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
                     } else {
                         returnArray.push({label: sceneKeys[i], value: sceneKeys[i]});
+                    }
+                }
+            }
+
+            return returnArray;
+        },
+        getCollectionFields: async(obj, args, context, infow) => {
+            let returnArray = [];
+            const results =  await mcsDB.db.collection('collection_keys').findOne({"name": args["collectionName"]});
+            const resultKeys = results.keys;
+
+            for(let i=0; i < resultKeys.length; i++) {
+                if(!sceneExcludeFields.includes(resultKeys[i]) && args["collectionName"].indexOf("Scene") > -1) {
+                    if (resultKeys[i] in sceneFieldLabelMap) {
+                        returnArray.push({label: sceneFieldLabelMap[resultKeys[i]], value: resultKeys[i]});
+                    } else {
+                        returnArray.push({label: resultKeys[i], value: resultKeys[i]});
+                    }
+                }
+                if(!historyExcludeFields.includes(resultKeys[i]) && args["collectionName"].indexOf("Result") > -1 ) {
+                    if (resultKeys[i] in historyFieldLabelMap) {
+                        returnArray.push({label: historyFieldLabelMap[resultKeys[i]], value: resultKeys[i]});
+                    } else {
+                        returnArray.push({label: resultKeys[i], value: resultKeys[i]});
                     }
                 }
             }

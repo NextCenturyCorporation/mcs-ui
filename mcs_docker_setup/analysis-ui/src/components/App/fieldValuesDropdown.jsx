@@ -7,13 +7,13 @@ const historyFieldQueryName = "getHistorySceneFieldAggregation";
 const sceneFieldQueryName = "getSceneFieldAggregation";
 
 const history_field_aggregation = gql`
-    query getHistorySceneFieldAggregation($fieldName: String!){
-        getHistorySceneFieldAggregation(fieldName: $fieldName) 
+    query getHistorySceneFieldAggregation($fieldName: String!, $eval: String!){
+        getHistorySceneFieldAggregation(fieldName: $fieldName, eval: $eval) 
   }`;
 
 const scene_field_aggregation= gql`
-    query getSceneFieldAggregation($fieldName: String!){
-        getSceneFieldAggregation(fieldName: $fieldName) 
+    query getSceneFieldAggregation($fieldName: String!, $eval: String!){
+        getSceneFieldAggregation(fieldName: $fieldName, eval: $eval) 
   }`;
 
 const convertArrayToArrayObject = (arrayToConvert) => {
@@ -39,9 +39,9 @@ const BasicFieldDropDown = ({onSelectHandler, options, isDisabled}) => {
     );
 }
 
-const HistoryFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
+const HistoryFieldValueDropDown = ({fieldName, selectFieldValueHandler, evalName}) => {
     return (
-        <Query query={history_field_aggregation} variables={{"fieldName": fieldName}}>
+        <Query query={history_field_aggregation} variables={{"fieldName": fieldName, "eval": evalName}}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 
@@ -59,9 +59,9 @@ const HistoryFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
     );
 };
 
-const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
+const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler,  evalName}) => {
     return (
-        <Query query={scene_field_aggregation} variables={{"fieldName": fieldName}}>
+        <Query query={scene_field_aggregation} variables={{"fieldName": fieldName, "eval": evalName}}>
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 
@@ -80,10 +80,11 @@ const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler}) => {
 }
 
 const FieldDropdownSelector =({fieldType, fieldName, selectFieldValueHandler}) => {
+    const evalName = fieldType.substring(fieldType.indexOf('.') + 1);
     if(fieldType.indexOf('mcs_history') > -1 && fieldName !== "") {
-        return(<HistoryFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler}/>);
+        return(<HistoryFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler} evalName={evalName}/>);
     } else if (fieldType.indexOf('mcs_scenes') > -1 && fieldName !== "") {
-        return(<SceneFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler}/>);
+        return(<SceneFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler} evalName={evalName}/>);
     } else {
         return(<BasicFieldDropDown options={{}} isDisabled={true}/>)
     }
