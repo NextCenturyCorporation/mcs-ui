@@ -3,20 +3,11 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import Select from 'react-select';
 
-const allHistoryQueryName = "getAllHistoryFields";
-const allSceneQueryName = "getAllSceneFields";
+const collectionFieldsQueryName = "getCollectionFields";
 
-const all_history_fields = gql`
-    query getAllHistoryFields{
-        getAllHistoryFields {
-            value 
-            label
-        }
-    }`;
-
-const all_scene_fields = gql`
-    query getAllSceneFields{
-        getAllSceneFields {
+const all_collection_fields = gql`
+    query getCollectionFields($collectionName: String!){
+        getCollectionFields(collectionName: $collectionName) {
             value 
             label
         }
@@ -36,15 +27,15 @@ const BasicFieldDropDown = ({onSelectHandler, options, isDisabled}) => {
     );
 }
 
-const HistoryFieldDropDown = ({onSelectHandler}) => {
+const CollectionFieldDropDown = ({collectionName, onSelectHandler}) => {
     return (
-        <Query query={all_history_fields}>
+        <Query query={all_collection_fields} variables={{"collectionName": collectionName}}> 
         {
             ({ loading, error, data }) => {
                 if (loading) return <div>Loading ...</div> 
                 if (error) return <div>Error</div>
                 
-                const options = data[allHistoryQueryName].sort((a, b) => (a.label > b.label) ? 1 : -1);
+                const options = data[collectionFieldsQueryName].sort((a, b) => (a.label > b.label) ? 1 : -1);
 
                 return (
                     <BasicFieldDropDown onSelectHandler={onSelectHandler} options={options} isDisabled={false}/>
@@ -55,30 +46,9 @@ const HistoryFieldDropDown = ({onSelectHandler}) => {
     );
 };
 
-const SceneFieldDropDown = ({onSelectHandler}) => {
-    return (
-        <Query query={all_scene_fields}>
-        {
-            ({ loading, error, data }) => {
-                if (loading) return <div>Loading ...</div> 
-                if (error) return <div>Error</div>
-                
-                const options = data[allSceneQueryName].sort((a, b) => (a.label > b.label) ? 1 : -1);
-
-                return (
-                    <BasicFieldDropDown onSelectHandler={onSelectHandler} options={options} isDisabled={false}/>
-                )
-            }
-        }
-        </Query>
-    );
-}
-
 const FieldSelector =({fieldType, onSelectHandler}) => {
-    if(fieldType.indexOf('mcs_history') > -1) {
-        return(<HistoryFieldDropDown onSelectHandler={onSelectHandler}/>);
-    } else if (fieldType.indexOf('mcs_scenes') > -1) {
-        return(<SceneFieldDropDown onSelectHandler={onSelectHandler}/>);
+    if(fieldType.indexOf('mcs_history') > -1 || fieldType.indexOf('mcs_scenes') > -1) {
+        return(<CollectionFieldDropDown collectionName={fieldType.substring(fieldType.indexOf('.') + 1)} onSelectHandler={onSelectHandler}/>);
     } else {
         return(<BasicFieldDropDown options={{}} isDisabled={true}/>)
     }
