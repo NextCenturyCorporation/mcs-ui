@@ -277,6 +277,10 @@ ol, ul {
     margin: 5px 10px 10px 10px;
 }
 
+.score-header-btn-group {
+    padding-bottom: 40px;
+}
+
 .score-table-div .table, .object-contents .table {
     border: 1px solid black;
     padding: 5px 15px 5px 15px; 

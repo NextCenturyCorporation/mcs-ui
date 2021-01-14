@@ -5,6 +5,7 @@ import _ from "lodash";
 import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
+import QueryResultsTable from "./queryResultsTable";
 
 const historyQueryName = "getEval3History";
 const sceneQueryName = "getEval3Scene";
@@ -57,6 +58,21 @@ const mcs_scene= gql`
 const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
+
+const tableCols = [
+    { dataKey: 'scene_num', title: 'Scene' },
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'score.classification', title: 'Answer' },
+    { dataKey: 'score.score_description', title: 'Score'},
+    { dataKey: 'score.confidence', title: 'Confidence' },
+    { dataKey: 'score.mse_loss', title: 'MSE'}
+]
+
+const groupingOptions = [
+    { value: 'score.classification', label: 'Answer' },
+    { value: 'score.score_description', label: 'Score'},
+    { value: 'score.confidence', label: 'Confidence' }
+]
 
 // TODO: Merge back in with Scenes view?
 class ScenesEval3 extends React.Component {
@@ -310,7 +326,28 @@ class ScenesEval3 extends React.Component {
         }
     }
 
+    getButtonClass = (currentIndex) => {
+        return this.state.currentSceneNum === currentIndex - 1 ? 'btn btn-primary active' : 'btn btn-secondary';
+    }
+
+    updateSceneFromTable = (currentIndex) => {
+        this.changeScene(currentIndex - 1);
+    }
+
+    getSceneButtonLabel = (value) => {
+        return "Scene " + value
+    }
+
     render() {
+        let displayOptions = {
+            includeButton: true, 
+            columnKey: 'scene_num', 
+            currentValue: this.state.currentSceneNum,
+            buttonClickHandler: this.updateSceneFromTable,
+            buttonClassHandler: this.getButtonClass,
+            buttonLabelHandler: this.getSceneButtonLabel
+        };
+
         return (
             <Query query={mcs_history} variables={
                 {   "categoryType":  this.props.value.category_type,
@@ -413,53 +450,34 @@ class ScenesEval3 extends React.Component {
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
                                                 </div>
-                                                <div className="metadata-group btn-group" role="group">
-                                                    {metadataList.map((metadataLvl, key) =>
-                                                        <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                            id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
-                                                            onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
-                                                                {this.getPrettyMetadataLabel(metadataLvl)}
-                                                        </button>
-                                                    )}
+                                                <div className="score-header-btn-group">
+                                                    <div className="metadata-group btn-group" role="group">
+                                                        {metadataList.map((metadataLvl, key) =>
+                                                            <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
+                                                                onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
+                                                                    {this.getPrettyMetadataLabel(metadataLvl)}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="performer-group btn-group" role="group">
+                                                        {performerList.map((performer, key) =>
+                                                            <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
+                                                                onClick={() => this.setStateObject('currentPerformer', performer)}>
+                                                                    {performer}
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <div className="performer-group btn-group" role="group">
-                                                    {performerList.map((performer, key) =>
-                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                            id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
-                                                            onClick={() => this.setStateObject('currentPerformer', performer)}>
-                                                                {performer}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                                <div className="score-table-div">
-                                                    <table className="score-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Select Scene</th>
-                                                                <th>Goal Id</th>
-                                                                <th>Answer</th>
-                                                                <th>Score</th>
-                                                                <th>Confidence</th>
-                                                                <th>MSE</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].map((scoreObj, key) => 
-                                                                <tr key={'peformer_score_row_' + key}>
-                                                                    <td>
-                                                                        <button key={"scene_button_" + scoreObj.scene_num} 
-                                                                            className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                        id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
-                                                                    </td>
-                                                                    <td>{scoreObj.scene_goal_id}</td>
-                                                                    <td>{scoreObj.score.classification}</td>
-                                                                    <td>{scoreObj.score.score_description}</td>
-                                                                    <td>{scoreObj.score.confidence}</td>
-                                                                    <td>{scoreObj.score.mse_loss}</td>
-                                                                </tr>
-                                                            )}
-                                                        </tbody>
-                                                    </table>
+
+                                                <div className="query-results-holder">
+                                                    {this.checkIfScenesExist(scenesByPerformer) && 
+                                                        <QueryResultsTable columns={tableCols} 
+                                                            rows={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
+                                                            groupByOptions={groupingOptions}
+                                                            displayOptions={displayOptions}/>
+                                                    }
                                                 </div>
                                                 <div className="scenes_header">
                                                     <h3>View Selected Scene Info</h3>

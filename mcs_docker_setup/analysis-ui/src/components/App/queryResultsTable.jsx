@@ -188,6 +188,22 @@ class QueryResultsTable extends React.Component {
         }
     }
 
+    getButtonText = (value) => {
+        if(this.props.displayOptions.buttonLabelHandler) {
+            return this.props.displayOptions.buttonLabelHandler(value);
+        } else {
+            return value;
+        }
+    }
+
+    getButtonClass = (value) => {
+        if(this.props.displayOptions.buttonClassHandler) {
+            return this.props.displayOptions.buttonClassHandler(value);
+        } else {
+            return "btn btn-secondary"
+        }
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -208,14 +224,17 @@ class QueryResultsTable extends React.Component {
                     <Table>
                         <TableHead>
                             <TableRow>
+                            {this.props.displayOptions !== undefined 
+                                && this.props.displayOptions.showAnalysisPageLink === true && 
                                 <TableCell key='result_table_cell_link' className="results-table-header-cell">
                                     Analysis Page Link
-                                </TableCell>
+                                </TableCell>}
 
                                 {columnData.map((item, key) => (
                                     <TableCell key={'result_table_cell_' + key} className="results-table-header-cell">
                                         <TableSortLabel active={sortBy === item.dataKey} direction={sortOrder} 
-                                            onClick={this.handleRequestSort.bind(null, item.dataKey)}>{item.title}
+                                            onClick={this.handleRequestSort.bind(null, item.dataKey)}>
+                                                {item.title}
                                         </TableSortLabel>
                                     </TableCell>
                                 ))}
@@ -228,19 +247,38 @@ class QueryResultsTable extends React.Component {
                                         groupedData.slice(this.state.page * this.state.rowsPerPage, 
                                             this.state.page * this.state.rowsPerPage + this.state.rowsPerPage) : groupedData).map((rowItem, rowKey) => (
                                         <TableRow key={'table_row_' + rowKey}>
-                                            <TableCell key={'table_cell_' + rowKey + "_link"}>
-                                                <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
-                                                    <div className="table-cell-wrap-text">
-                                                        <Link to={this.getAnalysisPageURL(rowItem)} target="_blank">View Details</Link>
-                                                    </div>
-                                                </ToolTipWithStyles>
-                                            </TableCell>
+                                            {this.props.displayOptions !== undefined &&
+                                                this.props.displayOptions.showAnalysisPageLink === true && 
+                                                <TableCell key={'table_cell_' + rowKey + "_link"}>
+                                                    <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
+                                                        <div className="table-cell-wrap-text">
+                                                            <Link to={this.getAnalysisPageURL(rowItem)} target="_blank">View Details</Link>
+                                                        </div>
+                                                    </ToolTipWithStyles>
+                                                </TableCell>
+                                            }
 
                                             {columnData.map((columnItem, columnKey) => (
                                                 <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
                                                     <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>
                                                         <div className="table-cell-wrap-text">
-                                                            {_.get(rowItem, columnItem.dataKey)}
+                                                            {this.props.displayOptions !== undefined &&
+                                                                this.props.displayOptions.includeButton === true && 
+                                                                columnItem.dataKey === this.props.displayOptions.columnKey &&
+                                                                this.props.displayOptions.buttonClickHandler &&
+                                                            <button key={columnItem.dataKey + "_button_" + _.get(rowItem, columnItem.dataKey)} 
+                                                                className={this.getButtonClass(_.get(rowItem, columnItem.dataKey))}
+                                                                id={columnItem.dataKey + "_btn_" + _.get(rowItem, columnItem.dataKey)} 
+                                                                type="button"
+                                                                onClick={() => this.props.displayOptions.buttonClickHandler(_.get(rowItem, columnItem.dataKey))}>
+                                                                    {this.getButtonText(_.get(rowItem, columnItem.dataKey))}
+                                                            </button>}
+                                                            {((this.props.displayOptions === undefined ||
+                                                                this.props.displayOptions.includeButton !== true) ||
+                                                                (this.props.displayOptions.includeButton === true && 
+                                                                columnItem.dataKey !== this.props.displayOptions.columnKey)) &&
+                                                                _.get(rowItem, columnItem.dataKey)
+                                                            }
                                                         </div>
                                                     </ToolTipWithStyles>
                                                 </TableCell>

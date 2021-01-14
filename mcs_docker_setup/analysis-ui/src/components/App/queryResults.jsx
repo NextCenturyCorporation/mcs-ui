@@ -34,7 +34,8 @@ const Results = ({queryObj}) => {
                     optionsToAdd.push({value: "scene." + key, label: data[complexQueryName].sceneMap[key]});
                 }
 
-                const options = noneOption.concat(optionsToAdd.sort((a, b) => (a.label > b.label) ? 1 : -1));
+                const groupByOptions = noneOption.concat(optionsToAdd.sort((a, b) => (a.label > b.label) ? 1 : -1));
+                const displayOptions = {showAnalysisPageLink: true};
 
                 if(resultsData.length === 0) {
                     return (
@@ -49,7 +50,7 @@ const Results = ({queryObj}) => {
                                     Display: {resultsData.length} Results
                                 </div>
                             </div>
-                            <QueryResultsTable columns={columns} rows={resultsData} groupByOptions={options}/>
+                            <QueryResultsTable columns={columns} rows={resultsData} groupByOptions={groupByOptions} displayOptions={displayOptions}/>
                         </div>
                     );
                 }
