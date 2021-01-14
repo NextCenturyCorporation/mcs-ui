@@ -270,7 +270,15 @@ class QueryResultsTable extends React.Component {
                                             </TableRow>
 
                                             {this.groups[key] && groupedData[key].map((rowItem, rowKey) => (
-                                                <TableRow key={'table_row_' + rowKey}>
+                                                <TableRow key={'table_row_grouped_' + rowKey}>
+                                                    <TableCell key={'table_cell_grouped_' + rowKey + "_link"}>
+                                                    <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
+                                                        <div className="table-cell-wrap-text">
+                                                            <Link to={this.getAnalysisPageURL(rowItem)} target="_blank">View Details</Link>
+                                                        </div>
+                                                    </ToolTipWithStyles>
+                                                </TableCell>
+
                                                     {columnData.map((columnItem, columnKey) => (
                                                         <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
                                                             <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>
