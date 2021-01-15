@@ -3,6 +3,7 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
 import QueryResultsTable from './queryResultsTable';
+import PerformanceStatistics from './performanceStatistics';
 
 const complexQueryName = "createComplexQuery";
 
@@ -47,8 +48,9 @@ const Results = ({queryObj}) => {
                             <div className="query-results-header">
                                 <h5>Query Results</h5>
                                 <div className="query-num-results">
-                                    Display: {resultsData.length} Results
+                                    Display: {resultsData.length} Results 
                                 </div>
+                                <PerformanceStatistics resultsData={resultsData}/>
                             </div>
                             <QueryResultsTable columns={columns} rows={resultsData} groupByOptions={groupByOptions} displayOptions={displayOptions}/>
                         </div>

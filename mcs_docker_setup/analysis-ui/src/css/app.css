@@ -418,6 +418,10 @@ ol, ul {
     width: 250px;
 }
 
+.query-collection-value-selector {
+    width: 400px;
+}
+
 .query-function-selector {
     width: 180px;
 }
@@ -833,6 +837,14 @@ ol, ul {
     font-size: 12px;
     margin: 0 0 8px 15px;
     align-self: flex-end;
+}
+
+.query-num-performance {
+    color: #646464;
+    font-size: 12px;
+    margin: 0 0 8px 20px;
+    align-self: flex-end;
+    display: inline-block;
 }
 
 .results-group-chooser {

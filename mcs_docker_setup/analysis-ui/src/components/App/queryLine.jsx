@@ -110,7 +110,15 @@ class QueryLineItem extends React.Component {
     }
 
     selectDropDownValue = (event) => {
-        this.setState({fieldValue1: event.value});
+        let valueToSet = "";
+        for(let i=0; i < event.length; i ++){
+            valueToSet = valueToSet + event[i].value;
+            if(i < event.length -1) {
+                valueToSet = valueToSet + "__,__"
+            }
+        }
+
+        this.setState({fieldValue1: valueToSet});
     }
 
     selectFieldValue1 = ({target}) => {
