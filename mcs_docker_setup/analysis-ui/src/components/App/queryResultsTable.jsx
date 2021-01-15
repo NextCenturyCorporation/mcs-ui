@@ -219,6 +219,19 @@ class QueryResultsTable extends React.Component {
         return newStr;
     }
 
+    convertObjectToString = (objectToConvert) => {
+        let newStr = "";
+        Object.keys(objectToConvert).forEach((key, index) => {
+            newStr = newStr + key + ": " + this.convertValueToString(objectToConvert[key]);
+
+            if(index < Object.keys(objectToConvert).length - 1) {
+                newStr = newStr + ", ";
+            }
+        })
+
+        return newStr;
+    }
+
     convertValueToString = (valueToConvert) => {
         if(Array.isArray(valueToConvert) && valueToConvert !== null) {
             return this.convertArrayToString(valueToConvert);
