@@ -414,6 +414,10 @@ ol, ul {
     width: 250px;
 }
 
+.query-collection-value-selector {
+    width: 400px;
+}
+
 .query-function-selector {
     width: 180px;
 }

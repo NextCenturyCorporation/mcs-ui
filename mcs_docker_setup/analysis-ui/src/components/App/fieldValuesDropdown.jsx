@@ -27,13 +27,14 @@ const convertArrayToArrayObject = (arrayToConvert) => {
 
 const BasicFieldDropDown = ({onSelectHandler, options, isDisabled}) => {
     return(
-        <div className="query-collection-selector">
+        <div className="query-collection-value-selector">
             <div className="query-builder-label">Value</div>
             <Select
                 onChange={onSelectHandler}
                 options={options}
                 placeholder="Select a value..."
                 isDisabled={isDisabled}
+                isMulti
             />
         </div>
     );
