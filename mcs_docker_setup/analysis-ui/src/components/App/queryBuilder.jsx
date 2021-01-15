@@ -20,7 +20,7 @@ const ParamDisplayByOperator =({queryLine}) => {
             <>
                 <div className="query-field-param-operator">{queryLine.functionOperator}</div>
                 <span className="material-icons query-param-spacer">add</span>
-                <div className="query-field-param">{queryLine.fieldValue1.toString()}</div>
+                <div className="query-field-param">{queryLine.fieldValue1.toString().replace(/__,__/g, ",")}</div>
             </>
         );
     }

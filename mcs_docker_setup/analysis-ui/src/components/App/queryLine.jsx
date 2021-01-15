@@ -114,7 +114,7 @@ class QueryLineItem extends React.Component {
         for(let i=0; i < event.length; i ++){
             valueToSet = valueToSet + event[i].value;
             if(i < event.length -1) {
-                valueToSet = valueToSet + ","
+                valueToSet = valueToSet + "__,__"
             }
         }
 

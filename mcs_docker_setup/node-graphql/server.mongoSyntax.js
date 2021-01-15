@@ -40,7 +40,7 @@ const createComplexMongoQuery = function(queryObj){
 
         switch(queryObj[i]["functionOperator"]) {
             case EQUALS:
-                const inObjList = queryObj[i]["fieldValue1"].split(",");
+                const inObjList = queryObj[i]["fieldValue1"].split("__,__");
                 mQueryObj = {$in: inObjList};
                 if(searchPrefix === scenesCollectionName) {
                     sceneQueryObj[searchPrefix +  queryObj[i]["fieldName"]] = mQueryObj;
