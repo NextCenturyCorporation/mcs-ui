@@ -5,6 +5,9 @@ import _ from "lodash";
 import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
+import Accordion from 'react-bootstrap/Accordion'
+import Button from 'react-bootstrap/Button'
+import Card from 'react-bootstrap/Card'
 
 const historyQueryName = "getEval3History";
 const sceneQueryName = "getEval3Scene";
@@ -310,6 +313,19 @@ class ScenesEval3 extends React.Component {
         }
     }
 
+    convertXYArrayToString = (arrayToConvert) => {
+        let newStr = "";
+        for(let i=0; i < arrayToConvert.length; i++) {
+            newStr = newStr + '(' + this.convertValueToString(arrayToConvert[i]) + ')';
+
+            if(i < arrayToConvert.length -1) {
+                newStr = newStr + ", ";
+            }
+        }
+
+        return newStr;
+    }
+
     render() {
         return (
             <Query query={mcs_history} variables={
@@ -461,6 +477,61 @@ class ScenesEval3 extends React.Component {
                                                         </tbody>
                                                     </table>
                                                 </div>
+
+                                                { (this.checkIfScenesExist(scenesByPerformer) 
+                                                    && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] !== "interactive") && 
+                                                    <div className="scores-by-step">
+                                                        <Accordion defaultActiveKey="0">
+                                                            <Card>
+                                                                <Accordion.Toggle as={Card.Header} className="scores-by-step-header" eventKey="0">
+                                                                    <div>
+                                                                        <div>
+                                                                            <h3>Selected Scene Score by Step</h3>
+                                                                        </div>
+                                                                        <div>
+                                                                            <h6>(Click Here to Expand/Collapse)</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                </Accordion.Toggle>
+                                                                <Accordion.Collapse eventKey="0">
+                                                                    <Card.Body>
+                                                                        <div className="score-table-div">
+                                                                            <table className="score-table">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Step Number</th>
+                                                                                        <th>Action</th>
+                                                                                        <th>Classification</th>
+                                                                                        <th>Confidence</th>
+                                                                                        <th>Violations ((x,y) list)</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer) !== null
+                                                                                        && this.getSceneHistoryItem(scenesByPerformer).steps.map((stepScoreObj, key) => 
+                                                                                        <tr key={'performer_score_by_step_row_' + key}>
+                                                                                            <td>{stepScoreObj.stepNumber}</td>
+                                                                                            <td>{stepScoreObj.action}</td>
+                                                                                            <td>{stepScoreObj.classification}</td>
+                                                                                            <td>{stepScoreObj.confidence}</td>
+                                                                                            <td>
+                                                                                                {stepScoreObj.action !== 'EndHabituation' && stepScoreObj.violations_xy_list !== undefined
+                                                                                                && stepScoreObj.violations_xy_list !== null &&
+                                                                                                        this.convertXYArrayToString(stepScoreObj.violations_xy_list)                                                                     
+                                                                                                }
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    )}
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>                            
+                                                                    </Card.Body>
+                                                                </Accordion.Collapse>
+                                                            </Card>
+                                                        </Accordion>
+                                                    </div>
+                                                }
+
                                                 <div className="scenes_header">
                                                     <h3>View Selected Scene Info</h3>
                                                 </div>
