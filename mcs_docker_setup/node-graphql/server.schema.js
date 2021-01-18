@@ -136,7 +136,7 @@ const mcsTypeDefs = gql`
     getFieldAggregation(fieldName: String, eval: String) : [String]
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
-    getSceneFieldAggregation(fieldName: String) : [StringOrFloat]
+    getSceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getAllHistoryFields: [dropDownObj]
     getAllSceneFields: [dropDownObj]
     getCollectionFields(collectionName: String): [dropDownObj]
