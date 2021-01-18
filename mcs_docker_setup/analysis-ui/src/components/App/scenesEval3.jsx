@@ -453,7 +453,7 @@ class ScenesEval3 extends React.Component {
                                                             <tr>
                                                                 <th>Select Scene</th>
                                                                 <th>Goal Id</th>
-                                                                <th>Answer</th>
+                                                                <th>Classification</th>
                                                                 <th>Score</th>
                                                                 <th>Confidence</th>
                                                                 <th>MSE</th>
