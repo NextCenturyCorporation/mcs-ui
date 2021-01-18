@@ -5,6 +5,12 @@ import _ from "lodash";
 import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 
 const historyQueryName = "getEval3History";
 const sceneQueryName = "getEval3Scene";
@@ -431,36 +437,39 @@ class ScenesEval3 extends React.Component {
                                                         </button>
                                                     )}
                                                 </div>
+
                                                 <div className="score-table-div">
-                                                    <table className="score-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Select Scene</th>
-                                                                <th>Goal Id</th>
-                                                                <th>Answer</th>
-                                                                <th>Score</th>
-                                                                <th>Confidence</th>
-                                                                <th>MSE</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].map((scoreObj, key) => 
-                                                                <tr key={'peformer_score_row_' + key}>
-                                                                    <td>
-                                                                        <button key={"scene_button_" + scoreObj.scene_num} 
-                                                                            className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                        id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
-                                                                    </td>
-                                                                    <td>{scoreObj.scene_goal_id}</td>
-                                                                    <td>{scoreObj.score.classification}</td>
-                                                                    <td>{scoreObj.score.score_description}</td>
-                                                                    <td>{scoreObj.score.confidence}</td>
-                                                                    <td>{scoreObj.score.mse_loss}</td>
-                                                                </tr>
-                                                            )}
-                                                        </tbody>
-                                                    </table>
+                                                    <Table className="score-table" aria-label="simple table">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>Select Scene</TableCell>
+                                                                <TableCell>Goal Id</TableCell>
+                                                                <TableCell>Answer</TableCell>
+                                                                <TableCell>Score</TableCell>
+                                                                <TableCell>Confidence</TableCell>
+                                                                <TableCell>MSE</TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                        {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].map((scoreObj, key) => 
+                                                            <TableRow key={'peformer_score_row_' + key}>
+                                                                <TableCell>
+                                                                <button key={"scene_button_" + scoreObj.scene_num} 
+                                                                    className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                    id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
+                                                                </TableCell>
+                                                                <TableCell>{scoreObj.scene_goal_id}</TableCell>
+                                                                <TableCell>{scoreObj.score.classification}</TableCell>
+                                                                <TableCell>{scoreObj.score.score_description}</TableCell>
+                                                                <TableCell>{scoreObj.score.confidence}</TableCell>
+                                                                <TableCell>{scoreObj.score.mse_loss}</TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                        </TableBody>
+                                                    </Table>      
                                                 </div>
+            
+
                                                 <div className="scenes_header">
                                                     <h3>View Selected Scene Info</h3>
                                                 </div>
