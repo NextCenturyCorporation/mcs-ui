@@ -486,7 +486,7 @@ class ScenesEval3 extends React.Component {
                                                                 <Accordion.Toggle as={Card.Header} className="scores-by-step-header" eventKey="0">
                                                                     <div>
                                                                         <div>
-                                                                            <h3>Selected Scene Score by Step</h3>
+                                                                            <h3>Selected Scene Classification by Step</h3>
                                                                         </div>
                                                                         <div>
                                                                             <h6>(Click Here to Expand/Collapse)</h6>
