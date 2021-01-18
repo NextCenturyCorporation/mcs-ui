@@ -523,6 +523,10 @@ ol, ul {
     float: right;
 }
 
+.grouped_table_row_span {
+    margin-left: 10px;
+}
+
 .nav-brand-mcs {
     width: 80px;
     height: 45px;

@@ -266,7 +266,7 @@ class QueryResultsTable extends React.Component {
                                                             {this.groups[key] ? "expand_more" : "chevron_right"}
                                                         </Icon>
                                                     </IconButton>
-                                                    <span>
+                                                    <span className="grouped_table_row_span">
                                                         {key + " (" + groupedData[key].length + ")"}
                                                     </span>
                                                     <PerformanceStatistics resultsData={groupedData[key]}/>
