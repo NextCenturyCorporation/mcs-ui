@@ -260,14 +260,14 @@ class QueryResultsTable extends React.Component {
                                     {Object.keys(groupedData).sort().map(key => {return (
                                         <React.Fragment key={"react_frag_row_" + key}>
                                             <TableRow key={"grouped_table_row_" + key}>
-                                                <TableCell colSpan={columnData.length} onClick={this.expandRow.bind(null, key)}>
-                                                    <IconButton>
+                                                <TableCell colSpan={columnData.length}>
+                                                    <IconButton onClick={this.expandRow.bind(null, key)}>
                                                         <Icon>
                                                             {this.groups[key] ? "expand_more" : "chevron_right"}
                                                         </Icon>
                                                     </IconButton>
                                                     <span>
-                                                        {key + " (" + groupedData[key].length +  " - " + ((groupedData[key].length/rows.length*100).toFixed(1)) + "%)"}
+                                                        {key + " (" + groupedData[key].length + ")"}
                                                     </span>
                                                     <PerformanceStatistics resultsData={groupedData[key]}/>
                                                 </TableCell>

@@ -27,7 +27,8 @@ class HomeCharts extends React.Component {
             passiveToggle: {value: "passiveCorrect_passiveTotal_passiveCorrectPercent", label: "Total"},
             interactiveToggle: {value: "interactiveCorrect_interactiveTotal_interactiveCorrectPercent", label: "Total"},
             agentToggle: {value: "agentCorrect_agentTotal_agentCorrectPercent", label: "Total"},
-            passiveWeightedToggle: 'weightedStats'
+            passiveWeightedToggle: 'weightedStats',
+            agentsWeightedToggle: 'weightedStats'
         }
 
         this.handleNumPercentChange = this.handleNumPercentChange.bind(this);
@@ -36,6 +37,7 @@ class HomeCharts extends React.Component {
         this.selectAgentToggle = this.selectAgentToggle.bind(this);
         this.selectInteractiveToggle = this.selectInteractiveToggle.bind(this);
         this.selectPassiveToggle = this.selectPassiveToggle.bind(this);
+        this.handleAgentsWeightedToggle = this.handleAgentsWeightedToggle.bind(this);
     }
 
     handleNumPercentChange(val) {
@@ -55,6 +57,16 @@ class HomeCharts extends React.Component {
         
         this.setState({
             passiveWeightedToggle: val[1]
+        });
+    }
+
+    handleAgentsWeightedToggle(val) {
+        if(val.length === 0) {
+            return;
+        }
+        
+        this.setState({
+            agentsWeightedToggle: val[1]
         });
     }
 
@@ -147,15 +159,15 @@ class HomeCharts extends React.Component {
                             }
 
                             // Build Agent Options Drop Down
-                            if(homeStats.stats.agentTotal > 0) {
+                            if(homeStats[this.state.agentsWeightedToggle].agentTotal > 0) {
                                 agentOptions.push({value: "agentCorrect_agentTotal_agentCorrectPercent", label: "Total"});
                                 agentOptions.push({value: "expectedTotal_null_expectedPercentTotal", label: "Total by Expected"});
                             }
-                            if (homeStats.stats.agentTotalMetadata1 > 0) {
+                            if (homeStats[this.state.agentsWeightedToggle].agentTotalMetadata1 > 0) {
                                 agentOptions.push({value: "agentCorrectMetadata1_agentTotalMetadata1_agentCorrectPercentMetadata1", label: "Metadata 1"});
                                 agentOptions.push({value: "expectedMetadata1_null_expectedPercentMetadata1", label: "Metadata 1 by Expected"});
                             }
-                            if (homeStats.stats.agentTotalMetadata2 > 0) {
+                            if (homeStats[this.state.agentsWeightedToggle].agentTotalMetadata2 > 0) {
                                 agentOptions.push({value: "agentCorrectMetadata2_agentTotalMetadata2_agentCorrectPercentMetadata2", label: "Metadata 2"});
                                 agentOptions.push({value: "expectedMetadata2_null_expectedPercentMetadata2", label: "Metadata 2 by Expected"});
                             }
@@ -168,7 +180,7 @@ class HomeCharts extends React.Component {
                             let interactiveData = homeStats.stats[interactiveSplit[0]];
 
                             const agentSplit = this.state.agentToggle.value.split("_");
-                            let agentData = homeStats.stats[agentSplit[0]];
+                            let agentData = homeStats[this.state.agentsWeightedToggle][agentSplit[0]];
 
                             //
                             let passiveLegendLabel = "Number of Correct Tests";
@@ -178,7 +190,7 @@ class HomeCharts extends React.Component {
                             if(this.state.numPercentToggle === 'percent') {
                                 passiveData = homeStats[this.state.passiveWeightedToggle][passiveSplit[2]];
                                 interactiveData = homeStats.stats[interactiveSplit[2]];
-                                agentData = homeStats.stats[agentSplit[2]];
+                                agentData = homeStats[this.state.agentsWeightedToggle][agentSplit[2]];
 
                                 passiveLegendLabel = "% Correct Tests";
                                 interactiveLegendLabel = "% Goal Achieved Tests";
@@ -212,7 +224,7 @@ class HomeCharts extends React.Component {
                                 agentLegendLabel = this.state.numPercentToggle === 'percent' ? "% Expectness Tests" : "Number of Expectness Tests";
                                 agentMaxValue = this.state.numPercentToggle === 'percent' ? 100 : agentData[agentLength][agentKeys[0]] + agentData[agentLength - 1][agentKeys[0]];
                             } else {
-                                agentMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats.stats[agentSplit[1]];
+                                agentMaxValue = this.state.numPercentToggle === 'percent' ? 100 : homeStats[this.state.agentsWeightedToggle][agentSplit[1]];
                             } 
 
                             return (
@@ -267,6 +279,12 @@ class HomeCharts extends React.Component {
                                                     options={agentOptions}
                                                     defaultValue={this.state.agentToggle}
                                                 />
+                                            </div>
+                                            <div className="chart-weight-toggle">
+                                                <ToggleButtonGroup type="checkbox" value={this.state.agentsWeightedToggle} onChange={this.handleAgentsWeightedToggle}>
+                                                    <ToggleButton variant="secondary" value={"weightedStats"}>Paired</ToggleButton>
+                                                    <ToggleButton variant="secondary" value={"stats"}>Unpaired</ToggleButton>
+                                                </ToggleButtonGroup>
                                             </div>
                                         </div>
                                         <ResultsChart chartKeys={agentKeys} chartData={agentData} chartIndex={"test_type"} maxVal={agentMaxValue} legendLabel={agentLegendLabel}/>
