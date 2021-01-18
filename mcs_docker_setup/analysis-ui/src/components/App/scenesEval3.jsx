@@ -480,10 +480,10 @@ class ScenesEval3 extends React.Component {
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) 
                                                     && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] !== "interactive") && 
-                                                    <div className="scores-by-step">
+                                                    <div className="classification-by-step">
                                                         <Accordion defaultActiveKey="0">
                                                             <Card>
-                                                                <Accordion.Toggle as={Card.Header} className="scores-by-step-header" eventKey="0">
+                                                                <Accordion.Toggle as={Card.Header} className="classification-by-step-header" eventKey="0">
                                                                     <div>
                                                                         <div>
                                                                             <h3>Selected Scene Classification by Step</h3>
@@ -508,16 +508,16 @@ class ScenesEval3 extends React.Component {
                                                                                 </thead>
                                                                                 <tbody>
                                                                                     {this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer) !== null
-                                                                                        && this.getSceneHistoryItem(scenesByPerformer).steps.map((stepScoreObj, key) => 
-                                                                                        <tr key={'performer_score_by_step_row_' + key}>
-                                                                                            <td>{stepScoreObj.stepNumber}</td>
-                                                                                            <td>{stepScoreObj.action}</td>
-                                                                                            <td>{stepScoreObj.classification}</td>
-                                                                                            <td>{stepScoreObj.confidence}</td>
+                                                                                        && this.getSceneHistoryItem(scenesByPerformer).steps.map((stepObj, key) => 
+                                                                                        <tr key={'performer_classification_by_step_row_' + key}>
+                                                                                            <td>{stepObj.stepNumber}</td>
+                                                                                            <td>{stepObj.action}</td>
+                                                                                            <td>{stepObj.classification}</td>
+                                                                                            <td>{stepObj.confidence}</td>
                                                                                             <td>
-                                                                                                {stepScoreObj.action !== 'EndHabituation' && stepScoreObj.violations_xy_list !== undefined
-                                                                                                && stepScoreObj.violations_xy_list !== null &&
-                                                                                                        this.convertXYArrayToString(stepScoreObj.violations_xy_list)                                                                     
+                                                                                                {stepObj.action !== 'EndHabituation' && stepObj.violations_xy_list !== undefined
+                                                                                                && stepObj.violations_xy_list !== null &&
+                                                                                                        this.convertXYArrayToString(stepObj.violations_xy_list)                                                                     
                                                                                                 }
                                                                                             </td>
                                                                                         </tr>
