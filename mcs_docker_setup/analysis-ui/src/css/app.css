@@ -670,6 +670,10 @@ ol, ul {
     justify-content: center;
 }
 
+.flex-chart-center svg{
+    overflow: visible !important;
+}
+
 .chart-header {
     display: flex;
     padding: 5px 0 0 20px;
