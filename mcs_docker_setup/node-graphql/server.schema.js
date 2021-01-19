@@ -140,7 +140,7 @@ const mcsTypeDefs = gql`
     getAllHistoryFields: [dropDownObj]
     getAllSceneFields: [dropDownObj]
     getCollectionFields(collectionName: String): [dropDownObj]
-    createComplexQuery(queryObject: JSON): JSON
+    createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
@@ -314,6 +314,12 @@ const mcsResolvers = {
         },
         createComplexQuery: async(obj, args, context, infow)=> {
             mongoQueryObject = createComplexMongoQuery(args['queryObject']);
+
+            if(args['projectionObject']) {
+                complexQueryProjectionObject = args['projectionObject'];
+            } else {
+                complexQueryProjectionObject = null;
+            }
 
             async function getComplexResults() {
                 if(complexQueryProjectionObject === null ){
