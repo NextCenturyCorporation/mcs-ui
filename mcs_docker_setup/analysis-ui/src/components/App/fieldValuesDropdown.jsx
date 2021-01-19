@@ -19,7 +19,9 @@ const scene_field_aggregation= gql`
 const convertArrayToArrayObject = (arrayToConvert) => {
     let newArray = [];
     for(let i=0; i < arrayToConvert.length; i++) {
-        newArray.push({value: arrayToConvert[i], label: arrayToConvert[i].toString()});
+        if(arrayToConvert[i] !== null &&  arrayToConvert[i] !== undefined) {
+            newArray.push({value: arrayToConvert[i], label: arrayToConvert[i].toString()});
+        }
     }
 
     return newArray.sort((a, b) => (a.label > b.label) ? 1 : -1);

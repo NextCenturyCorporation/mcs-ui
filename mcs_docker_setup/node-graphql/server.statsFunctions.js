@@ -65,7 +65,8 @@ const statsByScore = function(scoreStats, useScoreWeight){
 
     for(let i=0; i < scoreStats.length; i++) {
         if(scoreStats[i]._id.plausibililty === 0 && (scoreStats[i]._id.category === "observation" || scoreStats[i]._id.category === "passive")) {
-            if(scoreStats[i]._id.correct === 1) {
+            const isCorrect = useScoreWeight ? scoreStats[i]._id.weight_score > 0 : scoreStats[i]._id.correct === 1;
+            if(isCorrect) {
                 if(scoreStats[i]._id.test_type === "agents"){
                     updateScoreObject(agentScoreImplausibleCorrect, agentScoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     if(scoreStats[i]._id.metadata === "level1") {
@@ -103,7 +104,8 @@ const statsByScore = function(scoreStats, useScoreWeight){
                 }
             }
         } else if(scoreStats[i]._id.plausibililty === 1  && (scoreStats[i]._id.category === "observation" || scoreStats[i]._id.category === "passive")) {
-            if(scoreStats[i]._id.correct === 1) {
+            const isCorrect = useScoreWeight ? scoreStats[i]._id.weight_score > 0 : scoreStats[i]._id.correct === 1;
+            if(isCorrect) {
                 if(scoreStats[i]._id.test_type === "agents"){
                     updateScoreObject(agentScorePlausibleCorrect, agentScoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     if(scoreStats[i]._id.metadata === "level1") {
@@ -407,7 +409,8 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
                 updateTestTypeTotalsObj(interactiveOverallTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
         } else if(testTypeStats[i]._id.test_type === "agents") {
-            if(testTypeStats[i]._id.correct === 1) {
+            const isCorrect = useScoreWeight ? testTypeStats[i]._id.weight_score > 0 : testTypeStats[i]._id.correct === 1;
+            if(isCorrect) {
                 updateTestTypeScoreObj(agentScoresCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(agentOverallCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 if(testTypeStats[i]._id.metadata === "level1") {

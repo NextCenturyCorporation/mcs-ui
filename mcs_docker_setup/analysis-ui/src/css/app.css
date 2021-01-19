@@ -523,6 +523,10 @@ ol, ul {
     float: right;
 }
 
+.grouped_table_row_span {
+    margin-left: 10px;
+}
+
 .nav-brand-mcs {
     width: 80px;
     height: 45px;
@@ -664,6 +668,10 @@ ol, ul {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.flex-chart-center svg{
+    overflow: visible !important;
 }
 
 .chart-header {

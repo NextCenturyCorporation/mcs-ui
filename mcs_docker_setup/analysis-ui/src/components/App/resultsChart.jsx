@@ -54,7 +54,7 @@ const MyResponsiveBar = ({ data, keys, chartIndex, maxVal, legendLabel}) => {
         axisLeft={{ format: v => formatCategoryTypeString(v) }}
         enableGridY={false}
         enableGridX={true}
-        colors={["#00A0D2", "#444D5D", "#D95555"]}
+        colors={["#00A0D2", "#444D5D", "#D95555", "#8A55D9"]}
         labelFormat={d => <tspan></tspan>}
         legends={[
             {
