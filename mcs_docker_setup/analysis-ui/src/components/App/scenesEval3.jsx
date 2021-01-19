@@ -64,6 +64,20 @@ const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
+function getSorting(order, orderBy) {
+    return order === "desc"
+    ? (a, b) => (_.get(a, orderBy) > _.get(b, orderBy) ? -1 : 1)
+    : (a, b) => (_.get(a, orderBy) < _.get(b, orderBy) ? -1 : 1);
+}
+
+const scoreTableCols = [
+    { dataKey: 'scene_num', title: 'Scene' },
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    //{ dataKey: 'scene.goal.sceneInfo.slices', title: 'Slices'},
+    { dataKey: 'score.classification', title: 'Classification' },
+    { dataKey: 'score.score_description', title: 'Score'},
+    { dataKey: 'score.confidence', title: 'Confidence' }
+]
 // TODO: Merge back in with Scenes view?
 class ScenesEval3 extends React.Component {
 
@@ -78,7 +92,9 @@ class ScenesEval3 extends React.Component {
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            sceneNum: props.value.scene_num
+            sceneNum: props.value.scene_num,
+            sortBy: "",
+            sortOrder: "asc"
         };
     }
 
@@ -316,6 +332,15 @@ class ScenesEval3 extends React.Component {
         }
     }
 
+    handleRequestSort = (property) => {
+        let isAsc = this.state.sortBy === property && this.state.sortOrder === 'asc';
+
+        this.setState({ 
+            sortOrder: (isAsc ? 'desc' : 'asc'), 
+            sortBy: property 
+        });
+    };
+
     render() {
         return (
             <Query query={mcs_history} variables={
@@ -442,31 +467,38 @@ class ScenesEval3 extends React.Component {
                                                     <Table className="score-table" aria-label="simple table">
                                                         <TableHead>
                                                             <TableRow>
-                                                                <TableCell>Select Scene</TableCell>
-                                                                <TableCell>Goal Id</TableCell>
-                                                                <TableCell>Answer</TableCell>
-                                                                <TableCell>Score</TableCell>
-                                                                <TableCell>Confidence</TableCell>
-                                                                <TableCell>MSE</TableCell>
+                                                            {scoreTableCols.map((col, colKey) => (
+                                                                <TableCell key={"performer_score_header_cell_" + colKey}>
+                                                                    <TableSortLabel active={this.state.sortBy === col.dataKey} direction={this.state.sortOrder} 
+                                                                        onClick={() => this.handleRequestSort(col.dataKey)}>
+                                                                        {col.title}
+                                                                    </TableSortLabel>
+                                                                </TableCell>
+                                                            ))}
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
-                                                        {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].map((scoreObj, key) => 
-                                                            <TableRow key={'peformer_score_row_' + key}>
-                                                                <TableCell>
-                                                                <button key={"scene_button_" + scoreObj.scene_num} 
-                                                                    className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                    id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
-                                                                </TableCell>
-                                                                <TableCell>{scoreObj.scene_goal_id}</TableCell>
-                                                                <TableCell>{scoreObj.score.classification}</TableCell>
-                                                                <TableCell>{scoreObj.score.score_description}</TableCell>
-                                                                <TableCell>{scoreObj.score.confidence}</TableCell>
-                                                                <TableCell>{scoreObj.score.mse_loss}</TableCell>
+                                                        {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].sort(getSorting(this.state.sortOrder, this.state.sortBy)).map((scoreObj, rowKey) => 
+                                                            <TableRow key={'performer_score_row_' + rowKey}>
+                                                                {scoreTableCols.map((col, colKey) => ( 
+                                                                    <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
+                                                                        {(col.dataKey === "scene_num") &&
+                                                                            <button key={"scene_button_" + scoreObj.scene_num} 
+                                                                                className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                                id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>
+                                                                                    Scene {scoreObj.scene_num}
+                                                                            </button>
+                                                                        }
+
+                                                                        {(col.dataKey !== "scene_num") &&
+                                                                            _.get(scoreObj, col.dataKey)
+                                                                        }
+                                                                    </TableCell>
+                                                                ))}
                                                             </TableRow>
                                                         )}
                                                         </TableBody>
-                                                    </Table>      
+                                                    </Table>
                                                 </div>
             
 
