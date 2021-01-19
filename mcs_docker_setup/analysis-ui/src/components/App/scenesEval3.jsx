@@ -5,14 +5,48 @@ import _ from "lodash";
 import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 
-const historyQueryName = "getEval3History";
+const historyQueryName = "createComplexQuery";
+const historyQueryResults = "results";
 const sceneQueryName = "getEval3Scene";
 
 let constantsObject = {};
 //let currentState = {};
 let currentStep = 0;
 let currentTime = 0;
+
+const projectionObject = {
+    "eval": 1,
+    "performer": 1,
+    "name": 1,
+    "test_type": 1,
+    "scene_num": 1,
+    "scene_part_num": 1,
+    "scene_goal_id": 1,
+    "score": 1,
+    "steps": 1,
+    "flags": 1,
+    "metadata": 1,
+    "step_counter": 1,
+    "category": 1,
+    "category_type": 1,
+    "category_pair": 1,
+    "fullFilename": 1,
+    "filename": 1,
+    "fileTimestamp": 1,
+    "scene.goal.sceneInfo.slices": "$mcsScenes.goal.sceneInfo.slices"
+}
+
+const create_complex_query = gql`
+    query createComplexQuery($queryObject: JSON!, $projectionObject: JSON!) {
+        createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
+    }`;
 
 const mcs_history = gql`
     query getEval3History($categoryType: String!, $sceneNum: Int!){
@@ -58,6 +92,20 @@ const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
+function getSorting(order, orderBy) {
+    return order === "desc"
+    ? (a, b) => (_.get(a, orderBy) > _.get(b, orderBy) ? -1 : 1)
+    : (a, b) => (_.get(a, orderBy) < _.get(b, orderBy) ? -1 : 1);
+}
+
+const scoreTableCols = [
+    { dataKey: 'scene_num', title: 'Scene' },
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'scene.goal.sceneInfo.slices', title: 'Slices'},
+    { dataKey: 'score.classification', title: 'Classification' },
+    { dataKey: 'score.score_description', title: 'Score'},
+    { dataKey: 'score.confidence', title: 'Confidence' }
+]
 // TODO: Merge back in with Scenes view?
 class ScenesEval3 extends React.Component {
 
@@ -72,7 +120,9 @@ class ScenesEval3 extends React.Component {
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            sceneNum: props.value.scene_num
+            sceneNum: props.value.scene_num,
+            sortBy: "",
+            sortOrder: "asc"
         };
     }
 
@@ -163,6 +213,16 @@ class ScenesEval3 extends React.Component {
         }
 
         return valueToConvert;
+    }
+
+    displayItemText(row, dataKey) {
+        let item = _.get(row, dataKey);
+
+        if(item !== undefined && item !== null && item !== "") {
+            return this.convertValueToString(item);
+        } else {
+            return "";
+        }
     }
 
     findObjectTabName = (sceneObject) => {
@@ -310,18 +370,31 @@ class ScenesEval3 extends React.Component {
         }
     }
 
+    handleRequestSort = (property) => {
+        let isAsc = this.state.sortBy === property && this.state.sortOrder === 'asc';
+
+        this.setState({ 
+            sortOrder: (isAsc ? 'desc' : 'asc'), 
+            sortBy: property 
+        });
+    };
+
     render() {
         return (
-            <Query query={mcs_history} variables={
-                {   "categoryType":  this.props.value.category_type,
-                    "sceneNum": parseInt(this.props.value.scene_num)
-                }} fetchPolicy='network-only'>
+            <Query query={create_complex_query} variables={
+                {    
+                    "queryObject":  this.getSceneHistoryQueryObject(
+                        this.props.value.category_type,
+                        this.props.value.scene_num
+                    ), 
+                    "projectionObject": projectionObject
+                }}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
                     
-                    const evals = data[historyQueryName];
+                    const evals = data[historyQueryName][historyQueryResults];
                     //console.log(evals);
 
                     let sortedScenes =  _.sortBy(evals, "scene_part_num");
@@ -399,14 +472,14 @@ class ScenesEval3 extends React.Component {
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
-                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank">Heatmap</a>
+                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>}
                                                     </div> 
                                                 }
@@ -431,36 +504,46 @@ class ScenesEval3 extends React.Component {
                                                         </button>
                                                     )}
                                                 </div>
+
                                                 <div className="score-table-div">
-                                                    <table className="score-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Select Scene</th>
-                                                                <th>Goal Id</th>
-                                                                <th>Answer</th>
-                                                                <th>Score</th>
-                                                                <th>Confidence</th>
-                                                                <th>MSE</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].map((scoreObj, key) => 
-                                                                <tr key={'peformer_score_row_' + key}>
-                                                                    <td>
-                                                                        <button key={"scene_button_" + scoreObj.scene_num} 
-                                                                            className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                        id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>Scene {scoreObj.scene_num}</button>
-                                                                    </td>
-                                                                    <td>{scoreObj.scene_goal_id}</td>
-                                                                    <td>{scoreObj.score.classification}</td>
-                                                                    <td>{scoreObj.score.score_description}</td>
-                                                                    <td>{scoreObj.score.confidence}</td>
-                                                                    <td>{scoreObj.score.mse_loss}</td>
-                                                                </tr>
-                                                            )}
-                                                        </tbody>
-                                                    </table>
+                                                    <Table className="score-table" aria-label="simple table">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                            {scoreTableCols.map((col, colKey) => (
+                                                                <TableCell key={"performer_score_header_cell_" + colKey}>
+                                                                    <TableSortLabel active={this.state.sortBy === col.dataKey} direction={this.state.sortOrder} 
+                                                                        onClick={() => this.handleRequestSort(col.dataKey)}>
+                                                                        {col.title}
+                                                                    </TableSortLabel>
+                                                                </TableCell>
+                                                            ))}
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                        {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].sort(getSorting(this.state.sortOrder, this.state.sortBy)).map((scoreObj, rowKey) => 
+                                                            <TableRow key={'performer_score_row_' + rowKey}>
+                                                                {scoreTableCols.map((col, colKey) => ( 
+                                                                    <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
+                                                                        {(col.dataKey === "scene_num") &&
+                                                                            <button key={"scene_button_" + scoreObj.scene_num} 
+                                                                                className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                                id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>
+                                                                                    Scene {scoreObj.scene_num}
+                                                                            </button>
+                                                                        }
+
+                                                                        {(col.dataKey !== "scene_num") &&
+                                                                            this.displayItemText(scoreObj, col.dataKey)
+                                                                        }
+                                                                    </TableCell>
+                                                                ))}
+                                                            </TableRow>
+                                                        )}
+                                                        </TableBody>
+                                                    </Table>
                                                 </div>
+            
+
                                                 <div className="scenes_header">
                                                     <h3>View Selected Scene Info</h3>
                                                 </div>
@@ -489,11 +572,11 @@ class ScenesEval3 extends React.Component {
                                                             </div>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>} 
                                                         </div>
                                                     }

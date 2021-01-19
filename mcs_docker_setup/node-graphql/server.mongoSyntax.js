@@ -40,16 +40,29 @@ const createComplexMongoQuery = function(queryObj){
 
         switch(queryObj[i]["functionOperator"]) {
             case EQUALS:
-                const inObjList = queryObj[i]["fieldValue1"].split("__,__");
+                let inObjList;
+                if(isNaN(queryObj[i]["fieldValue1"])) {
+                    inObjList = queryObj[i]["fieldValue1"].split("__,__");
+                } else {
+                    inObjList = [queryObj[i]["fieldValue1"]]
+                }
+                let extraChecks = [];
                 for(let i = 0; i < inObjList.length; i++) {
-                    if(inObjList[i].toLowerCase() === "true") {
-                        inObjList[i] = true;
-                    }
-                    if(inObjList[i].toLowerCase() === "false") {
-                        inObjList[i] = false;
+                    if(isNaN(inObjList[i])){
+                        if(inObjList[i].toLowerCase() === "true") {
+                            inObjList[i] = true;
+                        }
+                        if(inObjList[i].toLowerCase() === "false") {
+                            inObjList[i] = false;
+                        }
+                    } else {
+                        if(parseFloat(inObjList[i]) !== NaN) {
+                            extraChecks.push(parseFloat(inObjList[i]))
+                        }
                     }
                 }
-                mQueryObj = {$in: inObjList};
+
+                mQueryObj = {$in: inObjList.concat(extraChecks)};
                 if(searchPrefix === scenesCollectionName) {
                     sceneQueryObj[searchPrefix +  queryObj[i]["fieldName"]] = mQueryObj;
                 } else {
