@@ -380,7 +380,8 @@ const mcsResolvers = {
                         "category": "$category",
                         "test_type": "$test_type",
                         "metadata": "$metadata",
-                        "weight": "$score.weighted_score_worth"
+                        "weight": "$score.weighted_score_worth",
+                        "weight_score": "$score.weighted_score"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
@@ -402,7 +403,8 @@ const mcsResolvers = {
                         "category": "$category",
                         "test_type": "$test_type",
                         "metadata": "$metadata",
-                        "weight": "$score.weighted_score_worth"
+                        "weight": "$score.weighted_score_worth",
+                        "weight_score": "$score.weighted_score"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
