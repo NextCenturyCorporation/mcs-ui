@@ -218,7 +218,7 @@ class ScenesEval3 extends React.Component {
     displayItemText(row, dataKey) {
         let item = _.get(row, dataKey);
 
-        if(item !== undefined && item !== null) {
+        if(item !== undefined && item !== null && item !== "") {
             return this.convertValueToString(item);
         } else {
             return "";
@@ -472,14 +472,14 @@ class ScenesEval3 extends React.Component {
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
-                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank">Heatmap</a>
+                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>}
                                                     </div> 
                                                 }
@@ -572,11 +572,11 @@ class ScenesEval3 extends React.Component {
                                                             </div>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>} 
                                                         </div>
                                                     }
