@@ -388,7 +388,7 @@ class ScenesEval3 extends React.Component {
                         this.props.value.scene_num
                     ), 
                     "projectionObject": projectionObject
-                }} fetchPolicy='network-only'>
+                }}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
