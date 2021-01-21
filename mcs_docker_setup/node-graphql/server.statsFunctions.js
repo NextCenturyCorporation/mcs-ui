@@ -69,36 +69,36 @@ const statsByScore = function(scoreStats, useScoreWeight){
             if(isCorrect) {
                 if(scoreStats[i]._id.test_type === "agents"){
                     updateScoreObject(agentScoreImplausibleCorrect, agentScoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScoreImplausibleCorrectMetadata1, agentScoreOverallCorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScoreImplausibleCorrectMetadata2, agentScoreOverallCorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 } else {
                     updateScoreObject(scoreImplausibleCorrect, scoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scoreImplausibleCorrectMetadata1, scoreOverallCorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scoreImplausibleCorrectMetadata2, scoreOverallCorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
             } else {
                 if(scoreStats[i]._id.test_type === "agents"){
                     updateScoreObject(agentScoreImplausibleIncorrect, agentScoreOverallIncorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScoreImplausibleIncorrectMetadata1, agentScoreOverallIncorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScoreImplausibleIncorrectMetadata2, agentScoreOverallIncorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 } else {
                     updateScoreObject(scoreImplausibleIncorrect, scoreOverallIncorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scoreImplausibleIncorrectMetadata1, scoreOverallIncorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scoreImplausibleIncorrectMetadata2, scoreOverallIncorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
@@ -108,36 +108,36 @@ const statsByScore = function(scoreStats, useScoreWeight){
             if(isCorrect) {
                 if(scoreStats[i]._id.test_type === "agents"){
                     updateScoreObject(agentScorePlausibleCorrect, agentScoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScorePlausibleCorrectMetadata1, agentScoreOverallCorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScorePlausibleCorrectMetadata2, agentScoreOverallCorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 } else {
                     updateScoreObject(scorePlausibleCorrect, scoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scorePlausibleCorrectMetadata1, scoreOverallCorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scorePlausibleCorrectMetadata2, scoreOverallCorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
             } else {
                 if(scoreStats[i]._id.test_type === "agents"){
                     updateScoreObject(agentScorePlausibleIncorrect, agentScoreOverallIncorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScorePlausibleIncorrectMetadata1,  agentScoreOverallIncorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(agentScorePlausibleIncorrectMetadata2,  agentScoreOverallIncorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 } else {
                     updateScoreObject(scorePlausibleIncorrect, scoreOverallIncorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1") {
+                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scorePlausibleIncorrectMetadata1,  scoreOverallIncorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2") {
+                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
                         updateScoreObject(scorePlausibleIncorrectMetadata2,  scoreOverallIncorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
@@ -389,22 +389,22 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
             if(testTypeStats[i]._id.correct === 1) {
                 updateTestTypeScoreObj(interactiveScoresCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(interactiveOverallCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-                if(testTypeStats[i]._id.metadata === "level1") {
+                if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
                     updateTestTypeScoreObj(interactiveScoresCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(interactiveOverallCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
-                if(testTypeStats[i]._id.metadata === "level2") {
+                if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
                     updateTestTypeScoreObj(interactiveScoresCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(interactiveOverallCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
             } 
             updateTestTypeScoreObj(interactiveScoresTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             updateTestTypeTotalsObj(interactiveOverallTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-            if(testTypeStats[i]._id.metadata === "level1") {
+            if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
                 updateTestTypeScoreObj(interactiveScoresTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(interactiveOverallTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
-            if(testTypeStats[i]._id.metadata === "level2") {
+            if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
                 updateTestTypeScoreObj(interactiveScoresTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(interactiveOverallTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
@@ -413,22 +413,22 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
             if(isCorrect) {
                 updateTestTypeScoreObj(agentScoresCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(agentOverallCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-                if(testTypeStats[i]._id.metadata === "level1") {
+                if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
                     updateTestTypeScoreObj(agentScoresCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(agentOverallCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
-                if(testTypeStats[i]._id.metadata === "level2") {
+                if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
                     updateTestTypeScoreObj(agentScoresCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(agentOverallCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
             } 
             updateTestTypeScoreObj(agentScoresTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             updateTestTypeTotalsObj(agentOverallTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-            if(testTypeStats[i]._id.metadata === "level1") {
+            if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
                 updateTestTypeScoreObj(agentScoresTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(agentOverallTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
-            if(testTypeStats[i]._id.metadata === "level2") {
+            if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
                 updateTestTypeScoreObj(agentScoresTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(agentOverallTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
@@ -436,22 +436,22 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
             if(testTypeStats[i]._id.correct === 1) {
                 updateTestTypeScoreObj(passiveScoresCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(passiveOverallCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-                if(testTypeStats[i]._id.metadata === "level1") {
+                if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
                     updateTestTypeScoreObj(passiveScoresCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(passiveOverallCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
-                if(testTypeStats[i]._id.metadata === "level2") {
+                if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
                     updateTestTypeScoreObj(passiveScoresCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(passiveOverallCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
             } 
             updateTestTypeScoreObj(passiveScoresTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             updateTestTypeTotalsObj(passiveOverallTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-            if(testTypeStats[i]._id.metadata === "level1") {
+            if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
                 updateTestTypeScoreObj(passiveScoresTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(passiveOverallTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
-            if(testTypeStats[i]._id.metadata === "level2") {
+            if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
                 updateTestTypeScoreObj(passiveScoresTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(passiveOverallTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
