@@ -27,7 +27,6 @@ const historyExcludeFields = [
 
 const historyExcludeFieldsTable = [
     "_id",
-    "eval",
     "flags.interest",
     "flags.remove",
     "steps.args.amount",
