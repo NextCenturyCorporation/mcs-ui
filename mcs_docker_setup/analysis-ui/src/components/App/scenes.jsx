@@ -66,7 +66,7 @@ class Scenes extends React.Component {
             flagRemove: false,
             flagInterest: false,
             testType: props.value.test_type,
-            sceneNum: props.value.scene_num
+            sceneNum: props.value.test_num
         };
     }
 
@@ -224,7 +224,7 @@ class Scenes extends React.Component {
         return (
             <Query query={mcs_history} variables={
                 {"testType": this.props.value.test_type, 
-                "sceneNum": this.props.value.scene_num
+                "sceneNum": this.props.value.test_num
                 }}>
             {
                 ({ loading, error, data }) => {
@@ -246,7 +246,7 @@ class Scenes extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"testType": this.props.value.test_type, 
-                                "sceneNum": this.props.value.scene_num
+                                "sceneNum": this.props.value.test_num
                                 }}>
                             {
                                 ({ loading, error, data }) => {
@@ -271,7 +271,7 @@ class Scenes extends React.Component {
                                                                 <div className="movie-text"><b>Scene 3:</b>&nbsp;&nbsp;{scenesInOrder[2].answer.choice}</div>
                                                             </div>
                                                             <div className="movie-center">
-                                                                <video src={constantsObject["moviesBucket"] + this.props.value.test_type + "-" + this.props.value.scene_num + constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video src={constantsObject["moviesBucket"] + this.props.value.test_type + "-" + this.props.value.test_num + constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                             <div className="movie-left-right">
                                                                 <div className="movie-text"><b>Scene 2:</b>&nbsp;&nbsp;{scenesInOrder[1].answer.choice}</div>
@@ -325,7 +325,7 @@ class Scenes extends React.Component {
                                                     { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
                                                         <div className="movie-steps-holder">
                                                             <div className="interactive-movie-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+                                                                <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.test_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
                                                             </div>
                                                             <div className="steps-holder">
                                                                 <h5>Performer Steps:</h5>
@@ -339,7 +339,7 @@ class Scenes extends React.Component {
                                                                 </div>
                                                             </div>
                                                             <div className="top-down-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.scene_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
+                                                                <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.test_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
                                                             </div>
                                                         </div> 
                                                     }

@@ -123,7 +123,7 @@ class ScenesEval3 extends React.Component {
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            sceneNum: props.value.scene_num,
+            sceneNum: props.value.test_num,
             sortBy: "",
             sortOrder: "asc"
         };
@@ -401,7 +401,7 @@ class ScenesEval3 extends React.Component {
                 {    
                     "queryObject":  this.getSceneHistoryQueryObject(
                         this.props.value.category_type,
-                        this.props.value.scene_num
+                        this.props.value.test_num
                     ), 
                     "projectionObject": projectionObject
                 }}>
@@ -443,7 +443,7 @@ class ScenesEval3 extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"sceneName": sceneNamePrefix, 
-                                "sceneNum": parseInt(this.props.value.scene_num)
+                                "sceneNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
                                 ({ loading, error, data }) => {

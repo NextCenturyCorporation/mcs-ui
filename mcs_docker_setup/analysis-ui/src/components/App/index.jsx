@@ -42,8 +42,17 @@ const AnalysisUI = ({newState, updateHandler}) => {
             newState.category_type = params.category_type;
         }
     
+        // creating backwards compatability for old URLs with "scene_num" specified
         if(params.scene_num) {
-            newState.scene_num = params.scene_num;
+            newState.test_num = params.scene_num;
+        } else {
+            if(params.test_num) {
+                newState.test_num = params.test_num;
+            }
+    
+            if(params.scene) {
+                newState.scene = params.scene;
+            }
         }
     }
 
@@ -55,7 +64,7 @@ const AnalysisUI = ({newState, updateHandler}) => {
     let isEval3 = hasEval && newState.eval.includes("3");
     let hasCatType = (newState.category_type !== undefined && newState.category_type !== null)
     let hasTestType = (newState.test_type !== undefined && newState.test_type !== null)
-    let hasSceneNum = (newState.scene_num !== undefined && newState.scene_num !== null)
+    let hasTestNum = (newState.test_num !== undefined && newState.test_num !== null)
 
     // TODO: Fix comments for eval 3
     return <div>
@@ -65,8 +74,8 @@ const AnalysisUI = ({newState, updateHandler}) => {
 
             <div className="layout-board">
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { (!isEval3) && hasTestType && hasSceneNum && <Scenes value={newState}/> }
-                { isEval3 && hasCatType && hasSceneNum && <ScenesEval3 value={newState}/> }
+                { (!isEval3) && hasTestType && hasTestNum && <Scenes value={newState}/> }
+                { isEval3 && hasCatType && hasTestNum && <ScenesEval3 value={newState}/> }
                 { newState.showComments && (!isEval3) && <CommentsComponent state={newState}/> }
             </div>
         </div>
@@ -100,8 +109,12 @@ function Login({newState, userLoginHandler}) {
                 analysisString += "&category_type=" + newState.category_type;
             } 
 
-            if(newState.scene_num) {
-                analysisString += "&scene_num=" + newState.scene_num;
+            if(newState.test_num) {
+                analysisString += "&test_num=" + newState.test_num;
+            } 
+
+            if(newState.scene) {
+                analysisString += "&scene=" + newState.scene;
             } 
 
             history.push(analysisString);
@@ -134,7 +147,8 @@ export class App extends React.Component {
         this.state.showComments = (process.env.REACT_APP_COMMENTS_ON.toLowerCase() === 'true' || process.env.REACT_APP_COMMENTS_ON === '1');
         this.state.category_type = null;
         this.state.test_type = null;
-        this.state.scene_num = null;
+        this.state.test_num = null;
+        this.state.scene = null;
     
         this.logout = this.logout.bind(this);
         this.userLoginHandler = this.userLoginHandler.bind(this);
@@ -183,15 +197,19 @@ export class App extends React.Component {
         return this.state['category_type'] !== null && this.state['category_type'] !== undefined;
     }
 
+    doesStateHaveTestNum() {
+        return this.state['test_num'] !== null && this.state['test_num'] !== undefined;
+    }
+
     doesStateHaveSceneNum() {
-        return this.state['scene_num'] !== null && this.state['scene_num'] !== undefined;
+        return this.state['scene'] !== null && this.state['scene'] !== undefined;
     }
 
     updateHandler(key, item) {
         if(key === 'test_type' && this.doesStateHaveCategoryType()) {
-            this.setState({ [key]: item, category_type: null, scene_num: null});
+            this.setState({ [key]: item, category_type: null, test_num: null, scene: null});
         } else if(key === 'category_type' && this.doesStateHaveTestType()) {
-            this.setState({ [key]: item, test_type: null, scene_num: null});
+            this.setState({ [key]: item, test_type: null, test_num: null, scene: null});
         } else {
             this.setState({ [key]: item });
         }
@@ -209,8 +227,12 @@ export class App extends React.Component {
                 analysisPath += "&category_type=" + this.state['category_type'];
             }
 
+            if(this.doesStateHaveTestNum()) {
+                analysisPath += "&test_num=" + this.state['test_num'] ;
+            }
+
             if(this.doesStateHaveSceneNum()) {
-                analysisPath += "&scene_num=" + this.state['scene_num'] ;
+                analysisPath += "&scene=" + this.state['scene'] ;
             }
         }
 

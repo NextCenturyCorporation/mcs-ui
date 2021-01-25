@@ -57,9 +57,10 @@ class ListItem extends React.Component {
         } else {
             // Property List for Eval 2 Going Forward
             let hasEvalState = this.props.state["eval"] !== undefined && this.props.state["eval"] !== null;
-            let hasSceneNumState = this.props.state["scene_num"] !== undefined && this.props.state["scene_num"] !== null;
             let hasTestTypeState = this.props.state["test_type"] !== undefined && this.props.state["test_type"] !== null;
             let hasCatTypeState = this.props.state["category_type"] !== undefined && this.props.state["category_type"] !== null;
+            let hasTestNumState = this.props.state["test_num"] !== undefined && this.props.state["test_num"] !== null;
+            let hasSceneNumState = this.props.state["scene"] !== undefined && this.props.state["scene"] !== null;
             let paramsToAppend = '';
 
             if(this.props.stateName === 'eval') {
@@ -68,18 +69,26 @@ class ListItem extends React.Component {
                 } else if(hasCatTypeState) {
                     paramsToAppend += "&category_type=" + this.props.state["category_type"];
                 }
+
+                // TODO: rename scene_num/scene_part_num in mongo
+                if(hasTestNumState) {
+                    paramsToAppend += "&test_num=" + this.props.state["test_num"];
+                }
     
                 if(hasSceneNumState) {
-                    // TODO: revisit calling param "scene_num" for eval 3 (should probably be "seq_num")
-                    paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
+                    paramsToAppend += "&scene=" + this.props.state["scene"];
                 }
                 params = "?eval=" + this.props.item + paramsToAppend;
             } else if(hasEvalState && this.props.stateName === 'test_type') {
 
                 paramsToAppend += "&test_type=" + this.props.item;
 
+                if(hasTestNumState) {
+                    paramsToAppend += "&test_num=" + this.props.state["test_num"];
+                }
+    
                 if(hasSceneNumState) {
-                    paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
+                    paramsToAppend += "&scene=" + this.props.state["scene"];
                 }
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
@@ -87,19 +96,27 @@ class ListItem extends React.Component {
 
                 paramsToAppend += "&category_type=" + this.props.item;
 
+                if(hasTestNumState) {
+                    paramsToAppend += "&test_num=" + this.props.state["test_num"];
+                }
+    
                 if(hasSceneNumState) {
-                    paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
+                    paramsToAppend += "&scene=" + this.props.state["scene"];
                 }
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
-            } else if(hasEvalState && this.props.stateName === 'scene_num') {
+            } else if(hasEvalState && this.props.stateName === 'test_num') {
                 if(hasTestTypeState) {
                     paramsToAppend += "&test_type=" + this.props.state["test_type"];
                 } else if(hasCatTypeState) {
                     paramsToAppend += "&category_type=" + this.props.state["category_type"];
                 }
 
-                paramsToAppend += "&scene_num=" + this.props.item;
+                paramsToAppend += "&test_num=" + this.props.item;
+
+                if(hasSceneNumState) {
+                    paramsToAppend += "&scene=" + this.props.state["scene"];
+                }
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
             }
@@ -217,17 +234,17 @@ class EvalNav extends React.Component {
 
                     {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("2")) &&
                     <NavDropdown title={"Test Number: " + (
-                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        (this.props.state.test_num === undefined || this.props.state.test_num === null) ? "None" : this.props.state.test_num)}
                         id="basic-nav-dropdown">
-                        <DropListItems fieldName={"scene_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        <DropListItems fieldName={"scene_num"} stateName={"test_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>}
 
 
                     {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("3")) &&
                     <NavDropdown title={"Test Number: " + (
-                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        (this.props.state.test_num === undefined || this.props.state.test_num === null) ? "None" : this.props.state.test_num)}
                         id="basic-nav-dropdown">
-                        <DropListItems fieldName={"scene_part_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        <DropListItems fieldName={"scene_part_num"} stateName={"test_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>}
                 </Nav>
             );
