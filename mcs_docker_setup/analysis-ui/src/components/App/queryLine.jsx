@@ -111,10 +111,12 @@ class QueryLineItem extends React.Component {
 
     selectDropDownValue = (event) => {
         let valueToSet = "";
-        for(let i=0; i < event.length; i ++){
-            valueToSet = valueToSet + event[i].value;
-            if(i < event.length -1) {
-                valueToSet = valueToSet + "__,__"
+        if(event !== null & event !== undefined){
+            for(let i=0; i < event.length; i ++){
+                valueToSet = valueToSet + event[i].value;
+                if(i < event.length -1) {
+                    valueToSet = valueToSet + "__,__"
+                }
             }
         }
 
