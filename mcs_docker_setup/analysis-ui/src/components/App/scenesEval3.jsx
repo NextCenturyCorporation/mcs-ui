@@ -6,7 +6,6 @@ import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 import Accordion from 'react-bootstrap/Accordion';
-import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -117,13 +116,14 @@ class ScenesEval3 extends React.Component {
         this.state = {
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
-            currentSceneNum: props.value.scene_part_num !== undefined ? parseInt(props.value.scene_part_num) - 1 : 0,
+            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) - 1 : 0,
             currentObjectNum: 0,
+            // evalName
             //flagRemove: false,
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            sceneNum: props.value.test_num,
+            testNum: props.value.test_num,
             sortBy: "",
             sortOrder: "asc"
         };
@@ -158,7 +158,28 @@ class ScenesEval3 extends React.Component {
     }
 
     changeScene = (sceneNum) => {
-        this.setState({ currentSceneNum: sceneNum});
+        if(this.state.currentSceneNum !== sceneNum) {
+            this.setState({ currentSceneNum: sceneNum});
+            let pathname = this.props.value.history.location.pathname;
+            let searchString = this.props.value.history.location.search;
+    
+            let sceneStringIndex = searchString.indexOf("&scene=");
+            let sceneToUpdate = "&scene=" + parseInt(sceneNum + 1);
+    
+            if(sceneStringIndex > -1) {
+                let newSearchString = searchString.substring(0, sceneStringIndex);
+                this.props.value.history.push({
+                    pathname: pathname,
+                    search: newSearchString + sceneToUpdate
+                });
+            } else {
+                this.props.value.history.push({
+                    pathname: pathname,
+                    search: searchString + sceneToUpdate
+                });
+            }
+            this.props.updateHandler("scene", parseInt(sceneNum + 1));
+        }
     }
 
     changeObjectDisplay = (objectKey) => {
@@ -404,7 +425,8 @@ class ScenesEval3 extends React.Component {
                         this.props.value.test_num
                     ), 
                     "projectionObject": projectionObject
-                }}>
+                }}
+                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -456,7 +478,6 @@ class ScenesEval3 extends React.Component {
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
-
                                         if(scenesInOrder.length - 1 < this.state.currentSceneNum) {
                                             this.changeScene(0);
                                         }

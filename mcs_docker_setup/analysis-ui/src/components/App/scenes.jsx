@@ -61,12 +61,12 @@ class Scenes extends React.Component {
         this.state = {
             currentPerformerKey: 0,
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
-            currentSceneNum: props.value.scene_part_num !== undefined ? parseInt(props.value.scene_part_num) - 1 : 0,
+            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) - 1 : 0,
             currentObjectNum: 0,
             flagRemove: false,
             flagInterest: false,
             testType: props.value.test_type,
-            sceneNum: props.value.test_num
+            testNum: props.value.test_num
         };
     }
 
@@ -90,7 +90,29 @@ class Scenes extends React.Component {
     }
 
     changeScene = (sceneNum) => {
-        this.setState({ currentSceneNum: sceneNum});
+        if(this.state.currentSceneNum !== sceneNum) {
+            this.setState({ currentSceneNum: sceneNum});
+            let pathname = this.props.value.history.location.pathname;
+            let searchString = this.props.value.history.location.search;
+    
+            let sceneStringIndex = searchString.indexOf("&scene=");
+            let sceneToUpdate = "&scene=" + parseInt(sceneNum + 1);
+    
+            if(sceneStringIndex > -1) {
+                let newSearchString = searchString.substring(0, sceneStringIndex);
+                this.props.value.history.push({
+                    pathname: pathname,
+                    search: newSearchString + sceneToUpdate
+                });
+            } else {
+                this.props.value.history.push({
+                    pathname: pathname,
+                    search: searchString + sceneToUpdate
+                });
+            }
+    
+            this.props.updateHandler("scene", parseInt(sceneNum + 1));
+        }
     }
 
     changeObjectDisplay = (objectKey) => {
@@ -225,7 +247,8 @@ class Scenes extends React.Component {
             <Query query={mcs_history} variables={
                 {"testType": this.props.value.test_type, 
                 "sceneNum": this.props.value.test_num
-                }}>
+                }}
+                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -331,7 +354,8 @@ class Scenes extends React.Component {
                                                                 <h5>Performer Steps:</h5>
                                                                 <div className="steps-container">
                                                                         <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                    {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
+                                                                    {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum] !== undefined &&
+                                                                     scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
                                                                         <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
                                                                             {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
                                                                         </div>

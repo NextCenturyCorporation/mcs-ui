@@ -66,6 +66,8 @@ const AnalysisUI = ({newState, updateHandler}) => {
     let hasTestType = (newState.test_type !== undefined && newState.test_type !== null)
     let hasTestNum = (newState.test_num !== undefined && newState.test_num !== null)
 
+    newState.history = history;
+
     // TODO: Fix comments for eval 3
     return <div>
         <div className="layout">
@@ -74,8 +76,8 @@ const AnalysisUI = ({newState, updateHandler}) => {
 
             <div className="layout-board">
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { (!isEval3) && hasTestType && hasTestNum && <Scenes value={newState}/> }
-                { isEval3 && hasCatType && hasTestNum && <ScenesEval3 value={newState}/> }
+                { (!isEval3) && hasTestType && hasTestNum && <Scenes value={newState} updateHandler={updateHandler}/> }
+                { isEval3 && hasCatType && hasTestNum && <ScenesEval3 value={newState} updateHandler={updateHandler}/> }
                 { newState.showComments && (!isEval3) && <CommentsComponent state={newState}/> }
             </div>
         </div>
@@ -206,12 +208,16 @@ export class App extends React.Component {
     }
 
     updateHandler(key, item) {
-        if(key === 'test_type' && this.doesStateHaveCategoryType()) {
+        if(key === 'eval') {
+            this.setState({ [key]: item, test_type: null, category_type: null, test_num: null, scene: null});
+        } else if(key === 'test_type' && this.doesStateHaveCategoryType()) {
             this.setState({ [key]: item, category_type: null, test_num: null, scene: null});
         } else if(key === 'category_type' && this.doesStateHaveTestType()) {
             this.setState({ [key]: item, test_type: null, test_num: null, scene: null});
-        } else {
+        } else if(key === 'scene') {
             this.setState({ [key]: item });
+        } else {
+            this.setState({ [key]: item, scene: null });
         }
     }
 
