@@ -677,30 +677,34 @@ class ScenesEval3 extends React.Component {
                                                                 this.checkSceneObjectKey(scenesInOrder[this.state.currentSceneNum], objectKey, key))}
                                                         </tbody>
                                                     </table>
-                                                    <div className="objects_scenes_header">
-                                                        <h5>Objects in Scene</h5>
-                                                    </div>
-                                                    <div className="object-nav">
-                                                        <ul className="nav nav-tabs">
-                                                            {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
-                                                                <li className="nav-item" key={'object_tab_' + key}>
-                                                                    <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
-                                                                </li>
-                                                            )}
-                                                        </ul>
-                                                    </div>
-                                                    <div className="object-contents">
-                                                        <table>
-                                                            <tbody>
-                                                                {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
-                                                                    <tr key={'object_tab_' + key}>
-                                                                        <td className="bold-label">{objectKey}:</td>
-                                                                        <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
-                                                                    </tr>
-                                                                )}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>        
+                                                    {scenesInOrder[this.state.currentSceneNum].objects.length > 0 &&
+                                                        <>
+                                                            <div className="objects_scenes_header">
+                                                                <h5>Objects in Scene</h5>
+                                                            </div>
+                                                            <div className="object-nav">
+                                                                <ul className="nav nav-tabs">
+                                                                    {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
+                                                                        <li className="nav-item" key={'object_tab_' + key}>
+                                                                            <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
+                                                                        </li>
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                            <div className="object-contents">
+                                                                <table>
+                                                                    <tbody>
+                                                                        {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
+                                                                            <tr key={'object_tab_' + key}>
+                                                                                <td className="bold-label">{objectKey}:</td>
+                                                                                <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
+                                                                            </tr>
+                                                                        )}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div> 
+                                                        </>   
+                                                    }    
                                                 </div>
                                             </div>
                                         )
