@@ -118,7 +118,6 @@ class ScenesEval3 extends React.Component {
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
             currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) - 1 : 0,
             currentObjectNum: 0,
-            // evalName
             //flagRemove: false,
             //flagInterest: false,
             testType: props.value.test_type,
