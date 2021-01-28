@@ -111,7 +111,7 @@ class QueryLineItem extends React.Component {
 
     selectDropDownValue = (event) => {
         let valueToSet = "";
-        if(event !== null & event !== undefined){
+        if(event !== null && event !== undefined){
             for(let i=0; i < event.length; i ++){
                 valueToSet = valueToSet + event[i].value;
                 if(i < event.length -1) {
