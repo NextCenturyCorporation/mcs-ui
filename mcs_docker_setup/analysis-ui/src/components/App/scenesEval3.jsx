@@ -6,7 +6,6 @@ import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 import Accordion from 'react-bootstrap/Accordion';
-import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -117,13 +116,13 @@ class ScenesEval3 extends React.Component {
         this.state = {
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
-            currentSceneNum: props.value.scene_part_num !== undefined ? parseInt(props.value.scene_part_num) - 1 : 0,
+            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) - 1 : 0,
             currentObjectNum: 0,
             //flagRemove: false,
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            sceneNum: props.value.scene_num,
+            testNum: props.value.test_num,
             sortBy: "",
             sortOrder: "asc"
         };
@@ -158,7 +157,28 @@ class ScenesEval3 extends React.Component {
     }
 
     changeScene = (sceneNum) => {
-        this.setState({ currentSceneNum: sceneNum});
+        if(this.state.currentSceneNum !== sceneNum) {
+            this.setState({ currentSceneNum: sceneNum});
+            let pathname = this.props.value.history.location.pathname;
+            let searchString = this.props.value.history.location.search;
+    
+            let sceneStringIndex = searchString.indexOf("&scene=");
+            let sceneToUpdate = "&scene=" + parseInt(sceneNum + 1);
+    
+            if(sceneStringIndex > -1) {
+                let newSearchString = searchString.substring(0, sceneStringIndex);
+                this.props.value.history.push({
+                    pathname: pathname,
+                    search: newSearchString + sceneToUpdate
+                });
+            } else {
+                this.props.value.history.push({
+                    pathname: pathname,
+                    search: searchString + sceneToUpdate
+                });
+            }
+            this.props.updateHandler("scene", parseInt(sceneNum + 1));
+        }
     }
 
     changeObjectDisplay = (objectKey) => {
@@ -401,10 +421,11 @@ class ScenesEval3 extends React.Component {
                 {    
                     "queryObject":  this.getSceneHistoryQueryObject(
                         this.props.value.category_type,
-                        this.props.value.scene_num
+                        this.props.value.test_num
                     ), 
                     "projectionObject": projectionObject
-                }}>
+                }}
+                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -443,7 +464,7 @@ class ScenesEval3 extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"sceneName": sceneNamePrefix, 
-                                "sceneNum": parseInt(this.props.value.scene_num)
+                                "sceneNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
                                 ({ loading, error, data }) => {
@@ -456,7 +477,6 @@ class ScenesEval3 extends React.Component {
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
-
                                         if(scenesInOrder.length - 1 < this.state.currentSceneNum) {
                                             this.changeScene(0);
                                         }
@@ -649,42 +669,44 @@ class ScenesEval3 extends React.Component {
                                                             </div>} 
                                                         </div>
                                                     }
-                                                <div className="scene-table-div">
-                                                    <table>
-                                                        <tbody>
-                                                            {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && Object.keys(scenesInOrder[this.state.currentSceneNum]).map((objectKey, key) => 
-                                                                this.checkSceneObjectKey(scenesInOrder[this.state.currentSceneNum], objectKey, key))}
-                                                        </tbody>
-                                                    </table>
-                                                    {scenesInOrder[this.state.currentSceneNum].objects.length > 0 &&
-                                                        <>
-                                                            <div className="objects_scenes_header">
-                                                                <h5>Objects in Scene</h5>
-                                                            </div>
-                                                            <div className="object-nav">
-                                                                <ul className="nav nav-tabs">
-                                                                    {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
-                                                                        <li className="nav-item" key={'object_tab_' + key}>
-                                                                            <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
-                                                                        </li>
-                                                                    )}
-                                                                </ul>
-                                                            </div>
-                                                            <div className="object-contents">
-                                                                <table>
-                                                                    <tbody>
-                                                                        {scenesInOrder && scenesInOrder[this.state.currentSceneNum] && Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
-                                                                            <tr key={'object_tab_' + key}>
-                                                                                <td className="bold-label">{objectKey}:</td>
-                                                                                <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
-                                                                            </tr>
+                                                {scenesInOrder && this.state.currentSceneNum < scenesInOrder.length && scenesInOrder[this.state.currentSceneNum] &&
+                                                    <div className="scene-table-div">
+                                                        <table>
+                                                            <tbody>
+                                                                {Object.keys(scenesInOrder[this.state.currentSceneNum]).map((objectKey, key) => 
+                                                                    this.checkSceneObjectKey(scenesInOrder[this.state.currentSceneNum], objectKey, key))}
+                                                            </tbody>
+                                                        </table>
+                                                        {scenesInOrder[this.state.currentSceneNum].objects && scenesInOrder[this.state.currentSceneNum].objects.length > 0 &&
+                                                            <>
+                                                                <div className="objects_scenes_header">
+                                                                    <h5>Objects in Scene</h5>
+                                                                </div>
+                                                                <div className="object-nav">
+                                                                    <ul className="nav nav-tabs">
+                                                                        {scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
+                                                                            <li className="nav-item" key={'object_tab_' + key}>
+                                                                                <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
+                                                                            </li>
                                                                         )}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div> 
-                                                        </>   
-                                                    }    
-                                                </div>
+                                                                    </ul>
+                                                                </div>
+                                                                <div className="object-contents">
+                                                                    <table>
+                                                                        <tbody>
+                                                                            {Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
+                                                                                <tr key={'object_tab_' + key}>
+                                                                                    <td className="bold-label">{objectKey}:</td>
+                                                                                    <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
+                                                                                </tr>
+                                                                            )}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div> 
+                                                            </>   
+                                                        }    
+                                                    </div>
+                                                }
                                             </div>
                                         )
                                     }  else {

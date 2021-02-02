@@ -34,8 +34,10 @@ const GET_SUBMISSION_AGG = gql`
 class ListItem extends React.Component {
 
     updateState(item, stateName) {
-        this.props.state[stateName] = item;
-        this.props.updateHandler(stateName, item);
+        if(this.props.state[stateName] !== item) {
+            this.props.state[stateName] = item;
+            this.props.updateHandler(stateName, item);
+        }
     }
 
     render() {
@@ -57,49 +59,55 @@ class ListItem extends React.Component {
         } else {
             // Property List for Eval 2 Going Forward
             let hasEvalState = this.props.state["eval"] !== undefined && this.props.state["eval"] !== null;
-            let hasSceneNumState = this.props.state["scene_num"] !== undefined && this.props.state["scene_num"] !== null;
+            let isEval2 = hasEvalState && this.props.state["eval"].includes("2");
+            let isEval3 = hasEvalState && this.props.state["eval"].includes("3");
             let hasTestTypeState = this.props.state["test_type"] !== undefined && this.props.state["test_type"] !== null;
             let hasCatTypeState = this.props.state["category_type"] !== undefined && this.props.state["category_type"] !== null;
+            let hasTestNumState = this.props.state["test_num"] !== undefined && this.props.state["test_num"] !== null;
             let paramsToAppend = '';
 
             if(this.props.stateName === 'eval') {
-                if(hasTestTypeState) {
+                let isValidEval2 = hasTestTypeState && this.props.item.includes("2");
+                let isValidEval3 = hasCatTypeState && this.props.item.includes("3");
+
+                if(isValidEval2) {
                     paramsToAppend += "&test_type=" + this.props.state["test_type"];
-                } else if(hasCatTypeState) {
+                } else if(isValidEval3) {
                     paramsToAppend += "&category_type=" + this.props.state["category_type"];
                 }
-    
-                if(hasSceneNumState) {
-                    // TODO: revisit calling param "scene_num" for eval 3 (should probably be "seq_num")
-                    paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
+
+                // TODO: rename scene_num/scene_part_num in mongo
+                if(hasTestNumState && (isValidEval2 || isValidEval3)) {
+                    paramsToAppend += "&test_num=" + this.props.state["test_num"];
                 }
+    
                 params = "?eval=" + this.props.item + paramsToAppend;
-            } else if(hasEvalState && this.props.stateName === 'test_type') {
+            } else if(hasEvalState && isEval2 && this.props.stateName === 'test_type') {
 
                 paramsToAppend += "&test_type=" + this.props.item;
 
-                if(hasSceneNumState) {
-                    paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
+                if(hasTestNumState) {
+                    paramsToAppend += "&test_num=" + this.props.state["test_num"];
                 }
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
-            } else if(hasEvalState && this.props.stateName === 'category_type') {
+            } else if(hasEvalState && isEval3 && this.props.stateName === 'category_type') {
 
                 paramsToAppend += "&category_type=" + this.props.item;
 
-                if(hasSceneNumState) {
-                    paramsToAppend += "&scene_num=" + this.props.state["scene_num"];
+                if(hasTestNumState) {
+                    paramsToAppend += "&test_num=" + this.props.state["test_num"];
                 }
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
-            } else if(hasEvalState && this.props.stateName === 'scene_num') {
-                if(hasTestTypeState) {
+            } else if(hasEvalState && this.props.stateName === 'test_num') {
+                if(hasTestTypeState && isEval2) {
                     paramsToAppend += "&test_type=" + this.props.state["test_type"];
-                } else if(hasCatTypeState) {
+                } else if(hasCatTypeState && isEval3) {
                     paramsToAppend += "&category_type=" + this.props.state["category_type"];
                 }
 
-                paramsToAppend += "&scene_num=" + this.props.item;
+                paramsToAppend += "&test_num=" + this.props.item;
 
                 params = "?eval=" + this.props.state["eval"] + paramsToAppend;
             }
@@ -217,17 +225,17 @@ class EvalNav extends React.Component {
 
                     {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("2")) &&
                     <NavDropdown title={"Test Number: " + (
-                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        (this.props.state.test_num === undefined || this.props.state.test_num === null) ? "None" : this.props.state.test_num)}
                         id="basic-nav-dropdown">
-                        <DropListItems fieldName={"scene_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        <DropListItems fieldName={"scene_num"} stateName={"test_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>}
 
 
                     {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval.includes("3")) &&
                     <NavDropdown title={"Test Number: " + (
-                        (this.props.state.scene_num === undefined || this.props.state.scene_num === null) ? "None" : this.props.state.scene_num)}
+                        (this.props.state.test_num === undefined || this.props.state.test_num === null) ? "None" : this.props.state.test_num)}
                         id="basic-nav-dropdown">
-                        <DropListItems fieldName={"scene_part_num"} stateName={"scene_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        <DropListItems fieldName={"scene_part_num"} stateName={"test_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>}
                 </Nav>
             );

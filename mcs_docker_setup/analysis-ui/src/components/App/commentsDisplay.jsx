@@ -74,7 +74,7 @@ const CommentBlockHolder = ({props}) => {
     if(props.value.test_type !== undefined && props.value.test_type !== null) {
         const queryVars = {
             "testType": props.value.test_type, 
-            "sceneNum": props.value.scene_num
+            "sceneNum": props.value.test_num
         };
 
         return (
