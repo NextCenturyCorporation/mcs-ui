@@ -68,3 +68,5 @@ Neon - http://localhost:4199/?dashboard=-#%E2%9F%A6%E2%9F%A7
 
 Analysis-UI - http://localhost:3000/
  - Page to view the individual Results
+
+ Jenkins Server - http://23.20.216.233:8080/
