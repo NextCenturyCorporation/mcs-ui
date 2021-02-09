@@ -33,7 +33,7 @@ services:
     environment: 
       - REACT_APP_COMMENTS_ON=false
     volumes:
-      - ./configs/prod/config.js:/usr/src/app/src/services/config.js
+      - ./analysis-ui/public/configs/prod/config.js:/usr/src/app/src/services/config.js
     ports: 
       - 3000:3000
     depends_on:
@@ -48,7 +48,7 @@ services:
     environment: 
       - REACT_APP_COMMENTS_ON=true
     volumes:
-      - ./configs/prod/staging-config.js:/usr/src/app/src/services/config.js
+      - ./analysis-ui/public/configs/prod/staging-config.js:/usr/src/app/src/services/config.js
     ports: 
       - 2000:2000
     depends_on:
@@ -59,7 +59,7 @@ services:
     container_name: node-graphql
     image: node-graphql
     volumes:
-      - ./configs/prod/graphql-config.js:/usr/src/app/config.js
+      - ./analysis-ui/public/configs/prod/graphql-config.js:/usr/src/app/config.js
     ports: 
       - 9100:9100
     expose:
@@ -74,7 +74,7 @@ services:
     container_name: node-graphql-staging
     image: node-graphql-staging
     volumes:
-      - ./configs/prod/graphql-staging-config.js:/usr/src/app/config.js
+      - ./analysis-ui/public/configs/prod/graphql-staging-config.js:/usr/src/app/config.js
     ports: 
       - 9111:9111
     expose:
