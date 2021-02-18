@@ -14,8 +14,8 @@ let currentState = {};
 let currentStep = 0;
 
 const mcs_history = gql`
-    query getEvalHistory($testType: String!, $sceneNum: Int!){
-        getEvalHistory(testType: $testType, sceneNum: $sceneNum) {
+    query getEvalHistory($testType: String!, $testNum: Int!){
+        getEvalHistory(testType: $testType, testNum: $testNum) {
             eval
             performer
             name
@@ -253,7 +253,7 @@ class Scenes extends React.Component {
         return (
             <Query query={mcs_history} variables={
                 {"testType": this.props.value.test_type, 
-                "sceneNum": parseInt(this.props.value.test_num)
+                "testNum": parseInt(this.props.value.test_num)
                 }}
                 onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
             {

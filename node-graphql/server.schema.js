@@ -122,7 +122,7 @@ const mcsTypeDefs = gql`
 
   type Query {
     msc_eval: [Source]
-    getEvalHistory(testType: String, sceneNum: Int) : [History]
+    getEvalHistory(testType: String, testNum: Int) : [History]
     getEval3History(categoryType: String, sceneNum: Int) : [History]
     getEvalScene(testType: String, sceneNum: Int) : [Scene]
     getEval3Scene(sceneName: String, sceneNum: Int) : [Scene]
@@ -149,8 +149,8 @@ const mcsTypeDefs = gql`
   type Mutation {
     saveComment(test: String, block: String, submission: String, performer: String, createdDate: String, text: String, userName: String) : Comment
     saveCommentByTestAndScene(testType: String, sceneNum: String, createdDate: String, text: String, userName: String) : NewComment
-    updateSceneHistoryRemoveFlag(testType: String, sceneNum: String, flagRemove: Boolean) : updateObject
-    updateSceneHistoryInterestFlag(testType: String, sceneNum: String, flagInterest: Boolean) : updateObject
+    updateSceneHistoryRemoveFlag(testType: String, testNum: Int, flagRemove: Boolean) : updateObject
+    updateSceneHistoryInterestFlag(testType: String, testNum: Int, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
     updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
@@ -165,7 +165,7 @@ const mcsResolvers = {
         },
         getEvalHistory: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_history').find({'test_type': args["testType"], 'test_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_history').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval3History: async(obj, args, context, infow) => {
@@ -453,14 +453,14 @@ const mcsResolvers = {
         },
         updateSceneHistoryRemoveFlag: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_history').update(
-                {"test_type": args["testType"], "test_num":  args["sceneNum"]},
+                {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.remove": args["flagRemove"]}},
                 {multi: true}
             );
         },
         updateSceneHistoryInterestFlag: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_history').update(
-                {"test_type": args["testType"], "test_num":  args["sceneNum"]},
+                {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.interest": args["flagInterest"]}},
                 {multi: true}
             );
