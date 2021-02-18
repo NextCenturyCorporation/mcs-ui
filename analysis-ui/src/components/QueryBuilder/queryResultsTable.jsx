@@ -250,7 +250,7 @@ class QueryResultsTable extends React.Component {
                                     ))}
                                     {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
-                                            <TableCell colSpan={columnData.length}/>
+                                            <TableCell colSpan={columnData.length + 1}/>
                                         </TableRow>
                                     )}
                                 </React.Fragment>
@@ -260,7 +260,7 @@ class QueryResultsTable extends React.Component {
                                     {Object.keys(groupedData).sort().map(key => {return (
                                         <React.Fragment key={"react_frag_row_" + key}>
                                             <TableRow key={"grouped_table_row_" + key}>
-                                                <TableCell colSpan={columnData.length}>
+                                                <TableCell colSpan={columnData.length + 1}>
                                                     <IconButton onClick={this.expandRow.bind(null, key)}>
                                                         <Icon>
                                                             {this.groups[key] ? "expand_more" : "chevron_right"}
