@@ -123,9 +123,9 @@ const mcsTypeDefs = gql`
   type Query {
     msc_eval: [Source]
     getEvalHistory(testType: String, testNum: Int) : [History]
-    getEval3History(categoryType: String, sceneNum: Int) : [History]
-    getEvalScene(testType: String, sceneNum: Int) : [Scene]
-    getEval3Scene(sceneName: String, sceneNum: Int) : [Scene]
+    getEval3History(categoryType: String, testNum: Int) : [History]
+    getEvalScene(testType: String, testNum: Int) : [Scene]
+    getEval3Scene(sceneName: String, testNum: Int) : [Scene]
     getEvalByTest(test: String) : [Source]
     getEvalByBlock(block: String) : [Source]
     getEvalBySubmission(submission: String) : [Source]
@@ -171,18 +171,18 @@ const mcsResolvers = {
         getEval3History: async(obj, args, context, infow) => {
             // Eval 3 - scene_part_num is actually the field we need
             // TODO: fix with reingest?
-            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'test_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_scenes').find({'test_type': args["testType"], 'test_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_scenes').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval3Scene: async(obj, args, context, infow) => {
             // Eval 3 - sequenceNumber is actually the field we need
             // TODO: rename fields?
-            return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'test_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {

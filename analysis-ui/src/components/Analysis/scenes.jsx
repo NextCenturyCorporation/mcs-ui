@@ -33,8 +33,8 @@ const mcs_history = gql`
   }`;
 
 const mcs_scene= gql`
-    query getEvalScene($testType: String!, $sceneNum: Int!){
-        getEvalScene(testType: $testType, sceneNum: $sceneNum) {
+    query getEvalScene($testType: String!, $testNum: Int!){
+        getEvalScene(testType: $testType, testNum: $testNum) {
             name
             ceilingMaterial
             floorMaterial
@@ -276,7 +276,7 @@ class Scenes extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"testType": this.props.value.test_type, 
-                                "sceneNum": parseInt(this.props.value.test_num)
+                                "testNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
                                 ({ loading, error, data }) => {

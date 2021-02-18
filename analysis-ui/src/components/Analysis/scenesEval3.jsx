@@ -51,8 +51,8 @@ const create_complex_query = gql`
     }`;
 
 const mcs_history = gql`
-    query getEval3History($categoryType: String!, $sceneNum: Int!){
-        getEval3History(categoryType: $categoryType, sceneNum: $sceneNum) {
+    query getEval3History($categoryType: String!, $testNum: Int!){
+        getEval3History(categoryType: $categoryType, testNum: $testNum) {
             eval
             performer
             name
@@ -75,8 +75,8 @@ const mcs_history = gql`
 
   // TODO: UPDATE
 const mcs_scene= gql`
-    query getEval3Scene($sceneName: String, $sceneNum: Int){
-        getEval3Scene(sceneName: $sceneName, sceneNum: $sceneNum) {
+    query getEval3Scene($sceneName: String, $testNum: Int){
+        getEval3Scene(sceneName: $sceneName, testNum: $testNum) {
             name
             ceilingMaterial
             floorMaterial
@@ -465,7 +465,7 @@ class ScenesEval3 extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"sceneName": sceneNamePrefix, 
-                                "sceneNum": parseInt(this.props.value.test_num)
+                                "testNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
                                 ({ loading, error, data }) => {
