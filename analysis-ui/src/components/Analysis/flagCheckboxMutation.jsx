@@ -9,8 +9,8 @@ const mcs_history = gql`
             performer
             name
             test_type
+            test_num
             scene_num
-            scene_part_num
             score
             steps
             flags

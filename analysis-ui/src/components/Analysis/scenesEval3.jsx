@@ -28,8 +28,8 @@ const projectionObject = {
     "performer": 1,
     "name": 1,
     "test_type": 1,
+    "test_num": 1,
     "scene_num": 1,
-    "scene_part_num": 1,
     "scene_goal_id": 1,
     "score": 1,
     "steps": 1,
@@ -57,8 +57,8 @@ const mcs_history = gql`
             performer
             name
             test_type
+            test_num
             scene_num
-            scene_part_num
             score
             steps
             flags
@@ -73,6 +73,7 @@ const mcs_history = gql`
         }
   }`;
 
+  // TODO: UPDATE
 const mcs_scene= gql`
     query getEval3Scene($sceneName: String, $sceneNum: Int){
         getEval3Scene(sceneName: $sceneName, sceneNum: $sceneNum) {
@@ -327,7 +328,7 @@ class ScenesEval3 extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
-    getSceneHistoryQueryObject = (categoryType, sceneNum) => {
+    getSceneHistoryQueryObject = (categoryType, testNum) => {
         return [
             {
                 fieldType: "mcs_history.Evaluation 3 Results",
@@ -342,9 +343,9 @@ class ScenesEval3 extends React.Component {
             {
                 fieldType: "mcs_history.Evaluation 3 Results",
                 fieldTypeLabel: "Evaluation 3 Results",
-                fieldName: "scene_part_num",
-                fieldNameLabel: "Scene Number",
-                fieldValue1: parseInt(sceneNum),
+                fieldName: "test_num",
+                fieldNameLabel: "Test Number",
+                fieldValue1: parseInt(testNum),
                 fieldValue2: "",
                 functionOperator: "equals",
                 collectionDropdownToggle: 1
@@ -434,7 +435,7 @@ class ScenesEval3 extends React.Component {
                     const evals = data[historyQueryName][historyQueryResults];
                     //console.log(evals);
 
-                    let sortedScenes =  _.sortBy(evals, "scene_part_num");
+                    let sortedScenes =  _.sortBy(evals, "scene_num");
                     let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
                     let metadataList = Object.keys(scenesByMetadata);
                     let performerList = _.uniq(_.map(sortedScenes, "performer"));
@@ -473,7 +474,7 @@ class ScenesEval3 extends React.Component {
                                     
                                     const scenes = data[sceneQueryName];
                                     //console.log(scenes);
-                                    const scenesInOrder = _.sortBy(scenes, "scene_part_num");
+                                    const scenesInOrder = _.sortBy(scenes, "scene_num");
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {

@@ -11,7 +11,7 @@ const AddComment = ({ mutate }) => {
         if(commentState.test_type !== undefined && commentState.test_type !== null) {
             return {
                 testType: commentState.test_type,
-                sceneNum: commentState.scene_num,
+                test_num: commentState.test_num,
                 createdDate: (new Date()).toISOString(),
                 text: document.getElementById("commentTextArea").value,
                 userName: document.getElementById("commentUserName").value

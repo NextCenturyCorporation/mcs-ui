@@ -26,7 +26,7 @@ const GET_COMMENTS_BY_TEST_AND_SCENE = gql`
         getCommentsByTestAndScene(testType: $testType, sceneNum: $sceneNum) {
             id
             test_type
-            scene_num
+            test_num
             createdDate
             text
             userName
