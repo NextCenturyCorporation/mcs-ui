@@ -39,7 +39,6 @@ const historyExcludeFieldsTable = [
     "steps.args.objectImageCoordsY",
     "steps.stepNumber",
     "test_type",
-    "url_string",
     "steps.output.reward",
     "steps.violations_xy_list",
     "steps.violations_xy_list.x",
