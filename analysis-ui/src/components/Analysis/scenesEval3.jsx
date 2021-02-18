@@ -50,30 +50,7 @@ const create_complex_query = gql`
         createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
     }`;
 
-const mcs_history = gql`
-    query getEval3History($categoryType: String!, $testNum: Int!){
-        getEval3History(categoryType: $categoryType, testNum: $testNum) {
-            eval
-            performer
-            name
-            test_type
-            test_num
-            scene_num
-            score
-            steps
-            flags
-            step_counter
-            category
-            category_type
-            category_pair
-            scene_goal_id
-            metadata
-            filename
-            fileTimestamp
-        }
-  }`;
-
-  // TODO: UPDATE
+// TODO: UPDATE
 const mcs_scene= gql`
     query getEval3Scene($sceneName: String, $testNum: Int){
         getEval3Scene(sceneName: $sceneName, testNum: $testNum) {

@@ -132,7 +132,7 @@ const mcsTypeDefs = gql`
     getEvalByPerformer(performer: String) : [Source]
     getEvalAnalysis(test: String, block: String, submission: String, performer: String) : [Source]
     getComments(test: String, block: String, submission: String, performer: String) : [Comment]
-    getCommentsByTestAndScene(testType: String, sceneNum: String) : [NewComment]
+    getCommentsByTest(testType: String, testNum: Int) : [NewComment]
     getFieldAggregation(fieldName: String, eval: String) : [String]
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
@@ -148,7 +148,7 @@ const mcsTypeDefs = gql`
 
   type Mutation {
     saveComment(test: String, block: String, submission: String, performer: String, createdDate: String, text: String, userName: String) : Comment
-    saveCommentByTestAndScene(testType: String, sceneNum: String, createdDate: String, text: String, userName: String) : NewComment
+    saveCommentByTest(testType: String, testNum: Int, createdDate: String, text: String, userName: String) : NewComment
     updateSceneHistoryRemoveFlag(testType: String, testNum: Int, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(testType: String, testNum: Int, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
@@ -223,8 +223,8 @@ const mcsResolvers = {
             return await mcsDB.db.collection('comments').find({'test': args["test"], 'block': args["block"], 
                 'submission': args["submission"], 'performer': args["performer"]}).toArray().then(result => {return result});
         },
-        getCommentsByTestAndScene: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('comments').find({'test_type': args["testType"], 'test_num': args["sceneNum"]})
+        getCommentsByTest: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('comments').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getFieldAggregation: async(obj, args, context, infow) => {
@@ -442,10 +442,10 @@ const mcsResolvers = {
                 userName: args["userName"]
             });
         },
-        saveCommentByTestAndScene: async (obj, args, context, infow) => {
+        saveCommentByTest: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('comments').insert({
                 test_type: args["testType"],
-                test_num: args["sceneNum"],
+                test_num: args["testNum"],
                 text: args["text"],
                 createdDate: args["createdDate"],
                 userName: args["userName"]

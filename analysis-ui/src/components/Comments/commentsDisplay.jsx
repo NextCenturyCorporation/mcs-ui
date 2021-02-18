@@ -20,10 +20,10 @@ const GET_COMMENTS = gql`
   }`;
 
 // For Comments Eval 2 Going forward
-const commentsQueryName = "getCommentsByTestAndScene";
-const GET_COMMENTS_BY_TEST_AND_SCENE = gql`
-    query getCommentsByTestAndScene($testType: String!, $sceneNum: String!){
-        getCommentsByTestAndScene(testType: $testType, sceneNum: $sceneNum) {
+const commentsQueryName = "getCommentsByTest";
+const GET_COMMENTS_BY_TEST = gql`
+    query getCommentsByTest($testType: String!, $testNum: Int!){
+        getCommentsByTest(testType: $testType, testNum: $testNum) {
             id
             test_type
             test_num
@@ -74,11 +74,11 @@ const CommentBlockHolder = ({props}) => {
     if(props.value.test_type !== undefined && props.value.test_type !== null) {
         const queryVars = {
             "testType": props.value.test_type, 
-            "sceneNum": props.value.test_num
+            "testNum": parseInt(props.value.test_num)
         };
 
         return (
-            <CommentBlock props={props} qName={commentsQueryName} queryType={GET_COMMENTS_BY_TEST_AND_SCENE} queryVars={queryVars}/>
+            <CommentBlock props={props} qName={commentsQueryName} queryType={GET_COMMENTS_BY_TEST} queryVars={queryVars}/>
         );
     } else {
         const queryVars = {
