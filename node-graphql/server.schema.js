@@ -86,8 +86,6 @@ const mcsTypeDefs = gql`
     test_type: String
     test_num: Int
     scene_num: Int
-    sequenceNumber: Int
-    sceneNumber: Int
   }
 
   type SubmissionPerformer {
@@ -180,8 +178,6 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getEval3Scene: async(obj, args, context, infow) => {
-            // Eval 3 - sequenceNumber is actually the field we need
-            // TODO: rename fields?
             return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },

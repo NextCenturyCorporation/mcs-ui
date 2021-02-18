@@ -63,8 +63,8 @@ const mcs_scene= gql`
             objects
             goal
             eval
-            sceneNumber
-            sequenceNumber
+            test_num
+            scene_num
         }
   }`;
 

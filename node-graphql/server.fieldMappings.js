@@ -789,8 +789,6 @@ const sceneFieldLabelMap = {
     "goal.habituation_total": "Habituation Total",
     "goal.answer.choice": "Goal Answer Choice",
     "isometric": "Isometric",
-    "sequenceNumber": "Sequence Number",
-    "sceneNumber": "Scene Number",
     "evaluation": "Evaluation",
     "training": "Training",
     "objects.untrainedCategory": "Objects Untrained Category",
@@ -870,7 +868,6 @@ const sceneFieldLabelMapTable = {
     "goal.sceneInfo.sequenceId": "Sequence Id",
     "goal.habituation_total": "Habituation Total",
     "goal.answer.choice": "Goal Answer Choice",
-    "sequenceNumber": "Sequence Number",
     "goal.sceneInfo.id": "Cube ID"
 };
 
