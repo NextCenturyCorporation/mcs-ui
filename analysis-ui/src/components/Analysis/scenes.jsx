@@ -14,7 +14,7 @@ let currentState = {};
 let currentStep = 0;
 
 const mcs_history = gql`
-    query getEvalHistory($testType: String!, $sceneNum: String!){
+    query getEvalHistory($testType: String!, $sceneNum: Int!){
         getEvalHistory(testType: $testType, sceneNum: $sceneNum) {
             eval
             performer
@@ -33,7 +33,7 @@ const mcs_history = gql`
   }`;
 
 const mcs_scene= gql`
-    query getEvalScene($testType: String!, $sceneNum: String!){
+    query getEvalScene($testType: String!, $sceneNum: Int!){
         getEvalScene(testType: $testType, sceneNum: $sceneNum) {
             name
             ceilingMaterial
@@ -242,11 +242,18 @@ class Scenes extends React.Component {
         }
     }
 
+    // Switching types for testNum, so need to pad them to match existing 
+    // file names
+    // TODO: should we rename eval 2 files?
+    addLeadingZeroes = (testNum) => {
+        return _.padStart(testNum.toString(), 4, '0');
+    }
+
     render() {
         return (
             <Query query={mcs_history} variables={
                 {"testType": this.props.value.test_type, 
-                "sceneNum": this.props.value.test_num
+                "sceneNum": parseInt(this.props.value.test_num)
                 }}
                 onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
             {
@@ -269,7 +276,7 @@ class Scenes extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"testType": this.props.value.test_type, 
-                                "sceneNum": this.props.value.test_num
+                                "sceneNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
                                 ({ loading, error, data }) => {
@@ -294,7 +301,7 @@ class Scenes extends React.Component {
                                                                 <div className="movie-text"><b>Scene 3:</b>&nbsp;&nbsp;{scenesInOrder[2].answer.choice}</div>
                                                             </div>
                                                             <div className="movie-center">
-                                                                <video src={constantsObject["moviesBucket"] + this.props.value.test_type + "-" + this.props.value.test_num + constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video src={constantsObject["moviesBucket"] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + constantsObject["movieExtension"]} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                             <div className="movie-left-right">
                                                                 <div className="movie-text"><b>Scene 2:</b>&nbsp;&nbsp;{scenesInOrder[1].answer.choice}</div>
@@ -326,7 +333,7 @@ class Scenes extends React.Component {
                                                         <tbody>
                                                             {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
                                                                 <tr key={'peformer_score_row_' + key}>
-                                                                    <td>{scoreObj.scene_part_num}</td>
+                                                                    <td>{scoreObj.scene_num}</td>
                                                                     <td>{scoreObj.score.classification}</td>
                                                                     <td>{scoreObj.score.score_description}</td>
                                                                     <td>{scoreObj.score.adjusted_confidence}</td>
@@ -348,7 +355,7 @@ class Scenes extends React.Component {
                                                     { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
                                                         <div className="movie-steps-holder">
                                                             <div className="interactive-movie-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.test_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+                                                                <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
                                                             </div>
                                                             <div className="steps-holder">
                                                                 <h5>Performer Steps:</h5>
@@ -363,7 +370,7 @@ class Scenes extends React.Component {
                                                                 </div>
                                                             </div>
                                                             <div className="top-down-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.props.value.test_num + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
+                                                                <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
                                                             </div>
                                                         </div> 
                                                     }
