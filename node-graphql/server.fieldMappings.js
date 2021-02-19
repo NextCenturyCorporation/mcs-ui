@@ -784,7 +784,7 @@ const sceneFieldLabelMap = {
     "goal.sceneInfo.uncontained.target": "Uncontained Target",
     "goal.sceneInfo.uncontained.wall": "Uncontained Wall",
     "goal.sceneInfo.name": "Scene Info Name",
-    "goal.sceneInfo.sequenceId": "Sequence Id",
+    "goal.sceneInfo.hypercubeId": "Hypercube Id",
     "goal.habituation_total": "Habituation Total",
     "goal.answer.choice": "Goal Answer Choice",
     "isometric": "Isometric",
@@ -864,7 +864,7 @@ const sceneFieldLabelMapTable = {
     "goal.sceneInfo.count.target": "Count Target",
     "goal.sceneInfo.count.wall": "Count Wall",
     "goal.sceneInfo.name": "Scene Info Name",
-    "goal.sceneInfo.sequenceId": "Sequence Id",
+    "goal.sceneInfo.hypercubeId": "Hypercube Id",
     "goal.habituation_total": "Habituation Total",
     "goal.answer.choice": "Goal Answer Choice",
     "goal.sceneInfo.id": "Cube ID"
