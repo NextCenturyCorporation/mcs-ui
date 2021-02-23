@@ -262,15 +262,15 @@ class Scenes extends React.Component {
                     if (error) return <div>Error</div>
                     
                     const evals = data[historyQueryName];
-                    console.log(evals);
-                    let scenesByPerformer = _.sortBy(evals, "scene_part_num");
+                    //console.log(evals);
+                    let scenesByPerformer = _.sortBy(evals, "scene_num");
                     scenesByPerformer = _.groupBy(scenesByPerformer, "performer");
                     let performerList = Object.keys(scenesByPerformer);
                     this.setInitialPerformer(performerList[0], evals[0]);
 
                     setConstants("Eval2");
 
-                    console.log(scenesByPerformer);
+                    //console.log(scenesByPerformer);
 
                     if(performerList.length > 0) {
                         return (
@@ -284,7 +284,7 @@ class Scenes extends React.Component {
                                     if (error) return <div>Error</div>
                                     
                                     const scenes = data[sceneQueryName];
-                                    const scenesInOrder = _.sortBy(scenes, "scene_part_num");
+                                    const scenesInOrder = _.sortBy(scenes, "scene_num");
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
