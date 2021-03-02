@@ -929,3 +929,12 @@ ol, ul {
 .classification-by-step-header {
     cursor: pointer;
 }
+
+.internal-state-toggle {
+    color: #007bff;
+    cursor: pointer;
+}
+.internal-state-cell {
+    max-width: 500px;
+    word-wrap: break-word;
+}

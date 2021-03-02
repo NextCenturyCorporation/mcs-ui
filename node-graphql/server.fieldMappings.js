@@ -22,6 +22,7 @@ const historyExcludeFields = [
     "filename",
     "fullFilename",
     "steps.confidence",
+    "steps.internal_state",
     "steps.classification"
 ];
 
@@ -49,6 +50,7 @@ const historyExcludeFieldsTable = [
     "fullFilename",
     "steps.confidence",
     "steps.classification",
+    "steps.internal_state",
     "steps.action",
     "steps.output.return_status",
     "steps",
