@@ -102,7 +102,8 @@ class ScenesEval3 extends React.Component {
             categoryType: props.value.category_type,
             testNum: props.value.test_num,
             sortBy: "",
-            sortOrder: "asc"
+            sortOrder: "asc",
+            showInternalState: false
         };
     }
 
@@ -333,6 +334,21 @@ class ScenesEval3 extends React.Component {
     checkIfScenesExist = (scenesByPerformer) =>{
         return scenesByPerformer !== undefined && scenesByPerformer[this.state.currentMetadataLevel] !== undefined
             && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer] !== undefined;
+    }
+
+    toggleShowInternalState = (newValue) => {
+        this.setState({
+            showInternalState: newValue
+        });
+    }
+
+    showInternalStatePreview = (stepObj) => {
+        if(!_.isEmpty(stepObj.internal_state)) {
+            return JSON.stringify(stepObj.internal_state).substring(0, 20) + '...';
+
+        } else {
+            return JSON.stringify(stepObj.internal_state);
+        }
     }
 
     getPrettyMetadataLabel = (metadata) => {
@@ -583,6 +599,13 @@ class ScenesEval3 extends React.Component {
                                                                                         <th>Classification</th>
                                                                                         <th>Confidence</th>
                                                                                         <th>Violations ((x,y) list)</th>
+                                                                                        {this.props.value.eval !== "Evaluation 3 Results" &&
+                                                                                            <th>Internal State
+                                                                                                <br/>
+                                                                                                <span className={this.state.showInternalState ? "internal-state-toggle" : "display-none"} onClick={() => this.toggleShowInternalState(false)}>(Click to Collapse)</span>
+                                                                                                <span className={this.state.showInternalState ? "display-none" : "internal-state-toggle"} onClick={() => this.toggleShowInternalState(true)}>(Click to Expand)</span>
+                                                                                            </th>
+                                                                                        }
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -599,6 +622,16 @@ class ScenesEval3 extends React.Component {
                                                                                                         this.convertXYArrayToString(stepObj.violations_xy_list)                                                                     
                                                                                                 }
                                                                                             </td>
+                                                                                            {this.props.value.eval !== "Evaluation 3 Results" && 
+                                                                                                <td className="internal-state-cell">
+                                                                                                    <span className={this.state.showInternalState ? "" : "display-none"}>
+                                                                                                        {JSON.stringify(stepObj.internal_state)}
+                                                                                                    </span>
+                                                                                                    <span className={this.state.showInternalState ? "display-none" : ""}>
+                                                                                                        {this.showInternalStatePreview(stepObj)}
+                                                                                                    </span>
+                                                                                                </td>
+                                                                                            }
                                                                                         </tr>
                                                                                     )}
                                                                                 </tbody>
