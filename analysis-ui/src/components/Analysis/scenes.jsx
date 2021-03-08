@@ -244,7 +244,6 @@ class Scenes extends React.Component {
 
     // Switching types for testNum, so need to pad them to match existing 
     // file names
-    // TODO: should we rename eval 2 files?
     addLeadingZeroes = (testNum) => {
         return _.padStart(testNum.toString(), 4, '0');
     }
@@ -262,15 +261,13 @@ class Scenes extends React.Component {
                     if (error) return <div>Error</div>
                     
                     const evals = data[historyQueryName];
-                    //console.log(evals);
+
                     let scenesByPerformer = _.sortBy(evals, "scene_num");
                     scenesByPerformer = _.groupBy(scenesByPerformer, "performer");
                     let performerList = Object.keys(scenesByPerformer);
                     this.setInitialPerformer(performerList[0], evals[0]);
 
                     setConstants("Eval2");
-
-                    //console.log(scenesByPerformer);
 
                     if(performerList.length > 0) {
                         return (
