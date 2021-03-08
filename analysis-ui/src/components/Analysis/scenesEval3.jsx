@@ -28,8 +28,8 @@ const projectionObject = {
     "performer": 1,
     "name": 1,
     "test_type": 1,
+    "test_num": 1,
     "scene_num": 1,
-    "scene_part_num": 1,
     "scene_goal_id": 1,
     "score": 1,
     "steps": 1,
@@ -50,32 +50,10 @@ const create_complex_query = gql`
         createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
     }`;
 
-const mcs_history = gql`
-    query getEval3History($categoryType: String!, $sceneNum: Int!){
-        getEval3History(categoryType: $categoryType, sceneNum: $sceneNum) {
-            eval
-            performer
-            name
-            test_type
-            scene_num
-            scene_part_num
-            score
-            steps
-            flags
-            step_counter
-            category
-            category_type
-            category_pair
-            scene_goal_id
-            metadata
-            filename
-            fileTimestamp
-        }
-  }`;
-
+// TODO: UPDATE
 const mcs_scene= gql`
-    query getEval3Scene($sceneName: String, $sceneNum: Int){
-        getEval3Scene(sceneName: $sceneName, sceneNum: $sceneNum) {
+    query getEval3Scene($sceneName: String, $testNum: Int){
+        getEval3Scene(sceneName: $sceneName, testNum: $testNum) {
             name
             ceilingMaterial
             floorMaterial
@@ -85,8 +63,8 @@ const mcs_scene= gql`
             objects
             goal
             eval
-            sceneNumber
-            sequenceNumber
+            test_num
+            scene_num
         }
   }`;
 
@@ -327,7 +305,7 @@ class ScenesEval3 extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
-    getSceneHistoryQueryObject = (categoryType, sceneNum) => {
+    getSceneHistoryQueryObject = (categoryType, testNum) => {
         return [
             {
                 fieldType: "mcs_history.Evaluation 3 Results",
@@ -342,9 +320,9 @@ class ScenesEval3 extends React.Component {
             {
                 fieldType: "mcs_history.Evaluation 3 Results",
                 fieldTypeLabel: "Evaluation 3 Results",
-                fieldName: "scene_part_num",
-                fieldNameLabel: "Scene Number",
-                fieldValue1: parseInt(sceneNum),
+                fieldName: "test_num",
+                fieldNameLabel: "Test Number",
+                fieldValue1: parseInt(testNum),
                 fieldValue2: "",
                 functionOperator: "equals",
                 collectionDropdownToggle: 1
@@ -434,7 +412,7 @@ class ScenesEval3 extends React.Component {
                     const evals = data[historyQueryName][historyQueryResults];
                     //console.log(evals);
 
-                    let sortedScenes =  _.sortBy(evals, "scene_part_num");
+                    let sortedScenes =  _.sortBy(evals, "scene_num");
                     let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
                     let metadataList = Object.keys(scenesByMetadata);
                     let performerList = _.uniq(_.map(sortedScenes, "performer"));
@@ -464,7 +442,7 @@ class ScenesEval3 extends React.Component {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"sceneName": sceneNamePrefix, 
-                                "sceneNum": parseInt(this.props.value.test_num)
+                                "testNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
                                 ({ loading, error, data }) => {
@@ -473,7 +451,7 @@ class ScenesEval3 extends React.Component {
                                     
                                     const scenes = data[sceneQueryName];
                                     //console.log(scenes);
-                                    const scenesInOrder = _.sortBy(scenes, "scene_part_num");
+                                    const scenesInOrder = _.sortBy(scenes, "scene_num");
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {

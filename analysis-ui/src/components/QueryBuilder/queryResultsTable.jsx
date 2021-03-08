@@ -181,11 +181,11 @@ class QueryResultsTable extends React.Component {
     }
     
     getAnalysisPageURL = (item) => {
-        if(item.scene.test_type && item.scene.scene_num) {
-            return "/analysis?eval=" + item.eval + "&test_type=" + item.scene.test_type + "&test_num=" + item.scene.scene_num + "&scene=" + item.scene_part_num;
+        if(item.scene.test_type && item.scene_num) {
+            return "/analysis?eval=" + item.eval + "&test_type=" + item.scene.test_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
         } else {
-            // Eval 3 - use category_type, swap scene_part_num and scene_num (TODO: fix in ingest)
-            return "/analysis?eval=" + item.eval + "&category_type=" + item.category_type + "&test_num=" + item.scene_part_num + "&scene=" + item.scene_num;
+            // Eval 3 - use category_type
+            return "/analysis?eval=" + item.eval + "&category_type=" + item.category_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
         }
     }
 
@@ -250,7 +250,7 @@ class QueryResultsTable extends React.Component {
                                     ))}
                                     {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
-                                            <TableCell colSpan={columnData.length}/>
+                                            <TableCell colSpan={columnData.length + 1}/>
                                         </TableRow>
                                     )}
                                 </React.Fragment>
@@ -260,7 +260,7 @@ class QueryResultsTable extends React.Component {
                                     {Object.keys(groupedData).sort().map(key => {return (
                                         <React.Fragment key={"react_frag_row_" + key}>
                                             <TableRow key={"grouped_table_row_" + key}>
-                                                <TableCell colSpan={columnData.length}>
+                                                <TableCell colSpan={columnData.length + 1}>
                                                     <IconButton onClick={this.expandRow.bind(null, key)}>
                                                         <Icon>
                                                             {this.groups[key] ? "expand_more" : "chevron_right"}

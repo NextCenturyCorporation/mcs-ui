@@ -11,7 +11,7 @@ const AddComment = ({ mutate }) => {
         if(commentState.test_type !== undefined && commentState.test_type !== null) {
             return {
                 testType: commentState.test_type,
-                sceneNum: commentState.scene_num,
+                testNum: parseInt(commentState.test_num),
                 createdDate: (new Date()).toISOString(),
                 text: document.getElementById("commentTextArea").value,
                 userName: document.getElementById("commentUserName").value
@@ -65,8 +65,8 @@ const addCommentMutation = gql`
 `;
 
 const addCommentTestTypeMutation = gql`
-    mutation saveCommentByTestAndScene($testType: String!, $sceneNum: String!, $createdDate: String!, $text: String!, $userName: String!) {
-        saveCommentByTestAndScene(testType: $testType, sceneNum: $sceneNum, createdDate: $createdDate, text: $text, userName: $userName) {
+    mutation saveCommentByTest($testType: String!, $testNum: Int!, $createdDate: String!, $text: String!, $userName: String!) {
+        saveCommentByTest(testType: $testType, testNum: $testNum, createdDate: $createdDate, text: $text, userName: $userName) {
             text
         }
     }

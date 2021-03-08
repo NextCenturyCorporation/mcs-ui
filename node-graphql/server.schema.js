@@ -46,7 +46,7 @@ const mcsTypeDefs = gql`
   type NewComment {
     id: String
     test_type: String
-    scene_num: String
+    test_num: String
     createdDate: String
     text: String
     userName: String
@@ -57,8 +57,8 @@ const mcsTypeDefs = gql`
     performer: String
     name: String
     test_type: String
-    scene_num: String
-    scene_part_num: String
+    test_num: Int
+    scene_num: Int
     score: JSON
     steps: JSON
     flags: JSON
@@ -84,10 +84,8 @@ const mcsTypeDefs = gql`
     answer: JSON
     eval: String
     test_type: String
-    scene_num: String
-    scene_part_num: String
-    sequenceNumber: Int
-    sceneNumber: Int
+    test_num: Int
+    scene_num: Int
   }
 
   type SubmissionPerformer {
@@ -122,17 +120,17 @@ const mcsTypeDefs = gql`
 
   type Query {
     msc_eval: [Source]
-    getEvalHistory(testType: String, sceneNum: String) : [History]
-    getEval3History(categoryType: String, sceneNum: Int) : [History]
-    getEvalScene(testType: String, sceneNum: String) : [Scene]
-    getEval3Scene(sceneName: String, sceneNum: Int) : [Scene]
+    getEvalHistory(testType: String, testNum: Int) : [History]
+    getEval3History(categoryType: String, testNum: Int) : [History]
+    getEvalScene(testType: String, testNum: Int) : [Scene]
+    getEval3Scene(sceneName: String, testNum: Int) : [Scene]
     getEvalByTest(test: String) : [Source]
     getEvalByBlock(block: String) : [Source]
     getEvalBySubmission(submission: String) : [Source]
     getEvalByPerformer(performer: String) : [Source]
     getEvalAnalysis(test: String, block: String, submission: String, performer: String) : [Source]
     getComments(test: String, block: String, submission: String, performer: String) : [Comment]
-    getCommentsByTestAndScene(testType: String, sceneNum: String) : [NewComment]
+    getCommentsByTest(testType: String, testNum: Int) : [NewComment]
     getFieldAggregation(fieldName: String, eval: String) : [String]
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
@@ -148,9 +146,9 @@ const mcsTypeDefs = gql`
 
   type Mutation {
     saveComment(test: String, block: String, submission: String, performer: String, createdDate: String, text: String, userName: String) : Comment
-    saveCommentByTestAndScene(testType: String, sceneNum: String, createdDate: String, text: String, userName: String) : NewComment
-    updateSceneHistoryRemoveFlag(testType: String, sceneNum: String, flagRemove: Boolean) : updateObject
-    updateSceneHistoryInterestFlag(testType: String, sceneNum: String, flagInterest: Boolean) : updateObject
+    saveCommentByTest(testType: String, testNum: Int, createdDate: String, text: String, userName: String) : NewComment
+    updateSceneHistoryRemoveFlag(testType: String, testNum: Int, flagRemove: Boolean) : updateObject
+    updateSceneHistoryInterestFlag(testType: String, testNum: Int, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
     updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
@@ -165,24 +163,22 @@ const mcsResolvers = {
         },
         getEvalHistory: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_history').find({'test_type': args["testType"], 'scene_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_history').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval3History: async(obj, args, context, infow) => {
             // Eval 3 - scene_part_num is actually the field we need
             // TODO: fix with reingest?
-            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'scene_part_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_history').find({'category_type': args["categoryType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_scenes').find({'test_type': args["testType"], 'scene_num': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_scenes').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval3Scene: async(obj, args, context, infow) => {
-            // Eval 3 - sequenceNumber is actually the field we need
-            // TODO: rename scene_num to sequenceNum in eval3 URL references?
-            return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'sequenceNumber': args["sceneNum"]})
+            return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {
@@ -223,8 +219,8 @@ const mcsResolvers = {
             return await mcsDB.db.collection('comments').find({'test': args["test"], 'block': args["block"], 
                 'submission': args["submission"], 'performer': args["performer"]}).toArray().then(result => {return result});
         },
-        getCommentsByTestAndScene: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('comments').find({'test_type': args["testType"], 'scene_num': args["sceneNum"]})
+        getCommentsByTest: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('comments').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getFieldAggregation: async(obj, args, context, infow) => {
@@ -442,10 +438,10 @@ const mcsResolvers = {
                 userName: args["userName"]
             });
         },
-        saveCommentByTestAndScene: async (obj, args, context, infow) => {
+        saveCommentByTest: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('comments').insert({
                 test_type: args["testType"],
-                scene_num: args["sceneNum"],
+                test_num: args["testNum"],
                 text: args["text"],
                 createdDate: args["createdDate"],
                 userName: args["userName"]
@@ -453,14 +449,14 @@ const mcsResolvers = {
         },
         updateSceneHistoryRemoveFlag: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_history').update(
-                {"test_type": args["testType"], "scene_num":  args["sceneNum"]},
+                {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.remove": args["flagRemove"]}},
                 {multi: true}
             );
         },
         updateSceneHistoryInterestFlag: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_history').update(
-                {"test_type": args["testType"], "scene_num":  args["sceneNum"]},
+                {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.interest": args["flagInterest"]}},
                 {multi: true}
             );
