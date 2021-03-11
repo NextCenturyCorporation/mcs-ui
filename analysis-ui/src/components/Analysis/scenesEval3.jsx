@@ -94,7 +94,7 @@ class ScenesEval3 extends React.Component {
         this.state = {
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
-            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) - 1 : 0,
+            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) : 1,
             currentObjectNum: 0,
             //flagRemove: false,
             //flagInterest: false,
@@ -142,7 +142,7 @@ class ScenesEval3 extends React.Component {
             let searchString = this.props.value.history.location.search;
     
             let sceneStringIndex = searchString.indexOf("&scene=");
-            let sceneToUpdate = "&scene=" + parseInt(sceneNum + 1);
+            let sceneToUpdate = "&scene=" + sceneNum;
     
             if(sceneStringIndex > -1) {
                 let newSearchString = searchString.substring(0, sceneStringIndex);
@@ -156,7 +156,7 @@ class ScenesEval3 extends React.Component {
                     search: searchString + sceneToUpdate
                 });
             }
-            this.props.updateHandler("scene", parseInt(sceneNum + 1));
+            this.props.updateHandler("scene", sceneNum);
         }
     }
 
@@ -369,7 +369,8 @@ class ScenesEval3 extends React.Component {
 
     getSceneHistoryItem = (scenesByPerformer) => {
         if(scenesByPerformer !== undefined && scenesByPerformer !== null) {
-            return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][this.state.currentSceneNum];
+            let sceneNumAsString = this.state.currentSceneNum.toString();
+            return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][sceneNumAsString];
         }
     }
 
@@ -409,6 +410,12 @@ class ScenesEval3 extends React.Component {
         });
     };
 
+    // currentSceneNum is used for the map values in scenesByPerformer
+    // need to subtract 1 to use as array index in scenesInOrder
+    getCurrentScene = (scenesInOrder) => {
+        return scenesInOrder[this.state.currentSceneNum - 1];
+    }
+
     render() {
         return (
             <Query query={create_complex_query} variables={
@@ -419,14 +426,13 @@ class ScenesEval3 extends React.Component {
                     ), 
                     "projectionObject": projectionObject
                 }}
-                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
+                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(1); }}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
                     
                     const evals = data[historyQueryName][historyQueryResults];
-                    //console.log(evals);
 
                     let sortedScenes =  _.sortBy(evals, "scene_num");
                     let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
@@ -437,16 +443,22 @@ class ScenesEval3 extends React.Component {
 
                     this.setInitialMetadataLevel(initialMetadataLevel);
 
-                    let scenesByPerformer = _.reduce(scenesByMetadata, function(result, value, key) {
-                        result[key] = _.groupBy(value, "performer");                     
-                        return result;
+                    let scenesByPerformer = _.reduce(scenesByMetadata, function(mapByMetadata, metadataValue, metadataKey) {
+                        mapByMetadata[metadataKey] = _.reduce(_.groupBy(metadataValue, "performer"), function(mapByPerformer, perfValue, perfKey) {
+                            mapByPerformer[perfKey] = _.reduce(perfValue, function(mapByScene, sceneValue) {
+                                // scene history records are now a map with scene_num as the key instead of an array
+                                mapByScene[sceneValue.scene_num.toString()] = sceneValue;
+                                return mapByScene
+                            }, {});
+                           return mapByPerformer;
+                        }, {});
+                        return mapByMetadata;
                     }, {});
-                    
+
                     this.setInitialPerformer(performerList[0], evals[0]);
                     
                     setConstants("Eval3");
-                    
-                    //console.log(scenesByPerformer);
+
                     let sceneNamePrefix = null;
                     
                     if((evals !== null && evals !== undefined && evals.length > 0) &&
@@ -466,13 +478,12 @@ class ScenesEval3 extends React.Component {
                                     if (error) return <div>Error</div>
                                     
                                     const scenes = data[sceneQueryName];
-                                    //console.log(scenes);
                                     const scenesInOrder = _.sortBy(scenes, "scene_num");
                                     this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
-                                        if(scenesInOrder.length - 1 < this.state.currentSceneNum) {
-                                            this.changeScene(0);
+                                        if(scenesInOrder.length < this.state.currentSceneNum) {
+                                            this.changeScene(scenesInOrder[0]["scene_num"].toString());
                                         }
 
                                         if(metadataList.indexOf(this.state.currentMetadataLevel) === -1) {             
@@ -486,11 +497,12 @@ class ScenesEval3 extends React.Component {
                                         return (
                                             <div>
                                                 { this.checkIfScenesExist(scenesByPerformer) &&
-                                                    scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] === "passive" && 
+                                                    this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
+                                                    this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
                                                     <div>
                                                         <div className="eval3-movies">
                                                             <div>
-                                                                <div><b>Scene:</b> {this.state.currentSceneNum + 1}</div>
+                                                                <div><b>Scene:</b> {this.state.currentSceneNum}</div>
                                                                 <video src={this.getVideoFileName(scenesByPerformer, "_visual_")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                             <div>
@@ -550,14 +562,14 @@ class ScenesEval3 extends React.Component {
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
-                                                        {this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer].sort(getSorting(this.state.sortOrder, this.state.sortBy)).map((scoreObj, rowKey) => 
+                                                        {this.checkIfScenesExist(scenesByPerformer) && _.values(scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]).sort(getSorting(this.state.sortOrder, this.state.sortBy)).map((scoreObj, rowKey) => 
                                                             <TableRow key={'performer_score_row_' + rowKey}>
-                                                                {scoreTableCols.map((col, colKey) => ( 
+                                                                {scoreTableCols.map((col, colKey) => (
                                                                     <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
                                                                         {(col.dataKey === "scene_num") &&
                                                                             <button key={"scene_button_" + scoreObj.scene_num} 
-                                                                                className={this.state.currentSceneNum === scoreObj.scene_num - 1 ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                                id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num - 1)}>
+                                                                                className={this.state.currentSceneNum === scoreObj.scene_num ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                                id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num)}>
                                                                                     Scene {scoreObj.scene_num}
                                                                             </button>
                                                                         }
@@ -573,8 +585,7 @@ class ScenesEval3 extends React.Component {
                                                     </Table>
                                                 </div>
 
-                                                { (this.checkIfScenesExist(scenesByPerformer) 
-                                                    && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] !== "interactive") && 
+                                                { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] !== "interactive") && 
                                                     <div className="classification-by-step">
                                                         <Accordion defaultActiveKey="0">
                                                             <Card>
@@ -647,7 +658,7 @@ class ScenesEval3 extends React.Component {
                                                 <div className="scenes_header">
                                                     <h3>View Selected Scene Info</h3>
                                                 </div>
-                                                    { (this.checkIfScenesExist(scenesByPerformer) && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][0]["category"] === "interactive") && 
+                                                    { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive") &&
                                                         <div>
                                                             <div className="movie-steps-holder">
                                                                 <div className="interactive-movie-holder">
@@ -680,22 +691,23 @@ class ScenesEval3 extends React.Component {
                                                             </div>} 
                                                         </div>
                                                     }
-                                                {scenesInOrder && this.state.currentSceneNum < scenesInOrder.length && scenesInOrder[this.state.currentSceneNum] &&
+                                                {scenesInOrder && this.state.currentSceneNum <= scenesInOrder.length && this.getCurrentScene(scenesInOrder) !== undefined
+                                                    && this.getCurrentScene(scenesInOrder) !== null &&
                                                     <div className="scene-table-div">
                                                         <table>
                                                             <tbody>
-                                                                {Object.keys(scenesInOrder[this.state.currentSceneNum]).map((objectKey, key) => 
-                                                                    this.checkSceneObjectKey(scenesInOrder[this.state.currentSceneNum], objectKey, key))}
+                                                                {Object.keys(this.getCurrentScene(scenesInOrder)).map((objectKey, key) => 
+                                                                    this.checkSceneObjectKey(this.getCurrentScene(scenesInOrder), objectKey, key))}
                                                             </tbody>
                                                         </table>
-                                                        {scenesInOrder[this.state.currentSceneNum].objects && scenesInOrder[this.state.currentSceneNum].objects.length > 0 &&
+                                                        {this.getCurrentScene(scenesInOrder).objects && this.getCurrentScene(scenesInOrder).objects.length > 0 &&
                                                             <>
                                                                 <div className="objects_scenes_header">
                                                                     <h5>Objects in Scene</h5>
                                                                 </div>
                                                                 <div className="object-nav">
                                                                     <ul className="nav nav-tabs">
-                                                                        {scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
+                                                                        {this.getCurrentScene(scenesInOrder).objects.map((sceneObject, key) => 
                                                                             <li className="nav-item" key={'object_tab_' + key}>
                                                                                 <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
                                                                             </li>
@@ -705,10 +717,10 @@ class ScenesEval3 extends React.Component {
                                                                 <div className="object-contents">
                                                                     <table>
                                                                         <tbody>
-                                                                            {Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
+                                                                            {Object.keys(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum]).map((objectKey, key) => 
                                                                                 <tr key={'object_tab_' + key}>
                                                                                     <td className="bold-label">{objectKey}:</td>
-                                                                                    <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
+                                                                                    <td className="scene-text">{this.convertValueToString(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum][objectKey])}</td>
                                                                                 </tr>
                                                                             )}
                                                                         </tbody>
