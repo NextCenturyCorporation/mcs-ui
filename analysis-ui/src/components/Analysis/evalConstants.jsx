@@ -6,6 +6,7 @@ const Eval2 = {
     sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-2-scenes/",
     sceneExtension: "-debug.json",
 
+    // note that this performerPrefixMapping is only used on the Eval 2 Results Page
     performerPrefixMapping: {
         "IBM-MIT-Harvard-Stanford": "mitibm_",
         "OPICS (OSU, UU, NYU)": "opics_",
@@ -21,15 +22,20 @@ const Eval3 = {
     movieExtension: ".mp4",
     sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-3-scenes/",
     sceneExtension: "_debug.json",
-
-    performerPrefixMapping: {
-        "IBM-MIT-Harvard-Stanford": "mit_",
-        "OPICS (OSU, UU, NYU)": "opics_",
-        "MESS-UCBerkeley": "mess_",
-    }
 }
 
+const Eval3_5 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-scenes-3.5/", 
+    sceneExtension: "_debug.json",
+}
+
+// TODO: MCS-589: move to ingest/store in mongo
 export const EvalConstants = {
-    "Eval2": Eval2, 
-    "Eval3": Eval3
+    "Evaluation 2 Results": Eval2, 
+    "Evaluation 3 Results": Eval3,
+    "Evaluation 3.5 Results": Eval3_5
 }

@@ -267,7 +267,7 @@ class Scenes extends React.Component {
                     let performerList = Object.keys(scenesByPerformer);
                     this.setInitialPerformer(performerList[0], evals[0]);
 
-                    setConstants("Eval2");
+                    setConstants(this.props.value.eval);
 
                     if(performerList.length > 0) {
                         return (

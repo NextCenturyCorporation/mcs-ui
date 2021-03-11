@@ -306,11 +306,11 @@ class ScenesEval3 extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
-    getSceneHistoryQueryObject = (categoryType, testNum) => {
+    getSceneHistoryQueryObject = (evalName, categoryType, testNum) => {
         return [
             {
-                fieldType: "mcs_history.Evaluation 3 Results",
-                fieldTypeLabel: "Evaluation 3 Results",
+                fieldType: "mcs_history." + evalName,
+                fieldTypeLabel: evalName,
                 fieldName: "category_type",
                 fieldNameLabel: "Test Type",
                 fieldValue1: categoryType,
@@ -319,8 +319,8 @@ class ScenesEval3 extends React.Component {
                 collectionDropdownToggle: 1
             },
             {
-                fieldType: "mcs_history.Evaluation 3 Results",
-                fieldTypeLabel: "Evaluation 3 Results",
+                fieldType: "mcs_history." + evalName,
+                fieldTypeLabel: evalName,
                 fieldName: "test_num",
                 fieldNameLabel: "Test Number",
                 fieldValue1: parseInt(testNum),
@@ -421,6 +421,7 @@ class ScenesEval3 extends React.Component {
             <Query query={create_complex_query} variables={
                 {    
                     "queryObject":  this.getSceneHistoryQueryObject(
+                        this.props.value.eval,
                         this.props.value.category_type,
                         this.props.value.test_num
                     ), 
@@ -457,7 +458,7 @@ class ScenesEval3 extends React.Component {
 
                     this.setInitialPerformer(performerList[0], evals[0]);
                     
-                    setConstants("Eval3");
+                    setConstants(this.props.value.eval);
 
                     let sceneNamePrefix = null;
                     
