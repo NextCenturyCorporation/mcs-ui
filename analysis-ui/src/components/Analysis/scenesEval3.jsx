@@ -484,7 +484,7 @@ class ScenesEval3 extends React.Component {
 
                                     if(scenesInOrder.length > 0) {
                                         if(scenesInOrder.length < this.state.currentSceneNum) {
-                                            this.changeScene(scenesInOrder[0]["scene_num"].toString());
+                                            this.changeScene(scenesInOrder[0]["scene_num"]);
                                         }
 
                                         if(metadataList.indexOf(this.state.currentMetadataLevel) === -1) {             
