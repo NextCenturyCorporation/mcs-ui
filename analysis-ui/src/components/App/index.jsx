@@ -6,6 +6,7 @@ import Scenes from '../Analysis/scenes';
 import ScenesEval3 from '../Analysis/scenesEval3';
 import EvalHeader from '../Analysis/header';
 import QueryPage from '../QueryBuilder/queryPage';
+import EvalStatusPage from '../EvaluationStatus/evalStatusPage';
 import CommentsComponent from '../Comments/comments';
 import {Router, Switch, Route, Link} from 'react-router-dom';
 import LoginApp from '../Account/login';
@@ -90,6 +91,14 @@ function QueryBuilder({newState}) {
     }
 
     return <QueryPage currentUser={newState.currentUser}/>
+}
+
+function EvalStatus({newState}) {
+    if(newState.currentUser == null) {
+        history.push('/login');
+    }
+
+    return <EvalStatusPage currentUser={newState.currentUser}/>
 }
 
 function Home({newState}) {
@@ -265,6 +274,9 @@ export class App extends React.Component {
                                 <li className="nav-item">
                                     <Link className="nav-link" to={this.getAnalysisUIPath()}>Analysis</Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/evalStatus">Evaluation Status</Link>
+                                </li>
                             </ul>
                             <ul className="navbar-nav ml-auto">
                                 <li className="login-user">
@@ -294,6 +306,9 @@ export class App extends React.Component {
                         <Route path="/reset-password/:token" component={ResetPassPage}/>
                         <Route path="/myaccount">
                             <MyAccount newState={this.state} userLoginHandler={this.userLoginHandler}/>
+                        </Route>
+                        <Route path="/evalStatus">
+                            <EvalStatus newState={this.state}/>
                         </Route>
                     </Switch>
                 </div>

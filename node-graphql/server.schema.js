@@ -142,6 +142,7 @@ const mcsTypeDefs = gql`
     getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
+    getEvaluationStatus(eval: String): JSON
   }
 
   type Mutation {
@@ -152,6 +153,7 @@ const mcsTypeDefs = gql`
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
     updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
+    setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
   }
 `;
 
@@ -247,6 +249,60 @@ const mcsResolvers = {
         getSubmissionFieldAggregation: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').aggregate([{$group: {_id: '$performer', submission: {$addToSet: '$submission'}}}])
                 .toArray().then(result => {return result});
+        },
+        getEvaluationStatus: async(obj, args, context, infow) => {
+            let performersArray = [];
+            let metadataArray = [];
+
+            const statusObj = await mcsDB.db.collection('eval_status').find({"eval": args.eval})
+                .toArray().then(result => {return result});
+
+            const performers =  await mcsDB.db.collection('mcs_history').distinct("performer").then(result => {return result});
+            const metadatas =  await mcsDB.db.collection('mcs_history').distinct("metadata").then(result => {return result});
+
+            for(let i=0; i < performers.length; i++) {
+                performersArray.push({label: performers[i], value: performers[i]});
+            }
+            for(let i=0; i < metadatas.length; i++) {
+                metadataArray.push({label: metadatas[i], value: metadatas[i]});
+            }
+
+            const evalStats = await mcsDB.db.collection('mcs_history').aggregate([
+                {"$match": 
+                    {
+                      "eval": args.eval,
+                    },
+                },
+                {"$group": 
+                    {"_id": {
+                        "performer": "$performer", 
+                        "metadata": "$metadata",
+                        "test_type": "$test_type"
+                    }, 
+                    "count": {"$sum": 1}}
+                }]).toArray();
+
+            const regexObj = {$options: 'i', $regex: ".*" + args.eval.substring(0, 13) + ".*"};
+            const sceneStats = await mcsDB.db.collection('mcs_scenes').aggregate([
+                {"$match": 
+                    {
+                        "eval": regexObj,
+                    },
+                },
+                {"$group": 
+                    {"_id": {
+                        "sceneType": "$goal.sceneInfo.secondaryType"
+                    }, 
+                    "count": {"$sum": 1}}
+                }]).toArray();
+
+            return {
+                statusObj: statusObj,
+                evalStats: evalStats,
+                performers: performersArray,
+                metadatas: metadataArray,
+                sceneStats: sceneStats
+            };
         },
         getAllHistoryFields: async(obj, args, context, infow) => {
             let returnArray = [];
@@ -459,6 +515,13 @@ const mcsResolvers = {
                 {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.interest": args["flagInterest"]}},
                 {multi: true}
+            );
+        },
+        setEvalStatusParameters: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('eval_status').update(
+                {"eval": args.eval},
+                {"eval": args.eval, "evalStatusParams": args.evalStatusParams},
+                {upsert: true}
             );
         },
         saveQuery: async (obj, args, context, infow) => {

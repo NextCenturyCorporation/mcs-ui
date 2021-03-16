@@ -9,7 +9,7 @@ const PerformanceStatistics = ({resultsData}) => {
     let weightedTotal = 0;
 
     for(let i=0; i < resultsData.length; i++) {
-        if(resultsData[i].score.score == 1) {
+        if(resultsData[i].score.score === 1) {
             numCorrect++;
             numCorrectWeight = numCorrectWeight + resultsData[i].score.weighted_score;
         } else {
