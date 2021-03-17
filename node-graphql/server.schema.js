@@ -267,10 +267,12 @@ const mcsResolvers = {
                 metadataArray.push({label: metadatas[i], value: metadatas[i]});
             }
 
+            const regexObj = {$options: 'i', $regex: ".*" + args.eval.substring(0, 13) + ".*"};
+
             const evalStats = await mcsDB.db.collection('mcs_history').aggregate([
                 {"$match": 
                     {
-                      "eval": args.eval,
+                      "eval": regexObj,
                     },
                 },
                 {"$group": 
@@ -282,7 +284,6 @@ const mcsResolvers = {
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            const regexObj = {$options: 'i', $regex: ".*" + args.eval.substring(0, 13) + ".*"};
             const sceneStats = await mcsDB.db.collection('mcs_scenes').aggregate([
                 {"$match": 
                     {

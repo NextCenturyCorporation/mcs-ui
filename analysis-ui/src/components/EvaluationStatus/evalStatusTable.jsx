@@ -15,6 +15,17 @@ function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStat
 
     const [modalShow, setModalShow] = React.useState(false);
 
+    let statusObjModal = {};
+    if(statusObj[0] !== undefined) {
+        statusObjModal = statusObj[0].evalStatusParams
+    } else {
+        statusObjModal = {
+            testTypes: "",
+            performers: "",
+            metadatas: ""
+        }
+    }
+
     return (
         <>
             <a href="#configureEval" onClick={() => setModalShow(true)} className="icon-link">
@@ -24,7 +35,7 @@ function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStat
             <EvalStatusConfigureModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
-                statusObj={statusObj[0].evalStatusParams}
+                statusObj={statusObjModal}
                 testTypes={testTypes}
                 performers={performers}
                 metadatas={metadatas}

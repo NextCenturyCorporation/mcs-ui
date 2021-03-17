@@ -3,11 +3,11 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import EvalStatusTable from './evalStatusTable';
 
-const historyFieldQueryName = "getHistorySceneFieldAggregation";
+const sceneFieldQueryName = "getSceneFieldAggregation";
 
-const history_field_aggregation = gql`
-    query getHistorySceneFieldAggregation($fieldName: String!){
-        getHistorySceneFieldAggregation(fieldName: $fieldName) 
+const scene_field_aggregation = gql`
+    query getSceneFieldAggregation($fieldName: String!){
+        getSceneFieldAggregation(fieldName: $fieldName) 
   }`;
 
 class EvalStatusPage extends React.Component {
@@ -28,13 +28,13 @@ class EvalStatusPage extends React.Component {
 
     render() {
         return (
-            <Query query={history_field_aggregation} variables={{"fieldName": "eval"}}>
+            <Query query={scene_field_aggregation} variables={{"fieldName": "eval"}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
-                    const evalOptions = data[historyFieldQueryName].sort();
+                    const evalOptions = data[sceneFieldQueryName].sort();
                     let evaluationOptions = [];
                     for(let i=0; i < evalOptions.length; i++) {
                         evaluationOptions.push({value: evalOptions[i], label: evalOptions[i]});
