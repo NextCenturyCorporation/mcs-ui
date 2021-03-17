@@ -14,16 +14,6 @@ class EvalStatusPage extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            currentEval: "",
-        }
-
-        this.selectEvaluation = this.selectEvaluation.bind(this);
-    }
-
-    selectEvaluation(val) {
-        console.log(val);
     }
 
     render() {
