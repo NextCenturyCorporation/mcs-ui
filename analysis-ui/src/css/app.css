@@ -653,6 +653,11 @@ ol, ul {
 
 .home-container {
     background-color: #F8F8F8;
+    height: 100vh;
+}
+
+.charts-container {
+    padding-bottom: 15px;
 }
 
 .chart-home-container {
@@ -937,4 +942,45 @@ ol, ul {
 .internal-state-cell {
     max-width: 500px;
     word-wrap: break-word;
+}
+
+/* Evaluation Stats Page */
+.eval-stats-body {
+    background-color: #F8F8F8;
+    display: flex;
+}
+
+.eval-not-configured {
+    margin: 50px;
+}
+
+.eval-stats-container {
+    display: flex;
+}
+
+.eval-stats-configure {
+    margin-left: auto;
+    position: relative;
+    top: -30px;
+}
+
+.eval-charts-container {
+    width: 95%;
+}
+
+.eval-chart-table {
+    padding-top: 25px;
+    padding-bottom: 10px;
+}
+
+.count-header-size {
+    font-size: 11px;
+}
+
+.eval-chart-table table {
+    margin: 0 auto;
+}
+
+.eval-chart-table th, td {
+    padding: 5px 10px;
 }

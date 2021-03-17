@@ -228,7 +228,7 @@ class HomeCharts extends React.Component {
                             } 
 
                             return (
-                                <div>
+                                <div className='charts-container'>
                                     <div className='chart-home-container'>
                                         <div className='chart-header'>
                                             <div className='chart-header-label'>
