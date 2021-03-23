@@ -377,13 +377,18 @@ class ScenesEval3 extends React.Component {
     getVideoFileName = (scenesByPerformer, videoCategory) => {
         let sceneItem = this.getSceneHistoryItem(scenesByPerformer);
 
-        if(sceneItem !== undefined && sceneItem !== null) {
+        if(sceneItem !== undefined && sceneItem !== null && sceneItem.eval === "Evaluation 3 Results") {
             return constantsObject["moviesBucket"] +
                 sceneItem.filename +
                 videoCategory +
                 sceneItem.fileTimestamp +
                 constantsObject["movieExtension"];
-        } else  {
+        } else if(sceneItem !== undefined && sceneItem !== null) {
+            return constantsObject["moviesBucket"] +
+                sceneItem.fullFilename +
+                videoCategory.slice(0, -1) +
+                constantsObject["movieExtension"];
+        } else {
             return "";
         }
     }

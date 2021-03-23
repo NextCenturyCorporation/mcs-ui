@@ -25,7 +25,7 @@ const Eval3 = {
 }
 
 const Eval3_5 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5",
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
     interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
     topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
     movieExtension: ".mp4",

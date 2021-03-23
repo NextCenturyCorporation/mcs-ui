@@ -251,44 +251,46 @@ class HomeCharts extends React.Component {
                                         <ResultsChart chartKeys={passiveKeys} chartData={passiveData} chartIndex={"test_type"} maxVal={passiveMaxValue} legendLabel={passiveLegendLabel}/>
                                     </div>
 
-                                    <div className='chart-home-container'>
-                                        <div className='chart-header'>
-                                            <div className='chart-header-label'>
-                                                <h4>Interactive</h4>
+                                    {interactiveOptions.length > 0 && 
+                                        <div className='chart-home-container'>
+                                            <div className='chart-header'>
+                                                <div className='chart-header-label'>
+                                                    <h4>Interactive</h4>
+                                                </div>
+                                                <div className='chart-header-select'>
+                                                    <Select
+                                                        onChange={this.selectInteractiveToggle}
+                                                        options={interactiveOptions}
+                                                        defaultValue={this.state.interactiveToggle}
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className='chart-header-select'>
-                                                <Select
-                                                    onChange={this.selectInteractiveToggle}
-                                                    options={interactiveOptions}
-                                                    defaultValue={this.state.interactiveToggle}
-                                                />
-                                            </div>
+                                            <ResultsChart chartKeys={interactiveKeys} chartData={interactiveData} chartIndex={"test_type"} maxVal={interactiveMaxValue} legendLabel={interactiveLegendLabel}/>
                                         </div>
-                                        <ResultsChart chartKeys={interactiveKeys} chartData={interactiveData} chartIndex={"test_type"} maxVal={interactiveMaxValue} legendLabel={interactiveLegendLabel}/>
-                                    </div>
+                                    }
 
                                     {agentOptions.length > 0 && 
                                         <div className='chart-home-container'>
-                                        <div className='chart-header'>
-                                            <div className='chart-header-label'>
-                                                <h4>Agents</h4>
+                                            <div className='chart-header'>
+                                                <div className='chart-header-label'>
+                                                    <h4>Agents</h4>
+                                                </div>
+                                                <div className='chart-header-select'>
+                                                    <Select
+                                                        onChange={this.selectAgentToggle}
+                                                        options={agentOptions}
+                                                        defaultValue={this.state.agentToggle}
+                                                    />
+                                                </div>
+                                                <div className="chart-weight-toggle">
+                                                    <ToggleButtonGroup type="checkbox" value={this.state.agentsWeightedToggle} onChange={this.handleAgentsWeightedToggle}>
+                                                        <ToggleButton variant="secondary" value={"weightedStats"}>Paired</ToggleButton>
+                                                        <ToggleButton variant="secondary" value={"stats"}>Unpaired</ToggleButton>
+                                                    </ToggleButtonGroup>
+                                                </div>
                                             </div>
-                                            <div className='chart-header-select'>
-                                                <Select
-                                                    onChange={this.selectAgentToggle}
-                                                    options={agentOptions}
-                                                    defaultValue={this.state.agentToggle}
-                                                />
-                                            </div>
-                                            <div className="chart-weight-toggle">
-                                                <ToggleButtonGroup type="checkbox" value={this.state.agentsWeightedToggle} onChange={this.handleAgentsWeightedToggle}>
-                                                    <ToggleButton variant="secondary" value={"weightedStats"}>Paired</ToggleButton>
-                                                    <ToggleButton variant="secondary" value={"stats"}>Unpaired</ToggleButton>
-                                                </ToggleButtonGroup>
-                                            </div>
+                                            <ResultsChart chartKeys={agentKeys} chartData={agentData} chartIndex={"test_type"} maxVal={agentMaxValue} legendLabel={agentLegendLabel}/>
                                         </div>
-                                        <ResultsChart chartKeys={agentKeys} chartData={agentData} chartIndex={"test_type"} maxVal={agentMaxValue} legendLabel={agentLegendLabel}/>
-                                    </div>
                                     }
                                 </div>
                             )
