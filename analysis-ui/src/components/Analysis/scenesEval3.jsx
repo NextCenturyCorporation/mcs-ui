@@ -376,20 +376,21 @@ class ScenesEval3 extends React.Component {
 
     getVideoFileName = (scenesByPerformer, videoCategory) => {
         let sceneItem = this.getSceneHistoryItem(scenesByPerformer);
+        if(sceneItem === undefined || sceneItem === null) {
+            return "";
+        }
 
-        if(sceneItem !== undefined && sceneItem !== null && sceneItem.eval === "Evaluation 3 Results") {
+        if(sceneItem.eval === "Evaluation 3 Results") {
             return constantsObject["moviesBucket"] +
                 sceneItem.filename +
                 videoCategory +
-                sceneItem.fileTimestamp +
-                constantsObject["movieExtension"];
-        } else if(sceneItem !== undefined && sceneItem !== null) {
-            return constantsObject["moviesBucket"] +
-                sceneItem.fullFilename +
-                videoCategory.slice(0, -1) +
+                "_" + sceneItem.fileTimestamp +
                 constantsObject["movieExtension"];
         } else {
-            return "";
+            return constantsObject["moviesBucket"] +
+                sceneItem.fullFilename +
+                videoCategory +
+                constantsObject["movieExtension"];
         }
     }
 
@@ -509,25 +510,25 @@ class ScenesEval3 extends React.Component {
                                                         <div className="eval3-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video src={this.getVideoFileName(scenesByPerformer, "_visual_")} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video src={this.getVideoFileName(scenesByPerformer, "_topdown_")} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                         </div>
 
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
-                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap_")} target="_blank" rel="noopener noreferrer">Heatmap</a>
+                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>}
                                                     </div> 
                                                 }
@@ -669,7 +670,7 @@ class ScenesEval3 extends React.Component {
                                                             <div className="movie-steps-holder">
                                                                 <div className="interactive-movie-holder">
                                                                     <video id="interactiveMoviePlayer" src={
-                                                                        this.getVideoFileName(scenesByPerformer, "_visual_")} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+                                                                        this.getVideoFileName(scenesByPerformer, "_visual")} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
                                                                 </div>
                                                                 <div className="steps-holder">
                                                                     <h5>Performer Steps:</h5>
@@ -684,16 +685,16 @@ class ScenesEval3 extends React.Component {
                                                                 </div>
                                                                 <div className="top-down-holder">
                                                                     <video id="interactiveMoviePlayer" src={
-                                                                        this.getVideoFileName(scenesByPerformer, "_topdown_")} width="500" height="350" controls="controls" autoPlay={false}/>
+                                                                        this.getVideoFileName(scenesByPerformer, "_topdown")} width="500" height="350" controls="controls" autoPlay={false}/>
                                                                 </div>
                                                             </div>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth_")} target="_blank" rel="noopener noreferrer">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation_")} target="_blank" rel="noopener noreferrer">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>} 
                                                         </div>
                                                     }
