@@ -11,7 +11,8 @@ const get_home_stats = gql`
     query getHomeStats($eval: String!){
         getHomeStats(eval: $eval) {
             stats,
-            weightedStats
+            weightedStats,
+            performers
         }
     }`;
 
@@ -99,6 +100,17 @@ class HomeCharts extends React.Component {
         this.setState({
             passiveToggle: target
         });
+    }
+
+    checkDataForUndefined(data, performers) {
+        for(let i=0; i < data.length; i++) {
+            for(let j=0; j < performers.length; j++) {
+                if(data[i][performers[j]] === undefined) {
+                    data[i][performers[j]] = 0;
+                }
+            }
+        }
+        return data;
     }
 
     render() {
@@ -252,7 +264,7 @@ class HomeCharts extends React.Component {
                                                 </ToggleButtonGroup>
                                             </div>
                                         </div>
-                                        <ResultsChart chartKeys={passiveKeys} chartData={passiveData} chartIndex={"test_type"} maxVal={passiveMaxValue} legendLabel={passiveLegendLabel}/>
+                                        <ResultsChart chartKeys={passiveKeys} chartData={this.checkDataForUndefined(passiveData, homeStats.performers)} chartIndex={"test_type"} maxVal={passiveMaxValue} legendLabel={passiveLegendLabel}/>
                                     </div>
 
                                     {interactiveOptions.length > 0 && 

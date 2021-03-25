@@ -102,6 +102,7 @@ const mcsTypeDefs = gql`
   type homeStatsObject {
       stats: JSON,
       weightedStats: JSON
+      performers: [String]
   }
 
   type savedQueryObj {
@@ -476,9 +477,13 @@ const mcsResolvers = {
                 ...weightedTestTypeScores
             }
 
+            const performers =  await mcsDB.db.collection('mcs_history').distinct(
+                "performer", {"eval": args.eval}).then(result => {return result});
+
             let statsObj = {
                 stats: stats,
-                weightedStats: weightedStats
+                weightedStats: weightedStats,
+                performers: performers
             };
 
             return statsObj;
