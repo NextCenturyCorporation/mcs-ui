@@ -146,6 +146,10 @@ class HomeCharts extends React.Component {
                                 passiveOptions.push({value: "passiveCorrectMetadata2_passiveTotalMetadata2_passiveCorrectPercentMetadata2", label: "Metadata 2"});
                                 passiveOptions.push({value: "plausibleMetadata2_null_plausiblePercentMetadata2", label: "Metadata 2 by Plausibility"});
                             }
+                            if (homeStats[this.state.passiveWeightedToggle].passiveTotalOracle> 0) {
+                                passiveOptions.push({value: "passiveCorrectOracle_passiveTotalOracle_passiveCorrectPercentOracle", label: "Oracle"});
+                                passiveOptions.push({value: "plausibleOracle_null_plausiblePercentOracle", label: "Oracle by Plausibility"});
+                            }
 
                             // Build Interactive Options Drop Down
                             if(homeStats.stats.interactiveTotal > 0) {

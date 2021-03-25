@@ -44,6 +44,13 @@ const statsByScore = function(scoreStats, useScoreWeight){
     let scoreImplausibleCorrectMetadata2 = {"test_type": "Implausible Correct"};
     let scoreImplausibleIncorrectMetadata2 = {"test_type": "Implausible Incorrect"};
 
+    let scoreOverallCorrectOracle = {"test_type": "Overall Correct"};
+    let scoreOverallIncorrectOracle = {"test_type": "Overall Incorrect"};
+    let scorePlausibleCorrectOracle = {"test_type": "Plausible Correct"};
+    let scorePlausibleIncorrectOracle = {"test_type": "Plausible Incorrect"};
+    let scoreImplausibleCorrectOracle = {"test_type": "Implausible Correct"};
+    let scoreImplausibleIncorrectOracle = {"test_type": "Implausible Incorrect"};
+
     let agentScoreOverallCorrect = {"test_type": "Overall Correct"};
     let agentScoreOverallIncorrect = {"test_type": "Overall Incorrect"};
     let agentScorePlausibleCorrect = {"test_type": "Expected Correct"};
@@ -77,11 +84,14 @@ const statsByScore = function(scoreStats, useScoreWeight){
                     }
                 } else {
                     updateScoreObject(scoreImplausibleCorrect, scoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level1") {
                         updateScoreObject(scoreImplausibleCorrectMetadata1, scoreOverallCorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level2") {
                         updateScoreObject(scoreImplausibleCorrectMetadata2, scoreOverallCorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
+                    }
+                    if(scoreStats[i]._id.metadata === "oracle") {
+                        updateScoreObject(scoreImplausibleCorrectOracle, scoreOverallCorrectOracle, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
             } else {
@@ -95,11 +105,14 @@ const statsByScore = function(scoreStats, useScoreWeight){
                     }
                 } else {
                     updateScoreObject(scoreImplausibleIncorrect, scoreOverallIncorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level1") {
                         updateScoreObject(scoreImplausibleIncorrectMetadata1, scoreOverallIncorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level2") {
                         updateScoreObject(scoreImplausibleIncorrectMetadata2, scoreOverallIncorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
+                    }
+                    if(scoreStats[i]._id.metadata === "oracle") {
+                        updateScoreObject(scoreImplausibleIncorrectOracle, scoreOverallIncorrectOracle, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
             }
@@ -116,11 +129,14 @@ const statsByScore = function(scoreStats, useScoreWeight){
                     }
                 } else {
                     updateScoreObject(scorePlausibleCorrect, scoreOverallCorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level1") {
                         updateScoreObject(scorePlausibleCorrectMetadata1, scoreOverallCorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level2") {
                         updateScoreObject(scorePlausibleCorrectMetadata2, scoreOverallCorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
+                    }
+                    if(scoreStats[i]._id.metadata === "oracle") {
+                        updateScoreObject(scorePlausibleCorrectOracle, scoreOverallCorrectOracle, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
             } else {
@@ -134,11 +150,14 @@ const statsByScore = function(scoreStats, useScoreWeight){
                     }
                 } else {
                     updateScoreObject(scorePlausibleIncorrect, scoreOverallIncorrect, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
-                    if(scoreStats[i]._id.metadata === "level1" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level1") {
                         updateScoreObject(scorePlausibleIncorrectMetadata1,  scoreOverallIncorrectMetadata1, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
-                    if(scoreStats[i]._id.metadata === "level2" || scoreStats[i]._id.metadata === "oracle") {
+                    if(scoreStats[i]._id.metadata === "level2") {
                         updateScoreObject(scorePlausibleIncorrectMetadata2,  scoreOverallIncorrectMetadata2, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
+                    }
+                    if(scoreStats[i]._id.metadata === "oracle") {
+                        updateScoreObject(scorePlausibleIncorrectOracle,  scoreOverallIncorrectOracle, scoreStats[i], useScoreWeight ? scoreStats[i]._id.weight : 1);
                     }
                 }
             }
@@ -152,6 +171,8 @@ const statsByScore = function(scoreStats, useScoreWeight){
         scorePlausibleIncorrectMetadata1, scoreImplausibleCorrectMetadata1, scoreImplausibleIncorrectMetadata1].reverse();
     statsByScoreObject["plausibleMetadata2"] = [scoreOverallCorrectMetadata2, scoreOverallIncorrectMetadata2, scorePlausibleCorrectMetadata2,
         scorePlausibleIncorrectMetadata2, scoreImplausibleCorrectMetadata2, scoreImplausibleIncorrectMetadata2].reverse();
+    statsByScoreObject["plausibleOracle"] = [scoreOverallCorrectOracle, scoreOverallIncorrectOracle, scorePlausibleCorrectOracle,
+        scorePlausibleIncorrectOracle, scoreImplausibleCorrectOracle, scoreImplausibleIncorrectOracle].reverse();
 
     statsByScoreObject["expectedTotal"] = [agentScoreOverallCorrect, agentScoreOverallIncorrect, agentScorePlausibleCorrect,
         agentScorePlausibleIncorrect, agentScoreImplausibleCorrect, agentScoreImplausibleIncorrect].reverse();
@@ -178,6 +199,12 @@ const statsByScore = function(scoreStats, useScoreWeight){
     let percentScorePlausibleIncorrectMetadata2 = {"test_type": "Plausible Incorrect"};
     let percentScoreImplausibleCorrectMetadata2 = {"test_type": "Implausible Correct"};
     let percentScoreImplausibleIncorrectMetadata2 = {"test_type": "Implausible Incorrect"};
+    let percentScoreOverallCorrectOracle = {"test_type": "Overall Correct"};
+    let percentScoreOverallIncorrectOracle = {"test_type": "Overall Incorrect"};
+    let percentScorePlausibleCorrectOracle = {"test_type": "Plausible Correct"};
+    let percentScorePlausibleIncorrectOracle = {"test_type": "Plausible Incorrect"};
+    let percentScoreImplausibleCorrectOracle = {"test_type": "Implausible Correct"};
+    let percentScoreImplausibleIncorrectOracle = {"test_type": "Implausible Incorrect"};
 
     let agentPercentScoreOverallCorrect = {"test_type": "Overall Correct"};
     let agentPercentScoreOverallIncorrect = {"test_type": "Overall Incorrect"};
@@ -227,6 +254,16 @@ const statsByScore = function(scoreStats, useScoreWeight){
 
     statsByScoreObject["plausiblePercentMetadata2"] = [percentScoreOverallCorrectMetadata2, percentScoreOverallIncorrectMetadata2, percentScorePlausibleCorrectMetadata2,
         percentScorePlausibleIncorrectMetadata2, percentScoreImplausibleCorrectMetadata2, percentScoreImplausibleIncorrectMetadata2].reverse();
+
+    calculatePercentObjectByScore(scoreOverallCorrectOracle, scoreOverallIncorrectOracle, percentScoreOverallCorrectOracle);
+    calculatePercentObjectByScore(scoreOverallIncorrectOracle, scoreOverallCorrectOracle, percentScoreOverallIncorrectOracle);
+    calculatePercentObjectByScore(scorePlausibleCorrectOracle, scorePlausibleIncorrectOracle, percentScorePlausibleCorrectOracle);
+    calculatePercentObjectByScore(scorePlausibleIncorrectOracle, scorePlausibleCorrectOracle, percentScorePlausibleIncorrectOracle);
+    calculatePercentObjectByScore(scoreImplausibleCorrectOracle, scoreImplausibleIncorrectOracle, percentScoreImplausibleCorrectOracle);
+    calculatePercentObjectByScore(scoreImplausibleIncorrectOracle, scoreImplausibleCorrectOracle, percentScoreImplausibleIncorrectOracle);
+
+    statsByScoreObject["plausiblePercentOracle"] = [percentScoreOverallCorrectOracle, percentScoreOverallIncorrectOracle, percentScorePlausibleCorrectOracle,
+        percentScorePlausibleIncorrectOracle, percentScoreImplausibleCorrectOracle, percentScoreImplausibleIncorrectOracle].reverse();
 
     
     calculatePercentObjectByScore(agentScoreOverallCorrect, agentScoreOverallIncorrect, agentPercentScoreOverallCorrect);
@@ -339,6 +376,14 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
     let passiveOverallCorrectPercentMetadata2 = {"test_type": "Overall"};
     let passiveOverallTotalMetadata2 = {};
 
+    //  This is why we need to rewrite this endpoint to fix this hacky nonsense
+    let passiveScoresCorrectOracle = [];
+    let passiveScoresCorrectPercentOracle  = [];
+    let passiveScoresTotalOracle  = [];
+    let passiveOverallCorrectOracle  = {"test_type": "Overall"};
+    let passiveOverallCorrectPercentOracle  = {"test_type": "Overall"};
+    let passiveOverallTotalOracle  = {};
+
     let interactiveScoresCorrect = [];
     let interactiveScoresCorrectPercent = [];
     let interactiveScoresTotal = [];
@@ -436,24 +481,32 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
             if(testTypeStats[i]._id.correct === 1) {
                 updateTestTypeScoreObj(passiveScoresCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(passiveOverallCorrect, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-                if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
+                if(testTypeStats[i]._id.metadata === "level1") {
                     updateTestTypeScoreObj(passiveScoresCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(passiveOverallCorrectMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
-                if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
+                if(testTypeStats[i]._id.metadata === "level2") {
                     updateTestTypeScoreObj(passiveScoresCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                     updateTestTypeTotalsObj(passiveOverallCorrectMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
+                }
+                if(testTypeStats[i]._id.metadata === "oracle") {
+                    updateTestTypeScoreObj(passiveScoresCorrectOracle, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
+                    updateTestTypeTotalsObj(passiveOverallCorrectOracle, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 }
             } 
             updateTestTypeScoreObj(passiveScoresTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             updateTestTypeTotalsObj(passiveOverallTotal, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
-            if(testTypeStats[i]._id.metadata === "level1" || testTypeStats[i]._id.metadata === "oracle") {
+            if(testTypeStats[i]._id.metadata === "level1") {
                 updateTestTypeScoreObj(passiveScoresTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(passiveOverallTotalMetadata1, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
-            if(testTypeStats[i]._id.metadata === "level2" || testTypeStats[i]._id.metadata === "oracle") {
+            if(testTypeStats[i]._id.metadata === "level2") {
                 updateTestTypeScoreObj(passiveScoresTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
                 updateTestTypeTotalsObj(passiveOverallTotalMetadata2, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
+            }
+            if(testTypeStats[i]._id.metadata === "oracle") {
+                updateTestTypeScoreObj(passiveScoresTotalOracle, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
+                updateTestTypeTotalsObj(passiveOverallTotalOracle, testTypeStats[i], useScoreWeight ? testTypeStats[i]._id.weight : 1);
             }
         }
     }
@@ -478,6 +531,13 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
         let newObj = {"test_type": passiveScoresCorrectMetadata2[j]["test_type"]};
         calculatePercentObjectByTestType(passiveScoresCorrectMetadata2[j], passiveScoresTotalMetadata2[j], newObj);
         passiveScoresCorrectPercentMetadata2.push(newObj);
+    }
+    passiveScoresCorrectOracle = sortScoreArray(passiveScoresCorrectOracle);
+    passiveScoresTotalOracle = sortScoreArray(passiveScoresTotalOracle);
+    for(let j=0; j < passiveScoresCorrectOracle.length; j++) {
+        let newObj = {"test_type": passiveScoresCorrectOracle[j]["test_type"]};
+        calculatePercentObjectByTestType(passiveScoresCorrectOracle[j], passiveScoresTotalOracle[j], newObj);
+        passiveScoresCorrectPercentOracle.push(newObj);
     }
 
     interactiveScoresCorrect = sortScoreArray(interactiveScoresCorrect);
@@ -527,6 +587,7 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
     calculatePercentObjectByTestType(passiveOverallCorrect, passiveOverallTotal, passiveOverallCorrectPercent);
     calculatePercentObjectByTestType(passiveOverallCorrectMetadata1, passiveOverallTotalMetadata1, passiveOverallCorrectPercentMetadata1);
     calculatePercentObjectByTestType(passiveOverallCorrectMetadata2, passiveOverallTotalMetadata2, passiveOverallCorrectPercentMetadata2);
+    calculatePercentObjectByTestType(passiveOverallCorrectOracle, passiveOverallTotalOracle, passiveOverallCorrectPercentOracle);
 
     calculatePercentObjectByTestType(interactiveOverallCorrect, interactiveOverallTotal, interactiveOverallCorrectPercent);
     calculatePercentObjectByTestType(interactiveOverallCorrectMetadata1, interactiveOverallTotalMetadata1, interactiveOverallCorrectPercentMetadata1);
@@ -546,6 +607,9 @@ const statsByTestType = function(testTypeStats, useScoreWeight){
         passiveCorrectMetadata2: [passiveOverallCorrectMetadata2].concat(passiveScoresCorrectMetadata2).reverse(),
         passiveTotalMetadata2: calculateTotalTests(passiveOverallTotalMetadata2),
         passiveCorrectPercentMetadata2: [passiveOverallCorrectPercentMetadata2].concat(passiveScoresCorrectPercentMetadata2).reverse(),
+        passiveCorrectOracle: [passiveOverallCorrectOracle].concat(passiveScoresCorrectOracle).reverse(),
+        passiveTotalOracle: calculateTotalTests(passiveOverallTotalOracle),
+        passiveCorrectPercentOracle: [passiveOverallCorrectPercentOracle].concat(passiveScoresCorrectPercentOracle).reverse(),
 
         interactiveCorrect: [interactiveOverallCorrect].concat(interactiveScoresCorrect).reverse(),
         interactiveTotal: calculateTotalTests(interactiveOverallTotal),
