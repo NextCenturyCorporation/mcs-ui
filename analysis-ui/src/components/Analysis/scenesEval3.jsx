@@ -617,7 +617,7 @@ class ScenesEval3 extends React.Component {
                                                                                         <th>Classification</th>
                                                                                         <th>Confidence</th>
                                                                                         <th>Violations ((x,y) list)</th>
-                                                                                        {this.props.value.eval !== "Evaluation 3 Results" &&
+                                                                                        {this.props.value.eval !== "Evaluation 3 Results" && this.props.value.eval !== "Evaluation 3.5 Results" &&
                                                                                             <th>Internal State
                                                                                                 <br/>
                                                                                                 <span className={this.state.showInternalState ? "internal-state-toggle" : "display-none"} onClick={() => this.toggleShowInternalState(false)}>(Click to Collapse)</span>
@@ -640,7 +640,7 @@ class ScenesEval3 extends React.Component {
                                                                                                         this.convertXYArrayToString(stepObj.violations_xy_list)                                                                     
                                                                                                 }
                                                                                             </td>
-                                                                                            {this.props.value.eval !== "Evaluation 3 Results" && 
+                                                                                            {this.props.value.eval !== "Evaluation 3 Results" && this.props.value.eval !== "Evaluation 3.5 Results" &&
                                                                                                 <td className="internal-state-cell">
                                                                                                     <span className={this.state.showInternalState ? "" : "display-none"}>
                                                                                                         {JSON.stringify(stepObj.internal_state)}
