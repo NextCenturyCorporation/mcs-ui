@@ -6,7 +6,9 @@ import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 import Accordion from 'react-bootstrap/Accordion';
+import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card';
+import Modal from 'react-bootstrap/Modal'
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -103,7 +105,8 @@ class ScenesEval3 extends React.Component {
             testNum: props.value.test_num,
             sortBy: "",
             sortOrder: "asc",
-            showInternalState: false
+            showInternalState: false,
+            showDetailsModal: false
         };
     }
 
@@ -422,6 +425,10 @@ class ScenesEval3 extends React.Component {
         return scenesInOrder[this.state.currentSceneNum - 1];
     }
 
+    handleToggleDetailsModal = (showModal) => {
+        this.setState({ showDetailsModal: showModal});
+    }
+
     render() {
         return (
             <Query query={create_complex_query} variables={
@@ -566,37 +573,88 @@ class ScenesEval3 extends React.Component {
                                                                     </TableSortLabel>
                                                                 </TableCell>
                                                             ))}
+                                                                <TableCell key="performer_score_header_cell_details">
+                                                                   Details
+                                                               </TableCell>
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
                                                         {this.checkIfScenesExist(scenesByPerformer) && _.values(scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]).sort(getSorting(this.state.sortOrder, this.state.sortBy)).map((scoreObj, rowKey) => 
-                                                            <TableRow key={'performer_score_row_' + rowKey}>
+                                                            <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={this.state.currentSceneNum === scoreObj.scene_num} onClick={()=> this.changeScene(scoreObj.scene_num)}> 
                                                                 {scoreTableCols.map((col, colKey) => (
                                                                     <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
-                                                                        {(col.dataKey === "scene_num") &&
-                                                                            <button key={"scene_button_" + scoreObj.scene_num} 
-                                                                                className={this.state.currentSceneNum === scoreObj.scene_num ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                                                id={"scene_btn_" + scoreObj.scene_num} type="button" onClick={() => this.changeScene(scoreObj.scene_num)}>
-                                                                                    Scene {scoreObj.scene_num}
-                                                                            </button>
-                                                                        }
-
-                                                                        {(col.dataKey !== "scene_num") &&
-                                                                            this.displayItemText(scoreObj, col.dataKey)
-                                                                        }
+                                                                        {this.displayItemText(scoreObj, col.dataKey)}
                                                                     </TableCell>
                                                                 ))}
+                                                                    <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
+                                                                        <div className="show-details-toggle" onClick={() => this.handleToggleDetailsModal(true)}>
+                                                                            <i className='material-icons' style={{fontSize: '24px'}}>fullscreen</i>
+                                                                        </div>
+                                                                    </TableCell>
                                                             </TableRow>
                                                         )}
                                                         </TableBody>
                                                     </Table>
                                                 </div>
 
+                                                {/* TODO: MCS-517: Make scene details modal component?  */}
+                                                    <Modal show={this.state.showDetailsModal} size="lg" aria-labelledby="contained-modal-title-vcenter" centered 
+                                                        onHide={() => this.handleToggleDetailsModal(false)}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>Scene {this.state.currentSceneNum} Details</Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body>
+                                                            {scenesInOrder && this.state.currentSceneNum <= scenesInOrder.length && this.getCurrentScene(scenesInOrder) !== undefined
+                                                                && this.getCurrentScene(scenesInOrder) !== null &&
+                                                                <div className="scene-table-div">
+                                                                    <table>
+                                                                        <tbody>
+                                                                            {Object.keys(this.getCurrentScene(scenesInOrder)).map((objectKey, key) => 
+                                                                                this.checkSceneObjectKey(this.getCurrentScene(scenesInOrder), objectKey, key))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                    {this.getCurrentScene(scenesInOrder).objects && this.getCurrentScene(scenesInOrder).objects.length > 0 &&
+                                                                        <>
+                                                                            <div className="objects_scenes_header">
+                                                                                <h5>Objects in Scene</h5>
+                                                                            </div>
+                                                                            <div className="object-nav">
+                                                                                <ul className="nav nav-tabs">
+                                                                                    {this.getCurrentScene(scenesInOrder).objects.map((sceneObject, key) => 
+                                                                                        <li className="nav-item" key={'object_tab_' + key}>
+                                                                                            <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
+                                                                                        </li>
+                                                                                    )}
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div className="object-contents">
+                                                                                <table>
+                                                                                    <tbody>
+                                                                                        {Object.keys(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum]).map((objectKey, key) => 
+                                                                                            <tr key={'object_tab_' + key}>
+                                                                                                <td className="bold-label">{objectKey}:</td>
+                                                                                                <td className="scene-text">{this.convertValueToString(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum][objectKey])}</td>
+                                                                                            </tr>
+                                                                                        )}
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div> 
+                                                                        </>   
+                                                                    }    
+                                                                </div>
+                                                            }
+                                                        </Modal.Body>
+                                                    <Modal.Footer>
+                                                        <Button variant="primary" onClick={() => this.handleToggleDetailsModal(false)}>Close Details</Button>
+                                                    </Modal.Footer>
+                                                </Modal>
+                                                {/* TODO: MCS-517: end modal code */}
+
                                                 { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] !== "interactive") && 
                                                     <div className="classification-by-step">
                                                         <Accordion defaultActiveKey="0">
                                                             <Card>
-                                                                <Accordion.Toggle as={Card.Header} className="classification-by-step-header" eventKey="0">
+                                                                <Accordion.Toggle as={Card.Header} className="pointer-on-hover" eventKey="0">
                                                                     <div>
                                                                         <div>
                                                                             <h3>Selected Scene Classification by Step</h3>
@@ -662,9 +720,7 @@ class ScenesEval3 extends React.Component {
                                                     </div>
                                                 }
 
-                                                <div className="scenes_header">
-                                                    <h3>View Selected Scene Info</h3>
-                                                </div>
+                                                {/* TODO: MCS-517 start video logic for interactive scenes */}
                                                     { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive") &&
                                                         <div>
                                                             <div className="movie-steps-holder">
@@ -698,45 +754,7 @@ class ScenesEval3 extends React.Component {
                                                             </div>} 
                                                         </div>
                                                     }
-                                                {scenesInOrder && this.state.currentSceneNum <= scenesInOrder.length && this.getCurrentScene(scenesInOrder) !== undefined
-                                                    && this.getCurrentScene(scenesInOrder) !== null &&
-                                                    <div className="scene-table-div">
-                                                        <table>
-                                                            <tbody>
-                                                                {Object.keys(this.getCurrentScene(scenesInOrder)).map((objectKey, key) => 
-                                                                    this.checkSceneObjectKey(this.getCurrentScene(scenesInOrder), objectKey, key))}
-                                                            </tbody>
-                                                        </table>
-                                                        {this.getCurrentScene(scenesInOrder).objects && this.getCurrentScene(scenesInOrder).objects.length > 0 &&
-                                                            <>
-                                                                <div className="objects_scenes_header">
-                                                                    <h5>Objects in Scene</h5>
-                                                                </div>
-                                                                <div className="object-nav">
-                                                                    <ul className="nav nav-tabs">
-                                                                        {this.getCurrentScene(scenesInOrder).objects.map((sceneObject, key) => 
-                                                                            <li className="nav-item" key={'object_tab_' + key}>
-                                                                                <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
-                                                                            </li>
-                                                                        )}
-                                                                    </ul>
-                                                                </div>
-                                                                <div className="object-contents">
-                                                                    <table>
-                                                                        <tbody>
-                                                                            {Object.keys(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum]).map((objectKey, key) => 
-                                                                                <tr key={'object_tab_' + key}>
-                                                                                    <td className="bold-label">{objectKey}:</td>
-                                                                                    <td className="scene-text">{this.convertValueToString(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum][objectKey])}</td>
-                                                                                </tr>
-                                                                            )}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div> 
-                                                            </>   
-                                                        }    
-                                                    </div>
-                                                }
+                                                {/* TODO: MCS-517 end video logic for interactive scenes */}
                                             </div>
                                         )
                                     }  else {

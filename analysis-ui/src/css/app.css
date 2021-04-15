@@ -931,7 +931,7 @@ ol, ul {
     padding: 20px 0 20px 0;
 }
 
-.classification-by-step-header {
+.pointer-on-hover {
     cursor: pointer;
 }
 
@@ -942,6 +942,16 @@ ol, ul {
 .internal-state-cell {
     max-width: 500px;
     word-wrap: break-word;
+}
+
+.show-details-toggle:hover {
+    /*color: #007bff;*/
+    color: #a2a9b5;
+    cursor: pointer;
+}
+    
+.TableRow.Mui-selected {
+    background-color: #99d6ff !important;
 }
 
 /* Evaluation Stats Page */
