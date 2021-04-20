@@ -8,13 +8,14 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
     
     const [currentObjectNum, setCurrentObjectNum] = useState(0);
     const [selectedData, setSelectedData] = useState("scene_info");
+    const keysToIgnore = ['objects', 'goal', 'objectsInfo'];
 
     const closeModal = () => {
         onHide();
     }
 
     const checkSceneObjectKey = (scene, objectKey, key, labelPrefix = "") => {
-        if(objectKey !== 'objects' && objectKey !== 'goal') {
+        if(!keysToIgnore.includes(objectKey)) {
             return (
                 <tr key={'scene_prop_' + key}>
                     <td className="bold-label">{labelPrefix + objectKey}:</td>
@@ -34,12 +35,16 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
             return sceneObject.shape;
         }
 
-        if(sceneObject.id.indexOf('occluder_wall')) {
+        if(sceneObject.id.indexOf('occluder_wall') > -1) {
             return "occluder wall";
         }
 
-        if(sceneObject.id.indexOf('occluder_pole')) {
+        if(sceneObject.id.indexOf('occluder_pole') > -1) {
             return "occluder pole";
+        }
+
+        if(sceneObject.role !== undefined && sceneObject.role !== null) {
+            return sceneObject.role;
         }
 
         return sceneObject.type;
