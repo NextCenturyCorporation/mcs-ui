@@ -6,15 +6,16 @@ import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 import Accordion from 'react-bootstrap/Accordion';
-import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card';
-import Modal from 'react-bootstrap/Modal'
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
+import SceneDetails from './sceneDetails';
+import { convertValueToString } from './displayTextUtils';
+
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
@@ -105,8 +106,7 @@ class ScenesEval3 extends React.Component {
             testNum: props.value.test_num,
             sortBy: "",
             sortOrder: "asc",
-            showInternalState: false,
-            showDetailsModal: false
+            showInternalState: false
         };
     }
 
@@ -163,109 +163,14 @@ class ScenesEval3 extends React.Component {
         }
     }
 
-    changeObjectDisplay = (objectKey) => {
-        $('#object_button_' + this.state.currentObjectNum ).toggleClass( "active" );
-        $('#object_button_' + objectKey ).toggleClass( "active" );
-
-        this.setState({ currentObjectNum: objectKey});
-    }
-
-    convertArrayToString = (arrayToConvert) => {
-        let newStr = "";
-        for(let i=0; i < arrayToConvert.length; i++) {
-            newStr = newStr + this.convertValueToString(arrayToConvert[i]);
-
-            if(i < arrayToConvert.length -1) {
-                newStr = newStr + ", ";
-            }
-        }
-
-        return newStr;
-    }
-
-    convertObjectToString = (objectToConvert) => {
-        let newStr = "";
-        Object.keys(objectToConvert).forEach((key, index) => {
-            newStr = newStr + key + ": " + this.convertValueToString(objectToConvert[key]);
-
-            if(index < Object.keys(objectToConvert).length - 1) {
-                newStr = newStr + ", ";
-            }
-        })
-
-        return newStr;
-    }
-
-    convertValueToString = (valueToConvert) => {
-        if(Array.isArray(valueToConvert) && valueToConvert !== null) {
-            return this.convertArrayToString(valueToConvert);
-        }
-
-        if(typeof valueToConvert === 'object' && valueToConvert !== null) {
-            return this.convertObjectToString(valueToConvert);
-        }
-
-        if(valueToConvert === true) {
-            return "true";
-        } 
-
-        if(valueToConvert === false) {
-            return "false";
-        } 
-
-        if(!isNaN(valueToConvert)) {
-            return Math.floor(valueToConvert * 100) / 100;
-        }
-
-        return valueToConvert;
-    }
 
     displayItemText(row, dataKey) {
         let item = _.get(row, dataKey);
 
         if(item !== undefined && item !== null && item !== "") {
-            return this.convertValueToString(item);
+            return convertValueToString(item);
         } else {
             return "";
-        }
-    }
-
-    findObjectTabName = (sceneObject) => {
-        if(sceneObject.shape !== undefined && sceneObject.shape !== null) {
-            return sceneObject.shape;
-        }
-
-        if(sceneObject.id.indexOf('occluder_wall')) {
-            return "occluder wall";
-        }
-
-        if(sceneObject.id.indexOf('occluder_pole')) {
-            return "occluder pole";
-        }
-
-        return sceneObject.type;
-    }
-
-    checkSceneObjectKey = (scene, objectKey, key, labelPrefix = "") => {
-        if(objectKey !== 'objects' && objectKey !== 'goal' && objectKey !== 'name') {
-            return (
-                <tr key={'scene_prop_' + key}>
-                    <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{this.convertValueToString(scene[objectKey])}</td>
-                </tr>
-            );
-        } else if(objectKey === 'goal') {
-            return (
-                Object.keys(scene["goal"]).map((goalObjectKey, goalKey) => 
-                    this.checkSceneObjectKey(scene["goal"], goalObjectKey, goalKey, "goal."))
-            );
-        } else if(objectKey === 'name') {
-            return (
-                <tr key={'scene_prop_' + key}>
-                    <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{this.convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
-                </tr>
-            );
         }
     }
 
@@ -400,7 +305,7 @@ class ScenesEval3 extends React.Component {
     convertXYArrayToString = (arrayToConvert) => {
         let newStr = "";
         for(let i=0; i < arrayToConvert.length; i++) {
-            newStr = newStr + '(' + this.convertValueToString(arrayToConvert[i]) + ')';
+            newStr = newStr + '(' + convertValueToString(arrayToConvert[i]) + ')';
 
             if(i < arrayToConvert.length -1) {
                 newStr = newStr + ", ";
@@ -423,10 +328,6 @@ class ScenesEval3 extends React.Component {
     // need to subtract 1 to use as array index in scenesInOrder
     getCurrentScene = (scenesInOrder) => {
         return scenesInOrder[this.state.currentSceneNum - 1];
-    }
-
-    handleToggleDetailsModal = (showModal) => {
-        this.setState({ showDetailsModal: showModal});
     }
 
     render() {
@@ -587,68 +488,19 @@ class ScenesEval3 extends React.Component {
                                                                     </TableCell>
                                                                 ))}
                                                                     <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
-                                                                        <div className="show-details-toggle" onClick={() => this.handleToggleDetailsModal(true)}>
-                                                                            <i className='material-icons' style={{fontSize: '24px'}}>fullscreen</i>
-                                                                        </div>
+
+                                                                        <SceneDetails  
+                                                                            currentSceneNum={this.state.currentSceneNum}
+                                                                            currentScene={this.getCurrentScene(scenesInOrder)}
+                                                                            constantsObject={constantsObject}
+                                                                        />
+                                                                        
                                                                     </TableCell>
                                                             </TableRow>
                                                         )}
                                                         </TableBody>
                                                     </Table>
                                                 </div>
-
-                                                {/* TODO: MCS-517: Make scene details modal component?  */}
-                                                    <Modal show={this.state.showDetailsModal} size="lg" aria-labelledby="contained-modal-title-vcenter" centered 
-                                                        onHide={() => this.handleToggleDetailsModal(false)}>
-                                                        <Modal.Header closeButton>
-                                                            <Modal.Title>Scene {this.state.currentSceneNum} Details</Modal.Title>
-                                                        </Modal.Header>
-                                                        <Modal.Body>
-                                                            {scenesInOrder && this.state.currentSceneNum <= scenesInOrder.length && this.getCurrentScene(scenesInOrder) !== undefined
-                                                                && this.getCurrentScene(scenesInOrder) !== null &&
-                                                                <div className="scene-table-div">
-                                                                    <table>
-                                                                        <tbody>
-                                                                            {Object.keys(this.getCurrentScene(scenesInOrder)).map((objectKey, key) => 
-                                                                                this.checkSceneObjectKey(this.getCurrentScene(scenesInOrder), objectKey, key))}
-                                                                        </tbody>
-                                                                    </table>
-                                                                    {this.getCurrentScene(scenesInOrder).objects && this.getCurrentScene(scenesInOrder).objects.length > 0 &&
-                                                                        <>
-                                                                            <div className="objects_scenes_header">
-                                                                                <h5>Objects in Scene</h5>
-                                                                            </div>
-                                                                            <div className="object-nav">
-                                                                                <ul className="nav nav-tabs">
-                                                                                    {this.getCurrentScene(scenesInOrder).objects.map((sceneObject, key) => 
-                                                                                        <li className="nav-item" key={'object_tab_' + key}>
-                                                                                            <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
-                                                                                        </li>
-                                                                                    )}
-                                                                                </ul>
-                                                                            </div>
-                                                                            <div className="object-contents">
-                                                                                <table>
-                                                                                    <tbody>
-                                                                                        {Object.keys(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum]).map((objectKey, key) => 
-                                                                                            <tr key={'object_tab_' + key}>
-                                                                                                <td className="bold-label">{objectKey}:</td>
-                                                                                                <td className="scene-text">{this.convertValueToString(this.getCurrentScene(scenesInOrder).objects[this.state.currentObjectNum][objectKey])}</td>
-                                                                                            </tr>
-                                                                                        )}
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </div> 
-                                                                        </>   
-                                                                    }    
-                                                                </div>
-                                                            }
-                                                        </Modal.Body>
-                                                    <Modal.Footer>
-                                                        <Button variant="primary" onClick={() => this.handleToggleDetailsModal(false)}>Close Details</Button>
-                                                    </Modal.Footer>
-                                                </Modal>
-                                                {/* TODO: MCS-517: end modal code */}
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] !== "interactive") && 
                                                     <div className="classification-by-step">
@@ -734,7 +586,7 @@ class ScenesEval3 extends React.Component {
                                                                             <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
                                                                             {this.getSceneHistoryItem(scenesByPerformer).steps.map((stepObject, key) => 
                                                                             <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
-                                                                                {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
+                                                                                {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
                                                                             </div>
                                                                         )}
                                                                     </div>

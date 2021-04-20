@@ -5,6 +5,7 @@ import _ from "lodash";
 import $ from 'jquery';
 import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
+import { convertValueToString } from './displayTextUtils';
 
 const historyQueryName = "getEvalHistory";
 const sceneQueryName = "getEvalScene";
@@ -122,56 +123,6 @@ class Scenes extends React.Component {
         this.setState({ currentObjectNum: objectKey});
     }
 
-    convertArrayToString = (arrayToConvert) => {
-        let newStr = "";
-        for(let i=0; i < arrayToConvert.length; i++) {
-            newStr = newStr + this.convertValueToString(arrayToConvert[i]);
-
-            if(i < arrayToConvert.length -1) {
-                newStr = newStr + ", ";
-            }
-        }
-
-        return newStr;
-    }
-
-    convertObjectToString = (objectToConvert) => {
-        let newStr = "";
-        Object.keys(objectToConvert).forEach((key, index) => {
-            newStr = newStr + key + ": " + this.convertValueToString(objectToConvert[key]);
-
-            if(index < Object.keys(objectToConvert).length - 1) {
-                newStr = newStr + ", ";
-            }
-        })
-
-        return newStr;
-    }
-
-    convertValueToString = (valueToConvert) => {
-        if(Array.isArray(valueToConvert) && valueToConvert !== null) {
-            return this.convertArrayToString(valueToConvert);
-        }
-
-        if(typeof valueToConvert === 'object' && valueToConvert !== null) {
-            return this.convertObjectToString(valueToConvert);
-        }
-
-        if(valueToConvert === true) {
-            return "true";
-        } 
-
-        if(valueToConvert === false) {
-            return "false";
-        } 
-
-        if(!isNaN(valueToConvert)) {
-            return Math.floor(valueToConvert * 100) / 100;
-        }
-
-        return valueToConvert;
-    }
-
     findObjectTabName = (sceneObject) => {
         if(sceneObject.shape !== undefined && sceneObject.shape !== null) {
             return sceneObject.shape;
@@ -193,7 +144,7 @@ class Scenes extends React.Component {
             return (
                 <tr key={'scene_prop_' + key}>
                     <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{this.convertValueToString(scene[objectKey])}</td>
+                    <td className="scene-text">{convertValueToString(scene[objectKey])}</td>
                 </tr>
             );
         } else if(objectKey === 'goal') {
@@ -205,7 +156,7 @@ class Scenes extends React.Component {
             return (
                 <tr key={'scene_prop_' + key}>
                     <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{this.convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
+                    <td className="scene-text">{convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
                 </tr>
             );
         }
@@ -361,7 +312,7 @@ class Scenes extends React.Component {
                                                                     {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum] !== undefined &&
                                                                      scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
                                                                         <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
-                                                                            {stepObject.stepNumber + ": " + stepObject.action + " (" + this.convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
+                                                                            {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
                                                                         </div>
                                                                     )}
                                                                 </div>
@@ -399,7 +350,7 @@ class Scenes extends React.Component {
                                                                             {Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
                                                                                 <tr key={'object_tab_' + key}>
                                                                                     <td className="bold-label">{objectKey}:</td>
-                                                                                    <td className="scene-text">{this.convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
+                                                                                    <td className="scene-text">{convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
                                                                                 </tr>
                                                                             )}
                                                                         </tbody>
