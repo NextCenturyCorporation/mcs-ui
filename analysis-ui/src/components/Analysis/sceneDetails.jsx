@@ -7,13 +7,14 @@ import { convertValueToString } from './displayTextUtils';
 function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constantsObject}) {
     
     const [currentObjectNum, setCurrentObjectNum] = useState(0);
+    const [selectedData, setSelectedData] = useState("scene_info");
 
     const closeModal = () => {
         onHide();
     }
 
     const checkSceneObjectKey = (scene, objectKey, key, labelPrefix = "") => {
-        if(objectKey !== 'objects' && objectKey !== 'goal' && objectKey !== 'name') {
+        if(objectKey !== 'objects' && objectKey !== 'goal') {
             return (
                 <tr key={'scene_prop_' + key}>
                     <td className="bold-label">{labelPrefix + objectKey}:</td>
@@ -24,13 +25,6 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
             return (
                 Object.keys(scene["goal"]).map((goalObjectKey, goalKey) => 
                     checkSceneObjectKey(scene["goal"], goalObjectKey, goalKey, "goal."))
-            );
-        } else if(objectKey === 'name') {
-            return (
-                <tr key={'scene_prop_' + key}>
-                    <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
-                </tr>
             );
         }
     }
@@ -61,30 +55,52 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
     return (
         <Modal show={show} onHide={closeModal} size="lg" aria-labelledby="contained-modal-title-vcenter" centered scrollable={true}>
             <Modal.Header closeButton>
-                <Modal.Title>
-                    Scene {currentSceneNum} Details     
-                </Modal.Title>
+                <div className="scene-details-header">
+                    <div className="scene-title-and-download">
+                        <Modal.Title>
+                            Scene {currentSceneNum} Details 
+                        </Modal.Title>
+
+                        <div className="download-scene">
+                            <a href={constantsObject["sceneBucket"] + currentScene.name + constantsObject["sceneExtension"]} download>
+                                <i className='material-icons' style={{fontSize: '24px'}}>get_app</i>
+                                <span className="download-scene-text">Download .JSON</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="scene-details-btn-group btn-group" role="group">
+                        <button className={"scene_info" === selectedData ? 'btn btn-primary active' : 'btn btn-secondary'}
+                            id='toggle_data_scene_info' key='toggle_scene_info' type="button"
+                            onClick={() => setSelectedData("scene_info")}>
+                                Scene Details
+                        </button>
+                        <button className={"scene_objects" === selectedData ? 'btn btn-primary active' : 'btn btn-secondary'}
+                            id='toggle_data_scene_objects' key='toggle_scene_objects' type="button"
+                            onClick={() => setSelectedData("scene_objects")}>
+                                Objects In Scene
+                        </button>
+                    </div>  
+                </div>
             </Modal.Header>
             <Modal.Body>
                 {currentScene !== undefined
                     && currentScene !== null &&
                     <div className="scene-table-div">
-                        <table>
+                        <table className={"scene_info" !== selectedData ? "display-none" : ""}>
                             <tbody>
                                 {Object.keys(currentScene).map((objectKey, key) => 
                                     checkSceneObjectKey(currentScene, objectKey, key))}
                             </tbody>
                         </table>
+
                         {currentScene.objects && currentScene.objects.length > 0 &&
-                            <>
-                                <div className="objects_scenes_header">
-                                    <h5>Objects in Scene</h5>
-                                </div>
+                            <div className={"scene_objects" !== selectedData ? "display-none" : ""}>
                                 <div className="object-nav">
                                     <ul className="nav nav-tabs">
                                         {currentScene.objects.map((sceneObject, key) => 
                                             <li className="nav-item" key={'object_tab_' + key}>
-                                                <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => changeObjectDisplay(key)}>{findObjectTabName(sceneObject)}</button>
+                                                <button id={'object_button_' + key} className={key === currentObjectNum ? 'nav-link active' : 'nav-link'} onClick={() => changeObjectDisplay(key)}>{findObjectTabName(sceneObject)}</button>
                                             </li>
                                         )}
                                     </ul>
@@ -101,7 +117,7 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
                                         </tbody>
                                     </table>
                                 </div> 
-                            </>   
+                            </div>   
                         }    
                     </div>
                 }
