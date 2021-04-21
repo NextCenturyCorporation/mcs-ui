@@ -125,52 +125,6 @@ class Scenes extends React.Component {
         }
     }
 
-    changeObjectDisplay = (objectKey) => {
-        $('#object_button_' + this.state.currentObjectNum ).toggleClass( "active" );
-        $('#object_button_' + objectKey ).toggleClass( "active" );
-
-        this.setState({ currentObjectNum: objectKey});
-    }
-
-    findObjectTabName = (sceneObject) => {
-        if(sceneObject.shape !== undefined && sceneObject.shape !== null) {
-            return sceneObject.shape;
-        }
-
-        if(sceneObject.id.indexOf('occluder_wall')) {
-            return "occluder wall";
-        }
-
-        if(sceneObject.id.indexOf('occluder_pole')) {
-            return "occluder pole";
-        }
-
-        return sceneObject.type;
-    }
-
-    checkSceneObjectKey = (scene, objectKey, key, labelPrefix = "") => {
-        if(objectKey !== 'objects' && objectKey !== 'goal' && objectKey !== 'name') {
-            return (
-                <tr key={'scene_prop_' + key}>
-                    <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{convertValueToString(scene[objectKey])}</td>
-                </tr>
-            );
-        } else if(objectKey === 'goal') {
-            return (
-                Object.keys(scene["goal"]).map((goalObjectKey, goalKey) => 
-                    this.checkSceneObjectKey(scene["goal"], goalObjectKey, goalKey, "goal."))
-            );
-        } else if(objectKey === 'name') {
-            return (
-                <tr key={'scene_prop_' + key}>
-                    <td className="bold-label">{labelPrefix + objectKey}:</td>
-                    <td className="scene-text">{convertValueToString(scene[objectKey])} (<a href={constantsObject["sceneBucket"] + scene[objectKey] + constantsObject["sceneExtension"]} download>Download Scene File</a>)</td>
-                </tr>
-            );
-        }
-    }
-
     highlightStep = (e) => {
         // First one is at 0.2 
         let currentTimeNum = Math.floor(document.getElementById("interactiveMoviePlayer").currentTime + 0.8);
