@@ -58,7 +58,9 @@ The following indicates an empty database:
 
 # Stop docker without losing data
 
+```bash
 docker-compose stop
+```
 
 Note: Using docker-compose down will cause the mongo database to be cleared
 
