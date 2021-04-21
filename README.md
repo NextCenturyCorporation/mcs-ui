@@ -81,10 +81,13 @@ db.mcs_history.find({"eval":"<evalName>"}).count()
 
 ## Find one entry of a certain eval:
 
-db.mcs_history.findOne({"eval": "<eval>"})
+```
+db.mcs_history.findOne({"eval": "<eval>" })
+```  
   
 ## Find one entry of a certain eval:
 
-db.mcs_history.find({"eval": "<eval>"})
-
+```
+db.mcs_history.find({"eval": "<eval>" })
+```
 
