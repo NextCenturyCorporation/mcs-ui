@@ -66,12 +66,13 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
                             Scene {currentSceneNum} Details 
                         </Modal.Title>
 
-                        <div className="download-scene">
+                        {currentScene !== undefined
+                            && currentScene !== null && <div className="download-scene">
                             <a href={constantsObject["sceneBucket"] + currentScene.name + constantsObject["sceneExtension"]} download>
-                                <i className='material-icons' style={{fontSize: '24px'}}>get_app</i>
+                                <i className='material-icons'>get_app</i>
                                 <span className="download-scene-text">Download .JSON</span>
                             </a>
-                        </div>
+                        </div>}
                     </div>
 
                     <div className="scene-details-btn-group btn-group" role="group">
@@ -141,7 +142,7 @@ function SceneDetails ({currentSceneNum, currentScene, constantsObject}) {
     return (
         <>
             <div className="show-details-toggle" onClick={() => setModalShow(true)}>
-                <i className='material-icons' style={{fontSize: '24px'}}>fullscreen</i>
+                <i className='material-icons'>fullscreen</i>
             </div>
 
             <SceneDetailsModal

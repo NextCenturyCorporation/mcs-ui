@@ -7,14 +7,8 @@ import $ from 'jquery';
 import {EvalConstants} from './evalConstants';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import SceneDetails from './sceneDetails';
 import { convertValueToString } from './displayTextUtils';
+import ScoreTable from './scoreTable';
 
 
 const historyQueryName = "createComplexQuery";
@@ -75,12 +69,6 @@ const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
-function getSorting(order, orderBy) {
-    return order === "desc"
-    ? (a, b) => (_.get(a, orderBy) > _.get(b, orderBy) ? -1 : 1)
-    : (a, b) => (_.get(a, orderBy) < _.get(b, orderBy) ? -1 : 1);
-}
-
 const scoreTableCols = [
     { dataKey: 'scene_num', title: 'Scene' },
     { dataKey: 'scene_goal_id', title: 'Goal ID'},
@@ -104,8 +92,6 @@ class ScenesEval3 extends React.Component {
             testType: props.value.test_type,
             categoryType: props.value.category_type,
             testNum: props.value.test_num,
-            sortBy: "",
-            sortOrder: "asc",
             showInternalState: false
         };
     }
@@ -160,17 +146,6 @@ class ScenesEval3 extends React.Component {
                 });
             }
             this.props.updateHandler("scene", sceneNum);
-        }
-    }
-
-
-    displayItemText(row, dataKey) {
-        let item = _.get(row, dataKey);
-
-        if(item !== undefined && item !== null && item !== "") {
-            return convertValueToString(item);
-        } else {
-            return "";
         }
     }
 
@@ -276,7 +251,7 @@ class ScenesEval3 extends React.Component {
     }
 
     getSceneHistoryItem = (scenesByPerformer) => {
-        if(scenesByPerformer !== undefined && scenesByPerformer !== null) {
+        if(scenesByPerformer !== undefined && scenesByPerformer !== null && this.state.currentSceneNum !== undefined) {
             let sceneNumAsString = this.state.currentSceneNum.toString();
             return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][sceneNumAsString];
         }
@@ -315,20 +290,6 @@ class ScenesEval3 extends React.Component {
         return newStr;
     }
 
-    handleRequestSort = (property) => {
-        let isAsc = this.state.sortBy === property && this.state.sortOrder === 'asc';
-
-        this.setState({ 
-            sortOrder: (isAsc ? 'desc' : 'asc'), 
-            sortBy: property 
-        });
-    };
-
-    // currentSceneNum is used for the map values in scenesByPerformer
-    // need to subtract 1 to use as array index in scenesInOrder
-    getCurrentScene = (scenesInOrder) => {
-        return scenesInOrder[this.state.currentSceneNum - 1];
-    }
 
     render() {
         return (
@@ -462,45 +423,16 @@ class ScenesEval3 extends React.Component {
                                                     )}
                                                 </div>
 
-                                                <div className="score-table-div">
-                                                    <Table className="score-table" aria-label="simple table">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                            {scoreTableCols.map((col, colKey) => (
-                                                                <TableCell key={"performer_score_header_cell_" + colKey}>
-                                                                    <TableSortLabel active={this.state.sortBy === col.dataKey} direction={this.state.sortOrder} 
-                                                                        onClick={() => this.handleRequestSort(col.dataKey)}>
-                                                                        {col.title}
-                                                                    </TableSortLabel>
-                                                                </TableCell>
-                                                            ))}
-                                                                <TableCell key="performer_score_header_cell_details">
-                                                                   Details
-                                                               </TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                        {this.checkIfScenesExist(scenesByPerformer) && _.values(scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]).sort(getSorting(this.state.sortOrder, this.state.sortBy)).map((scoreObj, rowKey) => 
-                                                            <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={this.state.currentSceneNum === scoreObj.scene_num} onClick={()=> this.changeScene(scoreObj.scene_num)}> 
-                                                                {scoreTableCols.map((col, colKey) => (
-                                                                    <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
-                                                                        {this.displayItemText(scoreObj, col.dataKey)}
-                                                                    </TableCell>
-                                                                ))}
-                                                                    <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
-
-                                                                        <SceneDetails  
-                                                                            currentSceneNum={this.state.currentSceneNum}
-                                                                            currentScene={this.getCurrentScene(scenesInOrder)}
-                                                                            constantsObject={constantsObject}
-                                                                        />
-                                                                        
-                                                                    </TableCell>
-                                                            </TableRow>
-                                                        )}
-                                                        </TableBody>
-                                                    </Table>
-                                                </div>
+                                                {this.checkIfScenesExist(scenesByPerformer) &&
+                                                    <ScoreTable
+                                                        columns={scoreTableCols}
+                                                        currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
+                                                        currentSceneNum={this.state.currentSceneNum}
+                                                        changeSceneHandler={this.changeScene}
+                                                        scenesInOrder={scenesInOrder}
+                                                        constantsObject={constantsObject}
+                                                    />
+                                                }
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] !== "interactive") && 
                                                     <div className="classification-by-step">
