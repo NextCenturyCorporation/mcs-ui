@@ -431,6 +431,7 @@ class ScenesEval3 extends React.Component {
                                                         changeSceneHandler={this.changeScene}
                                                         scenesInOrder={scenesInOrder}
                                                         constantsObject={constantsObject}
+                                                        sortable={true}
                                                     />
                                                 }
 

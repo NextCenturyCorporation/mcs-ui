@@ -6,6 +6,7 @@ import $ from 'jquery';
 import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 import { convertValueToString } from './displayTextUtils';
+import ScoreTable from './scoreTable';
 
 const historyQueryName = "getEvalHistory";
 const sceneQueryName = "getEvalScene";
@@ -55,6 +56,14 @@ const mcs_scene= gql`
 const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
+
+const scoreTableCols = [
+    { dataKey: 'scene_num', title: 'Scene' },
+    { dataKey: 'score.classification', title: 'Answer' },
+    { dataKey: 'score.score_description', title: 'Score'},
+    { dataKey: 'score.adjusted_confidence', title: 'Adjusted Confidence' },
+    { dataKey: 'score.confidence', title: 'Confidence' }
+]
 class Scenes extends React.Component {
 
     constructor(props) {
@@ -62,7 +71,7 @@ class Scenes extends React.Component {
         this.state = {
             currentPerformerKey: 0,
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
-            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) - 1 : 0,
+            currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) : 1,
             currentObjectNum: 0,
             flagRemove: false,
             flagInterest: false,
@@ -97,7 +106,7 @@ class Scenes extends React.Component {
             let searchString = this.props.value.history.location.search;
     
             let sceneStringIndex = searchString.indexOf("&scene=");
-            let sceneToUpdate = "&scene=" + parseInt(sceneNum + 1);
+            let sceneToUpdate = "&scene=" + parseInt(sceneNum);
     
             if(sceneStringIndex > -1) {
                 let newSearchString = searchString.substring(0, sceneStringIndex);
@@ -205,7 +214,7 @@ class Scenes extends React.Component {
                 {"testType": this.props.value.test_type, 
                 "testNum": parseInt(this.props.value.test_num)
                 }}
-                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(0);}}}>
+                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(1);}}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -266,99 +275,40 @@ class Scenes extends React.Component {
                                                         <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'} id={'toggle_performer_' + key} key={'toggle_' + performer} type="button" onClick={() => this.changePerformer(key, performer)}>{performer}</button>
                                                     )}
                                                 </div>
-                                                <div className="score-table-div">
-                                                    <table className="score-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Scene Number</th>
-                                                                <th>Answer</th>
-                                                                <th>Score</th>
-                                                                <th>Adjusted Confidence</th>
-                                                                <th>Confidence</th>
-                                                                <th>MSE</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer].map((scoreObj, key) => 
-                                                                <tr key={'peformer_score_row_' + key}>
-                                                                    <td>{scoreObj.scene_num}</td>
-                                                                    <td>{scoreObj.score.classification}</td>
-                                                                    <td>{scoreObj.score.score_description}</td>
-                                                                    <td>{scoreObj.score.adjusted_confidence}</td>
-                                                                    <td>{scoreObj.score.confidence}</td>
-                                                                    <td>{scoreObj.score.mse_loss}</td>
-                                                                </tr>
-                                                            )}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div className="scenes_header">
-                                                    <h3>Scenes</h3>
-                                                </div>
-                                                <div className="scene-group btn-group" role="group">
-                                                    {scenesInOrder.map((scene, key) =>
-                                                        <button key={"scene_button_" + key} className={this.state.currentSceneNum === key ? 'btn btn-primary active' : 'btn btn-secondary'} id={"scene_btn_" + key} type="button" onClick={() => this.changeScene(key)}>Scene {key+1}</button>
-                                                    )}
-                                                </div>
-                                                    { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
-                                                        <div className="movie-steps-holder">
-                                                            <div className="interactive-movie-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+
+                                                {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] &&
+                                                    <ScoreTable
+                                                        columns={scoreTableCols}
+                                                        currentPerformerScenes={scenesByPerformer[this.state.currentPerformer]}
+                                                        currentSceneNum={this.state.currentSceneNum}
+                                                        changeSceneHandler={this.changeScene}
+                                                        scenesInOrder={scenesInOrder}
+                                                        constantsObject={constantsObject}
+                                                        sortable={false}
+                                                    />
+                                                }
+
+                                                { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
+                                                    <div className="movie-steps-holder">
+                                                        <div className="interactive-movie-holder">
+                                                            <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
+                                                        </div>
+                                                        <div className="steps-holder">
+                                                            <h5>Performer Steps:</h5>
+                                                            <div className="steps-container">
+                                                                    <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
+                                                                {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1] !== undefined &&
+                                                                    scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1].steps.map((stepObject, key) => 
+                                                                    <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
+                                                                        {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
+                                                                    </div>
+                                                                )}
                                                             </div>
-                                                            <div className="steps-holder">
-                                                                <h5>Performer Steps:</h5>
-                                                                <div className="steps-container">
-                                                                        <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                    {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum] !== undefined &&
-                                                                     scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum].steps.map((stepObject, key) => 
-                                                                        <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
-                                                                            {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                            <div className="top-down-holder">
-                                                                <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum+1) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
-                                                            </div>
-                                                        </div> 
-                                                    }
-                                                {scenesInOrder && this.state.currentSceneNum < scenesInOrder.length && scenesInOrder[this.state.currentSceneNum] &&
-                                                    <div className="scene-table-div">
-                                                        <table>
-                                                            <tbody>
-                                                                {Object.keys(scenesInOrder[this.state.currentSceneNum]).map((objectKey, key) => 
-                                                                    this.checkSceneObjectKey(scenesInOrder[this.state.currentSceneNum], objectKey, key))}
-                                                            </tbody>
-                                                        </table>
-                                                        {scenesInOrder[this.state.currentSceneNum].objects && scenesInOrder[this.state.currentSceneNum].objects.length > 0 &&
-                                                            <>
-                                                                <div className="objects_scenes_header">
-                                                                    <h5>Objects in Scene</h5>
-                                                                </div>
-                                                                <div className="object-nav">
-                                                                    <ul className="nav nav-tabs">
-                                                                        {scenesInOrder[this.state.currentSceneNum].objects.map((sceneObject, key) => 
-                                                                            <li className="nav-item" key={'object_tab_' + key}>
-                                                                                <button id={'object_button_' + key} className={key === 0 ? 'nav-link active' : 'nav-link'} onClick={() => this.changeObjectDisplay(key)}>{this.findObjectTabName(sceneObject)}</button>
-                                                                            </li>
-                                                                        )}
-                                                                    </ul>
-                                                                </div>
-                                                                <div className="object-contents">
-                                                                    <table>
-                                                                        <tbody>
-                                                                            {Object.keys(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum]).map((objectKey, key) => 
-                                                                                <tr key={'object_tab_' + key}>
-                                                                                    <td className="bold-label">{objectKey}:</td>
-                                                                                    <td className="scene-text">{convertValueToString(scenesInOrder[this.state.currentSceneNum].objects[this.state.currentObjectNum][objectKey])}</td>
-                                                                                </tr>
-                                                                            )}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div> 
-                                                            </>
-                                                        }       
-                                                    </div>
+                                                        </div>
+                                                        <div className="top-down-holder">
+                                                            <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
+                                                        </div>
+                                                    </div> 
                                                 }
                                             </div>
                                         )

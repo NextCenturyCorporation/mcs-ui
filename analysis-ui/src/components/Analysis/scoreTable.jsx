@@ -10,7 +10,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import SceneDetails from './sceneDetails';
 
 function ScoreTable({columns, currentPerformerScenes, currentSceneNum, 
-    changeSceneHandler, scenesInOrder, constantsObject}) {
+    changeSceneHandler, scenesInOrder, constantsObject, sortable}) {
 
     const [sortOption, setSortOption] = useState({sortBy: "", sortOrder: "asc"})
 
@@ -47,10 +47,15 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     <TableRow>
                     {columns.map((col, colKey) => (
                         <TableCell key={"performer_score_header_cell_" + colKey}>
-                            <TableSortLabel active={sortOption.sortBy === col.dataKey} direction={sortOption.sortOrder} 
-                                onClick={() => handleRequestSort(col.dataKey)}>
-                                {col.title}
-                            </TableSortLabel>
+                            {sortable &&
+                                <TableSortLabel active={sortOption.sortBy === col.dataKey} direction={sortOption.sortOrder} 
+                                    onClick={() => handleRequestSort(col.dataKey)}>
+                                    {col.title}
+                                </TableSortLabel>
+                            }
+                            {!sortable &&
+                                col.title
+                            }
                         </TableCell>
                     ))}
                         <TableCell key="performer_score_header_cell_details">
@@ -66,15 +71,13 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                                 {displayItemText(scoreObj, col.dataKey)}
                             </TableCell>
                         ))}
-                            <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
-
-                                <SceneDetails  
-                                    currentSceneNum={currentSceneNum}
-                                    currentScene={getCurrentScene(scenesInOrder)}
-                                    constantsObject={constantsObject}
-                                />
-                                
-                            </TableCell>
+                        <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
+                            <SceneDetails  
+                                currentSceneNum={currentSceneNum}
+                                currentScene={getCurrentScene(scenesInOrder)}
+                                constantsObject={constantsObject}
+                            />
+                        </TableCell>
                     </TableRow>
                 )}
                 </TableBody>
