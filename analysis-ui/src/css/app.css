@@ -1021,7 +1021,6 @@ ol, ul {
 }
 
 .show-details-toggle:hover {
-    /*color: #007bff;*/
     color: #a2a9b5;
     cursor: pointer;
 }
