@@ -505,7 +505,7 @@ class ScenesEval3 extends React.Component {
                                                     </div>
                                                 }
 
-                                                {/* TODO: MCS-517 start video logic for interactive scenes */}
+                                                {/* start video logic for interactive scenes */}
                                                     { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive") &&
                                                         <div>
                                                             <div className="movie-steps-holder">
@@ -539,7 +539,7 @@ class ScenesEval3 extends React.Component {
                                                             </div>} 
                                                         </div>
                                                     }
-                                                {/* TODO: MCS-517 end video logic for interactive scenes */}
+                                                {/* end video logic for interactive scenes */}
                                             </div>
                                         )
                                     }  else {
