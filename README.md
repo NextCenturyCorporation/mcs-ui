@@ -18,12 +18,6 @@ docker-compose -f docker-compose-dev.yml up -d
 
 if necessary, follow the instructions to load data into the Mongo database from Restore Mongo Backup section of ./node-graphql/README.md
 
-# Stop docker without losing data
-
-docker-compose stop
-
-Note: Using docker-compose down will cause the mongo database to be cleared
-
 # Verify Mongo database
 
 ## Method 1
@@ -62,20 +56,35 @@ The following indicates an empty database:
   ```
   Verify the result of the last two commands are 0.  If they are not, the database is not loaded.
 
+# Stop docker without losing data
+
+docker-compose stop
+
+Note: Using docker-compose down will cause the mongo database to be cleared
+
 # Useful Mongo Queries
 
+Be sure to update any values wrapped in < > below
+
 ## List all evals:
-
-  db.mcs_history.distinct( "eval");
-
-or 
-
-  db.mcs_scenes.distinct( "eval");
+```
+db.mcs_history.distinct( "eval");
+db.mcs_scenes.distinct( "eval");
+```
 
 ## With the eval name know, you can count how many scenes or history with:
 
-  db.mcs_scenes.find({"eval":"<evalName>"}).count()
-  db.mcs_history.find({"eval":"<evalName>"}).count()
+```
+db.mcs_scenes.find({"eval":"<evalName>"}).count()
+db.mcs_history.find({"eval":"<evalName>"}).count()
+```
 
+## Find one entry of a certain eval:
+
+db.mcs_history.findOne({"eval": "<eval>"})
+  
+## Find one entry of a certain eval:
+
+db.mcs_history.find({"eval": "<eval>"})
 
 
