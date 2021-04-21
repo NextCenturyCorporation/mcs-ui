@@ -66,8 +66,8 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
                             Scene {currentSceneNum} Details 
                         </Modal.Title>
 
-                        {currentScene !== undefined
-                            && currentScene !== null && <div className="download-scene">
+                        {currentScene !== undefined && currentScene !== null &&
+                        <div className="download-scene">
                             <a href={constantsObject["sceneBucket"] + currentScene.name + constantsObject["sceneExtension"]} download>
                                 <i className='material-icons'>get_app</i>
                                 <span className="download-scene-text">Download .JSON</span>

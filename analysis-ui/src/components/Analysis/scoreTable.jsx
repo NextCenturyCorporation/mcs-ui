@@ -68,7 +68,20 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
                         {columns.map((col, colKey) => (
                             <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
-                                {displayItemText(scoreObj, col.dataKey)}
+                                {col.title === 'Score' &&
+                                    <div className="score-div">
+                                        {displayItemText(scoreObj, col.dataKey) === 'Correct' &&
+                                            <i className='material-icons' style={{color: "#008000", fontSize: '20px'}}>check</i>
+                                        }
+                                        {displayItemText(scoreObj, col.dataKey) === 'Incorrect' &&
+                                            <i className='material-icons' style={{color: "#ff0000", fontSize: '20px'}}>close</i>
+                                        }
+                                        <span className='score-text'>{displayItemText(scoreObj, col.dataKey)}</span>
+                                    </div>
+                                }
+                                {col.title !== 'Score' &&
+                                    displayItemText(scoreObj, col.dataKey)
+                                }
                             </TableCell>
                         ))}
                         <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
