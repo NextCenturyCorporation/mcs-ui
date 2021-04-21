@@ -939,16 +939,6 @@ ol, ul {
     word-wrap: break-word;
 }
 
-.show-details-toggle:hover {
-    /*color: #007bff;*/
-    color: #a2a9b5;
-    cursor: pointer;
-}
-    
-.TableRow.Mui-selected {
-    background-color: #99d6ff !important;
-}
-
 /* Evaluation Stats Page */
 .eval-stats-body {
     background-color: #F8F8F8;
@@ -1028,4 +1018,14 @@ ol, ul {
     position: relative;
     top: -5px;
     left: 5px;
+}
+
+.show-details-toggle:hover {
+    /*color: #007bff;*/
+    color: #a2a9b5;
+    cursor: pointer;
+}
+
+.TableRow.Mui-selected {
+    background-color: #99d6ff !important;
 }
