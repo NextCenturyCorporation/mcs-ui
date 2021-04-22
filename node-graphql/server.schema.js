@@ -355,7 +355,6 @@ const mcsResolvers = {
 
                     const historyEvalName = "Evaluation " + evalNumber + " Results";
                     const sceneEvalName = "Evaluation " + evalNumber + " Scenes";
-                    console.log(evalNumber, historyEvalName);
 
                     const historyResults =  await mcsDB.db.collection('collection_keys').findOne({"name": historyEvalName});
                     historyKeys = historyResults.keys;
