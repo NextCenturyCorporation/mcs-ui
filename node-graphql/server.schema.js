@@ -136,8 +136,6 @@ const mcsTypeDefs = gql`
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
-    getAllHistoryFields: [dropDownObj]
-    getAllSceneFields: [dropDownObj]
     getCollectionFields(collectionName: String): [dropDownObj]
     createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
     getHomeStats(eval: String): homeStatsObject
@@ -307,38 +305,6 @@ const mcsResolvers = {
                 sceneStats: sceneStats
             };
         },
-        getAllHistoryFields: async(obj, args, context, infow) => {
-            let returnArray = [];
-            const results =  await mcsDB.db.collection('mcs_history_keys').findOne();
-            const historyKeys = results.keys;
-            for(let i=0; i < historyKeys.length; i++) {
-                if(!historyExcludeFields.includes(historyKeys[i])) {
-                    if (historyKeys[i] in historyFieldLabelMap) {
-                        returnArray.push({label: historyFieldLabelMap[historyKeys[i]], value: historyKeys[i]});
-                    } else {
-                        returnArray.push({label: historyKeys[i], value: historyKeys[i]});
-                    }
-                }
-            }
-
-            return returnArray;
-        },
-        getAllSceneFields: async(obj, args, context, infow) => {
-            let returnArray = [];
-            const results =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
-            const sceneKeys = results.keys;
-            for(let i=0; i < sceneKeys.length; i++) {
-                if(!sceneExcludeFields.includes(sceneKeys[i])) {
-                    if (sceneKeys[i] in sceneFieldLabelMap) {
-                        returnArray.push({label: sceneFieldLabelMap[sceneKeys[i]], value: sceneKeys[i]});
-                    } else {
-                        returnArray.push({label: sceneKeys[i], value: sceneKeys[i]});
-                    }
-                }
-            }
-
-            return returnArray;
-        },
         getCollectionFields: async(obj, args, context, infow) => {
             let returnArray = [];
             const results =  await mcsDB.db.collection('collection_keys').findOne({"name": args["collectionName"]});
@@ -378,20 +344,36 @@ const mcsResolvers = {
 
             async function getComplexResults() {
                 if(complexQueryProjectionObject === null ){
-                    const historyKeys = await mcsDB.db.collection('mcs_history_keys').findOne();
-                    const sceneKeys =  await mcsDB.db.collection('mcs_scenes_keys').findOne();
+                    let historyKeys = [], sceneKeys = [];
+                    let evalNumber;
+
+                    if(mongoQueryObject.historyQuery["eval"] !== undefined) {
+                        evalNumber = mongoQueryObject.historyQuery["eval"].replace(/\D/g, "");
+                    } else {
+                        evalNumber = mongoQueryObject.sceneQuery["mcsScenes.eval"].replace(/\D/g, "");
+                    }
+
+                    const historyEvalName = "Evaluation " + evalNumber + " Results";
+                    const sceneEvalName = "Evaluation " + evalNumber + " Scenes";
+                    console.log(evalNumber, historyEvalName);
+
+                    const historyResults =  await mcsDB.db.collection('collection_keys').findOne({"name": historyEvalName});
+                    historyKeys = historyResults.keys;
+
+                    const sceneResults =  await mcsDB.db.collection('collection_keys').findOne({"name": sceneEvalName});
+                    sceneKeys = sceneResults.keys;
 
                     let projectionObj = {};
 
-                    for(let j=0; j < sceneKeys["keys"].length; j++) {
-                        if(!sceneExcludeFieldsTable.includes(sceneKeys["keys"][j])) {
-                            projectionObj["scene." + sceneKeys["keys"][j]] = "$mcsScenes." + sceneKeys["keys"][j];
+                    for(let j=0; j < sceneKeys.length; j++) {
+                        if(!sceneExcludeFieldsTable.includes(sceneKeys[j])) {
+                            projectionObj["scene." + sceneKeys[j]] = "$mcsScenes." + sceneKeys[j];
                         }
                     }
 
-                    for(let i=0; i < historyKeys["keys"].length; i++) {
-                        if(!historyExcludeFieldsTable.includes(historyKeys["keys"][i])) {
-                            projectionObj[historyKeys["keys"][i]] = 1;
+                    for(let i=0; i < historyKeys.length; i++) {
+                        if(!historyExcludeFieldsTable.includes(historyKeys[i])) {
+                            projectionObj[historyKeys[i]] = 1;
                         }
                     }
 
