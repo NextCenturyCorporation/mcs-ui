@@ -12,6 +12,8 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
 
     const closeModal = () => {
         onHide();
+        setCurrentObjectNum(0);
+        setSelectedData("scene_info");
     }
 
     const checkSceneObjectKey = (scene, objectKey, key, labelPrefix = "") => {
