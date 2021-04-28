@@ -77,7 +77,7 @@ const scoreTableCols = [
     { dataKey: 'score.confidence', title: 'Confidence' }
 ]
 // TODO: Merge back in with Scenes view?
-class ScenesEval3 extends React.Component {
+class Scenes extends React.Component {
 
     constructor(props) {
         super(props);
@@ -559,4 +559,4 @@ class ScenesEval3 extends React.Component {
     }
 }
 
-export default ScenesEval3;
+export default Scenes;
