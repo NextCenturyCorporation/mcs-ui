@@ -2,14 +2,11 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
-import $ from 'jquery';
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
-import { convertValueToString } from './displayTextUtils';
 import ScoreTable from './scoreTable';
-
+import ClassificationByStepTable from './classificationByStepTable';
+import InteractiveScenePlayer from './interactiveScenePlayer';
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
@@ -17,8 +14,6 @@ const sceneQueryName = "getEvalScene";
 
 let constantsObject = {};
 //let currentState = {};
-let currentStep = 0;
-let currentTime = 0;
 
 const projectionObject = {
     "eval": 1,
@@ -76,7 +71,7 @@ const scoreTableCols = [
     { dataKey: 'score.score_description', title: 'Score'},
     { dataKey: 'score.confidence', title: 'Confidence' }
 ]
-// TODO: Merge back in with Scenes view?
+
 class Scenes extends React.Component {
 
     constructor(props) {
@@ -85,13 +80,11 @@ class Scenes extends React.Component {
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
             currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) : 1,
-            currentObjectNum: 0,
             //flagRemove: false,
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            testNum: props.value.test_num,
-            showInternalState: false
+            testNum: props.value.test_num
         };
     }
 
@@ -148,42 +141,6 @@ class Scenes extends React.Component {
         }
     }
 
-    highlightStep = (e) => {
-        let currentTimeNum = document.getElementById("interactiveMoviePlayer").currentTime;
-        if(currentTimeNum !== currentTime) {
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            currentTime = currentTimeNum;
-            currentStep = Math.floor(currentTimeNum * 20);
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            if(document.getElementById("stepHolder" + currentStep) !== null) {
-                document.getElementById("stepHolder" + currentStep).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
-            }
-        }
-    }
-
-    initializeStepView = () => {
-        $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-        currentStep = 0;
-        $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-        if(document.getElementById("stepHolder" + currentStep) !== null) {
-            document.getElementById("stepHolder" + currentStep).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
-        }
-    }
-
-    goToVideoLocation = (currentAction) => {
-        // videos for eval 3 are faster than eval 2 -- 20 actions/frames per second
-        let timeToJumpTo = (currentAction + 1) / 20;
-
-        if( document.getElementById("interactiveMoviePlayer") !== null) {
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            currentStep = currentAction;
-            currentTime = timeToJumpTo;
-            document.getElementById("interactiveMoviePlayer").currentTime = currentTime;
-
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-        }
-    }
-
     getSceneNamePrefix = (name) => {
         return name.substring(0, name.indexOf('_')) + '*';
     }
@@ -216,21 +173,6 @@ class Scenes extends React.Component {
     checkIfScenesExist = (scenesByPerformer) =>{
         return scenesByPerformer !== undefined && scenesByPerformer[this.state.currentMetadataLevel] !== undefined
             && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer] !== undefined;
-    }
-
-    toggleShowInternalState = (newValue) => {
-        this.setState({
-            showInternalState: newValue
-        });
-    }
-
-    showInternalStatePreview = (stepObj) => {
-        if(!_.isEmpty(stepObj.internal_state)) {
-            return JSON.stringify(stepObj.internal_state).substring(0, 20) + '...';
-
-        } else {
-            return JSON.stringify(stepObj.internal_state);
-        }
     }
 
     getPrettyMetadataLabel = (metadata) => {
@@ -276,19 +218,10 @@ class Scenes extends React.Component {
         }
     }
 
-    convertXYArrayToString = (arrayToConvert) => {
-        let newStr = "";
-        for(let i=0; i < arrayToConvert.length; i++) {
-            newStr = newStr + '(' + convertValueToString(arrayToConvert[i]) + ')';
-
-            if(i < arrayToConvert.length -1) {
-                newStr = newStr + ", ";
-            }
-        }
-
-        return newStr;
+    isSceneHistInteractive = (scenesByPerformer) => {
+        return this.getSceneHistoryItem(scenesByPerformer) !== undefined
+            && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive";
     }
-
 
     render() {
         return (
@@ -301,7 +234,7 @@ class Scenes extends React.Component {
                     ), 
                     "projectionObject": projectionObject
                 }}
-                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(1); }}}>
+                onCompleted={() => { if(this.props.value.scene === null) { this.changeScene(1); }}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -354,7 +287,6 @@ class Scenes extends React.Component {
                                     
                                     const scenes = data[sceneQueryName];
                                     const scenesInOrder = _.sortBy(scenes, "scene_num");
-                                    this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
                                         if(scenesInOrder.length < this.state.currentSceneNum) {
@@ -434,100 +366,20 @@ class Scenes extends React.Component {
                                                     />
                                                 }
 
-                                                { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] !== "interactive") && 
-                                                    <div className="classification-by-step">
-                                                        <Accordion defaultActiveKey="0">
-                                                            <Card>
-                                                                <Accordion.Toggle as={Card.Header} className="pointer-on-hover" eventKey="0">
-                                                                    <div>
-                                                                        <div>
-                                                                            <h3>Selected Scene Classification by Step</h3>
-                                                                        </div>
-                                                                        <div>
-                                                                            <h6>(Click Here to Expand/Collapse)</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </Accordion.Toggle>
-                                                                <Accordion.Collapse eventKey="0">
-                                                                    <Card.Body>
-                                                                        <div className="score-table-div">
-                                                                            <table className="score-table">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>Step Number</th>
-                                                                                        <th>Action</th>
-                                                                                        <th>Classification</th>
-                                                                                        <th>Confidence</th>
-                                                                                        <th>Violations ((x,y) list)</th>
-                                                                                        {this.props.value.eval !== "Evaluation 3 Results" && this.props.value.eval !== "Evaluation 3.5 Results" &&
-                                                                                            <th>Internal State
-                                                                                                <br/>
-                                                                                                <span className={this.state.showInternalState ? "internal-state-toggle" : "display-none"} onClick={() => this.toggleShowInternalState(false)}>(Click to Collapse)</span>
-                                                                                                <span className={this.state.showInternalState ? "display-none" : "internal-state-toggle"} onClick={() => this.toggleShowInternalState(true)}>(Click to Expand)</span>
-                                                                                            </th>
-                                                                                        }
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    {this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer) !== null
-                                                                                        && this.getSceneHistoryItem(scenesByPerformer).steps.map((stepObj, key) => 
-                                                                                        <tr key={'performer_classification_by_step_row_' + key}>
-                                                                                            <td>{stepObj.stepNumber}</td>
-                                                                                            <td>{stepObj.action}</td>
-                                                                                            <td>{stepObj.classification}</td>
-                                                                                            <td>{stepObj.confidence}</td>
-                                                                                            <td>
-                                                                                                {stepObj.action !== 'EndHabituation' && stepObj.violations_xy_list !== undefined
-                                                                                                && stepObj.violations_xy_list !== null &&
-                                                                                                        this.convertXYArrayToString(stepObj.violations_xy_list)                                                                     
-                                                                                                }
-                                                                                            </td>
-                                                                                            {this.props.value.eval !== "Evaluation 3 Results" && this.props.value.eval !== "Evaluation 3.5 Results" &&
-                                                                                                <td className="internal-state-cell">
-                                                                                                    <span className={this.state.showInternalState ? "" : "display-none"}>
-                                                                                                        {JSON.stringify(stepObj.internal_state)}
-                                                                                                    </span>
-                                                                                                    <span className={this.state.showInternalState ? "display-none" : ""}>
-                                                                                                        {this.showInternalStatePreview(stepObj)}
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                            }
-                                                                                        </tr>
-                                                                                    )}
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>                            
-                                                                    </Card.Body>
-                                                                </Accordion.Collapse>
-                                                            </Card>
-                                                        </Accordion>
-                                                    </div>
+                                                { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
+                                                   <ClassificationByStepTable
+                                                        evaluation={this.props.value.eval}
+                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
+                                                    />
                                                 }
 
                                                 {/* start video logic for interactive scenes */}
-                                                    { (this.checkIfScenesExist(scenesByPerformer) && this.getSceneHistoryItem(scenesByPerformer) !== undefined && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive") &&
+                                                    { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistInteractive(scenesByPerformer)) &&
                                                         <div>
-                                                            <div className="movie-steps-holder">
-                                                                <div className="interactive-movie-holder">
-                                                                    <video id="interactiveMoviePlayer" src={
-                                                                        this.getVideoFileName(scenesByPerformer, "_visual")} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
-                                                                </div>
-                                                                <div className="steps-holder">
-                                                                    <h5>Performer Steps:</h5>
-                                                                    <div className="steps-container">
-                                                                            <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                            {this.getSceneHistoryItem(scenesByPerformer).steps.map((stepObject, key) => 
-                                                                            <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
-                                                                                {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                <div className="top-down-holder">
-                                                                    <video id="interactiveMoviePlayer" src={
-                                                                        this.getVideoFileName(scenesByPerformer, "_topdown")} width="500" height="350" controls="controls" autoPlay={false}/>
-                                                                </div>
-                                                            </div>
+                                                            <InteractiveScenePlayer evaluation={this.props.value.eval}
+                                                                sceneVidLink={this.getVideoFileName(scenesByPerformer, "_visual")}
+                                                                topDownLink={this.getVideoFileName(scenesByPerformer, "_topdown")}
+                                                                sceneHistoryItem={this.getSceneHistoryItem(scenesByPerformer)}/>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>

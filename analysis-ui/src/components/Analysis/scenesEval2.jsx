@@ -2,18 +2,16 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
-import $ from 'jquery';
 import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
-import { convertValueToString } from './displayTextUtils';
 import ScoreTable from './scoreTable';
+import InteractiveScenePlayer from './interactiveScenePlayer';
 
 const historyQueryName = "getEval2History";
 const sceneQueryName = "getEval2Scene";
 
 let constantsObject = {};
 let currentState = {};
-let currentStep = 0;
 
 const mcs_history = gql`
     query getEval2History($testType: String!, $testNum: Int!){
@@ -64,7 +62,9 @@ const scoreTableCols = [
     { dataKey: 'score.adjusted_confidence', title: 'Adjusted Confidence' },
     { dataKey: 'score.confidence', title: 'Confidence' }
 ]
-class Scenes extends React.Component {
+
+// TODO: Merge back in with Scenes view?
+class ScenesEval2 extends React.Component {
 
     constructor(props) {
         super(props);
@@ -72,7 +72,6 @@ class Scenes extends React.Component {
             currentPerformerKey: 0,
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) : 1,
-            currentObjectNum: 0,
             flagRemove: false,
             flagInterest: false,
             testType: props.value.test_type,
@@ -125,41 +124,14 @@ class Scenes extends React.Component {
         }
     }
 
-    highlightStep = (e) => {
-        // First one is at 0.2 
-        let currentTimeNum = Math.floor(document.getElementById("interactiveMoviePlayer").currentTime + 0.8);
-        if(currentTimeNum !== currentStep) {
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            currentStep = currentTimeNum;
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            if(document.getElementById("stepHolder" + currentStep) !== null) {
-                document.getElementById("stepHolder" + currentStep).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
-            }
-        }
-    }
-
-    initializeStepView = () => {
-        $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-        currentStep = 0;
-        $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-        if(document.getElementById("stepHolder" + currentStep) !== null) {
-            document.getElementById("stepHolder" + currentStep).scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
-        }
-    }
-
-    goToVideoLocation = (jumpTime) => {
-        if( document.getElementById("interactiveMoviePlayer") !== null) {
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-            currentStep = jumpTime;
-            document.getElementById("interactiveMoviePlayer").currentTime = jumpTime;
-            $('#stepHolder' + currentStep ).toggleClass( "step-highlight" );
-        }
-    }
-
     // Switching types for testNum, so need to pad them to match existing 
     // file names
     addLeadingZeroes = (testNum) => {
         return _.padStart(testNum.toString(), 4, '0');
+    }
+
+    createVideoLink = (bucketName) => {
+        return constantsObject[bucketName] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"];
     }
 
     render() {
@@ -168,7 +140,7 @@ class Scenes extends React.Component {
                 {"testType": this.props.value.test_type, 
                 "testNum": parseInt(this.props.value.test_num)
                 }}
-                onCompleted={() => {if(this.props.value.scene === null) { this.changeScene(1);}}}>
+                onCompleted={() => { if(this.props.value.scene === null) { this.changeScene(1); }}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -196,7 +168,6 @@ class Scenes extends React.Component {
                                     
                                     const scenes = data[sceneQueryName];
                                     const scenesInOrder = _.sortBy(scenes, "scene_num");
-                                    this.initializeStepView();
 
                                     if(scenesInOrder.length > 0) {
                                         return (
@@ -243,26 +214,11 @@ class Scenes extends React.Component {
                                                 }
 
                                                 { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
-                                                    <div className="movie-steps-holder">
-                                                        <div className="interactive-movie-holder">
-                                                            <video id="interactiveMoviePlayer" src={constantsObject["interactiveMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={this.highlightStep}/>
-                                                        </div>
-                                                        <div className="steps-holder">
-                                                            <h5>Performer Steps:</h5>
-                                                            <div className="steps-container">
-                                                                    <div id="stepHolder0" className="step-div step-highlight" onClick={() => this.goToVideoLocation(0)}>0: Starting Position</div>
-                                                                {scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1] !== undefined &&
-                                                                    scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1].steps.map((stepObject, key) => 
-                                                                    <div key={"step_div_" + key} id={"stepHolder" + (key+1)} className="step-div" onClick={() => this.goToVideoLocation(key+1)}>
-                                                                        {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <div className="top-down-holder">
-                                                            <video id="interactiveMoviePlayer" src={constantsObject["topDownMoviesBucket"] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"]} width="500" height="350" controls="controls" autoPlay={false}/>
-                                                        </div>
-                                                    </div> 
+
+                                                    <InteractiveScenePlayer evaluation={this.props.value.eval}
+                                                        sceneVidLink={this.createVideoLink("interactiveMoviesBucket")}
+                                                        topDownLink={this.createVideoLink("topDownMoviesBucket")}
+                                                        sceneHistoryItem={scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1]}/>
                                                 }
                                             </div>
                                         )
@@ -283,4 +239,4 @@ class Scenes extends React.Component {
     }
 }
 
-export default Scenes;
+export default ScenesEval2;
