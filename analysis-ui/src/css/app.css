@@ -310,11 +310,6 @@ ol, ul {
     border: 0px solid;
 }
 
-.objects_scenes_header {
-    display: flex;
-    margin: 40px 10px 0px 35px;
-}
-
 .movie-steps-holder{
     display: flex;
     margin: 20px 35px;
@@ -367,7 +362,7 @@ ol, ul {
 
 .object-nav, .object-contents {
     display: flex;
-    margin: 10px 50px;
+    margin: 10px;
 }
 
 .object-nav .nav {
@@ -931,7 +926,7 @@ ol, ul {
     padding: 20px 0 20px 0;
 }
 
-.classification-by-step-header {
+.pointer-on-hover {
     cursor: pointer;
 }
 
@@ -983,4 +978,53 @@ ol, ul {
 
 .eval-chart-table th, td {
     padding: 5px 10px;
+}
+
+/* scene details */
+.scene-details-header {
+    margin: 5px 15px;
+    flex-direction: column;
+    flex: 1;
+}
+
+.scene-title-and-download {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scene-details-btn-group {
+    padding-top: 10px;
+}
+
+.download-scene {
+    padding-top: 5px;
+    margin-right: 30px;
+}
+
+.download-scene-text {
+    position: relative;
+    top: -8px;
+    left: 2px;
+}
+
+/* score table */
+.score-div {
+    padding-top: 5px;
+}
+
+.score-text {
+    position: relative;
+    top: -5px;
+    left: 5px;
+}
+
+.show-details-toggle:hover {
+    color: #a2a9b5;
+    cursor: pointer;
+}
+
+.TableRow.Mui-selected {
+    background-color: #99d6ff !important;
 }
