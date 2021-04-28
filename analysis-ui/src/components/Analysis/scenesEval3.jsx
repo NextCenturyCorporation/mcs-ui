@@ -13,7 +13,7 @@ import ScoreTable from './scoreTable';
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
-const sceneQueryName = "getEval3Scene";
+const sceneQueryName = "getEvalScene";
 
 let constantsObject = {};
 //let currentState = {};
@@ -47,10 +47,9 @@ const create_complex_query = gql`
         createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
     }`;
 
-// TODO: UPDATE
 const mcs_scene= gql`
-    query getEval3Scene($sceneName: String, $testNum: Int){
-        getEval3Scene(sceneName: $sceneName, testNum: $testNum) {
+    query getEvalScene($sceneName: String, $testNum: Int){
+        getEvalScene(sceneName: $sceneName, testNum: $testNum) {
             name
             ceilingMaterial
             floorMaterial

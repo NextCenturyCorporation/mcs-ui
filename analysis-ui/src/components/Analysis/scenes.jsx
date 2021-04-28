@@ -8,16 +8,16 @@ import {EvalConstants} from './evalConstants';
 import { convertValueToString } from './displayTextUtils';
 import ScoreTable from './scoreTable';
 
-const historyQueryName = "getEvalHistory";
-const sceneQueryName = "getEvalScene";
+const historyQueryName = "getEval2History";
+const sceneQueryName = "getEval2Scene";
 
 let constantsObject = {};
 let currentState = {};
 let currentStep = 0;
 
 const mcs_history = gql`
-    query getEvalHistory($testType: String!, $testNum: Int!){
-        getEvalHistory(testType: $testType, testNum: $testNum) {
+    query getEval2History($testType: String!, $testNum: Int!){
+        getEval2History(testType: $testType, testNum: $testNum) {
             eval
             performer
             name
@@ -35,8 +35,8 @@ const mcs_history = gql`
   }`;
 
 const mcs_scene= gql`
-    query getEvalScene($testType: String!, $testNum: Int!){
-        getEvalScene(testType: $testType, testNum: $testNum) {
+    query getEval2Scene($testType: String!, $testNum: Int!){
+        getEval2Scene(testType: $testType, testNum: $testNum) {
             name
             ceilingMaterial
             floorMaterial

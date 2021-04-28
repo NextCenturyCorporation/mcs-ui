@@ -3,8 +3,8 @@ import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 const mcs_history = gql`
-    query getEvalHistory($testType: String!, $testNum: Int!){
-        getEvalHistory(testType: $testType, testNum: $testNum) {
+    query getEval2History($testType: String!, $testNum: Int!){
+        getEval2History(testType: $testType, testNum: $testNum) {
             eval
             performer
             name
