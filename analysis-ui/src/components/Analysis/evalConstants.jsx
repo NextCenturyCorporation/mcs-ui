@@ -33,9 +33,58 @@ const Eval3_5 = {
     sceneExtension: "_debug.json",
 }
 
-// TODO: MCS-589: move to ingest/store in mongo
+const Eval4 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-4-scenes/",
+    sceneExtension: "_debug.json",
+}
+
+const Eval5 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-5/",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-5/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-5/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-5-scenes/",
+    sceneExtension: "_debug.json",
+}
+
+const Eval6 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-6/",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-6/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-6/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-6-scenes/",
+    sceneExtension: "_debug.json",
+}
+
+const Eval7 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-7/",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-7/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-7/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-7-scenes/",
+    sceneExtension: "_debug.json",
+}
+
+const Eval8 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-8/",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-8/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-8/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-8-scenes/",
+    sceneExtension: "_debug.json",
+}
+
 export const EvalConstants = {
     "Evaluation 2 Results": Eval2, 
     "Evaluation 3 Results": Eval3,
-    "Evaluation 3.5 Results": Eval3_5
+    "Evaluation 3.5 Results": Eval3_5,
+    "Evaluation 4 Results": Eval4,
+    "Evaluation 5 Results": Eval5,
+    "Evaluation 6 Results": Eval6,
+    "Evaluation 7 Results": Eval7,
+    "Evaluation 8 Results": Eval8     
 }
