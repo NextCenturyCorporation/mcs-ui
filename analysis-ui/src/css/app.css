@@ -143,20 +143,12 @@ body {
     text-align: center;
 }
 
-.comments-holder {
-    margin: 0 25px;
-}
-
 .sceneScore {
     width: 250px;
     margin: 0 25px;
     position: relative;
     margin-top: 298px;
     padding-left: 18px;
-}
-
-.commentarea {
-    margin:20px;
 }
 
 .voe_chart {
@@ -214,19 +206,6 @@ ol, ul {
     margin-left: 20px;
     margin-top: 20px;
     width: 300px;
-}
-
-.comment-container {
-    margin: 20px;
-}
-
-.comment-display {
-    margin: 10px 20px;
-}
-
-.comment-date {
-    font-size: 12px;
-    color: #777777;
 }
 
 .header-dropdown-title {

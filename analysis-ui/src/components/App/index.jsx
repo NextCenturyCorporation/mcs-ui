@@ -7,7 +7,6 @@ import Scenes from '../Analysis/scenes';
 import EvalHeader from '../Analysis/header';
 import QueryPage from '../QueryBuilder/queryPage';
 import EvalStatusPage from '../EvaluationStatus/evalStatusPage';
-import CommentsComponent from '../Comments/comments';
 import {Router, Switch, Route, Link} from 'react-router-dom';
 import LoginApp from '../Account/login';
 import ResetPassPage from '../Account/resetPassword';
@@ -69,7 +68,6 @@ const AnalysisUI = ({newState, updateHandler}) => {
 
     newState.history = history;
 
-    // TODO: Fix comments for eval 3
     return <div>
         <div className="layout">
 
@@ -79,7 +77,6 @@ const AnalysisUI = ({newState, updateHandler}) => {
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
                 { isEval2 && hasTestType && hasTestNum && <ScenesEval2 value={newState} updateHandler={updateHandler}/> }
                 { (!isEval2) && hasCatType && hasTestNum && <Scenes value={newState} updateHandler={updateHandler}/> }
-                { newState.showComments && (isEval2) && <CommentsComponent state={newState}/> }
             </div>
         </div>
     </div>;
@@ -155,7 +152,6 @@ export class App extends React.Component {
 
         this.state = queryString.parse(window.location.search);
         this.state.currentUser = null;
-        this.state.showComments = (process.env.REACT_APP_COMMENTS_ON.toLowerCase() === 'true' || process.env.REACT_APP_COMMENTS_ON === '1');
         this.state.category_type = null;
         this.state.test_type = null;
         this.state.test_num = null;

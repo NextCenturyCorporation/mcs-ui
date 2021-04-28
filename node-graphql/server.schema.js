@@ -32,26 +32,6 @@ const mcsTypeDefs = gql`
     location_y: Float
   }
 
-  type Comment {
-    id: String
-    block: String
-    performer: String
-    submission: String
-    test: String
-    createdDate: String
-    text: String
-    userName: String
-  }
-
-  type NewComment {
-    id: String
-    test_type: String
-    test_num: String
-    createdDate: String
-    text: String
-    userName: String
-  }
-
   type History {
     eval: String
     performer: String
@@ -129,8 +109,6 @@ const mcsTypeDefs = gql`
     getEvalBySubmission(submission: String) : [Source]
     getEvalByPerformer(performer: String) : [Source]
     getEvalAnalysis(test: String, block: String, submission: String, performer: String) : [Source]
-    getComments(test: String, block: String, submission: String, performer: String) : [Comment]
-    getCommentsByTest(testType: String, testNum: Int) : [NewComment]
     getFieldAggregation(fieldName: String, eval: String) : [String]
     getSubmissionFieldAggregation: [SubmissionPerformer]
     getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
@@ -146,8 +124,6 @@ const mcsTypeDefs = gql`
   }
 
   type Mutation {
-    saveComment(test: String, block: String, submission: String, performer: String, createdDate: String, text: String, userName: String) : Comment
-    saveCommentByTest(testType: String, testNum: Int, createdDate: String, text: String, userName: String) : NewComment
     updateSceneHistoryRemoveFlag(testType: String, testNum: Int, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(testType: String, testNum: Int, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
@@ -211,14 +187,6 @@ const mcsResolvers = {
         getEvalAnalysis: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({'test': args["test"], 'block': args["block"], 
                 'submission': args["submission"], 'performer': args["performer"]}).toArray().then(result => {return result});
-        },
-        getComments: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('comments').find({'test': args["test"], 'block': args["block"], 
-                'submission': args["submission"], 'performer': args["performer"]}).toArray().then(result => {return result});
-        },
-        getCommentsByTest: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('comments').find({'test_type': args["testType"], 'test_num': args["testNum"]})
-                .toArray().then(result => {return result});
         },
         getFieldAggregation: async(obj, args, context, infow) => {
             if(args["eval"]) {
@@ -484,26 +452,6 @@ const mcsResolvers = {
         }
     }, 
     Mutation: {
-        saveComment: async (obj, args, context, infow) => {
-            return await mcsDB.db.collection('comments').insert({
-                test: args["test"],
-                block: args["block"],
-                submission: args["submission"],
-                performer: args["performer"],
-                text: args["text"],
-                createdDate: args["createdDate"],
-                userName: args["userName"]
-            });
-        },
-        saveCommentByTest: async (obj, args, context, infow) => {
-            return await mcsDB.db.collection('comments').insert({
-                test_type: args["testType"],
-                test_num: args["testNum"],
-                text: args["text"],
-                createdDate: args["createdDate"],
-                userName: args["userName"]
-            });
-        },
         updateSceneHistoryRemoveFlag: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('mcs_history').update(
                 {"test_type": args["testType"], "test_num":  args["testNum"]},
