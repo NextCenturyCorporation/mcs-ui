@@ -310,9 +310,9 @@ const mcsResolvers = {
                     let evalNumber;
 
                     if(mongoQueryObject.historyQuery["eval"] !== undefined) {
-                        evalNumber = mongoQueryObject.historyQuery["eval"].replace(/\D/g, "");
+                        evalNumber = mongoQueryObject.historyQuery["eval"].replace(/\D+\.?\D+/g, "");
                     } else {
-                        evalNumber = mongoQueryObject.sceneQuery["mcsScenes.eval"].replace(/\D/g, "");
+                        evalNumber = mongoQueryObject.sceneQuery["mcsScenes.eval"].replace(/\D+\.?\D+/g, "");
                     }
 
                     const historyEvalName = "Evaluation " + evalNumber + " Results";
