@@ -2,6 +2,7 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
+// TODO: Remove FlagCheckboxMutation component + currentState + related variables?
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
 import ScoreTable from './scoreTable';
