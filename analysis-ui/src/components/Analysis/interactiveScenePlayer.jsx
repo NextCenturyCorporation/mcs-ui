@@ -7,6 +7,7 @@ function InteractiveScenePlayer({evaluation, sceneVidLink, topDownLink, sceneHis
     const scenePlayer = useRef(null);
     const stepZero = useRef(null);
     const stepElems = useRef([]);
+    const currentFPS = 20; // for eval 3+ videos
 
     useEffect( () => {
         if(sceneHistoryItem.steps !== undefined) {
@@ -16,13 +17,13 @@ function InteractiveScenePlayer({evaluation, sceneVidLink, topDownLink, sceneHis
 
 
     const goToVideoLocation = (location) => {
-        if( document.getElementById("interactiveMoviePlayer") !== null && location !== currentStep) {
+        if(location !== currentStep) {
             if(evaluation === "Evaluation 2 Results") {
                 setCurrentStep(location);
                 scenePlayer.current.currentTime = location;
             } else {
                 // videos for eval 3+ are faster than eval 2 -- 20 actions/frames per second
-                let timeToJumpTo = (location + 1) / 20;
+                let timeToJumpTo = (location + 1) / currentFPS;
                 setCurrentStep(location);
                 setCurrentTime(timeToJumpTo);
                 scenePlayer.current.currentTime = timeToJumpTo;
@@ -41,7 +42,7 @@ function InteractiveScenePlayer({evaluation, sceneVidLink, topDownLink, sceneHis
         } else {
             let currentTimeNum = scenePlayer.current.currentTime;
             if(currentTimeNum !== currentTime) {
-                let newStep = Math.floor(currentTimeNum * 20);
+                let newStep = Math.floor(currentTimeNum * currentFPS);
                 setCurrentTime(currentTimeNum);
                 setCurrentStep(newStep);
                 scrollStepIntoView(newStep);

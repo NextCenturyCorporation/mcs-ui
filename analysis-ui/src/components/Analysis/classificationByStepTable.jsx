@@ -11,9 +11,8 @@ function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
     const showInternalStatePreview = (stepObj) => {
         if(!_.isEmpty(stepObj.internal_state)) {
             return JSON.stringify(stepObj.internal_state).substring(0, 20) + '...';
-
         } else {
-            return JSON.stringify(stepObj.internal_state);
+            return "";
         }
     }
 
