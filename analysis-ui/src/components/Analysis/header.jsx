@@ -71,7 +71,7 @@ class ListItem extends React.Component {
             if(this.props.stateName === 'eval') {
                 // We have 2 cases: "eval 2" and "every other eval"
                 let isValidEval2 = hasTestTypeState && this.props.item === EVAL_2_IDENTIFIER;
-                let isValidOtherEval = hasCatTypeState && (this.props.item !== EVAL_2_IDENTIFIER);
+                let isValidOtherEval = hasCatTypeState && this.props.item !== EVAL_2_IDENTIFIER;
 
                 if(isValidEval2) {
                     paramsToAppend += "&test_type=" + this.props.state["test_type"];
@@ -208,7 +208,7 @@ class EvalNav extends React.Component {
                         <DropListItems fieldName={"eval"} stateName={"eval"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                     </NavDropdown>
 
-                    {(this.props.state.eval !== undefined && this.props.state.eval !== null && (this.props.state.eval !== EVAL_2_IDENTIFIER)) &&
+                    {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval !== EVAL_2_IDENTIFIER) &&
                     <NavDropdown title={"Category Type: " + (
                         (this.props.state.category_type === undefined || this.props.state.category_type === null) ? "None" : this.props.state.category_type)}
                         id="basic-nav-dropdown">
