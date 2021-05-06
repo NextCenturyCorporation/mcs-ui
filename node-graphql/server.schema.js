@@ -103,7 +103,7 @@ const mcsTypeDefs = gql`
     msc_eval: [Source]
     getEval2History(testType: String, testNum: Int) : [History]
     getEval2Scene(testType: String, testNum: Int) : [Scene]
-    getEvalScene(sceneName: String, testNum: Int) : [Scene]
+    getEvalScene(eval: String, sceneName: String, testNum: Int) : [Scene]
     getEvalByTest(test: String) : [Source]
     getEvalByBlock(block: String) : [Source]
     getEvalBySubmission(submission: String) : [Source]
@@ -131,6 +131,10 @@ const mcsTypeDefs = gql`
   }
 `;
 
+const getEvalNumFromString = (strValue) => {
+    return strValue.replace(/\D+\.?\D+/g, "");
+}
+
 const mcsResolvers = {
     Query: {
         msc_eval: async(obj, args, context, infow) => {
@@ -139,17 +143,20 @@ const mcsResolvers = {
         },
         getEval2History: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_history').find({'test_type': args["testType"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection('mcs_history').find({'eval': "Evaluation 2 Results", 'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval2Scene: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_scenes').find({'test_type': args["testType"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection('mcs_scenes').find({'eval': "Evaluation 2 Scenes", 'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
             // Eval 3 onwards
-            return await mcsDB.db.collection('mcs_scenes').find({'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
+            let evalNum = getEvalNumFromString(args["eval"]);
+            let sceneEvalName = "Evaluation " + evalNum + " Scenes";
+
+            return await mcsDB.db.collection('mcs_scenes').find({'eval': sceneEvalName, 'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {
@@ -310,9 +317,9 @@ const mcsResolvers = {
                     let evalNumber;
 
                     if(mongoQueryObject.historyQuery["eval"] !== undefined) {
-                        evalNumber = mongoQueryObject.historyQuery["eval"].replace(/\D/g, "");
+                        evalNumber = getEvalNumFromString(mongoQueryObject.historyQuery["eval"]);
                     } else {
-                        evalNumber = mongoQueryObject.sceneQuery["mcsScenes.eval"].replace(/\D/g, "");
+                        evalNumber = getEvalNumFromString(mongoQueryObject.sceneQuery["mcsScenes.eval"]);
                     }
 
                     const historyEvalName = "Evaluation " + evalNumber + " Results";

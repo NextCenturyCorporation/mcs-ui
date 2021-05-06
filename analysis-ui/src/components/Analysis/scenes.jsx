@@ -44,8 +44,8 @@ const create_complex_query = gql`
     }`;
 
 const mcs_scene= gql`
-    query getEvalScene($sceneName: String, $testNum: Int){
-        getEvalScene(sceneName: $sceneName, testNum: $testNum) {
+    query getEvalScene($eval: String, $sceneName: String, $testNum: Int){
+        getEvalScene(eval: $eval, sceneName: $sceneName, testNum: $testNum) {
             name
             ceilingMaterial
             floorMaterial
@@ -278,7 +278,8 @@ class Scenes extends React.Component {
                     if(metadataList.length > 0 && performerList.length > 0 && sceneNamePrefix !== null) {
                         return (
                             <Query query={mcs_scene} variables={
-                                {"sceneName": sceneNamePrefix, 
+                                {"eval": this.props.value.eval,
+                                "sceneName": sceneNamePrefix, 
                                 "testNum": parseInt(this.props.value.test_num)
                                 }}>
                             {
