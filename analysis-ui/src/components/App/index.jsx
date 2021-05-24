@@ -26,6 +26,7 @@ import 'react-dropdown/style.css';
 
 import brandImage from '../../img/mcs_logo.png';
 import userImage from '../../img/account_icon.png';
+import Navigation from '../Analysis/navigation'
 
 const history = createBrowserHistory();
 
@@ -68,17 +69,13 @@ const AnalysisUI = ({newState, updateHandler}) => {
 
     newState.history = history;
 
-    return <div>
-        <div className="layout">
-
-            <EvalHeader state={newState} updateHandler={updateHandler}/>
-
+    return <div className="layout">
             <div className="layout-board">
+                <Navigation state={newState} updateHandler={updateHandler}></Navigation>
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { isEval2 && hasTestType && hasTestNum && <ScenesEval2 value={newState} updateHandler={updateHandler}/> }
-                { (!isEval2) && hasCatType && hasTestNum && <Scenes value={newState} updateHandler={updateHandler}/> }
+                {isEval2 && hasTestType && hasTestNum && <ScenesEval2 className="scene-view" value={newState} updateHandler={updateHandler}/>}
+                {(!isEval2) && hasCatType && hasTestNum && <Scenes className="scene-view" value={newState} updateHandler={updateHandler}/>}
             </div>
-        </div>
     </div>;
 }
 

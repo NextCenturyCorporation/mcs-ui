@@ -160,6 +160,7 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {
+            // TODO: MCS-516: Current Nav queries -- add to it to get more specificity with fields like test_num?
             if(args["eval"]) {
                 return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
             } else {
