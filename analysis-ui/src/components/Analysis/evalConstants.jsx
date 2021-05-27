@@ -38,7 +38,7 @@ const Eval3_75 = {
     interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
     topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-scenes-3.5/", 
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-scenes-3.75/",
     sceneExtension: "_debug.json",
 }
 
