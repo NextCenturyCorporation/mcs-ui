@@ -33,6 +33,15 @@ const Eval3_5 = {
     sceneExtension: "_debug.json",
 }
 
+const Eval3_75 = {
+    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
+    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
+    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
+    movieExtension: ".mp4",
+    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-scenes-3.75/",
+    sceneExtension: "_debug.json",
+}
+
 const Eval4 = {
     moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
     interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
@@ -82,6 +91,7 @@ export const EvalConstants = {
     "Evaluation 2 Results": Eval2, 
     "Evaluation 3 Results": Eval3,
     "Evaluation 3.5 Results": Eval3_5,
+    "Evaluation 3.75 Results": Eval3_75,
     "Evaluation 4 Results": Eval4,
     "Evaluation 5 Results": Eval5,
     "Evaluation 6 Results": Eval6,
