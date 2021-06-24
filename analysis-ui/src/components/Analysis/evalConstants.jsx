@@ -1,9 +1,9 @@
 const Eval2 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-2-inphys-videos/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-2/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-2-top-down/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-2-inphys-videos/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-2/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-2-top-down/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-2-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-2-scenes/",
     sceneExtension: "-debug.json",
 
     // note that this performerPrefixMapping is only used on the Eval 2 Results Page
@@ -16,74 +16,74 @@ const Eval2 = {
 };
 
 const Eval3 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-3/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-3/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-3/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-3-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-3-scenes/",
     sceneExtension: "_debug.json",
 }
 
 const Eval3_5 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.5/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-3.5/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-3.5/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-3.5/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-scenes-3.5/", 
+    sceneBucket: "https://resources.machinecommonsense.com/eval-scenes-3.5/", 
     sceneExtension: "_debug.json",
 }
 
 const Eval3_75 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-3.75/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-3.75/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-3.75/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-3.75/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-scenes-3.75/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-scenes-3.75/",
     sceneExtension: "_debug.json",
 }
 
 const Eval4 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-4/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-4/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-4/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-4/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-4-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-4-scenes/",
     sceneExtension: "_debug.json",
 }
 
 const Eval5 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-5/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-5/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-5/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-5/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-5/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-5/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-5-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-5-scenes/",
     sceneExtension: "_debug.json",
 }
 
 const Eval6 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-6/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-6/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-6/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-6/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-6/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-6/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-6-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-6-scenes/",
     sceneExtension: "_debug.json",
 }
 
 const Eval7 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-7/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-7/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-7/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-7/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-7/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-7/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-7-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-7-scenes/",
     sceneExtension: "_debug.json",
 }
 
 const Eval8 = {
-    moviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-8/",
-    interactiveMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-8/",
-    topDownMoviesBucket: "https://evaluation-images.s3.amazonaws.com/eval-8/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-8/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-8/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-8/",
     movieExtension: ".mp4",
-    sceneBucket: "https://evaluation-images.s3.amazonaws.com/eval-8-scenes/",
+    sceneBucket: "https://resources.machinecommonsense.com/eval-8-scenes/",
     sceneExtension: "_debug.json",
 }
 
