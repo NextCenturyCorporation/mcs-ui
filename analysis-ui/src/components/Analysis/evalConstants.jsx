@@ -34,9 +34,9 @@ const Eval3_5 = {
 }
 
 const Eval3_75 = {
-    moviesBucket: "https://resources.machinecommonsense.com/eval-resources-3.75/",
-    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-resources-3.75/",
-    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-resources-3.75/",
+    moviesBucket: "https://resources.machinecommonsense.com/eval-3.75/",
+    interactiveMoviesBucket: "https://resources.machinecommonsense.com/eval-3.75/",
+    topDownMoviesBucket: "https://resources.machinecommonsense.com/eval-3.75/",
     movieExtension: ".mp4",
     sceneBucket: "https://resources.machinecommonsense.com/eval-scenes-3.75/",
     sceneExtension: "_debug.json",
