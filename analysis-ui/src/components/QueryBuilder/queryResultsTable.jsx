@@ -206,7 +206,7 @@ class QueryResultsTable extends React.Component {
                         options={this.props.groupByOptions}/>
                 </div>
                 <div className="results-table-scroll">
-                    <Table>
+                    <Table stickyHeader>
                         <TableHead>
                             <TableRow>
                                 <TableCell key='result_table_cell_link' className="results-table-header-cell">
