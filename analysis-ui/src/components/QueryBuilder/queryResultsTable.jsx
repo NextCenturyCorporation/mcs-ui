@@ -299,28 +299,28 @@ class QueryResultsTable extends React.Component {
                                 </>
                             }
                         </TableBody>
-                        {this.state.groupBy === "" && 
-                            <TableFooter className="query-results-footer">
-                                <TableRow>
-                                    <TablePagination
-                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                        colSpan={3}
-                                        count={groupedData.length}
-                                        rowsPerPage={this.state.rowsPerPage}
-                                        page={this.state.page}
-                                        SelectProps={{
-                                            inputProps: { 'aria-label': 'rows per page' },
-                                            native: true,
-                                        }}
-                                        onChangePage={this.handleChangePage}
-                                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                        ActionsComponent={TablePaginationActions}
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        }
-                    </Table>
+                    </Table>  
                 </div>
+                {this.state.groupBy === "" && 
+                    <TableFooter className="query-results-footer">
+                        <TableRow>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={3}
+                                count={groupedData.length}
+                                rowsPerPage={this.state.rowsPerPage}
+                                page={this.state.page}
+                                SelectProps={{
+                                    inputProps: { 'aria-label': 'rows per page' },
+                                    native: true,
+                                }}
+                                onChangePage={this.handleChangePage}
+                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                }
             </div>
         );
     }

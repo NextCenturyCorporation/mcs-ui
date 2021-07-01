@@ -834,6 +834,7 @@ ol, ul {
     top: -75px;
     right: 30px;
     position: absolute;
+    z-index:10;
 }
 
 .query-parameters-holder, .query-results-holder {
@@ -850,6 +851,14 @@ ol, ul {
 .results-table-scroll thead tr th {
     position: sticky;
     top: 0;
+}
+
+.results-table-scroll .MuiTable-stickyHeader {
+    border-collapse: collapse;
+}
+
+.results-table-scroll .MuiTableCell-stickyHeader {
+    background-color: #eee;
 }
 
 .query-results-footer tr td {
@@ -894,7 +903,6 @@ ol, ul {
 
 .query-results-table-holder {
     position: relative;
-    display: flex;
 }
 
 .results-groupby-selector {
