@@ -68,6 +68,7 @@ class ScenesEval2 extends React.Component {
 
     constructor(props) {
         super(props);
+        this.playBackButtons = React.createRef();
         this.state = {
             currentPerformerKey: 0,
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
@@ -92,10 +93,12 @@ class ScenesEval2 extends React.Component {
                 flagInterest: firstEval["flags"]["interest"]
             });
         }
+        this.resetPlaybackButtons();
     }
 
     changePerformer = (performerKey, performer) => {
         this.setState({ currentPerformerKey: performerKey, currentPerformer: performer});
+        this.resetPlaybackButtons();
     }
 
     changeScene = (sceneNum) => {
@@ -121,6 +124,7 @@ class ScenesEval2 extends React.Component {
             }
     
             this.props.updateHandler("scene", parseInt(sceneNum + 1));
+            this.resetPlaybackButtons();
         }
     }
 
@@ -132,6 +136,12 @@ class ScenesEval2 extends React.Component {
 
     createVideoLink = (bucketName) => {
         return constantsObject[bucketName] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"];
+    }
+
+
+    resetPlaybackButtons = () => {
+        if(this.playBackButtons.current!==null)
+            this.playBackButtons.current.reset();
     }
 
     render() {
@@ -218,7 +228,8 @@ class ScenesEval2 extends React.Component {
                                                     <InteractiveScenePlayer evaluation={this.props.value.eval}
                                                         sceneVidLink={this.createVideoLink("interactiveMoviesBucket")}
                                                         topDownLink={this.createVideoLink("topDownMoviesBucket")}
-                                                        sceneHistoryItem={scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1]}/>
+                                                        sceneHistoryItem={scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1]}
+                                                        ref={this.playBackButtons}/>
                                                 }
                                             </div>
                                         )
