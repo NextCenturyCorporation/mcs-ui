@@ -8,6 +8,7 @@ import {EvalConstants} from './evalConstants';
 import ScoreTable from './scoreTable';
 import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
+import PlaybackButtons from './playbackButtons'
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
@@ -77,6 +78,7 @@ class Scenes extends React.Component {
 
     constructor(props) {
         super(props);
+        this.playBackButtons = React.createRef();
         this.state = {
             currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
@@ -115,6 +117,7 @@ class Scenes extends React.Component {
 
     setStateObject(key, value) {
         this.setState({[key]: value});
+        this.resetPlaybackButtons();
     }
 
     changeScene = (sceneNum) => {
@@ -139,7 +142,13 @@ class Scenes extends React.Component {
                 });
             }
             this.props.updateHandler("scene", sceneNum);
+            this.resetPlaybackButtons();
         }
+    }
+
+    resetPlaybackButtons = () => {
+        if(this.playBackButtons.current!==null)
+            this.playBackButtons.current.reset();
     }
 
     getSceneNamePrefix = (name) => {
@@ -204,6 +213,8 @@ class Scenes extends React.Component {
         if(sceneItem === undefined || sceneItem === null) {
             return "";
         }
+
+        this.resetPlaybackButtons()
 
         if(sceneItem.eval === "Evaluation 3 Results") {
             return constantsObject["moviesBucket"] +
@@ -312,13 +323,14 @@ class Scenes extends React.Component {
                                                         <div className="eval3-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" autoPlay={false} />
                                                             </div>
                                                         </div>
+                                                        <PlaybackButtons ref={this.playBackButtons} syncButtonPaddingLeft="160px" topdDownButtonPaddingLeft="140px"/>
 
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
@@ -381,7 +393,8 @@ class Scenes extends React.Component {
                                                             <InteractiveScenePlayer evaluation={this.props.value.eval}
                                                                 sceneVidLink={this.getVideoFileName(scenesByPerformer, "_visual")}
                                                                 topDownLink={this.getVideoFileName(scenesByPerformer, "_topdown")}
-                                                                sceneHistoryItem={this.getSceneHistoryItem(scenesByPerformer)}/>
+                                                                sceneHistoryItem={this.getSceneHistoryItem(scenesByPerformer)}
+                                                                ref={this.playBackButtons} />
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
