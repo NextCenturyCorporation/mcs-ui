@@ -100,6 +100,16 @@ class EvalStatusTable extends React.Component {
         return historyIngested + " / " + typeTotal + "(" + percentComplete + "%)";
     }
 
+    getStyleForPerformer(performer, header=false) {
+        return (
+            String(performer).includes("IBM-MIT-Harvard-Stanford") ? `rgb(0, 160, 210, ${header ? '1' : '0.5'})` :
+            String(performer).includes("MESS-UCBerkeley") ? `rgb(68, 77, 93, ${header ? '1' : '0.5'})` :
+            String(performer).includes("OPICS") ? `rgb(217, 85, 85, ${header ? '1' : '0.7'})` :
+            String(performer).includes("TA2 Baseline") ? `rgb(138, 85, 217, ${header ? '1' : '0.6'})` :
+            "inherit"
+        );
+    }
+
     render() {
         const setRefetch = refetch => {this.refetch = refetch};
         return (
@@ -164,9 +174,9 @@ class EvalStatusTable extends React.Component {
                                                                     </tr>
                                                                     {evalStatus.statusObj[0].evalStatusParams.performers.map((performer, performerKey) => (
                                                                         <tr key={"performer_row_" + sceneTypeKey + performerKey}>
-                                                                            <td>{performer.label}</td>
+                                                                            <td style={{background:this.getStyleForPerformer(performer.label, true), color:"white"}}>{performer.label}</td>
                                                                             {evalStatus.statusObj[0].evalStatusParams.metadatas.map((metadata, metaKey) => (
-                                                                                <td key={"performer_row_" + sceneTypeKey + performerKey + metaKey}>
+                                                                                <td style={{background:this.getStyleForPerformer(performer.label)}} key={"performer_row_" + sceneTypeKey + performerKey + metaKey}>
                                                                                     {this.calculateCellValue(evalStatus, sceneType.label, performer.label, metadata.label)}
                                                                                 </td>
                                                                             ))}

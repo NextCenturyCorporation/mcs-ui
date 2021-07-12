@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import _ from "lodash";
+import _, { get } from "lodash";
 // TODO: Remove FlagCheckboxMutation component + currentState + related variables?
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
@@ -192,6 +192,33 @@ class Scenes extends React.Component {
         return metadata;
     }
 
+    changePerformer = (key, value, colorCallback, id="") => {
+        this.setState({[key]: value}, () => {
+            colorCallback(value, id);
+        });
+    }
+    
+    getStyleForPerformer(performer, id="") {
+        const getColor = (performer) => {
+            return (
+                performer === this.state.currentPerformer ? '#0062cc' :
+                String(performer).includes("IBM-MIT-Harvard-Stanford") ? "rgb(0, 160, 210, 1)" :
+                String(performer).includes("MESS-UCBerkeley") ? "rgb(68, 77, 93, 1)" :
+                String(performer).includes("OPICS") ? "rgb(217, 85, 85, 1)" :
+                String(performer).includes("TA2 Baseline") ? "rgb(138, 85, 217, 1)" :
+                "inherit"
+            );
+        }
+
+        if(id!=="") {
+            document.getElementById(id).style.backgroundColor = getColor(performer);
+        } else {
+            return (
+                getColor(performer)
+            );
+        }
+    }
+
     getSceneHistoryItem = (scenesByPerformer) => {
         if(scenesByPerformer !== undefined && scenesByPerformer !== null && this.state.currentSceneNum !== undefined) {
             let sceneNumAsString = this.state.currentSceneNum.toString();
@@ -350,7 +377,8 @@ class Scenes extends React.Component {
                                                     {performerList.map((performer, key) =>
                                                         <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
                                                             id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
-                                                            onClick={() => this.setStateObject('currentPerformer', performer)}>
+                                                            style = {{backgroundColor: this.getStyleForPerformer(performer)}}
+                                                            onClick={() => {this.changePerformer('currentPerformer', performer, this.getStyleForPerformer.bind(this), 'toggle_performer_' + key)}}>
                                                                 {performer}
                                                         </button>
                                                     )}
