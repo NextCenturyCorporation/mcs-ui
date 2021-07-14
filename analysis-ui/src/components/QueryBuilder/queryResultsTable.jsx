@@ -17,10 +17,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
 import PerformanceStatistics from './performanceStatistics';
+import { CSVLink } from "react-csv";
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -189,6 +191,27 @@ class QueryResultsTable extends React.Component {
         }
     }
 
+    data = [
+        {firstName: "MCS-1", lastName: "mcs-2"},
+        {firstName: "MCS-3", lastName: "MCS-4"},
+        {firstName: "MCS-5", lastName: "MCS-6"},
+    ];
+
+    headers = [
+        {label: 'First Name', key: 'firstName'},
+        {label: 'Last Name', key: 'lastName'}
+    ]
+
+    csvDownload = {
+        filename: 'MCS-Query.csv',
+        headers: this.headers,
+        data: this.data,
+    }
+
+    downloadCSV = () => {
+        console.log("Downloading CSV");
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -199,11 +222,24 @@ class QueryResultsTable extends React.Component {
     
         return (
             <div className="query-results-table-holder">
-                <div className="results-group-chooser">
-                    <div className="query-builder-label">Group Table By</div>
-                    <Select className="results-groupby-selector"
-                        onChange={this.setQueryGroupBy} 
-                        options={this.props.groupByOptions}/>
+                <div className="csv-results-group-holder">
+                    <div className="csv-results-child" style={{paddingTop: '25px', paddingLeft: '40px'}}>
+                        <IconButton style={{padding: '7px', borderRadius: '10px', fontSize: '1rem'}} onClick={this.downloadCSV}>
+                            <span class="material-icons">
+                                get_app
+                            </span> 
+                            <CSVLink {...this.csvDownload}>
+                                CSV
+                            </CSVLink>
+                        </IconButton>
+                    </div>
+                    <div className="csv-results-child">
+                        <div className="results-group-chooser">
+                            <div className="query-builder-label">Group Table By</div>
+                            <Select className="results-groupby-selector"
+                                options={this.props.groupByOptions}/>
+                        </div>
+                    </div>
                 </div>
                 <div className="results-table-scroll">
                     <Table stickyHeader>
