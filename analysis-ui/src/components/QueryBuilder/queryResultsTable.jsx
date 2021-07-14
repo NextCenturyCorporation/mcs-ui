@@ -17,10 +17,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
-import {PerformanceStatistics, getStats} from './performanceStatistics';
+import PerformanceStatistics from './performanceStatistics';
+import { CSVLink } from "react-csv";
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -299,7 +301,10 @@ class QueryResultsTable extends React.Component {
                         <IconButton style={{padding: '7px', borderRadius: '10px', fontSize: '1rem'}} onClick={this.downloadCSV}>
                             <span className="material-icons">
                                 get_app
-                            </span>CSV
+                            </span> 
+                            <CSVLink {...this.csvDownload}>
+                                CSV
+                            </CSVLink>
                         </IconButton>
                     </div>
                     <div className="csv-results-child">
