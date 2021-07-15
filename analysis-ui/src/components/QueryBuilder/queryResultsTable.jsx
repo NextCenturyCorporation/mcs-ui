@@ -189,23 +189,6 @@ class QueryResultsTable extends React.Component {
         }
     }
 
-    data = [
-        {firstName: "MCS-1", lastName: "mcs-2"},
-        {firstName: "MCS-3", lastName: "MCS-4"},
-        {firstName: "MCS-5", lastName: "MCS-6"},
-    ];
-
-    headers = [
-        {label: 'First Name', key: 'firstName'},
-        {label: 'Last Name', key: 'lastName'}
-    ]
-
-    csvDownload = {
-        filename: 'MCS-Query.csv',
-        headers: this.headers,
-        data: this.data,
-    }
-
     downloadCSV = () => {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
