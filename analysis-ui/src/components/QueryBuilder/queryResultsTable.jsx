@@ -270,11 +270,6 @@ class QueryResultsTable extends React.Component {
                             <span class="material-icons">
                                 get_app
                             </span>CSV
-                            {/*
-                            <CSVLink {...this.csvDownload}>
-                                CSV
-                            </CSVLink>
-                            */}
                         </IconButton>
                     </div>
                     <div className="csv-results-child">
