@@ -17,12 +17,10 @@ import TablePagination from '@material-ui/core/TablePagination';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
 import PerformanceStatistics from './performanceStatistics';
-import { CSVLink } from "react-csv";
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -209,7 +207,68 @@ class QueryResultsTable extends React.Component {
     }
 
     downloadCSV = () => {
-        console.log("Downloading CSV");
+        let { rows, columns } = this.props;
+        let columnData = this.getColumnData(columns);
+        let groupedData = this.getGroupedData(rows);
+
+        let columnDelimiter = '\t';
+        let rowDelimter = '\n';
+        let csvString = ''; //append all content to this really long string
+
+        let keysToCSV = []
+        let titles = [];
+
+        if(this.state.groupBy !== "") {
+            titles.push("Group Table By");
+            titles.push("Group");
+        }
+
+        columnData.forEach(item => {
+            keysToCSV.push(item.dataKey);
+            titles.push(item.title);
+        });
+    
+        csvString += titles.join(columnDelimiter) + rowDelimter;
+
+        const appendDataStringToCSV = (data) => {
+            keysToCSV.forEach(element => {
+                let value = _.get(data, element);
+                if(value !== undefined && value !== null && value.constructor === Array)
+                    value = value[0];
+                if(String(value).includes("OPICS (OSU, UU, NYU)")) //csv files automatically use commas as column seperators
+                    value = "OPICS (OSU-UU-NYU)";
+                csvString += value !== undefined && value !== null ? String(value) + columnDelimiter: columnDelimiter;
+            });
+            csvString = csvString.slice(0, -1) + rowDelimter; //replace last column delimiter with row delimiter
+        }
+
+        let groupByTitle = "";
+        if(this.state.groupBy === "") {
+            groupedData.forEach(data => {
+                appendDataStringToCSV(data);
+            });
+        } else {
+            columnData.forEach(item => {
+                if(item.dataKey === this.state.groupBy)
+                    groupByTitle = item.title
+            });
+            const groupedByObjectsAsArray = Object.entries(groupedData);
+            groupedByObjectsAsArray.forEach(groupedByObject => {
+                groupedByObject[1].forEach(data => {
+                    csvString += groupByTitle + columnDelimiter;
+                    csvString += String(groupedByObject[0]) !== 'undefined' && String(groupedByObject[0]) !== 'null' ? String(groupedByObject[0]) + columnDelimiter : columnDelimiter;
+                    appendDataStringToCSV(data);
+                })
+            })
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8," + csvString; //encode csv format
+        let filename = `mcs-query-results${this.state.groupBy !== "" ? "-" + _.kebabCase(groupByTitle) : ""}.csv`;
+        
+        let downloader = document.createElement('a'); //create a link
+        downloader.setAttribute('href', csvContent); //content to download
+        downloader.setAttribute('download', filename); //filename of download
+        downloader.click(); //download
     }
 
     render() {
@@ -227,16 +286,19 @@ class QueryResultsTable extends React.Component {
                         <IconButton style={{padding: '7px', borderRadius: '10px', fontSize: '1rem'}} onClick={this.downloadCSV}>
                             <span class="material-icons">
                                 get_app
-                            </span> 
+                            </span>CSV
+                            {/*
                             <CSVLink {...this.csvDownload}>
                                 CSV
                             </CSVLink>
+                            */}
                         </IconButton>
                     </div>
                     <div className="csv-results-child">
                         <div className="results-group-chooser">
                             <div className="query-builder-label">Group Table By</div>
                             <Select className="results-groupby-selector"
+                                onChange={this.setQueryGroupBy}
                                 options={this.props.groupByOptions}/>
                         </div>
                     </div>
