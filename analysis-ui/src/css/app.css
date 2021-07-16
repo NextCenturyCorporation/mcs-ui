@@ -831,11 +831,26 @@ ol, ul {
 }
 
 .results-group-chooser {
-    top: -75px;
     right: 30px;
     position: absolute;
     z-index:10;
 }
+
+.csv-results-group-holder {
+    padding-right: 200px;
+    height: 5px;
+    width: 400px;
+    float: right;
+    position: relative;
+    top: -100px;
+    z-index: 3;
+}
+
+.csv-results-child {
+    width: 50%;
+    float: left;
+    padding: 5px;
+} 
 
 .query-parameters-holder, .query-results-holder {
     margin: 30px;
