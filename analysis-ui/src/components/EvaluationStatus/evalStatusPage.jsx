@@ -14,6 +14,22 @@ class EvalStatusPage extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            counter: 0
+        }
+        this.incrementCounter = this.incrementCounter.bind(this);
+    }
+
+    incrementCounter() {
+        this.setState({counter: this.state.counter + 1});
+    }
+
+    componentDidMount() {
+        this.intervalMethod = setInterval(this.incrementCounter, 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalMethod);
     }
 
     render() {
