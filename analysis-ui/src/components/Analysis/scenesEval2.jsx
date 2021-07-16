@@ -94,8 +94,31 @@ class ScenesEval2 extends React.Component {
         }
     }
 
-    changePerformer = (performerKey, performer) => {
-        this.setState({ currentPerformerKey: performerKey, currentPerformer: performer});
+    changePerformer = (performerKey, performer, colorCallback, id="") => {
+        this.setState({ currentPerformerKey: performerKey, currentPerformer: performer}, ()=> {
+            colorCallback(performer, id)
+        });
+    }
+
+    getStyleForPerformer(performer, id="") {
+        const getColor = (performer) => {
+            return (
+                performer === this.state.currentPerformer ? '#0062cc' :
+                String(performer).includes("IBM-MIT-Harvard-Stanford") ? "rgb(0, 160, 210, 1)" :
+                String(performer).includes("MESS-UCBerkeley") ? "rgb(68, 77, 93, 1)" :
+                String(performer).includes("OPICS") ? "rgb(217, 85, 85, 1)" :
+                String(performer).includes("TA2 Baseline") ? "rgb(138, 85, 217, 1)" :
+                "inherit"
+            );
+        }
+
+        if(id!=="") {
+            document.getElementById(id).style.backgroundColor = getColor(performer);
+        } else {
+            return (
+                getColor(performer)
+            );
+        }
     }
 
     changeScene = (sceneNum) => {
@@ -197,7 +220,11 @@ class ScenesEval2 extends React.Component {
                                                 </div>
                                                 <div className="performer-group btn-group" role="group">
                                                     {performerList.map((performer, key) =>
-                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'} id={'toggle_performer_' + key} key={'toggle_' + performer} type="button" onClick={() => this.changePerformer(key, performer)}>{performer}</button>
+                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'} id={'toggle_performer_' + key} key={'toggle_' + performer} type="button" 
+                                                            style = {{backgroundColor: this.getStyleForPerformer(performer)}} 
+                                                            onClick={() => this.changePerformer(key, performer, this.getStyleForPerformer.bind(this), 'toggle_performer_' + key)}>
+                                                                {performer}
+                                                        </button>
                                                     )}
                                                 </div>
 

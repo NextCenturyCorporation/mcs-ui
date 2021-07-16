@@ -189,6 +189,16 @@ class QueryResultsTable extends React.Component {
         }
     }
 
+    getColorForPerformer = (performer, titledColumn=false) => {
+        return (
+            String(performer).includes("IBM-MIT-Harvard-Stanford") ? `rgb(0, 160, 210, ${titledColumn? "0.8" : "0.1"})` :
+            String(performer).includes("MESS-UCBerkeley") ? `rgb(68, 77, 93, ${titledColumn? "0.6" : "0.1"})` :
+            String(performer).includes("OPICS") ? `rgb(217, 85, 85, ${titledColumn? "0.8" : "0.1"})` :
+            String(performer).includes("TA2 Baseline") ? `rgb(138, 85, 217, ${titledColumn? "0.8" : "0.1"})` :
+            "inherit"
+        );
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -228,7 +238,7 @@ class QueryResultsTable extends React.Component {
                                     {(this.state.rowsPerPage > 0 ? 
                                         groupedData.slice(this.state.page * this.state.rowsPerPage, 
                                             this.state.page * this.state.rowsPerPage + this.state.rowsPerPage) : groupedData).map((rowItem, rowKey) => (
-                                        <TableRow key={'table_row_' + rowKey}>
+                                        <TableRow style={{backgroundColor:this.getColorForPerformer(_.get(rowItem, columnData[4].dataKey))}} key={'table_row_' + rowKey}>
                                             <TableCell key={'table_cell_' + rowKey + "_link"}>
                                                 <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
                                                     <div className="table-cell-wrap-text">
@@ -238,7 +248,7 @@ class QueryResultsTable extends React.Component {
                                             </TableCell>
 
                                             {columnData.map((columnItem, columnKey) => (
-                                                <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
+                                                <TableCell key={'table_cell_' + rowKey + "_" + columnKey} style={{backgroundColor:this.getColorForPerformer(_.get(rowItem, columnItem.dataKey), true)}}>
                                                     <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>
                                                         <div className="table-cell-wrap-text">
                                                             {_.get(rowItem, columnItem.dataKey)}
@@ -274,7 +284,7 @@ class QueryResultsTable extends React.Component {
                                             </TableRow>
 
                                             {this.groups[key] && groupedData[key].map((rowItem, rowKey) => (
-                                                <TableRow key={'table_row_grouped_' + rowKey}>
+                                                <TableRow key={'table_row_grouped_' + rowKey} style={{backgroundColor:this.getColorForPerformer(_.get(rowItem, columnData[4].dataKey))}}>
                                                     <TableCell key={'table_cell_grouped_' + rowKey + "_link"}>
                                                     <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
                                                         <div className="table-cell-wrap-text">
@@ -284,7 +294,7 @@ class QueryResultsTable extends React.Component {
                                                 </TableCell>
 
                                                     {columnData.map((columnItem, columnKey) => (
-                                                        <TableCell key={'table_cell_' + rowKey + "_" + columnKey}>
+                                                        <TableCell key={'table_cell_' + rowKey + "_" + columnKey} style={{backgroundColor:this.getColorForPerformer(_.get(rowItem, columnItem.dataKey), true)}}>
                                                             <ToolTipWithStyles arrow={true} title={this.getToolTipTextForTable(rowItem, columnItem.dataKey)} placement='right'>
                                                                 <div className="table-cell-wrap-text">
                                                                     {_.get(rowItem, columnItem.dataKey)}
