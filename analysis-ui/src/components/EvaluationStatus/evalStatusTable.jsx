@@ -55,6 +55,7 @@ class EvalStatusTable extends React.Component {
 
         this.state = {
             currentEval: props.evaluationOptions[0],
+            counter: props.counter
         }
 
         this.selectEvaluation = this.selectEvaluation.bind(this);
@@ -77,6 +78,13 @@ class EvalStatusTable extends React.Component {
                 return sceneStats[i].count;
             }
         }
+    }
+    
+    reloadTable() {
+        this.updateTableRefresh();
+        this.setState({
+            counter: this.props.counter
+        });
     }
 
     calculateCellValue(evalStatus, type, performer, metadata) {
@@ -102,6 +110,10 @@ class EvalStatusTable extends React.Component {
 
     render() {
         const setRefetch = refetch => {this.refetch = refetch};
+        if(this.state.counter !== this.props.counter) {
+            this.reloadTable();
+        }
+        
         return (
             <div className="home-container">
                 <div className="home-navigation-container">

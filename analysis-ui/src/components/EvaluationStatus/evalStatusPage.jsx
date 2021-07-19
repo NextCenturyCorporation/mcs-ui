@@ -47,7 +47,7 @@ class EvalStatusPage extends React.Component {
                     }
 
                     return (
-                        <EvalStatusTable evaluationOptions={evaluationOptions}/>
+                        <EvalStatusTable evaluationOptions={evaluationOptions} counter={this.state.counter}/>
                     )
                 }
             }
