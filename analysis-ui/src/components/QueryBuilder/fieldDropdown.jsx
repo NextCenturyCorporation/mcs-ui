@@ -63,7 +63,7 @@ class FieldDropdown extends React.Component {
 
     render() {
         return (
-            <div className="query-field-selector">
+            <div style={{zIndex:'11'}} className="query-field-selector">
                 <FieldSelector fieldType={this.props.fieldType} onSelectHandler={this.props.selectFieldHandler}/>
             </div>
         );

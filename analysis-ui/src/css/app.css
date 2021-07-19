@@ -386,14 +386,17 @@ ol, ul {
 
 .query-collection-selector {
     width: 250px;
+    z-index: 11;
 }
 
 .query-collection-value-selector {
     width: 400px;
+    z-index: 11;
 }
 
 .query-function-selector {
     width: 180px;
+    z-index: 11;
 }
 
 .query-builder-label {
@@ -419,6 +422,7 @@ ol, ul {
 
 .query-field-input {
     border-radius: 4px;
+    z-index: 11;
 }
 
 .query-multi-operator {
@@ -484,6 +488,7 @@ ol, ul {
     display: inline-block;
     text-overflow: ellipsis;
     height: 45px;
+    z-index: 11;
 }
 
 .query-field-value-selector .Dropdown-root, .query-line .query-field-value-selector {
@@ -492,6 +497,7 @@ ol, ul {
     display: inline-block;
     text-overflow: ellipsis;
     height: 45px;
+    z-index: 11;
 }
 .nav ul li#user {
     float: right;
