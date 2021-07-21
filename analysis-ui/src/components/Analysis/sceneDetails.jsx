@@ -59,6 +59,16 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
         setCurrentObjectNum(objectKey);
     }
 
+    const getSceneLink = (currentScene) => {
+        let sceneName = currentScene.name;
+
+        if(currentScene.eval !== undefined && currentScene.eval === "Evaluation 3.75 Scenes") {
+            sceneName =  currentScene.name.replace("juliett", "juliett_rerun")
+        }
+
+        return constantsObject["sceneBucket"] + sceneName + constantsObject["sceneExtension"]
+    }
+
     return (
         <Modal show={show} onHide={closeModal} size="lg" aria-labelledby="contained-modal-title-vcenter" centered scrollable={true}>
             <Modal.Header closeButton>
@@ -70,7 +80,7 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
 
                         {currentScene !== undefined && currentScene !== null &&
                         <div className="download-scene">
-                            <a href={constantsObject["sceneBucket"] + currentScene.name + constantsObject["sceneExtension"]} download>
+                            <a href={getSceneLink(currentScene)} download>
                                 <i className='material-icons'>get_app</i>
                                 <span className="download-scene-text">Download .JSON</span>
                             </a>
