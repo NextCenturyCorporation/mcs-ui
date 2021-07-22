@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import { convertValueToString } from './displayTextUtils';
 import PlaybackButtons from './playbackButtons';
 
-const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, sceneHistoryItem}, ref) => {
+const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, sceneHistoryItem, upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const scenePlayer = useRef(null);
@@ -53,6 +53,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
 
 
     const initializeStepView = () => {
+        setSceneViewLoaded()
         scrollStepIntoView(currentStep);
     }
 
@@ -75,7 +76,8 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
             <div className="movie-steps-holder">
                 <div className="interactive-movie-holder">
                     <video id="interactiveMoviePlayer" ref={scenePlayer}
-                    src={sceneVidLink} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={highlightStep} onLoadedData={initializeStepView}/>
+                    src={sceneVidLink} width="500" height="350" controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
+                    onEnded={() => playAllState ? downOneScene(numOfScenes) : null}/>
                 </div>
                 <div className="steps-holder">
                     <h5>Performer Steps:</h5>
@@ -90,10 +92,10 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                     </div>
                 </div>
                 <div className="top-down-holder">
-                    <video id="topDownInteractiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" autoPlay={false}/>
+                    <video id="topDownInteractiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
                 </div>
             </div>
-            <PlaybackButtons ref={ref} syncButtonPaddingLeft="310px" topdDownButtonPaddingLeft="300px"/>
+            <PlaybackButtons ref={ref} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed}/>
         </div>
     );
 })

@@ -341,28 +341,24 @@ ol, ul {
 
 .movie-playback-buttons-holder {
     display: flex;
-}
-
-.scene-movie-playback-buttons-holder, .topdown-movie-playback-buttons-holder {
-    width: fit-content;
-    height: fit-content;
     padding-left: 150px;
 }
 
-.topdown-movie-playback-buttons-holder {
-    padding-left: 300px;
+.movie-playback-buttons-container {
+    width: 20%;
+    border-spacing: 0;
+    border-collapse: collapse;
 }
 
-.sync-video-button-holder {
-    padding-left: 310px;
+.movie-playback-button {
+    background: white;
+    padding: 5px 10px 0px 10px;
 }
 
-.scene-movie-playback-button, .topdown-movie-playback-button, .loop-video-button, .sync-video-button {
-    color: white;
-    background-color:rgb(100,115,135);
-    width: auto;
-    height: auto;
-    border-style: hidden;
+.movie-speed-dropdown {
+    border-color: #5f7485;
+    border-style: solid;
+    border-width: thin;
 }
 
 .object-nav, .object-contents {
