@@ -1,91 +1,123 @@
-import React from 'react'
+import React from 'react';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
-const defaultColor = "rgb(100,115,135)";
-const selectedColor = "rgb(200, 214, 255)";
-const defaultTextColor = "white";
-const selectedTextColor = "black"
-const sceneMovie = "interactiveMoviePlayer";
-const topDownMovie = "topDownInteractiveMoviePlayer";
+const defaultColor = "#5f7485"
+const selectedColor = "#99d6ff"
+const sceneMovieName = "interactiveMoviePlayer";
+const topDownMovieName = "topDownInteractiveMoviePlayer";
 
-class PlaybackButtons extends React.Component{
-
+class SpeedOption extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    setSpeed = (speed, btnName, className, movieId) => {
-        document.getElementById(movieId).playbackRate = speed;
-        let playBackBtns = document.getElementsByClassName(className);
-        for(let i=0; i<playBackBtns.length; i++) {
-            playBackBtns[i].style.backgroundColor = playBackBtns[i].id === btnName ? selectedColor : defaultColor;
-            playBackBtns[i].style.color = playBackBtns[i].id === btnName ? selectedTextColor : defaultTextColor;
+    render() {
+        return (
+            <NavDropdown.Item eventKey={this.props.speed}> 
+                {this.props.speed}
+            </NavDropdown.Item>
+        )
+    }
+}
+
+class PlaybackButtons extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            speedOptions: ["0.25x", "0.5x", "1x", "2x", "4x", "8x"],
+            looping:false,
+            paused: false,
         }
     }
 
-    setLoop = (btnId, movieId, reset=false) => {
-        let video = document.getElementById(movieId);
-        video.loop = reset ? false : !video.loop;
-        document.getElementById(btnId).style.backgroundColor = video.loop ? selectedColor : defaultColor;
-        document.getElementById(btnId).style.color = video.loop ? selectedTextColor : defaultTextColor;
+    setSpeed = speedChange => {
+        this.props.setSceneSpeed(speedChange);
+        document.getElementById(sceneMovieName).playbackRate = speedChange.slice(0, -1);
+        document.getElementById(topDownMovieName).playbackRate = speedChange.slice(0,-1);
     }
 
-    playMoviesInSync = (sceneMovieId, topDownMovieId) => {
-        let sceneMovie = document.getElementById(sceneMovieId);
-        let topDownMovie = document.getElementById(topDownMovieId);
-        sceneMovie.currentTime = 0;
-        topDownMovie.currentTime = 0;
-        sceneMovie.play();
-        topDownMovie.play();
+    pause = () => {
+        document.getElementById(sceneMovieName).playbackRate = 0;
+        document.getElementById(topDownMovieName).playbackRate = 0;
+        this.setState({paused:!this.state.paused}, () => {
+            document.getElementById(sceneMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
+            document.getElementById(topDownMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
+        });
+    }
+
+    setLoop = reset => {
+        let video1 = document.getElementById(sceneMovieName);
+        let video2 = document.getElementById(topDownMovieName);
+        if(video1!==null && video2!==null) {
+            this.setState({looping: reset ? false : !video1.loop}, () => {
+                video1.loop = reset ? false : this.state.looping;
+                video2.loop = reset ? false : this.state.looping;
+                document.getElementById("loopButton").style.background = this.state.looping ? selectedColor : "white";
+            });
+        }
     }
 
     reset = () => {
-        this.setSpeed(1, "1x-btn", "scene-movie-playback-button", sceneMovie);
-        this.setSpeed(1, "td-1x-btn", "topdown-movie-playback-button", topDownMovie);
-        this.setLoop("scene-loop-video-button",sceneMovie, true);
-        this.setLoop("topdown-loop-video-button",topDownMovie, true);
+        document.getElementById("pauseButton").style.background = "white";
+        this.setState({paused:false});
+    }
+
+    playMoviesInSync = () => {
+        let sceneMovie = document.getElementById(sceneMovieName);
+        let topDownMovie = document.getElementById(topDownMovieName);
+
+        if(!this.state.paused) {
+            sceneMovie.currentTime = 0;
+            topDownMovie.currentTime = 0;
+        }
+
+        sceneMovie.playbackRate = this.props.speed.slice(0, -1);
+        topDownMovie.playbackRate = this.props.speed.slice(0, -1);
+        sceneMovie.play();
+        topDownMovie.play();
+        this.setState({paused:false});
+        document.getElementById("pauseButton").style.background = "white";
     }
 
     render() {
         return (
             <div id="playbackButtons" className="movie-playback-buttons-holder">
-                <div className="scene-movie-playback-buttons-holder">
-                    <button className="scene-movie-playback-button" id=".25x-btn" 
-                        onClick={() => this.setSpeed(0.25, ".25x-btn", "scene-movie-playback-button", sceneMovie)}> 0.25x </button>
-                    <button className="scene-movie-playback-button" id=".5x-btn" 
-                        onClick={() => this.setSpeed(0.5, ".5x-btn", "scene-movie-playback-button", sceneMovie)}> 0.5x </button>
-                    <button className="scene-movie-playback-button" id="1x-btn"
-                        onClick={() => this.setSpeed(1, "1x-btn", "scene-movie-playback-button", sceneMovie)} 
-                        style= {{backgroundColor: selectedColor, color:selectedTextColor}}> 1x </button>
-                    <button className="scene-movie-playback-button" id="2x-btn" 
-                        onClick={() => this.setSpeed(2, "2x-btn", "scene-movie-playback-button", sceneMovie)}> 2x </button>
-                    <button className="scene-movie-playback-button" id="4x-btn" 
-                        onClick={() => this.setSpeed(4, "4x-btn", "scene-movie-playback-button", sceneMovie)}> 4x </button>
-                    <button className="scene-movie-playback-button" id="8x-btn"
-                        onClick={() => this.setSpeed(8, "8x-btn", "scene-movie-playback-button", sceneMovie)}> 8x </button>
-                    <button className="loop-video-button" id="scene-loop-video-button" 
-                        onClick={()=> this.setLoop("scene-loop-video-button",sceneMovie)}>Loop</button>
-                </div>
-                <div className="sync-video-button-holder" style={{paddingLeft:this.props.syncButtonPaddingLeft}}>
-                    <button className="sync-video-button" id="sync-video-button" 
-                        onClick={()=> this.playMoviesInSync("interactiveMoviePlayer","topDownInteractiveMoviePlayer")}>Sync Play</button>
-                </div>
-                <div className="topdown-movie-playback-buttons-holder" style={{paddingLeft:this.props.topdDownButtonPaddingLeft}}>
-                    <button className="topdown-movie-playback-button" id="td-.25x-btn" 
-                        onClick={() => this.setSpeed(0.25, "td-.25x-btn", "topdown-movie-playback-button", topDownMovie)}> 0.25x </button>
-                    <button className="topdown-movie-playback-button" id="td-.5x-btn" 
-                        onClick={() => this.setSpeed(0.5, "td-.5x-btn", "topdown-movie-playback-button", topDownMovie)}> 0.5x </button>
-                    <button className="topdown-movie-playback-button" id="td-1x-btn" 
-                        onClick={() => this.setSpeed(1, "td-1x-btn", "topdown-movie-playback-button", topDownMovie)} 
-                        style= {{backgroundColor: selectedColor, color:selectedTextColor}}> 1x </button>
-                    <button className="topdown-movie-playback-button" id="td-2x-btn" 
-                        onClick={() => this.setSpeed(2, "td-2x-btn", "topdown-movie-playback-button", topDownMovie)}> 2x </button>
-                    <button className="topdown-movie-playback-button" id="td-4x-btn" 
-                        onClick={() => this.setSpeed(4, "td-4x-btn", "topdown-movie-playback-button", topDownMovie)}> 4x </button>
-                    <button className="topdown-movie-playback-button" id="td-8x-btn"
-                        onClick={() => this.setSpeed(8, "td-8x-btn", "topdown-movie-playback-button", topDownMovie)}> 8x </button>
-                    <button className="loop-video-button" id="topdown-loop-video-button" 
-                        onClick={()=> this.setLoop("topdown-loop-video-button",topDownMovie)}>Loop</button>
-                </div>
+            <button className="movie-playback-button" style={{borderRadius: '10px 0px 0px 10px'}} onClick={this.props.upOneScene}>
+                <span style={{color:defaultColor}} className="material-icons">
+                    arrow_upward
+                </span>
+            </button>
+            <button className="movie-playback-button" onClick={()=>this.props.downOneScene(this.props.numOfScenes, false)}>
+                <span style={{color:defaultColor}} className="material-icons">
+                    arrow_downward
+                </span>
+            </button>
+                <NavDropdown title={this.props.speed} id="movieSpeedDropdown" className="movie-speed-dropdown" onSelect={this.setSpeed}>
+                {
+                    this.state.speedOptions.map(speed => {
+                        return(<SpeedOption key={`speedOption-${speed}`} speed={speed}>speed</SpeedOption>)
+                    })
+                }
+                </NavDropdown>
+                <button className="movie-playback-button" onClick={this.playMoviesInSync}>
+                    <span style={{color:defaultColor}} className="material-icons">
+                        play_arrow
+                    </span>
+                </button>
+                <button id="pauseButton" className="movie-playback-button" style={{background: this.state.paused ? selectedColor : "white"}} onClick={this.pause}>
+                    <span style={{color:defaultColor}} className="material-icons">
+                        pause
+                    </span>
+                </button>
+                <button id="loopButton" className="movie-playback-button" onClick={() => this.setLoop(false)}>
+                    <span className="material-icons">
+                        repeat
+                    </span>
+                </button>
+                <button id="playAllButton" className="movie-playback-button" style={{paddingBottom:"5px", borderRadius: '0px 10px 10px 0px', background:this.props.playAllState ? selectedColor : "white"}} onClick={this.props.playAll}>
+                    Play All
+                </button>
             </div>
         )
     }

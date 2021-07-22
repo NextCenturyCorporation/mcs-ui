@@ -87,7 +87,11 @@ class Scenes extends React.Component {
             //flagInterest: false,
             testType: props.value.test_type,
             categoryType: props.value.category_type,
-            testNum: props.value.test_num
+            testNum: props.value.test_num,
+            playAll: false,
+            speed: "1x",
+            sceneViewLoaded: false,
+            topDownLoaded: false
         };
     }
 
@@ -117,10 +121,9 @@ class Scenes extends React.Component {
 
     setStateObject(key, value) {
         this.setState({[key]: value});
-        this.resetPlaybackButtons();
     }
 
-    changeScene = (sceneNum) => {
+    changeScene = (sceneNum, matchSpeed=false) => {
         if(this.state.currentSceneNum !== sceneNum) {
             this.setState({ currentSceneNum: sceneNum});
             let pathname = this.props.value.history.location.pathname;
@@ -143,12 +146,69 @@ class Scenes extends React.Component {
             }
             this.props.updateHandler("scene", sceneNum);
             this.resetPlaybackButtons();
+            if(matchSpeed) 
+                this.setSceneSpeed(this.state.speed)
+            if(!matchSpeed) {
+                this.setState({playAll:false})
+                this.setSceneSpeed("1x");
+            }
+            this.setState({sceneViewLoaded:false})
+            this.setState({topDownLoaded:false})
         }
     }
 
     resetPlaybackButtons = () => {
         if(this.playBackButtons.current!==null)
             this.playBackButtons.current.reset();
+    }
+
+    setSceneSpeed = speed => {
+        this.setState({speed:speed})
+    }
+
+    upOneScene = () => {
+        if(this.state.currentSceneNum-1 > 0)
+            this.changeScene(this.state.currentSceneNum-1);
+    }
+
+    downOneScene = (numOfScenes, checkState) => {
+        if((checkState && this.state.playAll) || !checkState) {
+            if (this.state.currentSceneNum < numOfScenes) {
+                this.changeScene(this.state.currentSceneNum+1, true);
+            }
+        }
+    }
+
+    playAll = () => {
+        this.setState({playAll:!this.state.playAll}, () => {
+            const selectedColor = "#99d6ff"
+            document.getElementById("playAllButton").style.background = this.state.playAll ? selectedColor : "white";
+        });
+    }
+    
+    setVideoSpeedAndPlay = () => {
+        if(this.state.sceneViewLoaded && this.state.topDownLoaded) {
+            let topDownVideo = document.getElementById("topDownInteractiveMoviePlayer");
+            let sceneVideo = document.getElementById("interactiveMoviePlayer");
+            sceneVideo.playbackRate = this.state.speed.slice(0, -1);
+            topDownVideo.playbackRate = this.state.speed.slice(0, -1);
+            if(this.state.playAll) {
+                topDownVideo.play();
+                sceneVideo.play();
+            }
+        }
+    }
+
+    setSceneViewLoaded = () => {
+        this.setState({sceneViewLoaded:true}, ()=> {
+            this.setVideoSpeedAndPlay();
+        });
+    }
+
+    setTopDownLoaded = () => {
+        this.setState({topDownLoaded:true}, ()=> {
+            this.setVideoSpeedAndPlay();
+        });
     }
 
     getSceneNamePrefix = (name) => {
@@ -214,8 +274,7 @@ class Scenes extends React.Component {
             return "";
         }
 
-        this.resetPlaybackButtons()
-
+        this.resetPlaybackButtons();
         if(sceneItem.eval === "Evaluation 3 Results") {
             return constantsObject["moviesBucket"] +
                 sceneItem.filename +
@@ -300,6 +359,7 @@ class Scenes extends React.Component {
                                     
                                     const scenes = data[sceneQueryName];
                                     const scenesInOrder = _.sortBy(scenes, "scene_num");
+                                    const numOfScenes = scenesInOrder.length;
 
                                     if(scenesInOrder.length > 0) {
                                         if(scenesInOrder.length < this.state.currentSceneNum) {
@@ -323,15 +383,16 @@ class Scenes extends React.Component {
                                                         <div className="eval3-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" 
+                                                                    onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" autoPlay={false} />
+                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
                                                             </div>
                                                         </div>
-                                                        <PlaybackButtons ref={this.playBackButtons} syncButtonPaddingLeft="160px" topdDownButtonPaddingLeft="140px"/>
-
+                                                        <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed}/>
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
@@ -394,7 +455,16 @@ class Scenes extends React.Component {
                                                                 sceneVidLink={this.getVideoFileName(scenesByPerformer, "_visual")}
                                                                 topDownLink={this.getVideoFileName(scenesByPerformer, "_topdown")}
                                                                 sceneHistoryItem={this.getSceneHistoryItem(scenesByPerformer)}
-                                                                ref={this.playBackButtons} />
+                                                                ref={this.playBackButtons}
+                                                                upOneScene={this.upOneScene}
+                                                                downOneScene={this.downOneScene}
+                                                                numOfScenes={numOfScenes}
+                                                                playAll={this.playAll}
+                                                                playAllState={this.state.playAll}
+                                                                setSceneSpeed={this.setSceneSpeed}
+                                                                setSceneViewLoaded={this.setSceneViewLoaded}
+                                                                setTopDownLoaded={this.setTopDownLoaded}
+                                                                speed={this.state.speed}/>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>

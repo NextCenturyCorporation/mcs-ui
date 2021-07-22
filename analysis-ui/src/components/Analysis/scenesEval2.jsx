@@ -76,7 +76,11 @@ class ScenesEval2 extends React.Component {
             flagRemove: false,
             flagInterest: false,
             testType: props.value.test_type,
-            testNum: props.value.test_num
+            testNum: props.value.test_num,
+            playAll: false,
+            speed: "1x",
+            sceneViewLoaded: false,
+            topDownLoaded: false
         };
     }
 
@@ -101,7 +105,7 @@ class ScenesEval2 extends React.Component {
         this.resetPlaybackButtons();
     }
 
-    changeScene = (sceneNum) => {
+    changeScene = (sceneNum, matchSpeed) => {
         if(this.state.currentSceneNum !== sceneNum) {
             this.setState({ currentSceneNum: sceneNum});
             let pathname = this.props.value.history.location.pathname;
@@ -123,8 +127,17 @@ class ScenesEval2 extends React.Component {
                 });
             }
     
+            
             this.props.updateHandler("scene", parseInt(sceneNum + 1));
+            if(matchSpeed) 
+                this.setSceneSpeed(this.state.speed)
+            if(!matchSpeed) {
+                this.setState({playAll:false})
+                this.setSceneSpeed("1x");
+            }
             this.resetPlaybackButtons();
+            this.setState({sceneViewLoaded:false})
+            this.setState({topDownLoaded:false})
         }
     }
 
@@ -138,10 +151,58 @@ class ScenesEval2 extends React.Component {
         return constantsObject[bucketName] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"];
     }
 
-
     resetPlaybackButtons = () => {
         if(this.playBackButtons.current!==null)
             this.playBackButtons.current.reset();
+    }
+
+    setSceneSpeed = speed => {
+        this.setState({speed:speed})
+    }
+
+    upOneScene = () => {
+        if(this.state.currentSceneNum-1 > 0)
+            this.changeScene(this.state.currentSceneNum-1);
+    }
+
+    downOneScene = (numOfScenes, checkState) => {
+        if((checkState && this.state.playAll) || !checkState) {
+            if (this.state.currentSceneNum < numOfScenes) {
+                this.changeScene(this.state.currentSceneNum+1, true);
+            }
+        }
+    }
+
+    playAll = () => {
+        this.setState({playAll:!this.state.playAll}, () => {
+            const selectedColor = "#99d6ff"
+            document.getElementById("playAllButton").style.background = this.state.playAll ? selectedColor : "white";
+        });
+    }
+    
+    setVideoSpeedAndPlay = () => {
+        let topDownVideo = document.getElementById("topDownInteractiveMoviePlayer");
+        let sceneVideo = document.getElementById("interactiveMoviePlayer");
+        sceneVideo.playbackRate = this.state.speed.slice(0, -1);
+        topDownVideo.playbackRate = this.state.speed.slice(0, -1);
+        if(this.state.playAll) {
+            topDownVideo.play();
+            sceneVideo.play();
+        }
+    }
+
+    setSceneViewLoaded = () => {
+        this.setState({sceneViewLoaded:true}, ()=> {
+            if(this.state.sceneViewLoaded && this.state.topDownLoaded)
+                this.setVideoSpeedAndPlay();
+        })
+    }
+
+    setTopDownLoaded = () => {
+        this.setState({topDownLoaded:true}, ()=> {
+            if(this.state.sceneViewLoaded && this.state.topDownLoaded)
+                this.setVideoSpeedAndPlay();
+        })
     }
 
     render() {
@@ -178,6 +239,7 @@ class ScenesEval2 extends React.Component {
                                     
                                     const scenes = data[sceneQueryName];
                                     const scenesInOrder = _.sortBy(scenes, "scene_num");
+                                    const numOfScenes = scenesInOrder.length;
 
                                     if(scenesInOrder.length > 0) {
                                         return (
@@ -229,7 +291,17 @@ class ScenesEval2 extends React.Component {
                                                         sceneVidLink={this.createVideoLink("interactiveMoviesBucket")}
                                                         topDownLink={this.createVideoLink("topDownMoviesBucket")}
                                                         sceneHistoryItem={scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1]}
-                                                        ref={this.playBackButtons}/>
+                                                        ref={this.playBackButtons}
+                                                        upOneScene={this.upOneScene}
+                                                        downOneScene={this.downOneScene}
+                                                        numOfScenes={numOfScenes}
+                                                        setVideoSpeedAndPlayTopDown={this.setVideoSpeedAndPlayTopDown}
+                                                        playAll={this.playAll}
+                                                        playAllState={this.state.playAll}
+                                                        setSceneSpeed={this.setSceneSpeed}
+                                                        setSceneViewLoaded={this.setSceneViewLoaded}
+                                                        setTopDownLoaded={this.setTopDownLoaded}
+                                                        speed={this.state.speed}/>
                                                 }
                                             </div>
                                         )
