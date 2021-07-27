@@ -20,7 +20,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
-import PerformanceStatistics from './performanceStatistics';
+import {PerformanceStatistics, getStats} from './performanceStatistics';
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -201,6 +201,7 @@ class QueryResultsTable extends React.Component {
         let keysToCSV = []
         let titles = [];
 
+
         if(this.state.groupBy !== "") {
             titles.push("Group Table By");
             titles.push("Group");
@@ -211,8 +212,13 @@ class QueryResultsTable extends React.Component {
             titles.push(item.title);
         });
     
-        csvString += titles.join(columnDelimiter) + rowDelimter;
+        if(this.state.groupBy === "") {
+            let stats = getStats(groupedData);
+            csvString += `Total Results: ${groupedData.length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
+                columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
+        }
 
+        csvString += titles.join(columnDelimiter).toUpperCase() + rowDelimter;
         const appendDataStringToCSV = (data) => {
             keysToCSV.forEach(element => {
                 let value = _.get(data, element);
@@ -237,6 +243,9 @@ class QueryResultsTable extends React.Component {
             });
             const groupedByObjectsAsArray = Object.entries(groupedData);
             groupedByObjectsAsArray.forEach(groupedByObject => {
+                let stats = getStats(groupedByObject[1]);
+                csvString += `Total Results: ${groupedByObject[1].length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
+                    columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
                 groupedByObject[1].forEach(data => {
                     csvString += groupByTitle + columnDelimiter;
                     csvString += String(groupedByObject[0]) !== 'undefined' && String(groupedByObject[0]) !== 'null' ? String(groupedByObject[0]) + columnDelimiter : columnDelimiter;
