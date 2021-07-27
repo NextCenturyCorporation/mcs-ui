@@ -371,11 +371,13 @@ ol, ul {
 
 .query-builder-holder {
     width: 100%;
+    z-index: 11 !important;
 }
 
 .query-parameter-header {
     margin-left: 30px;
     font-size: 16px;
+    z-index: 11 !important;
 }
 
 .query-parameter-adder {
@@ -383,21 +385,22 @@ ol, ul {
     border-bottom: #e5e5e5 1px dashed;
     align-items: center;
     padding: 15px 30px;
+    z-index: 11 !important;
 }
 
 .query-collection-selector {
     width: 250px;
-    z-index: 11;
+    z-index: 11 !important;
 }
 
 .query-collection-value-selector {
     width: 400px;
-    z-index: 11;
+    z-index: 11 !important;
 }
 
 .query-function-selector {
     width: 180px;
-    z-index: 11;
+    z-index: 11 !important;
 }
 
 .query-builder-label {
@@ -423,7 +426,7 @@ ol, ul {
 
 .query-field-input {
     border-radius: 4px;
-    z-index: 11;
+    z-index: 11 !important;
 }
 
 .query-multi-operator {
@@ -489,7 +492,7 @@ ol, ul {
     display: inline-block;
     text-overflow: ellipsis;
     height: 45px;
-    z-index: 11;
+    z-index: 11 !important;
 }
 
 .query-field-value-selector .Dropdown-root, .query-line .query-field-value-selector {
@@ -498,8 +501,18 @@ ol, ul {
     display: inline-block;
     text-overflow: ellipsis;
     height: 45px;
-    z-index: 11;
+    z-index: 11 !important;
 }
+
+.query-field-value-selector-equals {
+    width: 390px;
+    margin: 0 10px;
+    display: inline-block;
+    text-overflow: ellipsis;
+    height: 60px;
+    z-index: 11 !important;
+}
+
 .nav ul li#user {
     float: right;
 }
