@@ -6,6 +6,7 @@ const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
 const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyExcludeFieldsTable, 
     sceneExcludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
+const spawn = require("child_process").spawn;
 
 let complexQueryProjectionObject = null;
 
@@ -119,6 +120,7 @@ const mcsTypeDefs = gql`
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String): JSON
+    createCSV: JSON
   }
 
   type Mutation {
@@ -301,6 +303,18 @@ const mcsResolvers = {
         getSavedQueries: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('savedQueries').find()
                 .toArray().then(result => {return result});
+        },
+        createCSV: async(obj, args, context, infow) => { 
+            const pythonProcess = spawn('python3',["./csv-scripts/generate_csv.py", "mcs_scenes", "Evaluation 3.5 Scenes"]);
+
+            pythonProcess.stdout.on('data', (data) => {
+                console.log(data.toString());
+            });
+
+            pythonProcess.stderr.on('data', (data) => {
+                console.log(data.toString());
+            });
+            return {message: "CSV creation launched."};
         },
         createComplexQuery: async(obj, args, context, infow)=> {
             mongoQueryObject = createComplexMongoQuery(args['queryObject']);
