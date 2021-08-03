@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import Select from 'react-select';
 import EvalStatusConfigureModal from './evalStatusConfigure';
+import CreateCSVModal from './createCSVModal';
 
+const CSV_URL_PREFIX = "https://resources.machinecommonsense.com/csv-db-files/Evaluation_";
+const CSV_URL_SCENE_SUFFIX = "_Scenes.csv";
+const CSV_URL_RESULTS_SUFFIX = "_Results.csv";
 const EvaluationStatusQuery = "getEvaluationStatus";
 
 const get_evaluation_status = gql`
@@ -29,7 +33,7 @@ function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStat
     return (
         <>
             <a href="#configureEval" onClick={() => setModalShow(true)} className="icon-link">
-                <span className="icon-link-text">Configure</span>
+                <button type="button" className="btn btn-secondary">Configure</button>
             </a>
 
             <EvalStatusConfigureModal
@@ -47,6 +51,44 @@ function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStat
     
 }
 
+function CreateCSV() {
+    const [csvModalShow, setCsvModalShow] = React.useState(false);
+
+    return(
+        <>
+            <a href="#createCSVModal" onClick={() => setCsvModalShow(true)} className="icon-link create-csv-button">
+                <button type="button" className="btn btn-secondary">Create CSV</button>
+            </a>
+
+            <CreateCSVModal
+                show={csvModalShow}
+                onHide={() => setCsvModalShow(false)}
+            />
+        </>
+    );
+}
+
+function CSVDownloadLink({url, linkText}) {
+    const [linkActive, updateLinkActive] = useState();
+    useEffect(() => {
+        const getUrl = async () => {
+            const linkCheck = await fetch(url);
+            updateLinkActive(linkCheck.ok);
+        }
+        getUrl();
+    });
+
+    return(
+        <>
+            {linkActive === true &&
+                <a href={url}  className="icon-link download-csv-button">
+                    <button type="button" className="btn btn-link">{linkText}</button>
+                </a>
+            }
+        </>
+    )
+}
+
 class EvalStatusTable extends React.Component {
 
     constructor(props) {
@@ -55,7 +97,9 @@ class EvalStatusTable extends React.Component {
 
         this.state = {
             currentEval: props.evaluationOptions[0],
-            counter: props.counter
+            counter: props.counter,
+            currentUser: props.currentUser,
+            evalNumber: props.evaluationOptions[0].value.replace(/[^0-9.]/g,'')
         }
 
         this.selectEvaluation = this.selectEvaluation.bind(this);
@@ -64,7 +108,8 @@ class EvalStatusTable extends React.Component {
 
     selectEvaluation(target){
         this.setState({
-            currentEval: target
+            currentEval: target,
+            evalNumber: target.value.replace(/[^0-9.]/g,'')
         });
     }
 
@@ -148,8 +193,15 @@ class EvalStatusTable extends React.Component {
                                 <>
                                     <div className="eval-stats-container">
                                         <div className="eval-stats-configure">
-                                            <ConfigureEval statusObj={evalStatus.statusObj} testTypes={testTypes} performers={evalStatus.performers}
-                                                metadatas={evalStatus.metadatas} updateStatusObjHandler={this.updateTableRefresh} evalName={this.state.currentEval.value}/>
+                                            <CSVDownloadLink linkText={"Download Scenes"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_SCENE_SUFFIX}/>
+                                            <CSVDownloadLink linkText={"Download Results"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_RESULTS_SUFFIX}/>
+                                            <div className="eval-button-holder">
+                                                {this.state.currentUser.admin === true &&
+                                                    <CreateCSV/>
+                                                }
+                                                <ConfigureEval statusObj={evalStatus.statusObj} testTypes={testTypes} performers={evalStatus.performers}
+                                                    metadatas={evalStatus.metadatas} updateStatusObjHandler={this.updateTableRefresh} evalName={this.state.currentEval.value}/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="eval-stats-body">

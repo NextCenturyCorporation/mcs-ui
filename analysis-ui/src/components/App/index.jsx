@@ -11,6 +11,7 @@ import {Router, Switch, Route, Link} from 'react-router-dom';
 import LoginApp from '../Account/login';
 import ResetPassPage from '../Account/resetPassword';
 import MyAccountPage from '../Account/myAccount';
+import AdminPage from '../Account/adminPage';
 import {accountsClient, accountsGraphQL} from '../../services/accountsService';
 import {createBrowserHistory} from 'history';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -23,6 +24,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import 'jquery/dist/jquery.min.js';
 import 'material-design-icons/iconfont/material-icons.css';
 import 'react-dropdown/style.css';
+import 'react-dual-listbox/lib/react-dual-listbox.css';
 
 import brandImage from '../../img/mcs_logo.png';
 import userImage from '../../img/account_icon.png';
@@ -127,11 +129,11 @@ function Login({newState, userLoginHandler}) {
 
             history.push(analysisString);
         } else {
-            history.push("/");
+            return <Home newState={newState}/>;
         }
+    } else {
+        return <LoginApp userLoginHandler={userLoginHandler}/>;
     }
-
-    return <LoginApp userLoginHandler={userLoginHandler}/>;
 }
 
 function MyAccount({newState, userLoginHandler}) {
@@ -140,6 +142,14 @@ function MyAccount({newState, userLoginHandler}) {
     }
 
     return <MyAccountPage currentUser={newState.currentUser} updateUserHandler={userLoginHandler}/>
+}
+
+function Admin({newState, userLoginHandler}) {
+    if(newState.currentUser == null) {
+        history.push("/login");
+    }
+
+    return <AdminPage currentUser={newState.currentUser} updateUserHandler={userLoginHandler}/>
 }
 
 export class App extends React.Component {
@@ -156,10 +166,12 @@ export class App extends React.Component {
         this.state.test_type = null;
         this.state.test_num = null;
         this.state.scene = null;
+        this.state.menuIsOpened = false;
     
         this.logout = this.logout.bind(this);
         this.userLoginHandler = this.userLoginHandler.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
+        this.handleToggle = this.handleToggle.bind(this);
     }
 
     async componentDidMount() {
@@ -250,6 +262,10 @@ export class App extends React.Component {
         return analysisPath;
     }
 
+    handleToggle() {
+        this.setState({ menuIsOpened: !this.state.menuIsOpened });
+    }
+
     render() {
         const {currentUser} = this.state;
         return (
@@ -277,8 +293,12 @@ export class App extends React.Component {
                             <ul className="navbar-nav ml-auto">
                                 <li className="login-user">
                                     <img className="nav-login-icon" src={userImage} alt=""/>
-                                    <NavDropdown title={currentUser.emails[0].address} id="basic-nav-dropdown">
-                                        <Link className="dropdown-item" to="/myaccount">My Account</Link>
+                                    <NavDropdown title={currentUser.emails[0].address} id="basic-nav-dropdown" 
+                                            show={this.state.menuIsOpened} onToggle={this.handleToggle}>
+                                        <Link className="dropdown-item" to="/myaccount" onClick={this.handleToggle}>My Account</Link>
+                                        {this.state.currentUser.admin === true &&
+                                            <Link className="dropdown-item" to="/admin" onClick={this.handleToggle}>Administrator</Link>
+                                        }
                                         <Link className="dropdown-item" to={{}} onClick={this.logout}>Logout</Link>
                                     </NavDropdown>
                                 </li>
@@ -302,6 +322,9 @@ export class App extends React.Component {
                         <Route path="/reset-password/:token" component={ResetPassPage}/>
                         <Route path="/myaccount">
                             <MyAccount newState={this.state} userLoginHandler={this.userLoginHandler}/>
+                        </Route>
+                        <Route path="/admin">
+                            <Admin newState={this.state} userLoginHandler={this.userLoginHandler}/>
                         </Route>
                         <Route path="/evalStatus">
                             <EvalStatus newState={this.state}/>

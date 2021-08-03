@@ -52,7 +52,7 @@ class ListItem extends React.Component {
         } */
 
         // TODO: MCS-466: Move URL logic to parent?
-        const urlBasePath = window.location.href.split('?')[0];
+        //const urlBasePath = window.location.href.split('?')[0];
         let params = ""
     
         // Property List for Eval 1 - TODO: MCS-492: fix for Eval 1 Data?

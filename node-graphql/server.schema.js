@@ -15,6 +15,14 @@ const mcsTypeDefs = gql`
 
   scalar StringOrFloat
 
+  extend input CreateUserInput {
+    admin: Boolean
+  }
+
+  extend type User {
+    admin: Boolean
+  }
+
   type Source {
     block: String
     complexity: String
@@ -120,7 +128,7 @@ const mcsTypeDefs = gql`
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String): JSON
-    createCSV: JSON
+    getUsers: JSON
   }
 
   type Mutation {
@@ -130,6 +138,8 @@ const mcsTypeDefs = gql`
     updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
     setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
+    createCSV(collectionName: String, eval: String): JSON
+    updateAdminUser(username: String, isAdmin: Boolean): JSON
   }
 `;
 
@@ -304,18 +314,6 @@ const mcsResolvers = {
             return await mcsDB.db.collection('savedQueries').find()
                 .toArray().then(result => {return result});
         },
-        createCSV: async(obj, args, context, infow) => { 
-            const pythonProcess = spawn('python3',["./csv-scripts/generate_csv.py", "mcs_scenes", "Evaluation 3.5 Scenes"]);
-
-            pythonProcess.stdout.on('data', (data) => {
-                console.log(data.toString());
-            });
-
-            pythonProcess.stderr.on('data', (data) => {
-                console.log(data.toString());
-            });
-            return {message: "CSV creation launched."};
-        },
         createComplexQuery: async(obj, args, context, infow)=> {
             mongoQueryObject = createComplexMongoQuery(args['queryObject']);
 
@@ -451,6 +449,10 @@ const mcsResolvers = {
             };
 
             return statsObj;
+        },
+        getUsers: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('users').find().project({"services":0, "createdAt":0, "updatedAt": 0})
+                .toArray().then(result => {return result});
         }
     }, 
     Mutation: {
@@ -500,6 +502,24 @@ const mcsResolvers = {
         },
         deleteQuery: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('savedQueries').remove({_id:  mongoDb.ObjectID(args["_id"])});
+        },
+        createCSV: async(obj, args, context, infow) => { 
+            const pythonProcess = spawn('python3',["./csv-scripts/generate_csv.py", args["collectionName"], args["eval"]]);
+
+            pythonProcess.stdout.on('data', (data) => {
+                console.log(data.toString());
+            });
+
+            pythonProcess.stderr.on('data', (data) => {
+                console.log(data.toString());
+            });
+            return {message: "CSV creation launched."};
+        },
+        updateAdminUser: async(obj, args, context, infow) => { 
+            return await mcsDB.db.collection('users').update(
+                {"username": args["username"]}, 
+                {$set: {"admin": args["isAdmin"]}}
+            );
         }
     },
     StringOrFloat: new GraphQLScalarType({

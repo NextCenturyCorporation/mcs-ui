@@ -25,7 +25,7 @@ class EvalStatusPage extends React.Component {
     }
 
     componentDidMount() {
-        this.intervalMethod = setInterval(this.incrementCounter, 1000);
+        this.intervalMethod = setInterval(this.incrementCounter, 2000);
     }
 
     componentWillUnmount() {
@@ -47,7 +47,8 @@ class EvalStatusPage extends React.Component {
                     }
 
                     return (
-                        <EvalStatusTable evaluationOptions={evaluationOptions} counter={this.state.counter}/>
+                        <EvalStatusTable evaluationOptions={evaluationOptions} counter={this.state.counter} 
+                            currentUser={this.props.currentUser}/>
                     )
                 }
             }

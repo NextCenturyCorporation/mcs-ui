@@ -54,6 +54,7 @@ services:
     image: node-graphql
     volumes:
       - ../analysis-ui/public/configs/prod/graphql-config.js:/usr/src/app/config.js
+      - $HOME/.aws/:/root/.aws/:ro
     ports: 
       - 9100:9100
     expose:
@@ -69,6 +70,7 @@ services:
     image: node-graphql-staging
     volumes:
       - ../analysis-ui/public/configs/prod/graphql-staging-config.js:/usr/src/app/config.js
+      - $HOME/.aws/:/root/.aws/:ro
     ports: 
       - 9111:9111
     expose:

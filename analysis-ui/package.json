@@ -31,6 +31,7 @@
         "react-bootstrap": "^1.0.0-beta.16",
         "react-dom": "^16.11.0",
         "react-dropdown": "^1.6.4",
+        "react-dual-listbox": "^2.2.0",
         "react-image": "^2.2.1",
         "react-linechart": "^1.1.12",
         "react-router": "^5.1.2",
