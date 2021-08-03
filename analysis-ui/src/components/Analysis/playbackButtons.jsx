@@ -82,7 +82,7 @@ class PlaybackButtons extends React.Component {
 
     render() {
         return (
-            <div id="playbackButtons" className="movie-playback-buttons-holder">
+            <div id="playbackButtons" className="movie-playback-buttons-holder" style={{paddingLeft:this.props.paddingLeft}}>
             <button className="movie-playback-button" style={{borderRadius: '10px 0px 0px 10px'}} onClick={this.props.upOneScene}>
                 <span style={{color:defaultColor}} className="material-icons">
                     arrow_upward
