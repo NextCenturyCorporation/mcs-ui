@@ -104,7 +104,7 @@ class FieldValuesDropdown extends React.Component {
         return (
             <>
                 {this.props.functionOperator === "equals" &&
-                    <div className="query-field-value-selector">
+                    <div className="query-field-value-selector-equals">
                         <FieldDropdownSelector fieldType={this.props.fieldType} fieldName={this.props.fieldName} selectFieldValueHandler={this.props.selectDropDownValue}/>
                     </div>
                 }
