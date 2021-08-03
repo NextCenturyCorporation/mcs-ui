@@ -42,7 +42,15 @@ function DualInputBox({options, selectedOptions}) {
     }
 
     return (
-        <DualListBox options={options} selected={selected} onChange={setAdmin}/>
+        <DualListBox 
+            options={options} 
+            selected={selected} 
+            onChange={setAdmin} 
+            showHeaderLabels={true}
+            lang={{
+                availableHeader: "All Users",
+                selectedHeader: "Admins"
+            }}/>
     );
 }
 
