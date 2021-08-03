@@ -276,7 +276,7 @@ class QueryResultsTable extends React.Component {
                 <div className="csv-results-group-holder">
                     <div className="csv-results-child" style={{paddingTop: '25px', paddingLeft: '40px'}}>
                         <IconButton style={{padding: '7px', borderRadius: '10px', fontSize: '1rem'}} onClick={this.downloadCSV}>
-                            <span class="material-icons">
+                            <span className="material-icons">
                                 get_app
                             </span>CSV
                         </IconButton>
@@ -387,24 +387,27 @@ class QueryResultsTable extends React.Component {
                     </Table>  
                 </div>
                 {this.state.groupBy === "" && 
-                    <TableFooter className="query-results-footer">
-                        <TableRow>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                colSpan={3}
-                                count={groupedData.length}
-                                rowsPerPage={this.state.rowsPerPage}
-                                page={this.state.page}
-                                SelectProps={{
-                                    inputProps: { 'aria-label': 'rows per page' },
-                                    native: true,
-                                }}
-                                onChangePage={this.handleChangePage}
-                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
-                            />
-                        </TableRow>
-                    </TableFooter>
+                    <table>
+                        <TableFooter className="query-results-footer">
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                    colSpan={3}
+                                    count={groupedData.length}
+                                    rowsPerPage={this.state.rowsPerPage}
+                                    page={this.state.page}
+                                    SelectProps={{
+                                        inputProps: { 'aria-label': 'rows per page' },
+                                        native: true,
+                                    }}
+                                    onChangePage={this.handleChangePage}
+                                    onPageChange={this.handleChangePage}
+                                    onRowsPerPageChange={this.handleChangeRowsPerPage}
+                                    ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </table>
                 }
             </div>
         );
