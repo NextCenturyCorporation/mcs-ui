@@ -391,8 +391,8 @@ class Scenes extends React.Component {
                                                                 <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
                                                             </div>
                                                         </div>
-                                                        <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed}/>
+                                                        <PlaybackButtons style= {{paddingLeft:"420px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"420px"}/>
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
@@ -464,7 +464,8 @@ class Scenes extends React.Component {
                                                                 setSceneSpeed={this.setSceneSpeed}
                                                                 setSceneViewLoaded={this.setSceneViewLoaded}
                                                                 setTopDownLoaded={this.setTopDownLoaded}
-                                                                speed={this.state.speed}/>
+                                                                speed={this.state.speed}
+                                                                paddingLeft={"570px"}/>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>

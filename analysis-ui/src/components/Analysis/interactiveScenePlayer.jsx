@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import { convertValueToString } from './displayTextUtils';
 import PlaybackButtons from './playbackButtons';
 
-const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, sceneHistoryItem, upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed}, ref) => {
+const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, sceneHistoryItem, upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const scenePlayer = useRef(null);
@@ -95,7 +95,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                     <video id="topDownInteractiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
                 </div>
             </div>
-            <PlaybackButtons ref={ref} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed}/>
+            <PlaybackButtons ref={ref} paddingLeft={paddingLeft} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed}/>
         </div>
     );
 })
