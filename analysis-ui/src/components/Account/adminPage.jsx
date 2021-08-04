@@ -18,7 +18,7 @@ const UPDATE_ADMIN_USER = gql`
   }`;
 
 function DualInputBox({options, selectedOptions}) {
-    const [selected, setSelected] = useState(selectedOptions);
+    const [selected, setSelected] = useState(selectedOptions.sort());
     const [updateAdminUserCall] = useMutation(UPDATE_ADMIN_USER);
 
     const setAdmin = (newSelect) => {
@@ -40,6 +40,8 @@ function DualInputBox({options, selectedOptions}) {
         }
         setSelected(newSelect);
     }
+
+    options.sort((a, b) => (a.value > b.value) ? 1 : -1);
 
     return (
         <DualListBox 

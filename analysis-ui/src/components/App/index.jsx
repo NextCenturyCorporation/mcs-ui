@@ -149,7 +149,12 @@ function Admin({newState, userLoginHandler}) {
         history.push("/login");
     }
 
-    return <AdminPage currentUser={newState.currentUser} updateUserHandler={userLoginHandler}/>
+    // Do not let users who aren't admins somehow go to the admin page
+    if(newState.currentUser !== null && newState.currentUser.admin === true) {
+        return <AdminPage currentUser={newState.currentUser} updateUserHandler={userLoginHandler}/>
+    } else {
+        return <Home newState={newState}/>;
+    } 
 }
 
 export class App extends React.Component {
