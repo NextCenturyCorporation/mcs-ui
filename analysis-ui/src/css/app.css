@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:wght@300;400;700');
+@import url("https://use.fontawesome.com/releases/v5.6.3/css/all.css");
 
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
@@ -945,10 +946,25 @@ ol, ul {
     margin-left: auto;
     position: relative;
     top: -30px;
+    right: 50px;
+    display: flex;
 }
 
 .eval-charts-container {
-    width: 95%;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.eval-button-holder {
+    margin-left: 60px;
+}
+
+.create-csv-button {
+    margin-right: 10px;
+}
+
+.download-csv-button {
+    margin-right: 10px;
 }
 
 .eval-chart-table {

@@ -5,6 +5,7 @@ import { ApolloClient } from 'apollo-client'
 import { createHttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import {GRAPHQL_URL} from './config'
+import gql from 'graphql-tag';
 
 console.log("uri", GRAPHQL_URL, "1002");
 
@@ -17,7 +18,21 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-const accountsGraphQL = new GraphQLClient({ graphQLClient: apolloClient });
+const accountsGraphQL = new GraphQLClient({
+  graphQLClient: apolloClient,
+  userFieldsFragment: gql`
+    fragment userFields on User {
+      id
+      emails {
+        address
+        verified
+      }
+      username
+      admin
+    }
+  `,
+});
+
 const accountsClient = new AccountsClient({}, accountsGraphQL);
 const accountsPassword = new AccountsClientPassword(accountsClient);
 
