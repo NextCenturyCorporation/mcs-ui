@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import {useMutation} from 'react-apollo';
 import gql from 'graphql-tag';
+import { forEach } from 'lodash';
 
 const SAVE_QUERY_NAME = "saveQuery";
 const SAVE_QUERY = gql`
@@ -17,6 +18,7 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
     const [queryName, setQueryName] = useState("");
     const [queryDesc, setQueryDesc] = useState("");
     const [saveQueryCall] = useMutation(SAVE_QUERY);
+    const [arrayOfNameSuggestions, setArrayOfNameSuggestions] = useState([]);
 
     const resetSaveForm = () => {
         setQueryName("");
@@ -42,6 +44,37 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
         onHide();
     }
 
+    const getNameRecs = () => {
+        let arrayOfNameSuggestions = [];
+        const getFullQueryName = (queryLine) => {
+            let subArray = [];
+            subArray.push(queryLine.fieldTypeLabel);
+            subArray.push(queryLine.fieldNameLabel);
+            if(queryLine.functionOperator === "between" || queryLine.functionOperator === "and" || queryLine.functionOperator === "or") {
+                subArray.push(queryLine.fieldValue1.toString())
+                subArray.push(queryLine.functionOperator)
+                subArray.push(queryLine.fieldValue2.toString())
+            } else {
+                subArray.push(queryLine.functionOperator)
+                subArray.push(queryLine.fieldValue1.toString())
+            }
+            arrayOfNameSuggestions.push(subArray);
+        }
+
+        queryObj.forEach(item => {
+            getFullQueryName(item);
+        });
+
+        let combineAll = "";
+        arrayOfNameSuggestions.forEach((item, i) => combineAll += Array.from(item).join(" ") + (i===arrayOfNameSuggestions.length-1 ? "" : ' & '));
+        arrayOfNameSuggestions.push(combineAll);
+        setArrayOfNameSuggestions(arrayOfNameSuggestions);
+    }
+
+    useEffect(() => {
+        getNameRecs();
+    }, [show])
+
     return (
         <Modal show={show} onHide={closeModal} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
@@ -51,12 +84,23 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
                 <form>
                     <div className="form-group">
                         <div className="input-login-header">Name</div>
-                        <input className="form-control form-control-lg" placeholder="Query Name" type="text" value={queryName} onChange={e => setQueryName(e.target.value)}/>
+                        <input className="form-control form-control-lg" placeholder="Query Name" type="text" value={queryName} list="name-recomendations" 
+                            onChange={e => setQueryName(e.target.value === "Combine All" ? arrayOfNameSuggestions[arrayOfNameSuggestions.length-1] : e.target.value)}/>
                     </div>
                     <div className="form-group">
                         <div className="input-login-header">Description</div>
-                        <input className="form-control form-control-lg" placeholder="Query Description" type="text" value={queryDesc} onChange={e => setQueryDesc(e.target.value)}/>
+                        <input className="form-control form-control-lg" placeholder="Query Description" type="text" value={queryDesc} list="name-recomendations" 
+                            onChange={e => setQueryDesc(e.target.value === "Combine All" ? arrayOfNameSuggestions[arrayOfNameSuggestions.length-1] : e.target.value)}/>
                     </div>
+                    <datalist id="name-recomendations">
+                        {
+                            arrayOfNameSuggestions.map((item, i) => {
+                                return (
+                                    <option value={i===arrayOfNameSuggestions.length - 1 ? "Combine All" : Array.from(item).join(' ')}/>
+                                )
+                            })
+                        }
+                    </datalist>
                 </form>
             </Modal.Body>
             <Modal.Footer>

@@ -20,7 +20,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
-import PerformanceStatistics from './performanceStatistics';
+import {PerformanceStatistics, getStats} from './performanceStatistics';
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -189,6 +189,80 @@ class QueryResultsTable extends React.Component {
         }
     }
 
+    downloadCSV = () => {
+        let { rows, columns } = this.props;
+        let columnData = this.getColumnData(columns);
+        let groupedData = this.getGroupedData(rows);
+
+        let columnDelimiter = '\t';
+        let rowDelimter = '\n';
+        let csvString = ''; //append all content to this really long string
+
+        let keysToCSV = []
+        let titles = [];
+
+
+        if(this.state.groupBy !== "") {
+            titles.push("Group Table By");
+            titles.push("Group");
+        }
+
+        columnData.forEach(item => {
+            keysToCSV.push(item.dataKey);
+            titles.push(item.title);
+        });
+    
+        if(this.state.groupBy === "") {
+            let stats = getStats(groupedData);
+            csvString += `Total Results: ${groupedData.length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
+                columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
+        }
+
+        csvString += titles.join(columnDelimiter).toUpperCase() + rowDelimter;
+        const appendDataStringToCSV = (data) => {
+            keysToCSV.forEach(element => {
+                let value = _.get(data, element);
+                if(value !== undefined && value !== null && value.constructor === Array)
+                    value = value[0];
+                if(String(value).includes("OPICS (OSU, UU, NYU)")) //csv files automatically use commas as column seperators
+                    value = "OPICS (OSU-UU-NYU)";
+                csvString += value !== undefined && value !== null ? String(value) + columnDelimiter: columnDelimiter;
+            });
+            csvString = csvString.slice(0, -1) + rowDelimter; //replace last column delimiter with row delimiter
+        }
+
+        let groupByTitle = "";
+        if(this.state.groupBy === "") {
+            groupedData.forEach(data => {
+                appendDataStringToCSV(data);
+            });
+        } else {
+            columnData.forEach(item => {
+                if(item.dataKey === this.state.groupBy)
+                    groupByTitle = item.title
+            });
+            const groupedByObjectsAsArray = Object.entries(groupedData);
+            groupedByObjectsAsArray.forEach(groupedByObject => {
+                let stats = getStats(groupedByObject[1]);
+                csvString += `Total Results: ${groupedByObject[1].length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
+                    columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
+                groupedByObject[1].forEach(data => {
+                    csvString += groupByTitle + columnDelimiter;
+                    csvString += String(groupedByObject[0]) !== 'undefined' && String(groupedByObject[0]) !== 'null' ? String(groupedByObject[0]) + columnDelimiter : columnDelimiter;
+                    appendDataStringToCSV(data);
+                })
+            })
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8," + csvString; //encode csv format
+        let filename = `mcs-query-results${this.state.groupBy !== "" ? "-" + _.kebabCase(groupByTitle) : ""}.csv`;
+        
+        let downloader = document.createElement('a'); //create a link
+        downloader.setAttribute('href', csvContent); //content to download
+        downloader.setAttribute('download', filename); //filename of download
+        downloader.click(); //download
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -199,11 +273,22 @@ class QueryResultsTable extends React.Component {
     
         return (
             <div className="query-results-table-holder">
-                <div className="results-group-chooser">
-                    <div className="query-builder-label">Group Table By</div>
-                    <Select className="results-groupby-selector"
-                        onChange={this.setQueryGroupBy} 
-                        options={this.props.groupByOptions}/>
+                <div className="csv-results-group-holder">
+                    <div className="csv-results-child" style={{paddingTop: '25px', paddingLeft: '40px'}}>
+                        <IconButton style={{padding: '7px', borderRadius: '10px', fontSize: '1rem'}} onClick={this.downloadCSV}>
+                            <span className="material-icons">
+                                get_app
+                            </span>CSV
+                        </IconButton>
+                    </div>
+                    <div className="csv-results-child">
+                        <div className="results-group-chooser">
+                            <div className="query-builder-label">Group Table By</div>
+                            <Select className="results-groupby-selector"
+                                onChange={this.setQueryGroupBy}
+                                options={this.props.groupByOptions}/>
+                        </div>
+                    </div>
                 </div>
                 <div className="results-table-scroll">
                     <Table stickyHeader>
@@ -302,24 +387,27 @@ class QueryResultsTable extends React.Component {
                     </Table>  
                 </div>
                 {this.state.groupBy === "" && 
-                    <TableFooter className="query-results-footer">
-                        <TableRow>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                colSpan={3}
-                                count={groupedData.length}
-                                rowsPerPage={this.state.rowsPerPage}
-                                page={this.state.page}
-                                SelectProps={{
-                                    inputProps: { 'aria-label': 'rows per page' },
-                                    native: true,
-                                }}
-                                onChangePage={this.handleChangePage}
-                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
-                            />
-                        </TableRow>
-                    </TableFooter>
+                    <table>
+                        <TableFooter className="query-results-footer">
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                    colSpan={3}
+                                    count={groupedData.length}
+                                    rowsPerPage={this.state.rowsPerPage}
+                                    page={this.state.page}
+                                    SelectProps={{
+                                        inputProps: { 'aria-label': 'rows per page' },
+                                        native: true,
+                                    }}
+                                    onChangePage={this.handleChangePage}
+                                    onPageChange={this.handleChangePage}
+                                    onRowsPerPageChange={this.handleChangeRowsPerPage}
+                                    ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </table>
                 }
             </div>
         );

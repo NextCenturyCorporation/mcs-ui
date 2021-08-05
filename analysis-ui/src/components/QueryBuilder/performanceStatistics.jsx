@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PerformanceStatistics = ({resultsData}) => {
+export const getStats = (resultsData) => {
     const totalResults = resultsData.length;
     let numCorrect = 0;
     let numIncorrect = 0;
@@ -32,23 +32,26 @@ const PerformanceStatistics = ({resultsData}) => {
     const sem = ((Math.sqrt(standardError/totalResults) / Math.sqrt(totalResults)) * 100).toFixed(4);
     const semWeighted = ((Math.sqrt(standardErrorWeight/weightedTotal) / Math.sqrt(weightedTotal)) * 100).toFixed(4);
 
-    const correctString = " Correct: " + numCorrect + "/" + totalResults + " (" + 
+    let correctString = " Correct: " + numCorrect + "/" + totalResults + " (" + 
         (numCorrect/totalResults * 100).toFixed(2)+ "%, SEM: " + sem + ")  Weighted: " + numCorrectWeight + "/" + weightedTotal +
         " (" + (numCorrectWeight/weightedTotal * 100).toFixed(2)+ "%, SEM: " + semWeighted + ")";
-    const incorrectString = " Incorrect: " + numIncorrect + "/" + totalResults + " (" + 
+    let incorrectString = " Incorrect: " + numIncorrect + "/" + totalResults + " (" + 
         (numIncorrect/totalResults * 100).toFixed(2)+ "%) Weighted: " + numIncorrectWeight + "/" + weightedTotal +
         " (" + (numIncorrectWeight/weightedTotal * 100).toFixed(2)+ "%)";
 
+    return {correct:correctString, incorrect:incorrectString};
+}
+
+export const PerformanceStatistics = ({resultsData}) => {
+    let stats = getStats(resultsData)
     return (
         <>
             <div className="query-num-performance">
-                {correctString}
+                {stats.correct}
             </div>
             <div className="query-num-performance">
-                {incorrectString}
+                {stats.incorrect}
             </div>
         </>
     );
 }    
-
-export default PerformanceStatistics;

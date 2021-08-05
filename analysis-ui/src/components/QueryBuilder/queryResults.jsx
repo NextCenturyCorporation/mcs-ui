@@ -3,7 +3,7 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import _ from "lodash";
 import QueryResultsTable from './queryResultsTable';
-import PerformanceStatistics from './performanceStatistics';
+import {PerformanceStatistics} from './performanceStatistics';
 
 const complexQueryName = "createComplexQuery";
 

@@ -1,7 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { convertValueToString } from './displayTextUtils';
+import PlaybackButtons from './playbackButtons';
 
-function InteractiveScenePlayer({evaluation, sceneVidLink, topDownLink, sceneHistoryItem}) {
+const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, sceneHistoryItem, upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const scenePlayer = useRef(null);
@@ -52,6 +53,7 @@ function InteractiveScenePlayer({evaluation, sceneVidLink, topDownLink, sceneHis
 
 
     const initializeStepView = () => {
+        setSceneViewLoaded()
         scrollStepIntoView(currentStep);
     }
 
@@ -70,29 +72,32 @@ function InteractiveScenePlayer({evaluation, sceneVidLink, topDownLink, sceneHis
     }
 
     return (
-        <div className="movie-steps-holder">
-            <div className="interactive-movie-holder">
-                <video id="interactiveMoviePlayer" ref={scenePlayer}
-                src={sceneVidLink} width="500" height="350" controls="controls" autoPlay={false} onTimeUpdate={highlightStep} onLoadedData={initializeStepView}/>
-            </div>
-            <div className="steps-holder">
-                <h5>Performer Steps:</h5>
-                <div className="steps-container">
-                    <div id="stepHolder0" className={currentStep === 0 ? "step-div step-highlight" : "step-div"} ref={stepZero} onClick={() => goToVideoLocation(0)}>0: Starting Position</div>
-                    {sceneHistoryItem !== undefined &&
-                        sceneHistoryItem.steps.map((stepObject, key) => 
-                        <div key={"step_div_" + key} id={"stepHolder" + (key+1)} ref = {element => stepElems.current[key] = element} className={currentStep === key+1 ? "step-div step-highlight" : "step-div"} onClick={() => goToVideoLocation(key+1)}>
-                            {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
-                        </div>
-                    )}
+        <div>
+            <div className="movie-steps-holder">
+                <div className="interactive-movie-holder">
+                    <video id="interactiveMoviePlayer" ref={scenePlayer}
+                    src={sceneVidLink} width="500" height="350" controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
+                    onEnded={() => playAllState ? downOneScene(numOfScenes) : null}/>
+                </div>
+                <div className="steps-holder">
+                    <h5>Performer Steps:</h5>
+                    <div className="steps-container">
+                        <div id="stepHolder0" className={currentStep === 0 ? "step-div step-highlight" : "step-div"} ref={stepZero} onClick={() => goToVideoLocation(0)}>0: Starting Position</div>
+                        {sceneHistoryItem !== undefined &&
+                            sceneHistoryItem.steps.map((stepObject, key) => 
+                            <div key={"step_div_" + key} id={"stepHolder" + (key+1)} ref = {element => stepElems.current[key] = element} className={currentStep === key+1 ? "step-div step-highlight" : "step-div"} onClick={() => goToVideoLocation(key+1)}>
+                                {stepObject.stepNumber + ": " + stepObject.action + " (" + convertValueToString(stepObject.args) + ") - " + stepObject.output.return_status}
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="top-down-holder">
+                    <video id="topDownInteractiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
                 </div>
             </div>
-            <div className="top-down-holder">
-                <video id="interactiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" autoPlay={false}/>
-            </div>
+            <PlaybackButtons ref={ref} paddingLeft={paddingLeft} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed}/>
         </div>
     );
-
-}
+})
 
 export default InteractiveScenePlayer;
