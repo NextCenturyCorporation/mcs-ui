@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {withRouter} from 'react-router-dom';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import '../../css/adming-page.css';
+import '../../css/admin-page.css';
 import DualListBox from 'react-dual-listbox';
 import {useMutation} from 'react-apollo';
 
@@ -68,7 +68,7 @@ class AdminPage extends React.Component {
 
     render() {
         return (
-            <Query query={GET_USERS}>
+            <Query query={GET_USERS} fetchPolicy={'no-cache'}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
