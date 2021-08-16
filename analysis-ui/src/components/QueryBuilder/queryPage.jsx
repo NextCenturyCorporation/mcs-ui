@@ -12,12 +12,15 @@ class QueryPage extends React.Component {
                 id: 1, 
                 name: "Query 1", 
                 tabQueryObj: [],
+                groupBy: {value: "", label: ""},
                 mongoId: ""
             }],
             currentTab: 1,
-            totalTab: 1
+            totalTab: 1,
+            currentTabMongoId: ""
         };
 
+        this.groupByRef = React.createRef();
         this.addTab = this.addTab.bind(this);
         this.updateQueryNameHandler = this.updateQueryNameHandler.bind(this);
         this.loadQueryHandler = this.loadQueryHandler.bind(this);
@@ -36,6 +39,7 @@ class QueryPage extends React.Component {
             id: this.state.totalTab+1, 
             name: "Query " + (this.state.totalTab+1),
             tabQueryObj: [],
+            groupBy: {value: "", label: ""},
             mongoId: ""
         });
 
@@ -48,9 +52,11 @@ class QueryPage extends React.Component {
     }
 
     updateQueryState = (newArray, newCurrentTab) => {
+        newCurrentTab = newCurrentTab !== undefined && newCurrentTab !== null ? newCurrentTab : this.state.currentTab;
         this.setState({ 
             queryTabs: newArray,
-            currentTab: newCurrentTab !== undefined && newCurrentTab !== null ? newCurrentTab : this.state.currentTab
+            currentTab: newCurrentTab,
+            currentTabMongoId: newArray[newCurrentTab-1].mongoId
         });
 
         this.props.currentUser["queryBuilderState"] = this.state;
@@ -69,14 +75,31 @@ class QueryPage extends React.Component {
     }
 
     loadQueryHandler = (queryObj) => {
-        this.updateQueryObjForTab(queryObj.queryObj, this.state.currentTab, queryObj.name, queryObj._id);
+        queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null ? {value: "", label: "None"} : queryObj.groupBy;
+        this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, this.state.currentTab, queryObj.name, queryObj._id);
+
+        if(this.groupByRef.current !== null) {
+            this.groupByRef.current.updateTableGroupBy(queryObj.groupBy);
+        }
     }
 
-    updateQueryObjForTab = (queryObj, queryId, tabName, mongoQueryId) => {
+    setGroupBy = (option) => {
+        let newArray = this.state.queryTabs.concat();
+        for(let i=0; i < newArray.length; i++) {
+            if(i === this.state.currentTab-1) {
+                newArray[i].groupBy = {value: option.value, label: option.label};
+                break;
+            }
+        }
+        this.updateQueryState(newArray);
+    }
+
+    updateQueryObjForTab = (queryObj, groupBy, queryId, tabName, mongoQueryId) => {
         let newArray = this.state.queryTabs.concat();
         for(let i=0; i < newArray.length; i++) {
             if(newArray[i].id === queryId) {
                 newArray[i].tabQueryObj = queryObj;
+                newArray[i].groupBy = groupBy === null || groupBy === undefined || groupBy === "" ? {value: "", label: "None"} : groupBy
                 if(tabName !== undefined) {
                     newArray[i].name = tabName;
                     newArray[i].mongoId = mongoQueryId;
@@ -95,7 +118,10 @@ class QueryPage extends React.Component {
         $('#tabObj_button_' + this.state.currentObjectNum ).toggleClass( "active" );
         $('#tabObj_button_' + objectKey ).toggleClass( "active" );
 
-        this.setState({ currentTab: objectKey});
+        this.setState({ 
+                currentTab: objectKey,
+                currentTabMongoId: this.state.queryTabs[objectKey-1].mongoId
+            });
 
         this.props.currentUser["queryBuilderState"] = this.state;
     }
@@ -106,8 +132,15 @@ class QueryPage extends React.Component {
         for(let i=0; i < newArray.length; i++) {
             if(newArray[i].id === queryId) {
                 newArray.splice(i, 1);
+                this.setState({totalTab: this.state.totalTab-1});
             }
-        } 
+        }
+        
+        if(newArray.length>0) {
+            for(let i=0; i < newArray.length; i++) {
+                newArray[i].id = i + 1;
+            }
+        }
 
         if(newCurrentTab === queryId) {
             newCurrentTab = newArray[0].id;
@@ -140,8 +173,9 @@ class QueryPage extends React.Component {
                     {this.state.queryTabs.map((tabObj, key) => 
                         <div key={'query_tab_' + key} className={tabObj.id === this.state.currentTab ? null : 'd-none'}>
                             <ComplexQueryBuilder queryId={tabObj.id} saveQueryObject={tabObj.tabQueryObj} currentUser={this.props.currentUser} 
-                                updateQueryNameHandler={this.updateQueryNameHandler} updateQueryObjForTab={this.updateQueryObjForTab} 
-                                closeQueryTab={this.closeQueryTab} numberTabs={this.state.queryTabs.length} queryMongoId={tabObj.mongoId}/>
+                                updateQueryNameHandler={this.updateQueryNameHandler} updateQueryObjForTab={this.updateQueryObjForTab} numberTabs={this.state.queryTabs.length}
+                                closeQueryTab={this.closeQueryTab} tabId={tabObj.id} currentTab={this.state.currentTab} queryMongoId={tabObj.mongoId} 
+                                setGroupBy={this.setGroupBy} groupBy={tabObj.groupBy} groupByRef={this.groupByRef}/>
                         </div>
                     )}
                 </div>   

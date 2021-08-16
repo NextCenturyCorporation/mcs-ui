@@ -11,6 +11,7 @@ const LOAD_SAVED_QUERIES = gql`
             name
             user
             queryObj
+            groupBy
             description
             createdDate
             _id

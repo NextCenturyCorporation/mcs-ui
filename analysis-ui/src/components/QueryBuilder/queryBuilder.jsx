@@ -40,21 +40,21 @@ class ComplexQueryBuilder extends React.Component {
     }
 
     clearQuery = () => {
-        this.props.updateQueryObjForTab([], this.props.queryId, "Query " + this.props.queryId, "");
+        this.props.updateQueryObjForTab([], null, this.props.queryId, "Query " + this.props.queryId, "");
     }
 
     removeQueryRow = (key) => {
         let newArray = this.props.saveQueryObject.concat();
         newArray.splice(key, 1);
 
-        this.props.updateQueryObjForTab(newArray, this.props.queryId);
+        this.props.updateQueryObjForTab(newArray, null, this.props.queryId);
     }
 
     queryLineHandler(qlObj) {
         let newArray = this.props.saveQueryObject.concat();
         newArray.push(qlObj);
 
-        this.props.updateQueryObjForTab(newArray, this.props.queryId);
+        this.props.updateQueryObjForTab(newArray, null, this.props.queryId);
     }
 
     closeTab = () => {
@@ -66,7 +66,7 @@ class ComplexQueryBuilder extends React.Component {
             <div>
                 <div className="query-controls">
                     <SaveQuery queryObj={this.props.saveQueryObject} currentUser={this.props.currentUser}
-                        queryId={this.props.queryId} updateQueryNameHandler={this.props.updateQueryNameHandler}/>
+                        queryId={this.props.queryId} updateQueryNameHandler={this.props.updateQueryNameHandler} groupBy={this.props.groupBy}/>
                     <a href="#clearQueryLink" onClick={this.clearQuery} className="icon-link">
                         <span className="material-icons icon-margin-left">settings_backup_restore</span>
                         <span className="icon-link-text">Clear</span>
@@ -103,7 +103,8 @@ class ComplexQueryBuilder extends React.Component {
                         }
                     </div>
                 </div>
-                <QueryResults queryObj={this.props.saveQueryObject}/>
+                <QueryResults queryObj={this.props.saveQueryObject} tabId={this.props.tabId} queryMongoId={this.props.queryMongoId} 
+                    currentTab={this.props.currentTab} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} groupByRef={this.props.groupByRef}/>
             </div>
         );
     }

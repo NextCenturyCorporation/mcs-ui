@@ -3,18 +3,17 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import {useMutation} from 'react-apollo';
 import gql from 'graphql-tag';
-import { forEach } from 'lodash';
 
 const SAVE_QUERY_NAME = "saveQuery";
 const SAVE_QUERY = gql`
-    mutation saveQuery($user: JSON!, $queryObj: JSON!, $name: String!, $description: String!, $createdDate: Float!){
-        saveQuery(user: $user, queryObj: $queryObj, name: $name, description: $description, createdDate: $createdDate) {
+    mutation saveQuery($user: JSON!, $queryObj: JSON!, $groupBy: JSON!, $name: String!, $description: String!, $createdDate: Float!){
+        saveQuery(user: $user, queryObj: $queryObj,  groupBy: $groupBy, name: $name, description: $description, createdDate: $createdDate) {
             name
             _id
         }
   }`;
 
-function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQueryNameHandler}) {
+function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQueryNameHandler, groupBy}) {
     const [queryName, setQueryName] = useState("");
     const [queryDesc, setQueryDesc] = useState("");
     const [saveQueryCall] = useMutation(SAVE_QUERY);
@@ -29,6 +28,7 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
         saveQueryCall({ variables: { 
             user: currentUser,
             queryObj: queryObj,
+            groupBy: groupBy,
             name: queryName,
             description: queryDesc,
             createdDate: (new Date()).valueOf()
@@ -96,7 +96,7 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
                         {
                             arrayOfNameSuggestions.map((item, i) => {
                                 return (
-                                    <option value={i===arrayOfNameSuggestions.length - 1 ? "Combine All" : Array.from(item).join(' ')}/>
+                                    <option key={i} value={i===arrayOfNameSuggestions.length - 1 ? "Combine All" : Array.from(item).join(' ')}/>
                                 )
                             })
                         }
@@ -111,7 +111,7 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
     );
 }
 
-function SaveQuery ({queryObj, currentUser, queryId, updateQueryNameHandler}) {
+function SaveQuery ({queryObj, currentUser, queryId, updateQueryNameHandler, groupBy}) {
 
     const [modalShow, setModalShow] = React.useState(false);
 
@@ -131,6 +131,7 @@ function SaveQuery ({queryObj, currentUser, queryId, updateQueryNameHandler}) {
                 currentUser={currentUser}
                 queryId={queryId}
                 updateQueryNameHandler={updateQueryNameHandler}
+                groupBy={groupBy}
             />
         </>
     );

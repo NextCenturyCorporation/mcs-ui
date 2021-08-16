@@ -96,7 +96,8 @@ const mcsTypeDefs = gql`
 
   type savedQueryObj {
     user: JSON, 
-    queryObj: JSON, 
+    queryObj: JSON,
+    groupBy: JSON,
     name: String, 
     description: String,
     createdDate: Float,
@@ -134,8 +135,8 @@ const mcsTypeDefs = gql`
   type Mutation {
     updateSceneHistoryRemoveFlag(testType: String, testNum: Int, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(testType: String, testNum: Int, flagInterest: Boolean) : updateObject
-    saveQuery(user: JSON, queryObj: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
-    updateQuery(queryObj: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
+    saveQuery(user: JSON, queryObj: JSON, groupBy: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
+    updateQuery(queryObj: JSON, groupBy: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
     setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
     createCSV(collectionName: String, eval: String): JSON
@@ -483,6 +484,7 @@ const mcsResolvers = {
             await mcsDB.db.collection('savedQueries').insertOne({
                 user: args["user"],
                 queryObj: args["queryObj"],
+                groupBy: args["groupBy"],
                 name: args["name"],
                 description: args["description"],
                 createdDate: args["createdDate"]
@@ -495,6 +497,7 @@ const mcsResolvers = {
         updateQuery: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('savedQueries').update({_id: mongoDb.ObjectID(args["_id"])}, {$set: {
                 queryObj: args["queryObj"],
+                groupBy: args["groupBy"],
                 name: args["name"],
                 description: args["description"],
                 createdDate: args["createdDate"]

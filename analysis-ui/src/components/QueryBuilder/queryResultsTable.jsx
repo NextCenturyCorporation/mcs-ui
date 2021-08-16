@@ -9,7 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from "@material-ui/core/styles";
-import _ from "lodash";
+import _, { conforms } from "lodash";
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import TableFooter from '@material-ui/core/TableFooter';
@@ -92,12 +92,12 @@ class QueryResultsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            groupBy: "",
+            groupBy: this.props.groupBy.value,
             sortBy: "",
             sortOrder: "asc",
             expandedGroups: [],
             page: 0,
-            rowsPerPage: 10
+            rowsPerPage: 10,
         };
 
         this.handleChangePage = this.handleChangePage.bind(this);
@@ -178,8 +178,18 @@ class QueryResultsTable extends React.Component {
 
     setQueryGroupBy = (event) => {
         this.setState({groupBy: event.value});
+        this.props.setGroupBy(event);
     }
     
+    updateTableGroupBy = (groupBy) => {
+        if(this.props.currentTab === this.props.tabId) {
+            if(groupBy === undefined || groupBy === null || groupBy === "") {
+                groupBy = {value:"", label:"None"}
+            }
+            this.setQueryGroupBy(groupBy);
+        }
+    }
+
     getAnalysisPageURL = (item) => {
         if(item.scene.test_type && item.scene_num) {
             return "/analysis?eval=" + item.eval + "&test_type=" + item.scene.test_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
@@ -285,6 +295,8 @@ class QueryResultsTable extends React.Component {
                         <div className="results-group-chooser">
                             <div className="query-builder-label">Group Table By</div>
                             <Select className="results-groupby-selector"
+                                defaultValue={{label: this.props.groupBy.label}}
+                                value={{label: this.props.groupBy.label}}
                                 onChange={this.setQueryGroupBy}
                                 options={this.props.groupByOptions}/>
                         </div>
