@@ -13,6 +13,7 @@ class QueryPage extends React.Component {
                 name: "Query 1", 
                 tabQueryObj: [],
                 groupBy: {value: "", label: ""},
+                sortBy: {property: "", sortOrder: "asc"},
                 mongoId: ""
             }],
             currentTab: 1,
@@ -20,7 +21,7 @@ class QueryPage extends React.Component {
             currentTabMongoId: ""
         };
 
-        this.groupByRef = React.createRef();
+        this.queryResultsTableRef = React.createRef();
         this.addTab = this.addTab.bind(this);
         this.updateQueryNameHandler = this.updateQueryNameHandler.bind(this);
         this.loadQueryHandler = this.loadQueryHandler.bind(this);
@@ -40,6 +41,7 @@ class QueryPage extends React.Component {
             name: "Query " + (this.state.totalTab+1),
             tabQueryObj: [],
             groupBy: {value: "", label: ""},
+            sortBy: {property: "", sortOrder: "asc"},
             mongoId: ""
         });
 
@@ -75,11 +77,11 @@ class QueryPage extends React.Component {
     }
 
     loadQueryHandler = (queryObj) => {
-        queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null ? {value: "", label: "None"} : queryObj.groupBy;
-        this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, this.state.currentTab, queryObj.name, queryObj._id);
-
-        if(this.groupByRef.current !== null) {
-            this.groupByRef.current.updateTableGroupBy(queryObj.groupBy);
+        queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null || queryObj.groupBy === "" ? {value: "", label: "None"} : queryObj.groupBy;
+        queryObj.sortBy = queryObj.sortBy === null || queryObj.sortBy === undefined || queryObj.sortBy === "" ? {property: "", sortOrder: "asc"} : queryObj.sortBy;
+        this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, queryObj.sortBy, this.state.currentTab, queryObj.name, queryObj._id);
+        if(this.queryResultsTableRef.current !== null) {
+            this.queryResultsTableRef.current.updateTableGroupAndSortBy(queryObj.groupBy, queryObj.sortBy);
         }
     }
 
@@ -94,19 +96,30 @@ class QueryPage extends React.Component {
         this.updateQueryState(newArray);
     }
 
-    updateQueryObjForTab = (queryObj, groupBy, queryId, tabName, mongoQueryId) => {
+    updateQueryObjForTab = (queryObj, groupBy, sortBy, queryId, tabName, mongoQueryId) => {
         let newArray = this.state.queryTabs.concat();
         for(let i=0; i < newArray.length; i++) {
             if(newArray[i].id === queryId) {
                 newArray[i].tabQueryObj = queryObj;
                 newArray[i].groupBy = groupBy === null || groupBy === undefined || groupBy === "" ? {value: "", label: "None"} : groupBy
+                newArray[i].sortBy = sortBy === null || sortBy === undefined || sortBy === "" ? {property: "", sortOrder: "asc"} : sortBy
                 if(tabName !== undefined) {
                     newArray[i].name = tabName;
                     newArray[i].mongoId = mongoQueryId;
                 }
             }
         } 
-
+        this.updateQueryState(newArray);
+    }
+    
+    setTableSortBy = (sortObject) => {
+        let newArray = this.state.queryTabs.concat();
+        for(let i=0; i < newArray.length; i++) {
+            if(i === this.state.currentTab-1) {
+                newArray[i].sortBy = {property: sortObject.property, sortOrder: sortObject.sortOrder};
+                break;
+            }
+        }
         this.updateQueryState(newArray);
     }
 
@@ -174,8 +187,8 @@ class QueryPage extends React.Component {
                         <div key={'query_tab_' + key} className={tabObj.id === this.state.currentTab ? null : 'd-none'}>
                             <ComplexQueryBuilder queryId={tabObj.id} saveQueryObject={tabObj.tabQueryObj} currentUser={this.props.currentUser} 
                                 updateQueryNameHandler={this.updateQueryNameHandler} updateQueryObjForTab={this.updateQueryObjForTab} numberTabs={this.state.queryTabs.length}
-                                closeQueryTab={this.closeQueryTab} tabId={tabObj.id} currentTab={this.state.currentTab} queryMongoId={tabObj.mongoId} 
-                                setGroupBy={this.setGroupBy} groupBy={tabObj.groupBy} groupByRef={this.groupByRef}/>
+                                closeQueryTab={this.closeQueryTab} tabId={tabObj.id} currentTab={this.state.currentTab} queryMongoId={tabObj.mongoId} name={tabObj.name}
+                                setTableSortBy={this.setTableSortBy} sortBy={tabObj.sortBy} setGroupBy={this.setGroupBy} groupBy={tabObj.groupBy} queryResultsTableRef={this.queryResultsTableRef}/>
                         </div>
                     )}
                 </div>   

@@ -52,7 +52,8 @@ class Results extends React.Component {
                                     </div>
                                     <PerformanceStatistics resultsData={resultsData}/>
                                 </div>
-                                <QueryResultsTable columns={columns} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} rows={resultsData} groupByOptions={options} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} ref={this.props.groupByRef}/>
+                                <QueryResultsTable columns={columns} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} rows={resultsData} name={this.props.name}
+                                    groupByOptions={options} setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} ref={this.props.queryResultsTableRef}/>
                             </div>
                         );
                     }
@@ -69,7 +70,8 @@ class ResultsTable extends React.Component {
         if(_.isEmpty(this.props.queryObj)) {
             return(<div>Enter some parameters to see query results.</div>);
         } else {
-            return(<Results queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} groupByRef={this.props.groupByRef}/>)
+            return(<Results queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} name={this.props.name}
+                setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>)
         }
     }
 };
@@ -79,7 +81,8 @@ class QueryResults extends React.Component {
     render() {
         return (
             <div className="query-results-holder">
-                <ResultsTable queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} groupByRef={this.props.groupByRef}/>
+                <ResultsTable queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} name={this.props.name}
+                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>
             </div>
         );
     }

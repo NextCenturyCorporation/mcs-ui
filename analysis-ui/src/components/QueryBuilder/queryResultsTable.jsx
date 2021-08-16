@@ -9,7 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
 import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from "@material-ui/core/styles";
-import _, { conforms } from "lodash";
+import _, { sortBy } from "lodash";
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import TableFooter from '@material-ui/core/TableFooter';
@@ -93,8 +93,8 @@ class QueryResultsTable extends React.Component {
         super(props);
         this.state = {
             groupBy: this.props.groupBy.value,
-            sortBy: "",
-            sortOrder: "asc",
+            sortBy: this.props.sortBy.property,
+            sortOrder: this.props.sortBy.sortOrder,
             expandedGroups: [],
             page: 0,
             rowsPerPage: 10,
@@ -133,17 +133,25 @@ class QueryResultsTable extends React.Component {
         return groupedData;
     };
     
-    handleRequestSort = property => {
+    handleRequestSort = sortBy => {
         let sortOrderCheck = "desc";
-    
-        if (this.state.sortBy === property && this.state.sortOrder === "desc") {
-            sortOrderCheck = "asc";
+        if(typeof(sortBy) === "string") {
+            if (this.state.sortBy === sortBy && this.state.sortOrder === "desc") {
+                sortOrderCheck = "asc";
+            }
+            this.setState({ 
+                sortOrder: sortOrderCheck, 
+                sortBy: sortBy
+            });
+            this.props.setTableSortBy({property: sortBy, sortOrder: sortOrderCheck});
         }
-    
-        this.setState({ 
-            sortOrder: sortOrderCheck, 
-            sortBy: property 
-        });
+        else {
+            this.setState({ 
+                sortOrder: sortBy.sortOrder, 
+                sortBy: sortBy.property 
+            });
+            this.props.setTableSortBy({property: sortBy.property, sortOrder: sortBy.sortOrderCheck});
+        }
     };
     
     expandRow = groupVal => {
@@ -180,13 +188,15 @@ class QueryResultsTable extends React.Component {
         this.setState({groupBy: event.value});
         this.props.setGroupBy(event);
     }
-    
-    updateTableGroupBy = (groupBy) => {
+
+    updateTableGroupAndSortBy = (groupBy, sortBy) => {
         if(this.props.currentTab === this.props.tabId) {
-            if(groupBy === undefined || groupBy === null || groupBy === "") {
+            if(groupBy === undefined || groupBy === null || groupBy === "")
                 groupBy = {value:"", label:"None"}
-            }
+            if(sortBy === undefined || sortBy === null || sortBy === "")
+                sortBy = {property:"", sortOrder:"acs"}
             this.setQueryGroupBy(groupBy);
+            this.handleRequestSort(sortBy);
         }
     }
 
@@ -265,7 +275,8 @@ class QueryResultsTable extends React.Component {
         }
 
         let csvContent = "data:text/csv;charset=utf-8," + csvString; //encode csv format
-        let filename = `mcs-query-results${this.state.groupBy !== "" ? "-" + _.kebabCase(groupByTitle) : ""}.csv`;
+        let filename = `${_.kebabCase(this.props.name)}${this.state.groupBy !== "" ? "_grouped-by-" +_.kebabCase(groupByTitle) : ""}` + 
+                    `${this.state.sortBy !== "" ? `_sorted-by-${this.state.sortOrder === "asc" ? "ascending" : "descending"}-${this.state.sortBy.replaceAll(/[._]/g, '-')}`: ""}.csv`;
         
         let downloader = document.createElement('a'); //create a link
         downloader.setAttribute('href', csvContent); //content to download
