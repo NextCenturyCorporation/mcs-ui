@@ -17,8 +17,20 @@ const LOAD_SAVED_QUERIES = gql`
         }
     }`;
 
+function LoadQuerySearchBar({setSearch}) {
+    return (
+        <div className="load-query-search-container">
+            <span className="material-icons icon-margin-left" style={{paddingRight: "5px", paddingTop: "7px", borderBottom: "1px solid", borderBottomStyle:"inset"}}>
+                    search
+            </span>
+            <input className="load-query-search-bar" type="text" id="loadQuerySearchBar" placeholder="Search..." onChange={(e)=>setSearch(e.target.value)}/>
+        </div>
+    )
+}
+    
 function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
     const [activeTab, setActiveTab] = useState("load_my_queries");
+    const [search, setSearch] = useState("");
 
     const loadQuery = (query) => {
         loadQueryHandler(query);
@@ -26,6 +38,7 @@ function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
     }
 
     const closeModal = () => {
+        setSearch("");
         onHide();
     }
 
@@ -50,6 +63,7 @@ function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
                         return (
                             <div className="load-query-contents">
                                 <div className="load-query-nav">
+                                    <LoadQuerySearchBar setSearch={setSearch}/>
                                     <ul className="nav nav-tabs">
                                         <li className="nav-item">
                                             <button id={'load_my_queries'} className={'load_my_queries' === activeTab ? 'nav-link active' : 'nav-link'} onClick={() => setActiveTab('load_my_queries')}>My Queries</button>
@@ -73,7 +87,11 @@ function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {queries.map((query, key) => 
+                                            {queries.map((query, key) =>
+                                                (search === "" ||
+                                                (query.name.toLowerCase().includes(search.toLowerCase()) || 
+                                                query.description.toLowerCase().includes(search.toLowerCase()) || 
+                                                query.user.username.toLowerCase().includes(search.toLowerCase()))) &&
                                                 <tr key={'saved_query_row_' + key}>
                                                     <td>{(new Date(query.createdDate)).toLocaleString()}</td>
                                                     <td>{query.name}</td>

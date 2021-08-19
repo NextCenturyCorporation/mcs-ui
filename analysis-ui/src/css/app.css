@@ -834,7 +834,8 @@ ol, ul {
 }
 
 .saved-query-table {
-    max-height: 400px;
+    min-height: 50vh;
+    max-height: 50vh;
     overflow-y: auto;
     margin: 25px 10px 10px 10px;
 }
@@ -846,6 +847,17 @@ ol, ul {
 .saved-query-table th {
     text-align: center;
     border: 1px solid #000;
+}
+
+.load-query-search-container {
+    display: flex;
+}
+
+.load-query-search-bar {
+    border:0; 
+    outline:0; 
+    border-bottom: 1px solid; 
+    border-bottom-style: inset;
 }
 
 .query-results-header {
