@@ -97,7 +97,7 @@ class QueryResultsTable extends React.Component {
             sortOrder: this.props.sortBy.sortOrder,
             expandedGroups: [],
             page: 0,
-            rowsPerPage: 10,
+            rowsPerPage: 10
         };
 
         this.handleChangePage = this.handleChangePage.bind(this);
