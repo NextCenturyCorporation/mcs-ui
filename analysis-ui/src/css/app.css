@@ -798,6 +798,17 @@ ol, ul {
     border-bottom: 1px solid #dee2e6;
 }
 
+.load-query-search-icon {
+    padding-right: 5px;
+    padding-top: 7px;
+    border-bottom: 1px solid;
+    border-bottom-style: inset
+}
+
+.load-query-modal {
+    min-width: min-content;
+}
+
 .icon-margin-right {
     margin-right: 25px;
 }
@@ -834,7 +845,8 @@ ol, ul {
 }
 
 .saved-query-table {
-    max-height: 400px;
+    min-height: 50vh;
+    max-height: 50vh;
     overflow-y: auto;
     margin: 25px 10px 10px 10px;
 }
@@ -846,6 +858,17 @@ ol, ul {
 .saved-query-table th {
     text-align: center;
     border: 1px solid #000;
+}
+
+.load-query-search-container {
+    display: flex;
+}
+
+.load-query-search-bar {
+    border:0; 
+    outline:0; 
+    border-bottom: 1px solid; 
+    border-bottom-style: inset;
 }
 
 .query-results-header {
