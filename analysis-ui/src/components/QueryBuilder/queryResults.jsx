@@ -12,70 +12,77 @@ const create_complex_query = gql`
         createComplexQuery(queryObject: $queryObject) 
     }`;
 
-const Results = ({queryObj}) => {
+class Results extends React.Component {
 
-    return (
-        <Query query={create_complex_query} variables={{"queryObject": queryObj}}>
-        {
-            ({ loading, error, data }) => {
-                if (loading) return <div>Results are currently loading ... </div> 
-                if (error) return <div>Error</div>
-                
-                let resultsData = data[complexQueryName].results;
+    render() {
+        return (
+            <Query query={create_complex_query} variables={{"queryObject": this.props.queryObj}}>
+            {
+                ({ loading, error, data }) => {
+                    if (loading) return <div>Results are currently loading ... </div> 
+                    if (error) return <div>Error</div>
+                    
+                    let resultsData = data[complexQueryName].results;
 
-                let columns = [];
-                let noneOption = [{value: "", label: "None"}];
-                let optionsToAdd = [];
-                for (const key in data[complexQueryName].historyMap) {
-                    columns.push({dataKey: key, title: data[complexQueryName].historyMap[key]});
-                    optionsToAdd.push({value: key, label: data[complexQueryName].historyMap[key]});
-                }
-                for (const key in data[complexQueryName].sceneMap) {
-                    columns.push({dataKey: "scene." + key, title: data[complexQueryName].sceneMap[key]});
-                    optionsToAdd.push({value: "scene." + key, label: data[complexQueryName].sceneMap[key]});
-                }
+                    let columns = [];
+                    let noneOption = [{value: "", label: "None"}];
+                    let optionsToAdd = [];
+                    for (const key in data[complexQueryName].historyMap) {
+                        columns.push({dataKey: key, title: data[complexQueryName].historyMap[key]});
+                        optionsToAdd.push({value: key, label: data[complexQueryName].historyMap[key]});
+                    }
+                    for (const key in data[complexQueryName].sceneMap) {
+                        columns.push({dataKey: "scene." + key, title: data[complexQueryName].sceneMap[key]});
+                        optionsToAdd.push({value: "scene." + key, label: data[complexQueryName].sceneMap[key]});
+                    }
 
-                const options = noneOption.concat(optionsToAdd.sort((a, b) => (a.label > b.label) ? 1 : -1));
+                    const options = noneOption.concat(optionsToAdd.sort((a, b) => (a.label > b.label) ? 1 : -1));
 
-                if(resultsData.length === 0) {
-                    return (
-                        <div>No Results</div>
-                    );
-                } else {
-                    return (
-                        <div className="query-results-holder">
-                            <div className="query-results-header">
-                                <h5>Query Results</h5>
-                                <div className="query-num-results">
-                                    Display: {resultsData.length} Results 
+                    if(resultsData.length === 0) {
+                        return (
+                            <div>No Results</div>
+                        );
+                    } else {
+                        return (
+                            <div className="query-results-holder">
+                                <div className="query-results-header">
+                                    <h5>Query Results</h5>
+                                    <div className="query-num-results">
+                                        Display: {resultsData.length} Results 
+                                    </div>
+                                    <PerformanceStatistics resultsData={resultsData}/>
                                 </div>
-                                <PerformanceStatistics resultsData={resultsData}/>
+                                <QueryResultsTable columns={columns} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} rows={resultsData} name={this.props.name}
+                                    groupByOptions={options} setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} ref={this.props.queryResultsTableRef}/>
                             </div>
-                            <QueryResultsTable columns={columns} rows={resultsData} groupByOptions={options}/>
-                        </div>
-                    );
+                        );
+                    }
                 }
             }
-        }
-        </Query>
-    );
-}
+            </Query>
+        );
+    }
+};
 
-const ResultsTable =({queryObj}) => {
-    if(_.isEmpty(queryObj)) {
-        return(<div>Enter some parameters to see query results.</div>);
-    } else {
-        return(<Results queryObj={queryObj}/>)
+
+class ResultsTable extends React.Component {
+    render() {
+        if(_.isEmpty(this.props.queryObj)) {
+            return(<div>Enter some parameters to see query results.</div>);
+        } else {
+            return(<Results queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} name={this.props.name}
+                setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>)
+        }
     }
 };
 
 
 class QueryResults extends React.Component {
-
     render() {
         return (
             <div className="query-results-holder">
-                <ResultsTable queryObj={this.props.queryObj}/>
+                <ResultsTable queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} name={this.props.name}
+                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>
             </div>
         );
     }
