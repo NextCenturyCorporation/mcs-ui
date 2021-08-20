@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -21,6 +21,9 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
 import {PerformanceStatistics, getStats} from './performanceStatistics';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Button from '@material-ui/core/Button'
+import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -81,6 +84,53 @@ function TablePaginationActions(props) {
     );
 }
 
+function SearchCategoryOption ({searchCategory, setTitle}) {
+    return (
+        <NavDropdown.Item eventKey={searchCategory.dataKey} onClick={()=> setTitle(searchCategory.title)}> 
+            {searchCategory.title}
+        </NavDropdown.Item>
+    )
+}
+
+const theme = createTheme({
+    palette: {
+      primary: {
+            main:"rgba(0, 123, 255, 0.8)",
+        },
+    }
+  });
+
+function QueryResultsSearchBar({setSearch, searchCategories, setSearchCategory, searchAllRows, setSearchAllRows}) {
+    const [searchTitle, setTitle] = useState('All Categories');
+    const [searchInputTextValue, setSearchInputTextValue] = useState('');
+
+    let searchCategoriesCopy = [...searchCategories]
+    searchCategoriesCopy.unshift({dataKey: "all", title: "All Categories"})
+
+    return (
+        <div className="table-query-search-container">
+            <div className="table-query-search-container">
+                <span className="material-icons icon-margin-left" style={{paddingRight: "5px", paddingTop: "7px", borderBottom: "1px solid", borderBottomStyle:"inset"}}>
+                        search
+                </span>
+                <input className="table-query-search-bar" type="text" id="loadQuerySearchBar" placeholder="Search..." onChange={(e)=>setSearchInputTextValue(e.target.value)}/>
+            </div>
+            <MuiThemeProvider theme={theme}>
+                <Button style={{borderRadius:"20px"}} variant={"outlined"}  size="small" color="primary" disableElevation onClick={()=>setSearch(searchInputTextValue)}>Search</Button>
+                <div style={{paddingLeft:"10px"}}/>
+                <Button style={{borderRadius:"20px"}} size="small" variant={searchAllRows?"contained":"outlined"} color="primary" disableElevation onClick={()=>setSearchAllRows()}>All Rows</Button>
+            </MuiThemeProvider>
+            <NavDropdown title={searchTitle} id="querySearchCategoryDropdown" onSelect={()=> console.log("hello there")} searchCategories={searchCategories} onSelect={setSearchCategory}>
+            {
+                searchCategoriesCopy.map((searchCategory, key) => {
+                    return(<SearchCategoryOption key={`searchCategory-${key}`} searchCategory={searchCategory} setTitle={setTitle}/>
+                    )})
+            }
+            </NavDropdown>
+        </div>
+    )
+}
+
 TablePaginationActions.propTypes = {
     count: PropTypes.number.isRequired,
     onChangePage: PropTypes.func.isRequired,
@@ -97,7 +147,10 @@ class QueryResultsTable extends React.Component {
             sortOrder: "asc",
             expandedGroups: [],
             page: 0,
-            rowsPerPage: 10
+            rowsPerPage: 10,
+            search: "",
+            searchCategory: "all",
+            searchAllRows: false
         };
 
         this.handleChangePage = this.handleChangePage.bind(this);
@@ -263,6 +316,42 @@ class QueryResultsTable extends React.Component {
         downloader.click(); //download
     }
 
+    setSearch = (search) => {
+        this.setState({search:search});
+    }
+
+    setSearchCategory = (category) => {
+        this.setState({searchCategory:category});
+    }
+
+    setSearchAllRows = () => {
+        this.setState({searchAllRows:!this.state.searchAllRows});
+    }
+
+    parseSearch = (rowItem, columnData) => {
+        const searchContains = text => text!==undefined && text.toString().toLowerCase().includes(this.state.search.toLowerCase());
+        
+        for (let i=0; i<columnData.length; i++) {
+            let columnItemText = _.get(rowItem, columnData[i].dataKey);
+            columnItemText = Array.isArray(columnItemText) ? columnItemText[0] : columnItemText;
+            if(this.state.searchCategory !== "all" && columnData[i].dataKey === this.state.searchCategory && searchContains(columnItemText)) {
+                return true;
+            }
+            else if (this.state.searchCategory === "all" && searchContains(columnItemText)) 
+                return true;
+        }
+        return false;
+    }
+
+    groupByParseSearch = (row, columnData) => {
+        for(let i=0; i<row.length; i++) {
+            let match = this.parseSearch(row[i], columnData);
+            if(match === true) 
+                return true;
+        }
+        return false;
+    }
+
     render() {
         let { rows, columns } = this.props;
         let columnData = this.getColumnData(columns);
@@ -273,6 +362,7 @@ class QueryResultsTable extends React.Component {
     
         return (
             <div className="query-results-table-holder">
+                <QueryResultsSearchBar setSearch={this.setSearch} searchCategories={columnData} setSearchCategory={this.setSearchCategory} setSearchAllRows={this.setSearchAllRows} searchAllRows={this.state.searchAllRows}/>
                 <div className="csv-results-group-holder">
                     <div className="csv-results-child" style={{paddingTop: '25px', paddingLeft: '40px'}}>
                         <IconButton style={{padding: '7px', borderRadius: '10px', fontSize: '1rem'}} onClick={this.downloadCSV}>
@@ -310,9 +400,10 @@ class QueryResultsTable extends React.Component {
                         <TableBody>
                             {this.state.groupBy === "" && 
                                 <React.Fragment>
-                                    {(this.state.rowsPerPage > 0 ? 
+                                    {(this.state.searchAllRows && this.state.search !== "" ? groupedData : this.state.rowsPerPage > 0 ? 
                                         groupedData.slice(this.state.page * this.state.rowsPerPage, 
                                             this.state.page * this.state.rowsPerPage + this.state.rowsPerPage) : groupedData).map((rowItem, rowKey) => (
+                                        this.parseSearch(rowItem, columnData) &&
                                         <TableRow key={'table_row_' + rowKey}>
                                             <TableCell key={'table_cell_' + rowKey + "_link"}>
                                                 <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
@@ -344,21 +435,24 @@ class QueryResultsTable extends React.Component {
                                 <>
                                     {Object.keys(groupedData).sort().map(key => {return (
                                         <React.Fragment key={"react_frag_row_" + key}>
-                                            <TableRow key={"grouped_table_row_" + key}>
-                                                <TableCell colSpan={columnData.length + 1}>
-                                                    <IconButton onClick={this.expandRow.bind(null, key)}>
-                                                        <Icon>
-                                                            {this.groups[key] ? "expand_more" : "chevron_right"}
-                                                        </Icon>
-                                                    </IconButton>
-                                                    <span className="grouped_table_row_span">
-                                                        {key + " (" + groupedData[key].length + ")"}
-                                                    </span>
-                                                    <PerformanceStatistics resultsData={groupedData[key]}/>
-                                                </TableCell>
-                                            </TableRow>
+                                            {(this.groupByParseSearch(groupedData[key], columnData)) &&
+                                                <TableRow key={"grouped_table_row_" + key}>
+                                                    <TableCell colSpan={columnData.length + 1}>
+                                                        <IconButton onClick={this.expandRow.bind(null, key)}>
+                                                            <Icon>
+                                                                {this.groups[key] ? "expand_more" : "chevron_right"}
+                                                            </Icon>
+                                                        </IconButton>
+                                                        <span className="grouped_table_row_span">
+                                                            {key + " (" + groupedData[key].length + ")"}
+                                                        </span>
+                                                        <PerformanceStatistics resultsData={groupedData[key]}/>
+                                                    </TableCell>
+                                                </TableRow>
+                                            }
 
                                             {this.groups[key] && groupedData[key].map((rowItem, rowKey) => (
+                                                (this.parseSearch(rowItem, columnData)) &&
                                                 <TableRow key={'table_row_grouped_' + rowKey}>
                                                     <TableCell key={'table_cell_grouped_' + rowKey + "_link"}>
                                                     <ToolTipWithStyles arrow={true} title='View Details' placement='right'>

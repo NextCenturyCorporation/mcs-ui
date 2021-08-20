@@ -945,6 +945,22 @@ ol, ul {
     padding: 5px;
 }
 
+.table-query-search-container {
+    display: flex;
+}
+
+
+.table-query-search-bar {
+    border:0; 
+    outline:0; 
+    border-bottom: 1px solid; 
+    border-bottom-style: inset;
+}
+
+.table-query-search-button {
+    border-radius: 10px;
+}
+
 ::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
