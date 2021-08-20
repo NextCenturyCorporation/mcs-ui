@@ -110,7 +110,7 @@ function QueryResultsSearchBar({setSearch, searchCategories, setSearchCategory, 
     return (
         <div className="table-query-search-container">
             <div className="table-query-search-container">
-                <span className="material-icons icon-margin-left" style={{paddingRight: "5px", paddingTop: "7px", borderBottom: "1px solid", borderBottomStyle:"inset"}}>
+                <span className="material-icons icon-margin-left table-query-search-icon">
                         search
                 </span>
                 <input className="table-query-search-bar" type="text" id="loadQuerySearchBar" placeholder="Search..." onChange={(e)=>setSearchInputTextValue(e.target.value)}/>

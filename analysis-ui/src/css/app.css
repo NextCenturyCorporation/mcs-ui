@@ -949,6 +949,12 @@ ol, ul {
     display: flex;
 }
 
+.table-query-search-icon {
+    padding-right: 5px; 
+    padding-top: 7px;
+    border-bottom: 1px solid; 
+    border-bottom-style: inset;
+}
 
 .table-query-search-bar {
     border:0; 
