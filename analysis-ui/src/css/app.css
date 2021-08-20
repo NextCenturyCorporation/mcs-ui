@@ -798,6 +798,17 @@ ol, ul {
     border-bottom: 1px solid #dee2e6;
 }
 
+.load-query-search-icon {
+    padding-right: 5px;
+    padding-top: 7px;
+    border-bottom: 1px solid;
+    border-bottom-style: inset
+}
+
+.load-query-modal {
+    min-width: min-content;
+}
+
 .icon-margin-right {
     margin-right: 25px;
 }

@@ -20,7 +20,7 @@ const LOAD_SAVED_QUERIES = gql`
 function LoadQuerySearchBar({setSearch}) {
     return (
         <div className="load-query-search-container">
-            <span className="material-icons icon-margin-left" style={{paddingRight: "5px", paddingTop: "7px", borderBottom: "1px solid", borderBottomStyle:"inset"}}>
+            <span className="material-icons icon-margin-left load-query-search-icon">
                     search
             </span>
             <input className="load-query-search-bar" type="text" id="loadQuerySearchBar" placeholder="Search..." onChange={(e)=>setSearch(e.target.value)}/>
@@ -43,7 +43,7 @@ function LoadQueryModal({show, onHide, currentUser, loadQueryHandler}) {
     }
 
     return (
-        <Modal show={show} onHide={closeModal} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal show={show} onHide={closeModal} size="lg" aria-labelledby="contained-modal-title-vcenter" contentClassName="load-query-modal" centered>
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter-load">Load Query</Modal.Title>
             </Modal.Header>
