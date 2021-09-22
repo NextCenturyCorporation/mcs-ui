@@ -1,6 +1,7 @@
 const { gql } = require('apollo-server');
 const { mcsDB } = require('./server.mongo');
 const mongoDb = require("mongodb");
+const { MONGO_DB, BUCKET } = require('./config');
 const { GraphQLScalarType, Kind } = require("graphql");
 const { statsByScore, statsByTestType } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
@@ -510,7 +511,7 @@ const mcsResolvers = {
             return await mcsDB.db.collection('savedQueries').remove({_id:  mongoDb.ObjectID(args["_id"])});
         },
         createCSV: async(obj, args, context, infow) => { 
-            const pythonProcess = spawn('python3',["./csv-scripts/generate_csv.py", args["collectionName"], args["eval"]]);
+            const pythonProcess = spawn('python3',["./csv-scripts/generate_csv.py", args["collectionName"], args["eval"], MONGO_DB, BUCKET]);
 
             pythonProcess.stdout.on('data', (data) => {
                 console.log(data.toString());

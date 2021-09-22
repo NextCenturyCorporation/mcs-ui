@@ -4,8 +4,9 @@ import gql from 'graphql-tag';
 import Select from 'react-select';
 import EvalStatusConfigureModal from './evalStatusConfigure';
 import CreateCSVModal from './createCSVModal';
+import {RESOURCES_URL} from '../../services/config';
 
-const CSV_URL_PREFIX = "https://resources.machinecommonsense.com/csv-db-files/Evaluation_";
+const CSV_URL_PREFIX = RESOURCES_URL + "/csv-db-files/Evaluation_";
 const CSV_URL_SCENE_SUFFIX = "_Scenes.csv";
 const CSV_URL_RESULTS_SUFFIX = "_Results.csv";
 const EvaluationStatusQuery = "getEvaluationStatus";
