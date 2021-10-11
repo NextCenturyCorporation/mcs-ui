@@ -375,7 +375,7 @@ class Scenes extends React.Component {
                                         }
 
                                         return (
-                                            <div>
+                                            <div className="scene-container">
                                                 { this.checkIfScenesExist(scenesByPerformer) &&
                                                     this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
                                                     this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 

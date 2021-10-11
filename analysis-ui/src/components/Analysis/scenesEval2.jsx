@@ -243,7 +243,7 @@ class ScenesEval2 extends React.Component {
 
                                     if(scenesInOrder.length > 0) {
                                         return (
-                                            <div>
+                                            <div className="scene-container">
                                                 <div className="flags-holder">
                                                     <FlagCheckboxMutation state={this.state} currentState={currentState}/>
                                                 </div>
