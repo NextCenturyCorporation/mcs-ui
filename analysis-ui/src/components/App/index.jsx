@@ -312,10 +312,10 @@ export class App extends React.Component {
                     }
 
                     <Switch>
-                        <Route exact path="/">
+                        <Route path="/">
                             <Home newState={this.state}/>
                         </Route>
-                        <Route exact path="/query">
+                        <Route path="/query">
                             <QueryBuilder newState={this.state}/>
                         </Route>
                         <Route path="/analysis">

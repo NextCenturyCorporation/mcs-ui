@@ -3,7 +3,7 @@ const { mcsDB } = require('./server.mongo');
 const mongoDb = require("mongodb");
 const { MONGO_DB, BUCKET } = require('./config');
 const { GraphQLScalarType, Kind } = require("graphql");
-const { statsByScore, statsByTestType } = require('./server.statsFunctions');
+const { getChartOptions, getChartData } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
 const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyExcludeFieldsTable, 
     sceneExcludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
@@ -127,11 +127,13 @@ const mcsTypeDefs = gql`
     getSceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getCollectionFields(collectionName: String): [dropDownObj]
     createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
-    getHomeStats(eval: String): homeStatsObject
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String): JSON
     getUsers: JSON
+    getEvalTestTypes(eval: String): [String]
+    getHomeChartOptions(eval: String, evalType: String): JSON
+    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isWeighted: Boolean): JSON
   }
 
   type Mutation {
@@ -385,77 +387,54 @@ const mcsResolvers = {
 
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
-        getHomeStats: async(obj, args, context, infow)=> {
-            let scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
-                {"$match": 
-                    {
-                      "eval": args.eval,
-                    },
-                },
-                {"$group": 
-                    {"_id": {
-                        "correct": "$score.score", 
-                        "plausibililty": "$score.ground_truth",
-                        "performer": "$performer", 
-                        "category": "$category",
-                        "test_type": "$test_type",
-                        "metadata": "$metadata",
-                        "weight": "$score.weighted_score_worth",
-                        "weight_score": "$score.weighted_score"
-                    }, 
-                    "count": {"$sum": 1}}
-                }]).toArray();
+        getEvalTestTypes: async(obj, args, context, infow)=> {
+            return await mcsDB.db.collection('mcs_history').distinct(
+                "test_type", {"eval": args.eval}).then(result => {return result});
+        },
+        getHomeChartOptions: async(obj, args, context, infow)=> {
+            const metadata =  await mcsDB.db.collection('mcs_history').distinct(
+                "metadata", {"eval": args.eval, "test_type": args.evalType}).then(result => {return result});
 
-            let statsByScoreObject = statsByScore(scoreStats, false);
-            let weighedStatsByScoreObject = statsByScore(scoreStats, true);
-
-            let testTypeStats = await mcsDB.db.collection('mcs_history').aggregate([
-                {"$match": 
-                    {
-                      "eval": args.eval,
-                    },
-                },
-                {"$group": 
-                    {"_id": {
-                        "correct": "$score.score", 
-                        "performer": "$performer", 
-                        "category_type": "$category_type", 
-                        "category": "$category",
-                        "test_type": "$test_type",
-                        "metadata": "$metadata",
-                        "weight": "$score.weighted_score_worth",
-                        "weight_score": "$score.weighted_score"
-                    }, 
-                    "count": {"$sum": 1}}
-                }]).toArray();
-
-            let testTypeScores = statsByTestType(testTypeStats, false);
-            let weightedTestTypeScores = statsByTestType(testTypeStats, true);
-
-            let stats = {
-                ...statsByScoreObject,
-                ...testTypeScores
+            return getChartOptions(args.evalType, metadata);
+        },
+        getHomeChart: async(obj, args, context, infow)=> {
+            //eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isWeighted: Boolean
+            let groupObject = {
+                "performer": "$performer",
+                "correct": "$score.score"
             };
 
-            let weightedStats = {
-                ...weighedStatsByScoreObject,
-                ...weightedTestTypeScores
+            let searchObject = {
+                "eval": args.eval,
+                "test_type": args.evalType
+            };
+
+            if(args.evalType !== 'interactive') {
+                groupObject["weight"] = "$score.weighted_score_worth";
             }
 
-            const performers =  await mcsDB.db.collection('mcs_history').distinct(
-                "performer", {"eval": args.eval}).then(result => {return result});
-
-            let statsObj = {
-                stats: stats,
-                weightedStats: weightedStats,
-                performers: performers
+            if(args.metadata !== "total" && args.metadata !== undefined && args.metadata !== null) {
+                searchObject["metadata"] = args.metadata;
             };
 
-            return statsObj;
+            if(!args.isPlausibility) {
+                groupObject["category_type"] = "$category_type";
+            } else {
+                groupObject["plausibililty"] = "$score.ground_truth";
+            }
+
+            let scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
+                    {"$match": searchObject}, {"$group": {"_id": groupObject, "count": {"$sum": 1}}
+                }]).toArray();
+
+            scoreStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
+
+            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType);
         },
         getUsers: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('users').find().project({"services":0, "createdAt":0, "updatedAt": 0})
                 .toArray().then(result => {return result});
+            
         }
     }, 
     Mutation: {
