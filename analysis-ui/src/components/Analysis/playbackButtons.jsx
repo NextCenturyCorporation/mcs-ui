@@ -7,7 +7,6 @@ const sceneMovieName = "interactiveMoviePlayer";
 const topDownMovieName = "topDownInteractiveMoviePlayer";
 
 class SpeedOption extends React.Component {
-
     render() {
         return (
             <NavDropdown.Item eventKey={this.props.speed}> 

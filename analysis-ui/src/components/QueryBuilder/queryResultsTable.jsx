@@ -20,7 +20,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Select from 'react-select';
 import {Link} from 'react-router-dom';
-import PerformanceStatistics from './performanceStatistics';
+import {PerformanceStatistics, getStats} from './performanceStatistics';
 
 function getSorting(order, orderBy) {
     return order === "desc"
@@ -299,11 +299,6 @@ class QueryResultsTable extends React.Component {
                             <span className="material-icons">
                                 get_app
                             </span>CSV
-                            {/*
-                            <CSVLink {...this.csvDownload}>
-                                CSV
-                            </CSVLink>
-                            */}
                         </IconButton>
                     </div>
                     <div className="csv-results-child">
