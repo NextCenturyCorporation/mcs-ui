@@ -1,10 +1,13 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { LinkContainer } from 'react-router-bootstrap';
+import Search from '@material-ui/icons/Search';
+import TextField from '@material-ui/core/TextField';
 
 const GET_FIELD_AGG = gql`
     query getFieldAggregation($fieldName: String!){
@@ -115,6 +118,25 @@ class NavListItem extends React.Component {
 
 // TODO: MCS-516: add filtering/type ahead + up/down buttons
 class NavList extends React.Component {
+
+    constructor() {
+        super();
+
+        this.state = {
+            filterText: ''
+        }
+
+        this.onFilterChange = this.onFilterChange.bind(this);
+    }
+
+    onFilterChange(event) {
+        this.setState({filterText: event.target.value});
+    }
+
+    filterCheck(item) {
+        return (item.toString().toUpperCase().includes(this.state.filterText.toUpperCase()) || this.state.filterText === '');
+    }
+
     render() {
         let queryName = GET_FIELD_AGG;
         let headerText = this.props.title;
@@ -157,14 +179,40 @@ class NavList extends React.Component {
                             }
                         }
 
-                        return (
-                            <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
-                                {options.map((item,key) =>
-                                    <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
-                                        item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
-                                )}
+                        if(this.props.hasFilter) {
+                            return (
+                                <>
+                                    <TextField
+                                        className="nav-filter"
+                                        id="input-with-icon-textfield"
+                                        value={this.state.filterText}
+                                        onChange={this.onFilterChange}
+                                        InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <Search />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    />
+                                    <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
+                                        {options.filter((item) => this.filterCheck(item)).map((item,key) =>
+                                                <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
+                                                    item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
+                                            )}
+                                    </List>
+                                </>
+                            )
+                        } else {
+                            return (
+                                <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
+                                    {options.map((item,key) =>
+                                        <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
+                                            item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
+                                    )}
                             </List>
-                        )
+                            )
+                        }
                     }
                 }
                 </Query>
@@ -183,17 +231,17 @@ class EvalNav2 extends React.Component {
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval !== EVAL_2_IDENTIFIER) &&
                     <NavList title={"Category Type"}
-                        id="basic-nav-dropdown" fieldName={"category_type"} stateName={"category_type"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        id="basic-nav-dropdown" fieldName={"category_type"} stateName={"category_type"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval === EVAL_2_IDENTIFIER) &&
                     <NavList title={"Test Type"}
-                        id="basic-nav-dropdown" fieldName={"test_type"} stateName={"test_type"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        id="basic-nav-dropdown" fieldName={"test_type"} stateName={"test_type"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
                     <NavList title={"Test Number"}
-                        id="basic-nav-dropdown" fieldName={"test_num"} stateName={"test_num"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                        id="basic-nav-dropdown" fieldName={"test_num"} stateName={"test_num"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }
             </>
         );

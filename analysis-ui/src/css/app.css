@@ -1077,6 +1077,16 @@ ol, ul {
     background-color: #F8F8F8;
 }
 
+.nav-filter {
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
+.nav-filter.MuiInputBase-input{
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
 /* TODO: MCS-516
 .scene-header {
     background-color: #e3e7ea;
