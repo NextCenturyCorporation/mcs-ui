@@ -410,6 +410,7 @@ const mcsResolvers = {
 
             if(args.evalType !== 'interactive') {
                 groupObject["weight"] = "$score.weighted_score_worth";
+                groupObject["weight_score"] = "$score.weighted_score";
             }
 
             if(args.metadata !== "total" && args.metadata !== undefined && args.metadata !== null) {

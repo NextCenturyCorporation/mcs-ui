@@ -20,7 +20,7 @@ class ChartContainer extends React.Component {
             chartOption: props.chartOptions[0],
             metadata: this.getMetadataLevel(props.chartOptions[0]),
             isPlausibility: this.getPlausibility(props.chartOptions[0]),
-            isWeighted: false
+            isWeighted: this.props.testType.toLowerCase() === 'interactive'? false : true
         }
 
         this.toggleChartOptions = this.toggleChartOptions.bind(this);
@@ -138,7 +138,7 @@ class ChartContainer extends React.Component {
                         "isWeighted": this.state.isWeighted}}>
                     {
                         ({ loading, error, data }) => {
-                            if (loading) return <div>No stats yet</div> 
+                            if (loading) return <div></div> 
                             if (error) return <div>Error</div>
 
                             let chartData = data[getHomeChart]

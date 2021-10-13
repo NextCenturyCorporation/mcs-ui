@@ -138,7 +138,8 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
         for(let i = 0; i < scoreStats.length; i++) {
             const performer = scoreStats[i]["_id"]["performer"];
             const weightedValue = isWeighted ? scoreStats[i]["_id"]["weight"] : 1;
-            if(scoreStats[i]["_id"]["correct"] === 1) {
+            const isCorrect = isWeighted ? scoreStats[i]["_id"]["weight_score"] > 0 : scoreStats[i]["_id"]["correct"];
+            if(isCorrect) {
                 updateOverall(scoreOverallCorrect, scoreStats[i], performer, weightedValue);
                 if(scoreStats[i]["_id"]["plausibililty"] === 1) {
                     updateOverall(scorePlausibleCorrect, scoreStats[i], performer, weightedValue);
@@ -182,8 +183,9 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
         for(let i = 0; i < scoreStats.length; i++) {
             const performer = scoreStats[i]["_id"]["performer"];
             const weightedValue = isWeighted ? scoreStats[i]["_id"]["weight"] : 1;
+            const isCorrect = isWeighted ? scoreStats[i]["_id"]["weight_score"] > 0 : scoreStats[i]["_id"]["correct"];
             // Only Add Correct Items to Totals
-            if(scoreStats[i]["_id"]["correct"] === 1) {
+            if(isCorrect) {
                 // Update Overall/Total
                 updateOverall(overallStats, scoreStats[i], performer, weightedValue);
                 // Update Category/Plausibility
