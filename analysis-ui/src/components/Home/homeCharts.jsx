@@ -114,7 +114,7 @@ class HomeCharts extends React.Component {
                             if (loading) return <div>No stats yet</div> 
                             if (error) return <div>Error</div>
 
-                            let testTypes = data[evalTestTypes].reverse()
+                            let testTypes = data[evalTestTypes].sort().reverse()
                             
                             // let homeStats = data[homeStatsQuery];
 

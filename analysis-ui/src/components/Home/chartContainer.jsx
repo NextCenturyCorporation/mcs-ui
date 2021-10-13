@@ -22,6 +22,9 @@ class ChartContainer extends React.Component {
             isPlausibility: this.getPlausibility(props.chartOptions[0]),
             isWeighted: false
         }
+
+        this.toggleChartOptions = this.toggleChartOptions.bind(this);
+        this.handleWeightedToggle = this.handleWeightedToggle.bind(this);
     }
 
     getMetadataLevel(valueToCheck) {
@@ -54,7 +57,6 @@ class ChartContainer extends React.Component {
     }
 
     getMaxChartValue(numTotal) {
-        console.log("getMaxChartValue", numTotal);
         return this.props.isPercent ? 100 : numTotal;
     }
 
@@ -67,7 +69,7 @@ class ChartContainer extends React.Component {
 
     getChartLegendLabel() {
         if(this.props.testType.toLowerCase() === 'agents') {
-            if(this.props.isPlausibility) {
+            if(this.state.isPlausibility) {
                 return this.props.isPercent ? "% Expectness Tests" : "Number of Expectness Tests";
             } else {
                 return this.props.isPercent ? "% Correct Tests" : "Number of Correct Tests";
@@ -75,7 +77,7 @@ class ChartContainer extends React.Component {
         } else if(this.props.testType.toLowerCase() === 'interactive') {
             return this.props.isPercent ? "% Goal Achieved Tests" : "Number Goal Achieved Tests";
         } else {
-            if(this.props.isPlausibility) {
+            if(this.state.isPlausibility) {
                 return this.props.isPercent ? "% Plausibility Tests" : "Number of Plausibility Tests";
             } else {
                 return this.props.isPercent ? "% Correct Tests" : "Number of Correct Tests";
@@ -94,6 +96,16 @@ class ChartContainer extends React.Component {
         return data;
     }
 
+    handleWeightedToggle(val) {
+        if(val.length === 0) {
+            return;
+        }
+        
+        this.setState({
+            isWeighted: val[1]
+        });
+    }
+
     render() {
         return (
             <div className='chart-home-container'>
@@ -108,6 +120,14 @@ class ChartContainer extends React.Component {
                             defaultValue={this.state.chartOption}
                         />
                     </div>
+                    {this.props.testType.toLowerCase() !== 'interactive' &&
+                        <div className="chart-weight-toggle">
+                            <ToggleButtonGroup type="checkbox" value={this.state.isWeighted} onChange={this.handleWeightedToggle}>
+                                <ToggleButton variant="secondary" value={true}>{this.props.testType.toLowerCase() === 'agents' ? 'Paired' : 'Weighted'}</ToggleButton>
+                                <ToggleButton variant="secondary" value={false}>{this.props.testType.toLowerCase() === 'agents' ? 'Unpaired' : 'Unweighted'}</ToggleButton>
+                            </ToggleButtonGroup>
+                        </div>
+                    }
                 </div>
                 <Query query={get_home_chart} variables={{
                         "eval": this.props.eval.value,

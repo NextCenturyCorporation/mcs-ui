@@ -17,24 +17,31 @@ function getChartOptions(evalType, metadata) {
         case "intuitive physics":
             chartOptions = [{label: "Total", value:"total"}, {label: "Total By Plausibility", value: "totalByPlausibility"}];
             for(let i=0; i < metadata.length; i++) {
-                const prettyName = getMetaDataPrettyName(metadata[i]);
-                chartOptions.push({label: prettyName, value: metadata[i]});
-                chartOptions.push({label: prettyName + " by Plausibility", value: metadata[i] + "ByPlausibility"});
+                if(metadata[i] !== null) {
+                    const prettyName = getMetaDataPrettyName(metadata[i]);
+                    chartOptions.push({label: prettyName, value: metadata[i]});
+                    chartOptions.push({label: prettyName + " by Plausibility", value: metadata[i] + "ByPlausibility"});
+                }
             }
             break;
         case "agents":
             chartOptions = [{label: "Total", value:"total"}, {label: "Total By Expected", value: "totalByExpected"}];
             for(let i=0; i < metadata.length; i++) {
-                const prettyName = getMetaDataPrettyName(metadata[i]);
-                chartOptions.push({label: prettyName, value: metadata[i]});
-                chartOptions.push({label: prettyName + " by Expected", value: metadata[i] + "ByExpected"});
+                if(metadata[i] !== null) {
+                    const prettyName = getMetaDataPrettyName(metadata[i]);
+                    chartOptions.push({label: prettyName, value: metadata[i]});
+                    chartOptions.push({label: prettyName + " by Expected", value: metadata[i] + "ByExpected"});
+                }
             }
             break;
         case "interactive":
             chartOptions = [{label: "Total", value:"total"}];
+            console.log(metadata);
             for(let i=0; i < metadata.length; i++) {
-                const prettyName = getMetaDataPrettyName(metadata[i]);
-                chartOptions.push({label: prettyName, value: metadata[i]});
+                if(metadata[i] !== null) {
+                    const prettyName = getMetaDataPrettyName(metadata[i]);
+                    chartOptions.push({label: prettyName, value: metadata[i]});
+                }
             }
             break;
         default:

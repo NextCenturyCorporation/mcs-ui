@@ -398,7 +398,6 @@ const mcsResolvers = {
             return getChartOptions(args.evalType, metadata);
         },
         getHomeChart: async(obj, args, context, infow)=> {
-            //eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isWeighted: Boolean
             let groupObject = {
                 "performer": "$performer",
                 "correct": "$score.score"
