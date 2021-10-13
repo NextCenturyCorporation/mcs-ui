@@ -144,8 +144,6 @@ class ChartContainer extends React.Component {
                             let chartData = data[getHomeChart]
                             const performers = this.getChartKeys(chartData.data);
 
-                            console.log("chartData", chartData);
-
                             return (
                                 <ResultsChart chartKeys={performers} chartData={this.checkDataForUndefined(chartData.data, performers)} 
                                     chartIndex={"test_type"} maxVal={this.getMaxChartValue(chartData.total)} legendLabel={this.getChartLegendLabel()}/>
