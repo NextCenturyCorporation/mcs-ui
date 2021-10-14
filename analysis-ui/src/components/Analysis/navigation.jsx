@@ -58,24 +58,8 @@ class NavListItem extends React.Component {
 
         if(this.props.stateName === 'eval') {
             // We have 2 cases: "eval 2" and "every other eval"
-            let isValidEval2 = hasTestTypeState && this.props.item === EVAL_2_IDENTIFIER;
-            let isValidOtherEval = hasCatTypeState && this.props.item !== EVAL_2_IDENTIFIER;
-
-            if(hasPerformer) {
-                paramsToAppend += "&performer=" + this.props.state["performer"];
-            }
-
-            if(isValidEval2) {
-                paramsToAppend += "&test_type=" + this.props.state["test_type"];
-            } else if(isValidOtherEval) {
-                paramsToAppend += "&category_type=" + this.props.state["category_type"];
-            }
-
-            if(hasTestNumState && (isValidEval2 || isValidOtherEval)) {
-                paramsToAppend += "&test_num=" + this.props.state["test_num"];
-            }
-
-            params = "?eval=" + this.props.item + paramsToAppend;
+            // don't append other params if picking a different eval (old params likely don't apply)
+            params = "?eval=" + this.props.item;
         } else if(hasEvalState && this.props.stateName === 'performer') {
 
             paramsToAppend += "&performer=" + this.props.item;
