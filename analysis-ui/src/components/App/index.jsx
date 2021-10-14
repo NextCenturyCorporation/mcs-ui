@@ -105,7 +105,7 @@ function Home({newState}) {
     return <HomePage/>;
 }
 
-function Login({newState, userLoginHandler}) {
+function Login({newState, userLoginHandler, updateHandler}) {
     if(newState.currentUser !== null) {
         if(newState.eval) {
             let analysisString = "/analysis?eval=" + newState.eval;
@@ -125,6 +125,7 @@ function Login({newState, userLoginHandler}) {
             } 
 
             history.push(analysisString);
+            return <AnalysisUI newState={newState} updateHandler={updateHandler}/>
         } else {
             return <Home newState={newState}/>;
         }
