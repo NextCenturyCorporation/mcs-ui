@@ -54,6 +54,7 @@ class NavListItem extends React.Component {
         let hasCatTypeState = this.props.state["category_type"] !== undefined && this.props.state["category_type"] !== null;
         let hasTestNumState = this.props.state["test_num"] !== undefined && this.props.state["test_num"] !== null;
         let hasPerformer = this.props.state["performer"] !== undefined && this.props.state["performer"] !== null;
+        let hasMetadata = this.props.state["metadata"] !== undefined && this.props.state["metadata"] !== null;
         let paramsToAppend = '';
 
         if(this.props.stateName === 'eval') {
@@ -63,6 +64,28 @@ class NavListItem extends React.Component {
         } else if(hasEvalState && this.props.stateName === 'performer') {
 
             paramsToAppend += "&performer=" + this.props.item;
+
+            if(hasMetadata) {
+                paramsToAppend += "&metadata=" + this.props.state["metadata"];
+            }
+
+            if(hasTestTypeState && isEval2) {
+                paramsToAppend += "&test_type=" + this.props.state["test_type"];
+            } else if(hasCatTypeState && isNotEval2) {
+                paramsToAppend += "&category_type=" + this.props.state["category_type"];
+            }
+
+            if(hasTestNumState) {
+                paramsToAppend += "&test_num=" + this.props.state["test_num"];
+            }
+
+            params = "?eval=" + this.props.state["eval"] + paramsToAppend;
+        } else if(hasEvalState && this.props.stateName === 'metadata') {
+            if(hasPerformer) {
+                paramsToAppend += "&performer=" + this.props.state["performer"];
+            }
+
+            paramsToAppend += "&metadata=" + this.props.item;
 
             if(hasTestTypeState && isEval2) {
                 paramsToAppend += "&test_type=" + this.props.state["test_type"];
@@ -80,6 +103,10 @@ class NavListItem extends React.Component {
                 paramsToAppend += "&performer=" + this.props.state["performer"];
             }
 
+            if(hasMetadata) {
+                paramsToAppend += "&metadata=" + this.props.state["metadata"];
+            }
+
             paramsToAppend += "&test_type=" + this.props.item;
 
             if(hasTestNumState) {
@@ -92,6 +119,10 @@ class NavListItem extends React.Component {
                 paramsToAppend += "&performer=" + this.props.state["performer"];
             }
 
+            if(hasMetadata) {
+                paramsToAppend += "&metadata=" + this.props.state["metadata"];
+            }
+
             paramsToAppend += "&category_type=" + this.props.item;
 
             if(hasTestNumState) {
@@ -102,6 +133,10 @@ class NavListItem extends React.Component {
         } else if(hasEvalState && this.props.stateName === 'test_num') {
             if(hasPerformer) {
                 paramsToAppend += "&performer=" + this.props.state["performer"];
+            }
+
+            if(hasMetadata) {
+                paramsToAppend += "&metadata=" + this.props.state["metadata"];
             }
 
             if(hasTestTypeState && isEval2) {
@@ -165,7 +200,8 @@ class NavList extends React.Component {
         }
 
         if((this.props.fieldName === 'test_type' || this.props.fieldName === 'category_type' ||
-            this.props.fieldName === 'test_num' || this.props.fieldName == 'performer') && this.props.state.eval) {
+            this.props.fieldName === 'test_num' || this.props.fieldName === 'performer' ||
+            this.props.fieldName === 'metadata') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
 
             // TODO: MCS-516: add category/test type to this optionally??
@@ -211,7 +247,7 @@ class NavList extends React.Component {
                                     />
                                     <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
                                         {options.filter((item) => this.filterCheck(item)).map((item,key) =>
-                                                <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
+                                                <NavListItem stateName={this.props.stateName} state={this.props.state} 
                                                     item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
                                             )}
                                     </List>
@@ -221,7 +257,7 @@ class NavList extends React.Component {
                             return (
                                 <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
                                     {options.map((item,key) =>
-                                        <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
+                                        <NavListItem stateName={this.props.stateName} state={this.props.state} 
                                             item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
                                     )}
                             </List>
@@ -246,6 +282,11 @@ class EvalNav2 extends React.Component {
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
                     <NavList title={"Performer"}
                         id="basic-nav-dropdown" fieldName={"performer"} stateName={"performer"} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                }
+
+                {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
+                    <NavList title={"Metadata Level"}
+                        id="basic-nav-dropdown" fieldName={"metadata"} stateName={"metadata"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval !== EVAL_2_IDENTIFIER) &&
