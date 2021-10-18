@@ -201,11 +201,13 @@ class QueryResultsTable extends React.Component {
     }
 
     getAnalysisPageURL = (item) => {
-        if(item.scene.test_type && item.scene_num) {
-            return "/analysis?eval=" + item.eval + "&test_type=" + item.scene.test_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
+        if(item.scene.test_type) {
+            return "/analysis?eval=" + item.eval + "&performer=" + item.performer + 
+                "&test_type=" + item.scene.test_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
         } else {
-            // Eval 3 - use category_type
-            return "/analysis?eval=" + item.eval + "&category_type=" + item.category_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
+            // Eval 3+ - use category_type as well as metadata in the URL
+            return "/analysis?eval=" + item.eval + "&performer=" + item.performer + "&metadata=" + item.metadata + 
+                "&category_type=" + item.category_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
         }
     }
 

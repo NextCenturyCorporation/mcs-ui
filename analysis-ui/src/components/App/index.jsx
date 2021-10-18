@@ -81,7 +81,7 @@ const AnalysisUI = ({newState, updateHandler}) => {
             <div className="layout-board">
                 <Navigation state={newState} updateHandler={updateHandler}></Navigation>
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                {isEval2 && hasTestType && hasTestNum && <ScenesEval2 className="scene-view" value={newState} updateHandler={updateHandler}/>}
+                {isEval2 && hasPerformer && hasTestType && hasTestNum && <ScenesEval2 className="scene-view" value={newState} updateHandler={updateHandler}/>}
                 {(!isEval2) && hasPerformer && hasMetadata && hasCatType && hasTestNum && <Scenes className="scene-view" value={newState} updateHandler={updateHandler}/>}
             </div>
     </div>;

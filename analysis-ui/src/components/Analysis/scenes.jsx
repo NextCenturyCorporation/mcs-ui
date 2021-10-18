@@ -199,6 +199,7 @@ class Scenes extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
+    // TODO: MCS-516: update history query for eval 3+ onwards
     getSceneHistoryQueryObject = (evalName, categoryType, testNum, performer, metadata) => {
         return [
             {

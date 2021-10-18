@@ -3,8 +3,8 @@ import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 const mcs_history = gql`
-    query getEval2History($testType: String!, $testNum: Int!){
-        getEval2History(testType: $testType, testNum: $testNum) {
+    query getEval2History($testType: String!, $testNum: Int!, $performer: String!){
+        getEval2History(testType: $testType, testNum: $testNum, performer: $performer) {
             eval
             performer
             name
@@ -19,7 +19,7 @@ const mcs_history = gql`
             category_type
             category_pair
         }
-  }`;
+    }`;
 
 const flagRemoveMutation = gql`
     mutation updateSceneHistoryRemoveFlag($testType: String!, $testNum: Int!, $flagRemove: Boolean!) {
