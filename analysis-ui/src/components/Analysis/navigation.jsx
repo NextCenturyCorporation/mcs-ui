@@ -279,7 +279,7 @@ class EvalNav2 extends React.Component {
                 <NavList title={"Evaluation"}
                     id="basic-nav-dropdown" fieldName={"eval"} stateName={"eval"} state={this.props.state} updateHandler={this.props.updateHandler}/>
 
-                {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
+                {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval !== EVAL_2_IDENTIFIER) &&
                     <NavList title={"Performer"}
                         id="basic-nav-dropdown" fieldName={"performer"} stateName={"performer"} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }

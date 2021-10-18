@@ -14,8 +14,8 @@ let constantsObject = {};
 let currentState = {};
 
 const mcs_history = gql`
-    query getEval2History($testType: String!, $testNum: Int!, $performer: String!){
-        getEval2History(testType: $testType, testNum: $testNum, performer: $performer) {
+    query getEval2History($testType: String!, $testNum: Int!){
+        getEval2History(testType: $testType, testNum: $testNum) {
             eval
             performer
             name
@@ -70,7 +70,8 @@ class ScenesEval2 extends React.Component {
         super(props);
         this.playBackButtons = React.createRef();
         this.state = {
-            performer: props.value.performer,
+            currentPerformerKey: 0,
+            currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) : 1,
             flagRemove: false,
             flagInterest: false,
@@ -83,14 +84,24 @@ class ScenesEval2 extends React.Component {
         };
     }
 
-    setFlagState = (firstEval) => {
-        if(firstEval !== null && firstEval !== undefined && 
-            (firstEval["flags"]["remove"] !== this.state.flagRemove || firstEval["flags"]["interest"] !== this.state.flagInterest)) {
+    setInitialPerformer = (performer, firstEval) => {
+        if(this.state.currentPerformer === "") {
+            this.setState({
+                currentPerformer: performer
+            });
+        }
+
+        if(this.state.currentPerformer === "" && firstEval !== null && firstEval !== undefined) {
             this.setState({
                 flagRemove: firstEval["flags"]["remove"],
                 flagInterest: firstEval["flags"]["interest"]
             });
         }
+        this.resetPlaybackButtons();
+    }
+
+    changePerformer = (performerKey, performer) => {
+        this.setState({ currentPerformerKey: performerKey, currentPerformer: performer});
         this.resetPlaybackButtons();
     }
 
@@ -137,8 +148,7 @@ class ScenesEval2 extends React.Component {
     }
 
     createVideoLink = (bucketName) => {
-        return constantsObject[bucketName] + constantsObject["performerPrefixMapping"][this.props.value.performer] + 
-            this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"];
+        return constantsObject[bucketName] + constantsObject["performerPrefixMapping"][this.state.currentPerformer] + this.props.value.test_type + "-" + this.addLeadingZeroes(this.props.value.test_num) + "-" + (this.state.currentSceneNum) + constantsObject["movieExtension"];
     }
 
     resetPlaybackButtons = () => {
@@ -199,8 +209,7 @@ class ScenesEval2 extends React.Component {
         return (
             <Query query={mcs_history} variables={
                 {"testType": this.props.value.test_type, 
-                "testNum": parseInt(this.props.value.test_num),
-                "performer": this.props.value.performer
+                "testNum": parseInt(this.props.value.test_num)
                 }}
                 onCompleted={() => { if(this.props.value.scene === null) { this.changeScene(1); }}}>
             {
@@ -210,13 +219,14 @@ class ScenesEval2 extends React.Component {
                     
                     const evals = data[historyQueryName];
 
-                    let sceneHistoryArray = _.sortBy(evals, "scene_num");
-
-                    this.setFlagState(evals[0]);
+                    let scenesByPerformer = _.sortBy(evals, "scene_num");
+                    scenesByPerformer = _.groupBy(scenesByPerformer, "performer");
+                    let performerList = Object.keys(scenesByPerformer);
+                    this.setInitialPerformer(performerList[0], evals[0]);
 
                     setConstants(this.props.value.eval);
 
-                    if(sceneHistoryArray.length > 0) {
+                    if(performerList.length > 0) {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"testType": this.props.value.test_type, 
@@ -237,7 +247,7 @@ class ScenesEval2 extends React.Component {
                                                 <div className="flags-holder">
                                                     <FlagCheckboxMutation state={this.state} currentState={currentState}/>
                                                 </div>
-                                                { (sceneHistoryArray && sceneHistoryArray[0]["category"] === "observation") && 
+                                                { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "observation") && 
                                                     <div>
                                                         <div className="movie-holder">
                                                             <div className="movie-left-right">
@@ -258,10 +268,16 @@ class ScenesEval2 extends React.Component {
                                                     <h3>Scores</h3>
                                                 </div>
 
-                                                {sceneHistoryArray &&
+                                                <div className="performer-group btn-group" role="group">
+                                                    {performerList.map((performer, key) =>
+                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'} id={'toggle_performer_' + key} key={'toggle_' + performer} type="button" onClick={() => this.changePerformer(key, performer)}>{performer}</button>
+                                                    )}
+                                                </div>
+ 
+                                                {scenesByPerformer && scenesByPerformer[this.state.currentPerformer] &&
                                                     <ScoreTable
                                                         columns={scoreTableCols}
-                                                        currentPerformerScenes={sceneHistoryArray}
+                                                        currentPerformerScenes={scenesByPerformer[this.state.currentPerformer]}
                                                         currentSceneNum={this.state.currentSceneNum}
                                                         changeSceneHandler={this.changeScene}
                                                         scenesInOrder={scenesInOrder}
@@ -270,12 +286,11 @@ class ScenesEval2 extends React.Component {
                                                     />
                                                 }
 
-                                                { (sceneHistoryArray && sceneHistoryArray[0]["category"] === "interactive") && 
-
+                                                { (scenesByPerformer && scenesByPerformer[this.state.currentPerformer] && scenesByPerformer[this.state.currentPerformer][0]["category"] === "interactive") && 
                                                     <InteractiveScenePlayer evaluation={this.props.value.eval}
                                                         sceneVidLink={this.createVideoLink("interactiveMoviesBucket")}
                                                         topDownLink={this.createVideoLink("topDownMoviesBucket")}
-                                                        sceneHistoryItem={sceneHistoryArray[this.state.currentSceneNum - 1]}
+                                                        sceneHistoryItem={scenesByPerformer[this.state.currentPerformer][this.state.currentSceneNum - 1]}
                                                         ref={this.playBackButtons}
                                                         upOneScene={this.upOneScene}
                                                         downOneScene={this.downOneScene}

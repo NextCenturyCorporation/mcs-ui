@@ -113,7 +113,7 @@ const mcsTypeDefs = gql`
 
   type Query {
     msc_eval: [Source]
-    getEval2History(testType: String, testNum: Int, performer: String) : [History]
+    getEval2History(testType: String, testNum: Int) : [History]
     getEval2Scene(testType: String, testNum: Int) : [Scene]
     getEvalScene(eval: String, sceneName: String, testNum: Int) : [Scene]
     getEvalByTest(test: String) : [Source]
@@ -159,7 +159,7 @@ const mcsResolvers = {
         getEval2History: async(obj, args, context, infow) => {
             // Eval 2
             return await mcsDB.db.collection('mcs_history').find({'eval': "Evaluation 2 Results", 
-                'test_type': args["testType"], 'test_num': args["testNum"], 'performer': args["performer"]})
+                'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval2Scene: async(obj, args, context, infow) => {
