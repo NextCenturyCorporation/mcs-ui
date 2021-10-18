@@ -80,7 +80,7 @@ class Scenes extends React.Component {
         super(props);
         this.playBackButtons = React.createRef();
         this.state = {
-            performer: props.value.performer !== undefined ? props.value.performer : "",
+            currentPerformer: props.value.performer !== undefined ? props.value.performer : "",
             currentMetadataLevel: props.value.metadata_lvl !== undefined ? props.value.metadata_lvl : "",
             currentSceneNum: (props.value.scene !== undefined && props.value.scene !== null) ? parseInt(props.value.scene) : 1,
             //flagRemove: false,
@@ -101,6 +101,22 @@ class Scenes extends React.Component {
                 currentMetadataLevel: metadata
             });
         }
+    }
+
+    setInitialPerformer = (performer, firstEval) => {
+        if(this.state.currentPerformer === "") {
+            this.setState({
+                currentPerformer: performer
+            });
+        }
+
+        /*
+        if(this.state.currentPerformer === "" && firstEval !== null && firstEval !== undefined) {
+            this.setState({
+                flagRemove: firstEval["flags"]["remove"],
+                flagInterest: firstEval["flags"]["interest"]
+            });
+        }*/
     }
 
     setStateObject(key, value) {
@@ -200,7 +216,7 @@ class Scenes extends React.Component {
     }
 
     // TODO: MCS-516: update history query for eval 3+ onwards
-    getSceneHistoryQueryObject = (evalName, categoryType, testNum, performer) => {
+    getSceneHistoryQueryObject = (evalName, categoryType, testNum) => {
         return [
             {
                 fieldType: "mcs_history." + evalName,
@@ -221,21 +237,13 @@ class Scenes extends React.Component {
                 fieldValue2: "",
                 functionOperator: "equals",
                 collectionDropdownToggle: 1
-            }, {
-                fieldType: "mcs_history." + evalName,
-                fieldTypeLabel: evalName,
-                fieldName: "performer",
-                fieldNameLabel: "Performer",
-                fieldValue1: performer,
-                fieldValue2: "",
-                functionOperator: "equals",
-                collectionDropdownToggle: 1
             }
         ]
     }
 
-    checkIfScenesExist = (scenesByMetadata) =>{
-        return scenesByMetadata !== undefined && scenesByMetadata[this.state.currentMetadataLevel] !== undefined;
+    checkIfScenesExist = (scenesByPerformer) =>{
+        return scenesByPerformer !== undefined && scenesByPerformer[this.state.currentMetadataLevel] !== undefined
+            && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer] !== undefined;
     }
 
     getPrettyMetadataLabel = (metadata) => {
@@ -254,15 +262,15 @@ class Scenes extends React.Component {
         return metadata;
     }
 
-    getSceneHistoryItem = (scenesByMetadata) => {
-        if(scenesByMetadata !== undefined && scenesByMetadata !== null && this.state.currentSceneNum !== undefined) {
+    getSceneHistoryItem = (scenesByPerformer) => {
+        if(scenesByPerformer !== undefined && scenesByPerformer !== null && this.state.currentSceneNum !== undefined) {
             let sceneNumAsString = this.state.currentSceneNum.toString();
-            return scenesByMetadata[this.state.currentMetadataLevel][sceneNumAsString];
+            return scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer][sceneNumAsString];
         }
     }
 
-    getVideoFileName = (scenesByMetadata, videoCategory) => {
-        let sceneItem = this.getSceneHistoryItem(scenesByMetadata);
+    getVideoFileName = (scenesByPerformer, videoCategory) => {
+        let sceneItem = this.getSceneHistoryItem(scenesByPerformer);
         if(sceneItem === undefined || sceneItem === null) {
             return "";
         }
@@ -282,9 +290,9 @@ class Scenes extends React.Component {
         }
     }
 
-    isSceneHistInteractive = (scenesByMetadata) => {
-        return this.getSceneHistoryItem(scenesByMetadata) !== undefined
-            && this.getSceneHistoryItem(scenesByMetadata)["category"] === "interactive";
+    isSceneHistInteractive = (scenesByPerformer) => {
+        return this.getSceneHistoryItem(scenesByPerformer) !== undefined
+            && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive";
     }
 
     render() {
@@ -294,8 +302,7 @@ class Scenes extends React.Component {
                     "queryObject":  this.getSceneHistoryQueryObject(
                         this.props.value.eval,
                         this.props.value.category_type,
-                        this.props.value.test_num,
-                        this.props.value.performer
+                        this.props.value.test_num
                     ), 
                     "projectionObject": projectionObject
                 }}
@@ -308,21 +315,28 @@ class Scenes extends React.Component {
                     const evals = data[historyQueryName][historyQueryResults];
 
                     let sortedScenes =  _.sortBy(evals, "scene_num");
-
-                    let scenesByMetadata = _.reduce(_.groupBy(sortedScenes, "metadata"), function(mapByMetadata, metadataValue, metadataKey) {
-                        mapByMetadata[metadataKey] = _.reduce(metadataValue, function(mapByScene, sceneValue) {
-                            // scene history records are now a map with scene_num as the key instead of an array
-                            mapByScene[sceneValue.scene_num.toString()] = sceneValue;
-                            return mapByScene
-                        }, {});
-                        return mapByMetadata;
-                    }, {});
-
+                    let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
                     let metadataList = Object.keys(scenesByMetadata);
+                    let performerList = _.uniq(_.map(sortedScenes, "performer"));
+
                     let initialMetadataLevel = metadataList[0];
 
                     this.setInitialMetadataLevel(initialMetadataLevel);
 
+                    let scenesByPerformer = _.reduce(scenesByMetadata, function(mapByMetadata, metadataValue, metadataKey) {
+                        mapByMetadata[metadataKey] = _.reduce(_.groupBy(metadataValue, "performer"), function(mapByPerformer, perfValue, perfKey) {
+                            mapByPerformer[perfKey] = _.reduce(perfValue, function(mapByScene, sceneValue) {
+                                // scene history records are now a map with scene_num as the key instead of an array
+                                mapByScene[sceneValue.scene_num.toString()] = sceneValue;
+                                return mapByScene
+                            }, {});
+                           return mapByPerformer;
+                        }, {});
+                        return mapByMetadata;
+                    }, {});
+
+                    this.setInitialPerformer(performerList[0], evals[0]);
+                    
                     setConstants(this.props.value.eval);
 
                     let sceneNamePrefix = null;
@@ -332,7 +346,7 @@ class Scenes extends React.Component {
                         sceneNamePrefix = this.getSceneNamePrefix(evals[0].name);
                     }
 
-                    if(metadataList.length > 0 && sceneNamePrefix !== null) {
+                    if(metadataList.length > 0 && performerList.length > 0 && sceneNamePrefix !== null) {
                         return (
                             <Query query={mcs_scene} variables={
                                 {"eval": this.props.value.eval,
@@ -357,21 +371,25 @@ class Scenes extends React.Component {
                                             this.setStateObject('currentMetadataLevel', metadataList[0]);
                                         }
 
+                                        if(performerList.indexOf(this.state.currentPerformer) === -1) {
+                                            this.setStateObject('currentPerformer', performerList[0]);
+                                        }
+
                                         return (
                                             <div className="scene-container">
-                                                { this.checkIfScenesExist(scenesByMetadata) &&
-                                                    this.getSceneHistoryItem(scenesByMetadata) !== undefined &&
-                                                    this.getSceneHistoryItem(scenesByMetadata)["category"] === "passive" && 
+                                                { this.checkIfScenesExist(scenesByPerformer) &&
+                                                    this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
+                                                    this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
                                                     <div>
                                                         <div className="eval3-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByMetadata, "_visual")} width="600" height="400" controls="controls" 
+                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" 
                                                                     onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByMetadata, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
                                                             </div>
                                                         </div>
                                                         <PlaybackButtons style= {{paddingLeft:"420px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
@@ -379,14 +397,14 @@ class Scenes extends React.Component {
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
-                                                                    this.getVideoFileName(scenesByMetadata, "_heatmap")} target="_blank" rel="noopener noreferrer">Heatmap</a>
+                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByMetadata, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByMetadata, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>}
                                                     </div> 
                                                 }
@@ -402,11 +420,20 @@ class Scenes extends React.Component {
                                                         </button>
                                                     )}
                                                 </div>
+                                                <div className="performer-group btn-group" role="group">
+                                                    {performerList.map((performer, key) =>
+                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                            id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
+                                                            onClick={() => this.setStateObject('currentPerformer', performer)}>
+                                                                {performer}
+                                                        </button>
+                                                    )}
+                                                </div>
 
-                                                {this.checkIfScenesExist(scenesByMetadata) &&
+                                                {this.checkIfScenesExist(scenesByPerformer) &&
                                                     <ScoreTable
                                                         columns={scoreTableCols}
-                                                        currentPerformerScenes={scenesByMetadata[this.state.currentMetadataLevel]}
+                                                        currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
                                                         currentSceneNum={this.state.currentSceneNum}
                                                         changeSceneHandler={this.changeScene}
                                                         scenesInOrder={scenesInOrder}
@@ -415,20 +442,20 @@ class Scenes extends React.Component {
                                                     />
                                                 }
 
-                                                { (this.checkIfScenesExist(scenesByMetadata) && (!this.isSceneHistInteractive(scenesByMetadata))) && 
+                                                { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
                                                    <ClassificationByStepTable
                                                         evaluation={this.props.value.eval}
-                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByMetadata)}
+                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
                                                     />
                                                 }
 
                                                 {/* start video logic for interactive scenes */}
-                                                    { (this.checkIfScenesExist(scenesByMetadata) && this.isSceneHistInteractive(scenesByMetadata)) &&
+                                                    { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistInteractive(scenesByPerformer)) &&
                                                         <div>
                                                             <InteractiveScenePlayer evaluation={this.props.value.eval}
-                                                                sceneVidLink={this.getVideoFileName(scenesByMetadata, "_visual")}
-                                                                topDownLink={this.getVideoFileName(scenesByMetadata, "_topdown")}
-                                                                sceneHistoryItem={this.getSceneHistoryItem(scenesByMetadata)}
+                                                                sceneVidLink={this.getVideoFileName(scenesByPerformer, "_visual")}
+                                                                topDownLink={this.getVideoFileName(scenesByPerformer, "_topdown")}
+                                                                sceneHistoryItem={this.getSceneHistoryItem(scenesByPerformer)}
                                                                 ref={this.playBackButtons}
                                                                 upOneScene={this.upOneScene}
                                                                 downOneScene={this.downOneScene}
@@ -442,11 +469,11 @@ class Scenes extends React.Component {
                                                                 paddingLeft={"570px"}/>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByMetadata, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
                                                             {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
                                                             <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByMetadata, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
+                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>} 
                                                         </div>
                                                     }

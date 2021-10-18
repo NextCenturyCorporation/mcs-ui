@@ -39,8 +39,6 @@ const AnalysisUI = ({newState, updateHandler}) => {
     if(params.eval) {
         newState.eval = params.eval;
 
-        newState.performer = params.performer;
-
         if(params.test_type) {
             newState.test_type = params.test_type;
         } else if(params.category_type) {
@@ -67,7 +65,6 @@ const AnalysisUI = ({newState, updateHandler}) => {
 
     let hasEval =  (newState.eval !== undefined && newState.eval !== null)
     let isEval2 = hasEval && newState.eval === 'Evaluation 2 Results';
-    let hasPerformer = (newState.performer !== undefined && newState.performer !== null)
     let hasCatType = (newState.category_type !== undefined && newState.category_type !== null)
     let hasTestType = (newState.test_type !== undefined && newState.test_type !== null)
     let hasTestNum = (newState.test_num !== undefined && newState.test_num !== null)
@@ -79,7 +76,7 @@ const AnalysisUI = ({newState, updateHandler}) => {
                 <Navigation state={newState} updateHandler={updateHandler}></Navigation>
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
                 {isEval2 && hasTestType && hasTestNum && <ScenesEval2 className="scene-view" value={newState} updateHandler={updateHandler}/>}
-                {(!isEval2) && hasPerformer && hasCatType && hasTestNum && <Scenes className="scene-view" value={newState} updateHandler={updateHandler}/>}
+                {(!isEval2) && hasCatType && hasTestNum && <Scenes className="scene-view" value={newState} updateHandler={updateHandler}/>}
             </div>
     </div>;
 }
@@ -112,11 +109,6 @@ function Login({newState, userLoginHandler, updateHandler}) {
     if(newState.currentUser !== null) {
         if(newState.eval) {
             let analysisString = "/analysis?eval=" + newState.eval;
-
-
-            if(newState.performer) {
-                analysisString += "&performer=" + newState.performer;
-            } 
 
             if(newState.test_type) {
                 analysisString += "&test_type=" + newState.test_type;
@@ -174,7 +166,6 @@ export class App extends React.Component {
         this.state = queryString.parse(window.location.search);
         this.state.currentUser = null;
         this.state.category_type = null;
-        this.state.performer = null;
         this.state.test_type = null;
         this.state.test_num = null;
         this.state.scene = null;
@@ -228,10 +219,6 @@ export class App extends React.Component {
         return this.state['category_type'] !== null && this.state['category_type'] !== undefined;
     }
 
-    doesStateHavePerformer() {
-        return this.state['performer'] !== null && this.state['performer'] !== undefined;
-    }
-
     doesStateHaveTestNum() {
         return this.state['test_num'] !== null && this.state['test_num'] !== undefined;
     }
@@ -242,12 +229,12 @@ export class App extends React.Component {
 
     updateHandler(key, item) {
         if(key === 'eval') {
-            this.setState({ [key]: item, performer: null, test_type: null, category_type: null, test_num: null, scene: null});
+            this.setState({ [key]: item, test_type: null, category_type: null, test_num: null, scene: null});
         } else if(key === 'test_type' && this.doesStateHaveCategoryType()) {
             this.setState({ [key]: item, category_type: null, test_num: null, scene: null});
         } else if(key === 'category_type' && this.doesStateHaveTestType()) {
             this.setState({ [key]: item, test_type: null, test_num: null, scene: null});
-        } else if(key === 'scene' || key === 'performer') {
+        } else if(key === 'scene') {
             this.setState({ [key]: item });
         } else {
             this.setState({ [key]: item, scene: null });
@@ -259,10 +246,6 @@ export class App extends React.Component {
 
         if(this.doesStateHaveEval()) {
             analysisPath += "?eval=" + this.state['eval'];
-
-            if(this.doesStateHavePerformer()) {
-                analysisPath += "&performer=" + this.state['performer'] ;
-            }
 
             if(this.doesStateHaveTestType()) {
                 analysisPath += "&test_type=" + this.state['test_type'];

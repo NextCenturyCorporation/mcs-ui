@@ -53,32 +53,13 @@ class NavListItem extends React.Component {
         let hasTestTypeState = this.props.state["test_type"] !== undefined && this.props.state["test_type"] !== null;
         let hasCatTypeState = this.props.state["category_type"] !== undefined && this.props.state["category_type"] !== null;
         let hasTestNumState = this.props.state["test_num"] !== undefined && this.props.state["test_num"] !== null;
-        let hasPerformer = this.props.state["performer"] !== undefined && this.props.state["performer"] !== null;
         let paramsToAppend = '';
 
         if(this.props.stateName === 'eval') {
             // We have 2 cases: "eval 2" and "every other eval"
             // don't append other params if picking a different eval (old params likely don't apply)
             params = "?eval=" + this.props.item;
-        } else if(hasEvalState && this.props.stateName === 'performer') {
-
-            paramsToAppend += "&performer=" + this.props.item;
-
-            if(hasTestTypeState && isEval2) {
-                paramsToAppend += "&test_type=" + this.props.state["test_type"];
-            } else if(hasCatTypeState && isNotEval2) {
-                paramsToAppend += "&category_type=" + this.props.state["category_type"];
-            }
-
-            if(hasTestNumState) {
-                paramsToAppend += "&test_num=" + this.props.state["test_num"];
-            }
-
-            params = "?eval=" + this.props.state["eval"] + paramsToAppend;
         } else if(isEval2 && this.props.stateName === 'test_type') {
-            if(hasPerformer) {
-                paramsToAppend += "&performer=" + this.props.state["performer"];
-            }
 
             paramsToAppend += "&test_type=" + this.props.item;
 
@@ -88,9 +69,6 @@ class NavListItem extends React.Component {
 
             params = "?eval=" + this.props.state["eval"] + paramsToAppend;
         } else if(isNotEval2 && this.props.stateName === 'category_type') {
-            if(hasPerformer) {
-                paramsToAppend += "&performer=" + this.props.state["performer"];
-            }
 
             paramsToAppend += "&category_type=" + this.props.item;
 
@@ -100,10 +78,6 @@ class NavListItem extends React.Component {
 
             params = "?eval=" + this.props.state["eval"] + paramsToAppend;
         } else if(hasEvalState && this.props.stateName === 'test_num') {
-            if(hasPerformer) {
-                paramsToAppend += "&performer=" + this.props.state["performer"];
-            }
-
             if(hasTestTypeState && isEval2) {
                 paramsToAppend += "&test_type=" + this.props.state["test_type"];
             } else if(hasCatTypeState && isNotEval2) {
@@ -165,7 +139,7 @@ class NavList extends React.Component {
         }
 
         if((this.props.fieldName === 'test_type' || this.props.fieldName === 'category_type' ||
-            this.props.fieldName === 'test_num' || this.props.fieldName == 'performer') && this.props.state.eval) {
+            this.props.fieldName === 'test_num') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
 
             // TODO: MCS-516: add category/test type to this optionally??
@@ -242,11 +216,6 @@ class EvalNav2 extends React.Component {
             <>
                 <NavList title={"Evaluation"}
                     id="basic-nav-dropdown" fieldName={"eval"} stateName={"eval"} state={this.props.state} updateHandler={this.props.updateHandler}/>
-
-                {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval !== EVAL_2_IDENTIFIER) &&
-                    <NavList title={"Performer"}
-                        id="basic-nav-dropdown" fieldName={"performer"} stateName={"performer"} state={this.props.state} updateHandler={this.props.updateHandler}/>
-                }
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval !== EVAL_2_IDENTIFIER) &&
                     <NavList title={"Category Type"}
