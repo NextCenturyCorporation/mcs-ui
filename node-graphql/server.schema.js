@@ -10,6 +10,8 @@ const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneF
 const spawn = require("child_process").spawn;
 
 let complexQueryProjectionObject = null;
+const HISTORY_COLLECTION = "mcs_history";
+const SCENES_COLLECTION = "mcs_scenes";
 
 const mcsTypeDefs = gql`
   scalar JSON
@@ -160,12 +162,12 @@ const mcsResolvers = {
         },
         getEval2History: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_history').find({'eval': "Evaluation 2 Results", 'test_type': args["testType"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection(HISTORY_COLLECTION).find({'eval': "Evaluation 2 Results", 'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval2Scene: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection('mcs_scenes').find({'eval': "Evaluation 2 Scenes", 'test_type': args["testType"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection(SCENES_COLLECTION).find({'eval': "Evaluation 2 Scenes", 'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
@@ -173,21 +175,21 @@ const mcsResolvers = {
             let evalNum = getEvalNumFromString(args["eval"]);
             let sceneEvalName = "Evaluation " + evalNum + " Scenes";
 
-            return await mcsDB.db.collection('mcs_scenes').find({'eval': sceneEvalName, 'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
+            return await mcsDB.db.collection(SCENES_COLLECTION).find({'eval': sceneEvalName, 'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {
             if(args["eval"]) {
-                return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
+                return await mcsDB.db.collection(HISTORY_COLLECTION).distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
             } else {
-                return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
+                return await mcsDB.db.collection(HISTORY_COLLECTION).distinct(args["fieldName"]).then(result => {return result});
             }
         },
         getSceneFieldAggregation: async(obj, args, context, infow) => {
             if(args["eval"]) {
-                return await mcsDB.db.collection('mcs_scenes').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
+                return await mcsDB.db.collection(SCENES_COLLECTION).distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
             } else {
-                return await mcsDB.db.collection('mcs_scenes').distinct(args["fieldName"]).then(result => {return result});
+                return await mcsDB.db.collection(SCENES_COLLECTION).distinct(args["fieldName"]).then(result => {return result});
             }
         },
         getEvalByTest: async(obj, args, context, infow) => {
@@ -219,14 +221,14 @@ const mcsResolvers = {
         },
         getScenesAndHistoryTypes: async(obj, args, context, infow) => {
             let returnArray = [];
-            const historyEvals = await mcsDB.db.collection('mcs_history').distinct("eval");
+            const historyEvals = await mcsDB.db.collection(HISTORY_COLLECTION).distinct("eval");
             for(let i=0; i < historyEvals.length; i++) {
-                returnArray.push({label: historyEvals[i], value: "mcs_history." + historyEvals[i]});
+                returnArray.push({label: historyEvals[i], value: HISTORY_COLLECTION + "." + historyEvals[i]});
             }
 
-            const sceneEvals = await mcsDB.db.collection('mcs_scenes').distinct("eval");
+            const sceneEvals = await mcsDB.db.collection(SCENES_COLLECTION).distinct("eval");
             for(let i=0; i < sceneEvals.length; i++) {
-                returnArray.push({label: sceneEvals[i], value: "mcs_scenes." + sceneEvals[i]});
+                returnArray.push({label: sceneEvals[i], value: SCENES_COLLECTION + "." + sceneEvals[i]});
             }
             
             return returnArray;
@@ -242,8 +244,8 @@ const mcsResolvers = {
             const statusObj = await mcsDB.db.collection('eval_status').find({"eval": args.eval})
                 .toArray().then(result => {return result});
 
-            const performers =  await mcsDB.db.collection('mcs_history').distinct("performer").then(result => {return result});
-            const metadatas =  await mcsDB.db.collection('mcs_history').distinct("metadata").then(result => {return result});
+            const performers =  await mcsDB.db.collection(HISTORY_COLLECTION).distinct("performer").then(result => {return result});
+            const metadatas =  await mcsDB.db.collection(HISTORY_COLLECTION).distinct("metadata").then(result => {return result});
 
             for(let i=0; i < performers.length; i++) {
                 performersArray.push({label: performers[i], value: performers[i]});
@@ -255,7 +257,7 @@ const mcsResolvers = {
             const evalListStr =  args.eval.split(" ");
             const regexObj = {$options: 'i', $regex: ".*" + (evalListStr[0] + " " + evalListStr[1]) + ".*"};
 
-            const evalStats = await mcsDB.db.collection('mcs_history').aggregate([
+            const evalStats = await mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
                 {"$match": 
                     {
                       "eval": regexObj,
@@ -270,7 +272,7 @@ const mcsResolvers = {
                     "count": {"$sum": 1}}
                 }]).toArray();
 
-            const sceneStats = await mcsDB.db.collection('mcs_scenes').aggregate([
+            const sceneStats = await mcsDB.db.collection(SCENES_COLLECTION).aggregate([
                 {"$match": 
                     {
                         "eval": regexObj,
@@ -366,16 +368,16 @@ const mcsResolvers = {
                 }
 
                 if(Object.keys(mongoQueryObject.sceneQuery).length === 0) {
-                    return mcsDB.db.collection('mcs_history').aggregate([
+                    return mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
                         {$match: mongoQueryObject.historyQuery},
-                        {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                        {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                         {$unwind:'$mcsScenes'},
                         {$project: complexQueryProjectionObject}
                     ]).toArray();
                 } else {
-                    return mcsDB.db.collection('mcs_history').aggregate([
+                    return mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
                         {$match: mongoQueryObject.historyQuery},
-                        {$lookup:{'from': 'mcs_scenes', 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                        {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                         {$unwind:'$mcsScenes'},
                         {$match: mongoQueryObject.sceneQuery},
                         {$project: complexQueryProjectionObject}
@@ -388,11 +390,11 @@ const mcsResolvers = {
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
         getEvalTestTypes: async(obj, args, context, infow)=> {
-            return await mcsDB.db.collection('mcs_history').distinct(
+            return await mcsDB.db.collection(HISTORY_COLLECTION).distinct(
                 "test_type", {"eval": args.eval}).then(result => {return result});
         },
         getHomeChartOptions: async(obj, args, context, infow)=> {
-            const metadata =  await mcsDB.db.collection('mcs_history').distinct(
+            const metadata =  await mcsDB.db.collection(HISTORY_COLLECTION).distinct(
                 "metadata", {"eval": args.eval, "test_type": args.evalType}).then(result => {return result});
 
             return getChartOptions(args.evalType, metadata);
@@ -423,7 +425,7 @@ const mcsResolvers = {
                 groupObject["plausibililty"] = "$score.ground_truth";
             }
 
-            let scoreStats = await mcsDB.db.collection('mcs_history').aggregate([
+            let scoreStats = await mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
                     {"$match": searchObject}, {"$group": {"_id": groupObject, "count": {"$sum": 1}}
                 }]).toArray();
 
@@ -439,14 +441,14 @@ const mcsResolvers = {
     }, 
     Mutation: {
         updateSceneHistoryRemoveFlag: async (obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_history').update(
+            return await mcsDB.db.collection(HISTORY_COLLECTION).update(
                 {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.remove": args["flagRemove"]}},
                 {multi: true}
             );
         },
         updateSceneHistoryInterestFlag: async (obj, args, context, infow) => {
-            return await mcsDB.db.collection('mcs_history').update(
+            return await mcsDB.db.collection(HISTORY_COLLECTION).update(
                 {"test_type": args["testType"], "test_num":  args["testNum"]},
                 {$set: {"flags.interest": args["flagInterest"]}},
                 {multi: true}
