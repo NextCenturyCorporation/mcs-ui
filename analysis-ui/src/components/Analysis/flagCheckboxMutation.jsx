@@ -3,8 +3,8 @@ import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 const mcs_history = gql`
-    query getEval2History($testType: String!, $testNum: Int!){
-        getEval2History(testType: $testType, testNum: $testNum) {
+    query getEval2History($catTypePair: String!, $testNum: Int!){
+        getEval2History(catTypePair: $catTypePair, testNum: $testNum) {
             eval
             performer
             name
@@ -18,20 +18,21 @@ const mcs_history = gql`
             category
             category_type
             category_pair
+            cat_type_pair
         }
     }`;
 
 const flagRemoveMutation = gql`
-    mutation updateSceneHistoryRemoveFlag($testType: String!, $testNum: Int!, $flagRemove: Boolean!) {
-        updateSceneHistoryRemoveFlag(testType: $testType, testNum: $testNum, flagRemove: $flagRemove) {
+    mutation updateSceneHistoryRemoveFlag($catTypePair: String!, $testNum: Int!, $flagRemove: Boolean!) {
+        updateSceneHistoryRemoveFlag(catTypePair: $catTypePair, testNum: $testNum, flagRemove: $flagRemove) {
             total
         }
     }
 `;
 
 const flagInterestMutation = gql`
-    mutation updateSceneHistoryInterestFlag($testType: String!, $testNum: Int!, $flagInterest: Boolean!) {
-        updateSceneHistoryInterestFlag(testType: $testType, testNum: $testNum, flagInterest: $flagInterest) {
+    mutation updateSceneHistoryInterestFlag($catTypePair: String!, $testNum: Int!, $flagInterest: Boolean!) {
+        updateSceneHistoryInterestFlag(catTypePair: $catTypePair, testNum: $testNum, flagInterest: $flagInterest) {
             total
         }
     }
@@ -54,12 +55,12 @@ const FlagCheckboxMutation = ({state, currentState}) => {
     const mutateRemoveFlagUpdate = () => {
         updateRemoveFlags({
                 variables: {
-                    testType: state.testType,
+                    catTypePair: state.catTypePair,
                     testNum: parseInt(state.testNum),
                     flagRemove: state.flagRemove
             }, refetchQueries: { 
                 query: mcs_history, 
-                variables:{"testType": currentState.testType, "testNum": currentState.testNum}
+                variables:{"catTypePair": currentState.catTypePair, "testNum": currentState.testNum}
             }
         });
     }
@@ -67,12 +68,12 @@ const FlagCheckboxMutation = ({state, currentState}) => {
     const mutateInterestFlagUpdate = () => {
         updateInterestFlags({
                 variables: {
-                    testType: state.testType,
+                    catTypePair: state.catTypePair,
                     testNum: parseInt(state.testNum),
                     flagInterest: state.flagInterest  
             }, refetchQueries: { 
                 query: mcs_history, 
-                variables:{"testType": currentState.testType, "testNum": currentState.testNum}
+                variables:{"catTypePair": currentState.catTypePair, "testNum": currentState.testNum}
             }
         });
     }

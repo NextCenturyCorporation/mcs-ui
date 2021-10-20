@@ -50,7 +50,7 @@ class NavListItem extends React.Component {
         let hasEvalState = this.props.state["eval"] !== undefined && this.props.state["eval"] !== null;
         let isEval2 = hasEvalState && this.props.state["eval"] === EVAL_2_IDENTIFIER
         let isNotEval2 = hasEvalState && this.props.state["eval"] !== EVAL_2_IDENTIFIER
-        let hasTestTypeState = this.props.state["test_type"] !== undefined && this.props.state["test_type"] !== null;
+        let hasCatTypePairState = this.props.state["cat_type_pair"] !== undefined && this.props.state["cat_type_pair"] !== null;
         let hasCatTypeState = this.props.state["category_type"] !== undefined && this.props.state["category_type"] !== null;
         let hasTestNumState = this.props.state["test_num"] !== undefined && this.props.state["test_num"] !== null;
         let paramsToAppend = '';
@@ -59,9 +59,9 @@ class NavListItem extends React.Component {
             // We have 2 cases: "eval 2" and "every other eval"
             // don't append other params if picking a different eval (old params likely don't apply)
             params = "?eval=" + this.props.item;
-        } else if(isEval2 && this.props.stateName === 'test_type') {
+        } else if(isEval2 && this.props.stateName === 'cat_type_pair') {
 
-            paramsToAppend += "&test_type=" + this.props.item;
+            paramsToAppend += "&cat_type_pair=" + this.props.item;
 
             if(hasTestNumState) {
                 paramsToAppend += "&test_num=" + this.props.state["test_num"];
@@ -78,8 +78,8 @@ class NavListItem extends React.Component {
 
             params = "?eval=" + this.props.state["eval"] + paramsToAppend;
         } else if(hasEvalState && this.props.stateName === 'test_num') {
-            if(hasTestTypeState && isEval2) {
-                paramsToAppend += "&test_type=" + this.props.state["test_type"];
+            if(hasCatTypePairState && isEval2) {
+                paramsToAppend += "&cat_type_pair=" + this.props.state["cat_type_pair"];
             } else if(hasCatTypeState && isNotEval2) {
                 paramsToAppend += "&category_type=" + this.props.state["category_type"];
             }
@@ -138,7 +138,7 @@ class NavList extends React.Component {
             variablesToQuery['eval'] = null;
         }
 
-        if((this.props.fieldName === 'test_type' || this.props.fieldName === 'category_type' ||
+        if((this.props.fieldName === 'cat_type_pair' || this.props.fieldName === 'category_type' ||
             this.props.fieldName === 'test_num') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
 
@@ -185,7 +185,7 @@ class NavList extends React.Component {
                                     />
                                     <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
                                         {options.filter((item) => this.filterCheck(item)).map((item,key) =>
-                                                <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
+                                                <NavListItem stateName={this.props.stateName} state={this.props.state} 
                                                     item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
                                             )}
                                     </List>
@@ -195,7 +195,7 @@ class NavList extends React.Component {
                             return (
                                 <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
                                     {options.map((item,key) =>
-                                        <NavListItem className="testing" stateName={this.props.stateName} state={this.props.state} 
+                                        <NavListItem stateName={this.props.stateName} state={this.props.state} 
                                             item={item} itemKey={key} key={this.props.stateName + "_" + key} updateHandler={this.props.updateHandler}/>
                                     )}
                             </List>
@@ -223,8 +223,8 @@ class EvalNav2 extends React.Component {
                 }
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null && this.props.state.eval === EVAL_2_IDENTIFIER) &&
-                    <NavList title={"Test Type"}
-                        id="basic-nav-dropdown" fieldName={"test_type"} stateName={"test_type"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
+                    <NavList title={"Category Type w/Pair"}
+                        id="basic-nav-dropdown" fieldName={"cat_type_pair"} stateName={"cat_type_pair"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }
 
                 {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
