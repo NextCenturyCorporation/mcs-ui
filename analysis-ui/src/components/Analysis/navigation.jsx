@@ -24,6 +24,11 @@ const GET_HISTORY_FIELD_AGG_WITH_EVAL = gql`
         getHistorySceneFieldAggregation(fieldName: $fieldName, eval: $eval) 
   }`;
 
+const GET_HISTORY_FIELD_AGG_WITH_EVAL_AND_CAT_TYPE = gql`
+    query getHistorySceneFieldAggregation($fieldName: String!, $eval: String, $catType: String) {
+        getHistorySceneFieldAggregation(fieldName: $fieldName, eval: $eval, catType: $catType) 
+    }`;
+
 const EVAL_2_IDENTIFIER = "Evaluation 2 Results";
 
 class NavListItem extends React.Component {
@@ -104,7 +109,6 @@ class NavListItem extends React.Component {
     }
 }
 
-// TODO: MCS-516: add filtering/type ahead + up/down buttons
 class NavList extends React.Component {
 
     constructor() {
@@ -125,25 +129,31 @@ class NavList extends React.Component {
         return (item.toString().toUpperCase().includes(this.state.filterText.toUpperCase()) || this.state.filterText === '');
     }
 
+    hasEval2Properties() {
+        return this.props.state.eval === EVAL_2_IDENTIFIER && this.props.state.cat_type_pair;
+    }
+
     render() {
         let queryName = GET_FIELD_AGG;
         let headerText = this.props.title;
         let variablesToQuery = {"fieldName": this.props.fieldName};
         let dataName = "getFieldAggregation";
 
-        // TODO: if/else instead?
         if(this.props.fieldName === 'eval') {
             queryName = GET_HISTORY_FIELD_AGG;
             dataName = "getHistorySceneFieldAggregation";
             variablesToQuery['eval'] = null;
-        }
-
-        if((this.props.fieldName === 'cat_type_pair' || this.props.fieldName === 'category_type' ||
-            this.props.fieldName === 'test_num') && this.props.state.eval) {
+        } else if((this.props.fieldName === 'cat_type_pair' || this.props.fieldName === 'category_type') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
 
-            // TODO: MCS-516: add category/test type to this optionally??
             queryName = GET_HISTORY_FIELD_AGG_WITH_EVAL;
+            dataName = "getHistorySceneFieldAggregation";
+        } else if(this.props.fieldName === 'test_num' && this.props.state.eval && 
+                (this.props.state.category_type || this.props.state.cat_type_pair)) {
+            variablesToQuery['eval'] = this.props.state.eval;
+            variablesToQuery['catType'] = this.hasEval2Properties() ? this.props.state.cat_type_pair : this.props.state.category_type;
+
+            queryName = GET_HISTORY_FIELD_AGG_WITH_EVAL_AND_CAT_TYPE;
             dataName = "getHistorySceneFieldAggregation";
         }
 
@@ -227,7 +237,9 @@ class EvalNav2 extends React.Component {
                         id="basic-nav-dropdown" fieldName={"cat_type_pair"} stateName={"cat_type_pair"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }
 
-                {(this.props.state.eval !== undefined && this.props.state.eval !== null) &&
+                {(this.props.state.eval !== undefined && this.props.state.eval !== null && 
+                ((this.props.state.eval === EVAL_2_IDENTIFIER && this.props.state.cat_type_pair !== undefined && this.props.state.cat_type_pair !== null) ||
+                (this.props.state.eval !== EVAL_2_IDENTIFIER && this.props.state.category_type !== undefined && this.props.state.category_type !== null))) &&
                     <NavList title={"Test Number"}
                         id="basic-nav-dropdown" fieldName={"test_num"} stateName={"test_num"} hasFilter={true} state={this.props.state} updateHandler={this.props.updateHandler}/>
                 }

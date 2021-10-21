@@ -123,7 +123,7 @@ const mcsTypeDefs = gql`
     getEvalAnalysis(test: String, block: String, submission: String, performer: String) : [Source]
     getFieldAggregation(fieldName: String, eval: String) : [String]
     getSubmissionFieldAggregation: [SubmissionPerformer]
-    getHistorySceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
+    getHistorySceneFieldAggregation(fieldName: String, eval: String, catType: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getCollectionFields(collectionName: String): [dropDownObj]
     createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
@@ -176,12 +176,20 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {
-            // TODO: MCS-516: Current Nav queries -- add to it to get more specificity with fields like test_num?
+            let whereClause = {};
             if(args["eval"]) {
-                return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"], {"eval": args["eval"]}).then(result => {return result});
-            } else {
-                return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"]).then(result => {return result});
+                whereClause["eval"] = args["eval"];
+
+                if(args["catType"]) {
+                    if(args["eval"] === "Evaluation 2 Results") {
+                        whereClause["cat_type_pair"] = args["catType"];
+                    } else {
+                        whereClause["category_type"] = args["catType"];
+                    }
+                }
             }
+
+            return await mcsDB.db.collection('mcs_history').distinct(args["fieldName"], whereClause).then(result => {return result});
         },
         getSceneFieldAggregation: async(obj, args, context, infow) => {
             if(args["eval"]) {
