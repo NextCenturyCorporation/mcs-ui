@@ -682,6 +682,7 @@ ol, ul {
     border-radius: 15px;
     background-color: #ffffff;
     margin: 10px 25px;
+    min-height:150px;
 }
 
 .flex-chart-center {
