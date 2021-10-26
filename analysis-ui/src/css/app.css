@@ -1075,6 +1075,9 @@ ol, ul {
 
 .scene-container {
     background-color: #F8F8F8;
+    margin-top: 8px;
+    overflow-y: scroll;
+    height: 100vh;
 }
 
 .nav-filter {
@@ -1195,4 +1198,11 @@ nav.MuiList-root.nav-list.MuiList-padding {
 
 .MuiButtonBase-root.MuiListItem-root.nav-list-item.Mui-selected {
     background-color: #99d6ff;
+}
+
+.history-selector-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color:#F8F8F8;
 }
