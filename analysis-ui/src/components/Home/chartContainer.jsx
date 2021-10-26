@@ -7,8 +7,8 @@ import ResultsChart from './resultsChart';
 
 const getHomeChart = "getHomeChart";
 const get_home_chart = gql`
-    query getHomeChart($eval: String!, $evalType: String!, $isPercent: Boolean, $metadata: String!, $isPlausibility: Boolean, $isWeighted: Boolean){
-        getHomeChart(eval: $eval, evalType: $evalType, isPercent: $isPercent, metadata: $metadata, isPlausibility: $isPlausibility, isWeighted: $isWeighted) 
+    query getHomeChart($eval: String!, $evalType: String!, $isPercent: Boolean, $metadata: String!, $isPlausibility: Boolean, $isNovelty: Boolean, $isWeighted: Boolean){
+        getHomeChart(eval: $eval, evalType: $evalType, isPercent: $isPercent, metadata: $metadata, isPlausibility: $isPlausibility, isNovelty: $isNovelty, isWeighted: $isWeighted) 
     }`;
 
 class ChartContainer extends React.Component {
@@ -20,6 +20,7 @@ class ChartContainer extends React.Component {
             chartOption: props.chartOptions[0],
             metadata: this.getMetadataLevel(props.chartOptions[0]),
             isPlausibility: this.getPlausibility(props.chartOptions[0]),
+            isNovelty: this.getNovelty(props.chartOptions[0]),
             isWeighted: this.props.testType.toLowerCase() === 'interactive'? false : true
         }
 
@@ -40,6 +41,14 @@ class ChartContainer extends React.Component {
         }
     }
 
+    getNovelty(valueToCheck) {
+        if(valueToCheck.value.toLowerCase().indexOf("novelty") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     toUpperFirstLetters(testType) {
         const testTypeArray = testType.split(" ");
         for (let i = 0; i < testTypeArray.length; i++) {
@@ -52,7 +61,8 @@ class ChartContainer extends React.Component {
         this.setState({
             chartOption: target,
             metadata: this.getMetadataLevel(target),
-            isPlausibility: this.getPlausibility(target)
+            isPlausibility: this.getPlausibility(target),
+            isNovelty: this.getNovelty(target)
         });
     }
 
@@ -68,21 +78,18 @@ class ChartContainer extends React.Component {
     }
 
     getChartLegendLabel() {
-        if(this.props.testType.toLowerCase() === 'agents') {
-            if(this.state.isPlausibility) {
-                return this.props.isPercent ? "% Expectness Tests" : "Number of Expectness Tests";
-            } else {
-                return this.props.isPercent ? "% Correct Tests" : "Number of Correct Tests";
-            }
-        } else if(this.props.testType.toLowerCase() === 'interactive') {
-            return this.props.isPercent ? "% Goal Achieved Tests" : "Number Goal Achieved Tests";
-        } else {
-            if(this.state.isPlausibility) {
-                return this.props.isPercent ? "% Plausibility Tests" : "Number of Plausibility Tests";
-            } else {
-                return this.props.isPercent ? "% Correct Tests" : "Number of Correct Tests";
-            }
+        let numPercentLabel = this.props.isPercent ? "% " : "Number of ";
+        let testLabel = this.props.testType.toLowerCase() === 'interactive' ? "Goal Achieved " : "Correct ";
+
+        if(this.state.isPlausibility) {
+            testLabel = this.props.testType.toLowerCase() === 'agents' ? "Expectness " : "Plausibility ";
         }
+
+        if(this.state.isNovelty) {
+            testLabel = "Novelty ";
+        }
+
+        return numPercentLabel + testLabel + "Tests";
     }
 
     checkDataForUndefined(data, performers) {
@@ -135,6 +142,7 @@ class ChartContainer extends React.Component {
                         "isPercent": this.props.isPercent,
                         "metadata": this.state.metadata,
                         "isPlausibility": this.state.isPlausibility,
+                        "isNovelty": this.state.isNovelty,
                         "isWeighted": this.state.isWeighted}}>
                     {
                         ({ loading, error, data }) => {

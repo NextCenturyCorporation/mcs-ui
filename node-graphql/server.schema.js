@@ -135,7 +135,7 @@ const mcsTypeDefs = gql`
     getUsers: JSON
     getEvalTestTypes(eval: String): [String]
     getHomeChartOptions(eval: String, evalType: String): JSON
-    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isWeighted: Boolean): JSON
+    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean): JSON
   }
 
   type Mutation {
@@ -397,7 +397,11 @@ const mcsResolvers = {
             const metadata =  await mcsDB.db.collection(HISTORY_COLLECTION).distinct(
                 "metadata", {"eval": args.eval, "test_type": args.evalType}).then(result => {return result});
 
-            return getChartOptions(args.evalType, metadata);
+            const hasNovelty = await mcsDB.db.collection(SCENES_COLLECTION).find({
+                "goal.sceneInfo.untrained.any": true, "eval": args.eval.replace("Results", "Scenes"), 
+                    "goal.sceneInfo.secondaryType": args.evalType}).count() > 0;
+            
+            return getChartOptions(args.evalType, metadata, hasNovelty);
         },
         getHomeChart: async(obj, args, context, infow)=> {
             let groupObject = {
@@ -419,10 +423,12 @@ const mcsResolvers = {
                 searchObject["metadata"] = args.metadata;
             };
 
-            if(!args.isPlausibility) {
-                groupObject["category_type"] = "$category_type";
-            } else {
+            if(args.isPlausibility) {
                 groupObject["plausibililty"] = "$score.ground_truth";
+            } else if(args.isNovelty) {
+                groupObject["hasNovelty"] = "$hasNovelty";
+            } else {
+                groupObject["category_type"] = "$category_type";
             }
 
             let scoreStats = await mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
@@ -431,7 +437,7 @@ const mcsResolvers = {
 
             scoreStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
 
-            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType);
+            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType, args.isNovelty);
         },
         getUsers: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('users').find().project({"services":0, "createdAt":0, "updatedAt": 0})

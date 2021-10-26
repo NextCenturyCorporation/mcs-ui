@@ -11,36 +11,53 @@ function getMetaDataPrettyName(metadataName) {
     }
 }
 
-function getChartOptions(evalType, metadata) {
+function getChartOptions(evalType, metadata, hasNovelty) {
     let chartOptions = [];
     switch(evalType) {
         case "intuitive physics":
             chartOptions = [{label: "Total", value:"total"}, {label: "Total By Plausibility", value: "totalByPlausibility"}];
+            if(hasNovelty) {
+                chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
+            }
             for(let i=0; i < metadata.length; i++) {
                 if(metadata[i] !== null) {
                     const prettyName = getMetaDataPrettyName(metadata[i]);
                     chartOptions.push({label: prettyName, value: metadata[i]});
                     chartOptions.push({label: prettyName + " by Plausibility", value: metadata[i] + "ByPlausibility"});
+                    if(hasNovelty) {
+                        chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
+                    }
                 }
             }
             break;
         case "agents":
             chartOptions = [{label: "Total", value:"total"}, {label: "Total By Expected", value: "totalByExpected"}];
+            if(hasNovelty) {
+                chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
+            }
             for(let i=0; i < metadata.length; i++) {
                 if(metadata[i] !== null) {
                     const prettyName = getMetaDataPrettyName(metadata[i]);
                     chartOptions.push({label: prettyName, value: metadata[i]});
                     chartOptions.push({label: prettyName + " by Expected", value: metadata[i] + "ByExpected"});
+                    if(hasNovelty) {
+                        chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
+                    }
                 }
             }
             break;
         case "interactive":
             chartOptions = [{label: "Total", value:"total"}];
-            console.log(metadata);
+            if(hasNovelty) {
+                chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
+            }
             for(let i=0; i < metadata.length; i++) {
                 if(metadata[i] !== null) {
                     const prettyName = getMetaDataPrettyName(metadata[i]);
                     chartOptions.push({label: prettyName, value: metadata[i]});
+                    if(hasNovelty) {
+                        chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
+                    }
                 }
             }
             break;
@@ -123,10 +140,15 @@ function getTotalNumberOfTests(correctData, incorrectData) {
     return totalNum;
 }
 
-function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalType) {
-    if(isPlausibility) {
-        const plausibleTerm = evalType === 'agents' ? 'Expected' : 'Plausible';
-        const implausibleTerm = evalType === 'agents' ? 'Unexpected' : 'Implausible';
+function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalType, isNovelty) {
+    if(isPlausibility || isNovelty) {
+        let plausibleTerm = evalType === 'agents' ? 'Expected' : 'Plausible';
+        let implausibleTerm = evalType === 'agents' ? 'Unexpected' : 'Implausible';
+
+        if(isNovelty) {
+            plausibleTerm = "Novel";
+            implausibleTerm = "No Novelty";
+        }
 
         let scoreOverallCorrect = {"test_type": "Overall Correct"};
         let scoreOverallIncorrect = {"test_type": "Overall Incorrect"};
@@ -141,14 +163,14 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
             const isCorrect = isWeighted ? scoreStats[i]["_id"]["weight_score"] > 0 : scoreStats[i]["_id"]["correct"];
             if(isCorrect) {
                 updateOverall(scoreOverallCorrect, scoreStats[i], performer, weightedValue);
-                if(scoreStats[i]["_id"]["plausibililty"] === 1) {
+                if(scoreStats[i]["_id"]["plausibililty"] === 1 || scoreStats[i]["_id"]["hasNovelty"]) {
                     updateOverall(scorePlausibleCorrect, scoreStats[i], performer, weightedValue);
                 } else {
                     updateOverall(scoreImplausibleCorrect, scoreStats[i], performer, weightedValue);
                 }
             } else {
                 updateOverall(scoreOverallIncorrect, scoreStats[i], performer, weightedValue);
-                if(scoreStats[i]["_id"]["plausibililty"] === 1) {
+                if(scoreStats[i]["_id"]["plausibililty"] === 1 || scoreStats[i]["_id"]["hasNovelty"]) {
                     updateOverall(scorePlausibleIncorrect, scoreStats[i], performer, weightedValue);
                 } else {
                     updateOverall(scoreImplausibleIncorrect, scoreStats[i], performer, weightedValue);
