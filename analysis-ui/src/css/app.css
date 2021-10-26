@@ -1076,8 +1076,6 @@ ol, ul {
 .scene-container {
     background-color: #F8F8F8;
     margin-top: 8px;
-    overflow-y: scroll;
-    height: 100vh;
 }
 
 .nav-filter {
