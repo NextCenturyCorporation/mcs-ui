@@ -224,7 +224,6 @@ class QueryResultsTable extends React.Component {
         let keysToCSV = []
         let titles = [];
 
-
         if(this.state.groupBy !== "") {
             titles.push("Group Table By");
             titles.push("Group");
