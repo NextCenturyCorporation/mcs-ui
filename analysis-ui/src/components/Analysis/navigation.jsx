@@ -219,8 +219,7 @@ class NavList extends React.Component {
     }
 }
 
-// TODO: MCS-516: rename after removing header.jsx
-class EvalNav2 extends React.Component {
+class EvalNav extends React.Component {
     render() {
         return(
             <>
@@ -252,7 +251,7 @@ class Navigation extends React.Component {
     render() {
         return (
             <div className="nav-menu">
-                <EvalNav2 state={this.props.state} updateHandler={this.props.updateHandler}/>
+                <EvalNav state={this.props.state} updateHandler={this.props.updateHandler}/>
             </div>
         );
     }

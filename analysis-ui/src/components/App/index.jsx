@@ -4,7 +4,6 @@ import Results from '../Analysis/results';
 import HomePage from '../Home/home';
 import ScenesEval2 from '../Analysis/scenesEval2';
 import Scenes from '../Analysis/scenes';
-import EvalHeader from '../Analysis/header';
 import QueryPage from '../QueryBuilder/queryPage';
 import EvalStatusPage from '../EvaluationStatus/evalStatusPage';
 import {Router, Switch, Route, Link} from 'react-router-dom';

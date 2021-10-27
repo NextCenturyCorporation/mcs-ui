@@ -1088,18 +1088,6 @@ ol, ul {
     width: 100%;
 }
 
-/* TODO: MCS-516
-.scene-header {
-    background-color: #e3e7ea;
-    display: flex;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-    height: 55px;
-    padding: 15px;
-    margin-top: 10px;
-}
-*/
-
 /* scene details */
 .scene-details-header {
     margin: 5px 15px;
