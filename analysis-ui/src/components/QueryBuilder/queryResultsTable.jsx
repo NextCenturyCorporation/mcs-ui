@@ -205,9 +205,9 @@ class QueryResultsTable extends React.Component {
             return "/analysis?eval=" + item.eval +
                 "&test_type=" + item.scene.test_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
         } else {
-            // Eval 3+ - use category_type as well as metadata in the URL
-            return "/analysis?eval=" + item.eval + "&performer=" + item.performer + "&metadata=" + item.metadata + 
-                "&category_type=" + item.category_type + "&test_num=" + item.test_num + "&scene=" + item.scene_num;
+            // Eval 3+ - use category_type in the URL
+            return "/analysis?eval=" + item.eval + "&category_type=" + item.category_type + 
+                "&test_num=" + item.test_num + "&scene=" + item.scene_num;
         }
     }
 
