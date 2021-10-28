@@ -224,7 +224,7 @@ class Scenes extends React.Component {
                 fieldNameLabel: "Test Type",
                 fieldValue1: categoryType,
                 fieldValue2: "",
-                functionOperator: "contains",
+                functionOperator: "equals",
                 collectionDropdownToggle: 1
             },
             {
