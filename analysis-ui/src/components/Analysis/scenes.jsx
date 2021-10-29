@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import _ from "lodash";
+import _, { forEach } from "lodash";
 // TODO: Remove FlagCheckboxMutation component + currentState + related variables?
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
@@ -9,6 +9,7 @@ import ScoreTable from './scoreTable';
 import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
+import PlausabilityGraph from './plausabilityGraph';
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
@@ -229,7 +230,7 @@ class Scenes extends React.Component {
                 fieldNameLabel: "Test Type",
                 fieldValue1: categoryType,
                 fieldValue2: "",
-                functionOperator: "contains",
+                functionOperator: "equals",
                 collectionDropdownToggle: 1
             },
             {
@@ -297,6 +298,34 @@ class Scenes extends React.Component {
     isSceneHistInteractive = (scenesByPerformer) => {
         return this.getSceneHistoryItem(scenesByPerformer) !== undefined
             && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive";
+    }
+
+    getPointsData(sceneHistItem) {
+        let data = [];
+
+        console.log(sceneHistItem);
+        //if(sceneHistItem === null || sceneHistItem === undefined ) {
+        //    return;
+        //}
+    
+        sceneHistItem.steps.forEach(step => {
+            let plausibility = step["confidence"];
+
+            if(step["classification"] === "implausible") {
+                console.log('imp');
+                plausibility = 1 - step["confidence"];
+            }
+            data.push({y: plausibility, x: step["stepNumber"]})
+        });
+
+        console.log(data);
+        let points = [
+            {id: "", color: "hsla(200, 70%, 50%, 0)", data: []},
+            {id: "Scene " + sceneHistItem.scene_num, color: "hsla(50, 70%, 50%, 0)", data: data}
+        ];
+
+        return points;
+    
     }
 
     render() {
@@ -449,10 +478,15 @@ class Scenes extends React.Component {
                                                 }
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
-                                                   <ClassificationByStepTable
-                                                        evaluation={this.props.value.eval}
-                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
-                                                    />
+                                                   <>
+                                                        <PlausabilityGraph 
+                                                            pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
+                                                            state={this.state}/>
+                                                        <ClassificationByStepTable
+                                                            evaluation={this.props.value.eval}
+                                                            currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
+                                                        />
+                                                    </>
                                                 }
 
                                                 {/* start video logic for interactive scenes */}

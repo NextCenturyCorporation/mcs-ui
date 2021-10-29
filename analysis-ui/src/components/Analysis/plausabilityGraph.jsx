@@ -7,7 +7,7 @@ const MyResponsiveLine = ({ data, state, onClickHandler}) => (
     <ResponsiveLine
         data={data}
         margin={{ top: 20, right: 175, bottom: 30, left: 80 }}
-        xScale={{ type: 'linear', min: 1, max: 100}}
+        xScale={{ type: 'linear', min: 1, max: 61}}
         yScale={{ type: 'linear', min: 0, max: 1.1}}
         axisBottom={{
             orient: 'bottom',
@@ -17,7 +17,7 @@ const MyResponsiveLine = ({ data, state, onClickHandler}) => (
             legend: 'Frame',
             legendOffset: 36,
             legendPosition: 'middle',
-            tickValues: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+            tickValues: [10, 20, 30, 40, 50, 60]
         }}
         axisLeft={{
             orient: 'left',
