@@ -69,18 +69,13 @@ const MyResponsiveLine = ({ data }) => (
     />
 )
 
-class PlausabilityGraph extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+function PlausabilityGraph ({pointsData}) {
 
-    render() {
-        return (
-            <div style={{ height: '300px', width: '100%' }}>
-                <MyResponsiveLine data={this.props.pointsData} />
-            </div>       
-        )
-    }
+    return (
+        <div style={{ height: '300px', width: '100%' }}>
+            <MyResponsiveLine data={pointsData} />
+        </div>
+    )
 }
 
 export default PlausabilityGraph;
