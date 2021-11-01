@@ -434,19 +434,27 @@ class Scenes extends React.Component {
                                                     this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
                                                     this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
                                                     <div>
-                                                        <div className="eval3-movies">
+                                                        <div className="eval-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" 
+                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
                                                                     onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
                                                             </div>
+
+                                                            {(this.getSceneHistoryItem(scenesByPerformer)["test_type"] !== "agents") &&
+                                                                <div>
+                                                                    <div className="graph-header"><b>Plausibility Graph</b></div>
+                                                                    <PlausabilityGraph 
+                                                                        pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}/>
+                                                                </div>
+                                                            }
                                                         </div>
-                                                        <PlaybackButtons style= {{paddingLeft:"420px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"420px"}/>
+                                                        <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
@@ -479,10 +487,10 @@ class Scenes extends React.Component {
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
                                                    <>
-                                                        {(this.getSceneHistoryItem(scenesByPerformer)["test_type"] !== "agents") &&
+                                                        {/* FOR TESTING ONLY (this.getSceneHistoryItem(scenesByPerformer)["test_type"] !== "agents") &&
                                                             <PlausabilityGraph 
                                                                 pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}/>
-                                                        }
+                                                        */}
                                                         <ClassificationByStepTable
                                                             evaluation={this.props.value.eval}
                                                             currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}

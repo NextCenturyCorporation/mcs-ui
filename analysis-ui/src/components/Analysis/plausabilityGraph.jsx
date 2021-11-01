@@ -6,7 +6,7 @@ import $ from 'jquery';
 const MyResponsiveLine = ({ data }) => (
     <ResponsiveLine
         data={data}
-        margin={{ top: 20, right: 175, bottom: 30, left: 80 }}
+        margin={{ top: 20, right: 100, bottom: 50, left: 80 }}
         xScale={{ type: 'linear', min: 1, max: 61}}
         yScale={{ type: 'linear', min: 0, max: 1.1}}
         axisBottom={{
@@ -14,8 +14,8 @@ const MyResponsiveLine = ({ data }) => (
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'Frame',
-            legendOffset: 36,
+            legend: 'Step/Frame',
+            legendOffset: 35,
             legendPosition: 'middle',
             tickValues: [10, 20, 30, 40, 50, 60]
         }}
@@ -72,7 +72,7 @@ const MyResponsiveLine = ({ data }) => (
 function PlausabilityGraph ({pointsData}) {
 
     return (
-        <div style={{ height: '300px', width: '100%' }}>
+        <div style={{ height: '350px', width: '400px' }}>
             <MyResponsiveLine data={pointsData} />
         </div>
     )

@@ -32,7 +32,7 @@ function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
 
     return (
         <div className="classification-by-step">
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="1">
                 <Card>
                     <Accordion.Toggle as={Card.Header} className="pointer-on-hover" eventKey="0">
                         <div>

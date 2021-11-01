@@ -230,10 +230,14 @@ ol, ul {
     margin-bottom: 25px;
 }
 
-.eval3-movies {
+.eval-movies {
     margin: 15px;
     display: flex;
     align-items: center;
+}
+
+.graph-header {
+    margin-left: 5px;
 }
 
 .scores_header {
