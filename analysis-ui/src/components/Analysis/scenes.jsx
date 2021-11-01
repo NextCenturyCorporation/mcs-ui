@@ -303,29 +303,29 @@ class Scenes extends React.Component {
     getPointsData(sceneHistItem) {
         let data = [];
 
-        console.log(sceneHistItem);
-        //if(sceneHistItem === null || sceneHistItem === undefined ) {
-        //    return;
-        //}
-    
         sceneHistItem.steps.forEach(step => {
             let plausibility = step["confidence"];
 
-            if(step["classification"] === "implausible") {
-                console.log('imp');
+            // For pre-eval 4 data, flip confidence value since we 
+            // had a lot of "implausible: 1" instead of "0".
+            if(this.isPreEval4(sceneHistItem.eval) && step["classification"] === "implausible") {
                 plausibility = 1 - step["confidence"];
             }
             data.push({y: plausibility, x: step["stepNumber"]})
         });
 
-        console.log(data);
         let points = [
-            {id: "", color: "hsla(200, 70%, 50%, 0)", data: []},
             {id: "Scene " + sceneHistItem.scene_num, color: "hsla(50, 70%, 50%, 0)", data: data}
         ];
 
         return points;
     
+    }
+
+    isPreEval4(evalResultName) {
+        return ["Evaluation 3 Results",
+                "Evaluation 3.5 Results",
+                "Evaluation 3.75 Results"].indexOf(evalResultName) > -1;
     }
 
     render() {
@@ -479,9 +479,10 @@ class Scenes extends React.Component {
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
                                                    <>
-                                                        <PlausabilityGraph 
-                                                            pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
-                                                            state={this.state}/>
+                                                        {(this.getSceneHistoryItem(scenesByPerformer)["test_type"] !== "agents") &&
+                                                            <PlausabilityGraph 
+                                                                pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}/>
+                                                        }
                                                         <ClassificationByStepTable
                                                             evaluation={this.props.value.eval}
                                                             currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
