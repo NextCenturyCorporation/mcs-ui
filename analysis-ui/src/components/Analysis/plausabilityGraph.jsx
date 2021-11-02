@@ -71,13 +71,20 @@ const MyResponsiveLine = ({ data, xAxisMax, xTicks }) => (
 
 function PlausabilityGraph ({pointsData, xAxisMax}) {
 
-    const calculateXTicks = () => {
-        if(xAxisMax === 60) {
-            return [20, 40, 60];
-        } else {
-            let xAxisTickMultiplier = Math.round(xAxisMax / 3);
+    const INT_PHYS_MAX_FRAMES = 60;
+    const INT_PHYS_TICKS = [10, 20, 30, 40, 50, 60];
+    const AGENCY_NUM_TICKS = 4;
+    const AGENCY_TICK_PLACEHOLDERS = [1, 2, 3, 4];
 
-            return [xAxisTickMultiplier, xAxisTickMultiplier * 2, xAxisMax]
+    const calculateXTicks = () => {
+        // int phys tasks currently always have 60 frames and
+        // therefore preset tick values, but agency scenes can vary. 
+        if(xAxisMax === INT_PHYS_MAX_FRAMES) {
+            return INT_PHYS_TICKS;
+        } else {
+            let xAxisTickMultiplier = Math.round(xAxisMax / AGENCY_NUM_TICKS);
+
+            return AGENCY_TICK_PLACEHOLDERS.map(x => x * xAxisTickMultiplier);
         }
     }
 
