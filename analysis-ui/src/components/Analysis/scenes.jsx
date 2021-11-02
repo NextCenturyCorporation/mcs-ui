@@ -498,17 +498,10 @@ class Scenes extends React.Component {
                                                 }
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
-                                                   <>
-                                                        {/* FOR TESTING ONLY 
-                                                        <PlausabilityGraph 
-                                                                pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
-                                                                xAxisMax={this.getSceneHistoryItem(scenesByPerformer).steps.length}/>
-                                                        */}
-                                                        <ClassificationByStepTable
-                                                            evaluation={this.props.value.eval}
-                                                            currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
-                                                        />
-                                                    </>
+                                                    <ClassificationByStepTable
+                                                        evaluation={this.props.value.eval}
+                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
+                                                    />
                                                 }
 
                                                 {/* start video logic for interactive scenes */}
