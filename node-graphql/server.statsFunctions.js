@@ -46,6 +46,7 @@ function getChartOptions(evalType, metadata, hasNovelty) {
                 }
             }
             break;
+        case "retrieval":
         case "interactive":
             chartOptions = [{label: "Total", value:"total"}];
             if(hasNovelty) {
