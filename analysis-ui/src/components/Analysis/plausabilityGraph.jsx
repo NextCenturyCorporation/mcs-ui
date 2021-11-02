@@ -82,7 +82,7 @@ function PlausabilityGraph ({pointsData, xAxisMax}) {
     }
 
     return (
-        <div style={{ height: '350px', width: '800px' }}>
+        <div style={{ height: '350px', width: '400px' }}>
             <MyResponsiveLine data={pointsData} xAxisMax={xAxisMax} xTicks={calculateXTicks()}/>
         </div>
     )
