@@ -312,8 +312,9 @@ class Scenes extends React.Component {
                 plausibility = 1 - step["confidence"];
             }
 
-            // agents doesn't require confidence rating, so just use 0/1 
-            // values if we want to represent them in this graph
+            // agency scenes do not require confidence/score value, so
+            // just use 0/1 values (for unexpected/expected) if we want to
+            // represent them in this graph
             if(sceneHistItem["test_type"] === "agents") {
                 if(step["classification"] === "expected") {
                     plausibility = 1;
