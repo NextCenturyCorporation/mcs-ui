@@ -103,7 +103,12 @@ function calculatePercentage(baseStats, correspondingStats, isPlausible) {
             });
             for(const key in baseStats[i]) {
                 if(key !== "test_type") {
-                    if(baseStats[i][key] + matchingObj[key] === 0) {
+                    // Account for no incorrect answers
+                    if(matchingObj === undefined ||  matchingObj[key] === undefined) {
+                        baseStats[i][key] = 100;
+                    }
+                    // Account for division by 0
+                    else if(baseStats[i][key] + matchingObj[key] === 0) {
                         baseStats[i][key] = 0;
                     } else {
                         baseStats[i][key] = Math.round(baseStats[i][key] / (baseStats[i][key] + matchingObj[key]) * 100);
