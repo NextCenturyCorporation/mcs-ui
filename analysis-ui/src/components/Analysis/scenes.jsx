@@ -312,6 +312,27 @@ class Scenes extends React.Component {
                 plausibility = 1 - step["confidence"];
             }
 
+            // It was decided during planning for Eval 4 that agency scenes do not 
+            // require confidence/score value, just a classification/rating
+            if(sceneHistItem["test_type"] === "agents") {
+                // For pre-eval 4 agent data, just use 0/1 values (for unexpected/expected)
+                // if we want to represent them in this graph
+                if(this.isPreEval4(sceneHistItem.eval)) {
+                    if(step["classification"] === "expected") {
+                        plausibility = 1;
+                    } else if(step["classification"] === "unexpected") {
+                        plausibility = 0;
+                    } else {
+                        plausibility = null;
+                    }
+                } else {
+                    // Eval 4+ should have a value between 0.0 and 1.0 in the 
+                    // classification field
+                    plausibility = step["classification"];
+                }
+
+            }
+
             data.push({y: plausibility, x: step["stepNumber"]})
         });
 
