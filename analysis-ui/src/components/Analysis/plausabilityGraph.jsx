@@ -14,7 +14,7 @@ const MyResponsiveLine = ({ data, xAxisMax, xTicks }) => (
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'Frame',
+            legend: 'Step',
             legendOffset: 35,
             legendPosition: 'middle',
             tickValues: xTicks
@@ -71,21 +71,16 @@ const MyResponsiveLine = ({ data, xAxisMax, xTicks }) => (
 
 function PlausabilityGraph ({pointsData, xAxisMax}) {
 
-    const INT_PHYS_MAX_FRAMES = 60;
-    const INT_PHYS_TICKS = [10, 20, 30, 40, 50, 60];
-    const AGENCY_NUM_TICKS = 4;
-    const AGENCY_TICK_PLACEHOLDERS = [1, 2, 3, 4];
+    const NUM_TICKS = 4;
+    const TICK_PLACEHOLDERS = [1, 2, 3, 4];
 
     const calculateXTicks = () => {
-        // int phys tasks currently always have 60 frames and
-        // therefore preset tick values, but agency scenes can vary. 
-        if(xAxisMax === INT_PHYS_MAX_FRAMES) {
-            return INT_PHYS_TICKS;
-        } else {
-            let xAxisTickMultiplier = Math.round(xAxisMax / AGENCY_NUM_TICKS);
+        // passive scenes can vary with the amount of
+        // max steps (or steps that are taken by the performer),
+        // so need to calculate the tick values
+        let xAxisTickMultiplier = Math.round(xAxisMax / NUM_TICKS);
 
-            return AGENCY_TICK_PLACEHOLDERS.map(x => x * xAxisTickMultiplier);
-        }
+        return TICK_PLACEHOLDERS.map(x => x * xAxisTickMultiplier);
     }
 
     return (

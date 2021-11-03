@@ -306,23 +306,10 @@ class Scenes extends React.Component {
         sceneHistItem.steps.forEach(step => {
             let plausibility = step["confidence"];
 
-            // For pre-eval 4 data, flip confidence value since we 
+            // For pre-eval 4 VoE data, flip confidence value since we 
             // had a lot of "implausible: 1" instead of "0".
             if(this.isPreEval4(sceneHistItem.eval) && step["classification"] === "implausible") {
                 plausibility = 1 - step["confidence"];
-            }
-
-            // agency scenes do not require confidence/score value, so
-            // just use 0/1 values (for unexpected/expected) if we want to
-            // represent them in this graph
-            if(sceneHistItem["test_type"] === "agents") {
-                if(step["classification"] === "expected") {
-                    plausibility = 1;
-                } else if(step["classification"] === "unexpected") {
-                    plausibility = 0;
-                } else {
-                    plausibility = null;
-                }
             }
 
             data.push({y: plausibility, x: step["stepNumber"]})
