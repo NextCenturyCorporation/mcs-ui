@@ -218,6 +218,8 @@ ol, ul {
 
 .layout-board {
     margin-bottom: 50px;
+    display: flex;
+    background-color: #F8F8F8;
 }
 
 .movie-holder {
@@ -1063,6 +1065,30 @@ ol, ul {
     padding: 5px 10px;
 }
 
+.scene-view {
+    flex: 1 1 auto;
+}
+
+.layout {
+    background-color: #F8F8F8;
+    height: 100vh;
+}
+
+.scene-container {
+    background-color: #F8F8F8;
+    margin-top: 8px;
+}
+
+.nav-filter {
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
+.nav-filter.MuiInputBase-input{
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
 /* scene details */
 .scene-details-header {
     margin: 5px 15px;
@@ -1110,4 +1136,60 @@ ol, ul {
 
 .TableRow.Mui-selected {
     background-color: #99d6ff !important;
+}
+
+/* analysis UI navigation */
+.nav-section {
+    border: 1px solid transparent;
+    margin-left: 5px;
+    border-radius: 8px;
+    min-width: 275px;
+}
+
+.nav-header {
+    background-color: #e3e7ea;
+    display: flex;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    height: 50px;
+    padding: 12px 15px 0 15px;
+    margin-top: 10px;
+}
+
+.nav-header-text {
+    align-items: center;
+    font-weight: bold;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    background-color: #F8F8F8;
+}
+
+nav.MuiList-root.nav-list {
+    width: 100%;
+    position: relative;
+    overflow: auto;
+    max-height: 200px;
+}
+
+nav.MuiList-root.nav-list.MuiList-padding {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+.MuiButtonBase-root.MuiListItem-root.nav-list-item.Mui-selected {
+    background-color: #99d6ff;
+}
+
+.history-selector-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color:#F8F8F8;
 }

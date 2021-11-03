@@ -215,6 +215,11 @@ class Scenes extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
+    // TODO: investigating update history query for eval 3+ onwards
+    // currently there are fields needed that are on the scene record
+    // and not the history record, so a projection query is done
+    // (grabbing those things seperately from the history record
+    // breaks sorting on the score table)
     getSceneHistoryQueryObject = (evalName, categoryType, testNum) => {
         return [
             {
@@ -375,7 +380,27 @@ class Scenes extends React.Component {
                                         }
 
                                         return (
-                                            <div>
+                                            <div className="scene-container">
+                                                <div className="history-selector-sticky">
+                                                    <div className="metadata-group btn-group" role="group">
+                                                        {metadataList.map((metadataLvl, key) =>
+                                                            <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
+                                                                onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
+                                                                    {this.getPrettyMetadataLabel(metadataLvl)}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="performer-group btn-group" role="group">
+                                                        {performerList.map((performer, key) =>
+                                                            <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
+                                                                onClick={() => this.setStateObject('currentPerformer', performer)}>
+                                                                    {performer}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
                                                 { this.checkIfScenesExist(scenesByPerformer) &&
                                                     this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
                                                     this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
@@ -409,24 +434,6 @@ class Scenes extends React.Component {
                                                 }
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
-                                                </div>
-                                                <div className="metadata-group btn-group" role="group">
-                                                    {metadataList.map((metadataLvl, key) =>
-                                                        <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                            id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
-                                                            onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
-                                                                {this.getPrettyMetadataLabel(metadataLvl)}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                                <div className="performer-group btn-group" role="group">
-                                                    {performerList.map((performer, key) =>
-                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                            id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
-                                                            onClick={() => this.setStateObject('currentPerformer', performer)}>
-                                                                {performer}
-                                                        </button>
-                                                    )}
                                                 </div>
 
                                                 {this.checkIfScenesExist(scenesByPerformer) &&
