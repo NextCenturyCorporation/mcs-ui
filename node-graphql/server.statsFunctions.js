@@ -146,6 +146,34 @@ function getTotalNumberOfTests(correctData, incorrectData) {
     return totalNum;
 }
 
+function checkCorrespondingValuesObject(data1, data2) {
+    for(const key in data1) {
+        if(data2[key] === null || data2[key] === undefined) {
+            data2[key] = 0;
+        }
+    }
+}
+
+// Will assign a value of zero to a matching array, if it's test type doesn't exist
+function checkCorrespondingValuesArray(data1, data2) {
+    for(let i=0; i < data1.length; i++) {
+        const matchingElement = data2.find(element => element.test_type == data1[i].test_type);
+        if(matchingElement === null || matchingElement === undefined) {
+            let newObj = {};
+            for(const key in data1[i]) {
+                if(key === "test_type"){
+                    newObj[key] = data1[i][key];
+                } else {
+                    newObj[key] = 0;
+                }
+            }
+            data2.push(newObj)
+        } else {
+            checkCorrespondingValuesObject(data1[i], matchingElement);
+        }
+    }
+}
+
 function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalType, isNovelty) {
     if(isPlausibility || isNovelty) {
         let plausibleTerm = evalType === 'agents' ? 'Expected' : 'Plausible';
@@ -183,6 +211,13 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
                 }
             }
         }
+
+        checkCorrespondingValuesObject(scoreOverallCorrect, scoreOverallIncorrect);
+        checkCorrespondingValuesObject(scoreOverallIncorrect, scoreOverallCorrect);
+        checkCorrespondingValuesObject(scorePlausibleCorrect, scorePlausibleIncorrect);
+        checkCorrespondingValuesObject(scorePlausibleIncorrect, scorePlausibleCorrect);
+        checkCorrespondingValuesObject(scoreImplausibleCorrect, scoreImplausibleIncorrect);
+        checkCorrespondingValuesObject(scoreImplausibleIncorrect, scoreImplausibleCorrect);
 
         const totalNum = getTotalNumberOfTests(scoreOverallCorrect, scoreOverallIncorrect);
 
@@ -225,6 +260,12 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
                 updateCategory(incorrectCategoryStats, scoreStats[i], performer, weightedValue);
             }
         }
+
+        checkCorrespondingValuesArray(categoryStats, incorrectCategoryStats);
+        checkCorrespondingValuesArray(incorrectCategoryStats, categoryStats);
+
+        checkCorrespondingValuesObject(overallStats, incorrectOverallStats);
+        checkCorrespondingValuesObject(incorrectOverallStats, overallStats);
 
         // Arrange Data in the Necessary Display Order
         categoryStats.sort((a, b) => (a.test_type < b.test_type) ? 1 : -1);
