@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import _ from "lodash";
+import _, { forEach } from "lodash";
 // TODO: Remove FlagCheckboxMutation component + currentState + related variables?
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
@@ -9,6 +9,7 @@ import ScoreTable from './scoreTable';
 import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
+import PlausabilityGraph from './plausabilityGraph';
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
@@ -299,6 +300,56 @@ class Scenes extends React.Component {
             && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive";
     }
 
+    getPointsData(sceneHistItem) {
+        let data = [];
+
+        sceneHistItem.steps.forEach(step => {
+            let plausibility = step["confidence"];
+
+            // For pre-eval 4 VoE data, flip confidence value since we 
+            // had a lot of "implausible: 1" instead of "0".
+            if(this.isPreEval4(sceneHistItem.eval) && step["classification"] === "implausible") {
+                plausibility = 1 - step["confidence"];
+            }
+
+            // It was decided during planning for Eval 4 that agency scenes do not 
+            // require confidence/score value, just a classification/rating
+            if(sceneHistItem["test_type"] === "agents") {
+                // For pre-eval 4 agent data, just use 0/1 values (for unexpected/expected)
+                // if we want to represent them in this graph
+                if(this.isPreEval4(sceneHistItem.eval)) {
+                    if(step["classification"] === "expected") {
+                        plausibility = 1;
+                    } else if(step["classification"] === "unexpected") {
+                        plausibility = 0;
+                    } else {
+                        plausibility = null;
+                    }
+                } else {
+                    // Eval 4+ should have a value between 0.0 and 1.0 in the 
+                    // classification field
+                    plausibility = step["classification"];
+                }
+
+            }
+
+            data.push({y: plausibility, x: step["stepNumber"]})
+        });
+
+        let points = [
+            {id: "Scene " + sceneHistItem.scene_num, color: "hsla(50, 70%, 50%, 0)", data: data}
+        ];
+
+        return points;
+    
+    }
+
+    isPreEval4(evalResultName) {
+        return ["Evaluation 3 Results",
+                "Evaluation 3.5 Results",
+                "Evaluation 3.75 Results"].indexOf(evalResultName) > -1;
+    }
+
     render() {
         return (
             <Query query={create_complex_query} variables={
@@ -405,19 +456,26 @@ class Scenes extends React.Component {
                                                     this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
                                                     this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
                                                     <div>
-                                                        <div className="eval3-movies">
+                                                        <div className="eval-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" 
+                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
                                                                     onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                            </div>
+
+                                                            <div>
+                                                                <div className="graph-header"><b>Plausibility Graph</b></div>
+                                                                <PlausabilityGraph 
+                                                                    pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
+                                                                    xAxisMax={this.getSceneHistoryItem(scenesByPerformer).steps.length}/>
                                                             </div>
                                                         </div>
-                                                        <PlaybackButtons style= {{paddingLeft:"420px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"420px"}/>
+                                                        <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
@@ -449,7 +507,7 @@ class Scenes extends React.Component {
                                                 }
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
-                                                   <ClassificationByStepTable
+                                                    <ClassificationByStepTable
                                                         evaluation={this.props.value.eval}
                                                         currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
                                                     />
