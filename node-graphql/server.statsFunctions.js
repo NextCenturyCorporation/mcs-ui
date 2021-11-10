@@ -13,57 +13,36 @@ function getMetaDataPrettyName(metadataName) {
 
 function getChartOptions(evalType, metadata, hasNovelty) {
     let chartOptions = [];
-    switch(evalType) {
-        case "intuitive physics":
-            chartOptions = [{label: "Total", value:"total"}, {label: "Total By Plausibility", value: "totalByPlausibility"}];
-            if(hasNovelty) {
-                chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
-            }
-            for(let i=0; i < metadata.length; i++) {
-                if(metadata[i] !== null) {
-                    const prettyName = getMetaDataPrettyName(metadata[i]);
-                    chartOptions.push({label: prettyName, value: metadata[i]});
-                    chartOptions.push({label: prettyName + " by Plausibility", value: metadata[i] + "ByPlausibility"});
-                    if(hasNovelty) {
-                        chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
-                    }
+
+    if(evalType === "intuitive physics") {
+        chartOptions = [{label: "Total", value:"total"}, {label: "Total By Plausibility", value: "totalByPlausibility"}];
+        if(hasNovelty) {
+            chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
+        }
+        for(let i=0; i < metadata.length; i++) {
+            if(metadata[i] !== null) {
+                const prettyName = getMetaDataPrettyName(metadata[i]);
+                chartOptions.push({label: prettyName, value: metadata[i]});
+                chartOptions.push({label: prettyName + " by Plausibility", value: metadata[i] + "ByPlausibility"});
+                if(hasNovelty) {
+                    chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
                 }
             }
-            break;
-        case "agents":
-            chartOptions = [{label: "Total", value:"total"}, {label: "Total By Expected", value: "totalByExpected"}];
-            if(hasNovelty) {
-                chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
-            }
-            for(let i=0; i < metadata.length; i++) {
-                if(metadata[i] !== null) {
-                    const prettyName = getMetaDataPrettyName(metadata[i]);
-                    chartOptions.push({label: prettyName, value: metadata[i]});
-                    chartOptions.push({label: prettyName + " by Expected", value: metadata[i] + "ByExpected"});
-                    if(hasNovelty) {
-                        chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
-                    }
+        }
+    } else {
+        chartOptions = [{label: "Total", value:"total"}];
+        if(hasNovelty) {
+            chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
+        }
+        for(let i=0; i < metadata.length; i++) {
+            if(metadata[i] !== null) {
+                const prettyName = getMetaDataPrettyName(metadata[i]);
+                chartOptions.push({label: prettyName, value: metadata[i]});
+                if(hasNovelty) {
+                    chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
                 }
             }
-            break;
-        case "retrieval":
-        case "interactive":
-            chartOptions = [{label: "Total", value:"total"}];
-            if(hasNovelty) {
-                chartOptions.push({label: "Total by Novelty", value: "totalByNovelty"});
-            }
-            for(let i=0; i < metadata.length; i++) {
-                if(metadata[i] !== null) {
-                    const prettyName = getMetaDataPrettyName(metadata[i]);
-                    chartOptions.push({label: prettyName, value: metadata[i]});
-                    if(hasNovelty) {
-                        chartOptions.push({label: prettyName + " by Novelty", value: metadata[i] + "ByNovelty"});
-                    }
-                }
-            }
-            break;
-        default:
-            console.log("Invalid eval type submitted.")
+        }
     }
 
     return chartOptions;

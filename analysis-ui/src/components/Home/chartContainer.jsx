@@ -127,7 +127,7 @@ class ChartContainer extends React.Component {
                             defaultValue={this.state.chartOption}
                         />
                     </div>
-                    {this.props.testType.toLowerCase() !== 'interactive' &&
+                    {this.props.testType.toLowerCase() === 'intuitive physics' &&
                         <div className="chart-weight-toggle">
                             <ToggleButtonGroup type="checkbox" value={this.state.isWeighted} onChange={this.handleWeightedToggle}>
                                 <ToggleButton variant="secondary" value={true}>{this.props.testType.toLowerCase() === 'agents' ? 'Paired' : 'Weighted'}</ToggleButton>
