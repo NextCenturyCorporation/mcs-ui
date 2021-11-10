@@ -37,6 +37,7 @@ const projectionObject = {
     "fullFilename": 1,
     "filename": 1,
     "fileTimestamp": 1,
+    "corner_visit_order": 1,
     "scene.goal.sceneInfo.slices": "$mcsScenes.goal.sceneInfo.slices"
 }
 
@@ -75,6 +76,7 @@ const scoreTableCols = [
     { dataKey: 'score.confidence', title: 'Confidence' }
 ]
 
+const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
 class Scenes extends React.Component {
 
     constructor(props) {
@@ -496,7 +498,7 @@ class Scenes extends React.Component {
 
                                                 {this.checkIfScenesExist(scenesByPerformer) &&
                                                     <ScoreTable
-                                                        columns={scoreTableCols}
+                                                        columns={this.props.value.category_type === "reorientation" ? scoreTableColsWithCorners: scoreTableCols}
                                                         currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
                                                         currentSceneNum={this.state.currentSceneNum}
                                                         changeSceneHandler={this.changeScene}
