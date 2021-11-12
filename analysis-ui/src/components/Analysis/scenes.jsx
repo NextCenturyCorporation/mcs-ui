@@ -70,9 +70,9 @@ const scoreTableCols = [
     { dataKey: 'scene_num', title: 'Scene' },
     { dataKey: 'scene_goal_id', title: 'Goal ID'},
     { dataKey: 'scene.goal.sceneInfo.slices', title: 'Slices'},
-    { dataKey: 'score.classification', title: 'Classification' },
-    { dataKey: 'score.score_description', title: 'Score'},
-    { dataKey: 'score.confidence', title: 'Confidence' }
+    { dataKey: 'score.classification', title: 'Rating' },
+    { dataKey: 'score.score_description', title: 'Evaluation Score'},
+    { dataKey: 'score.confidence', title: 'Frame Score' }
 ]
 
 class Scenes extends React.Component {
