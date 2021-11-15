@@ -4,7 +4,6 @@ import Results from '../Analysis/results';
 import HomePage from '../Home/home';
 import ScenesEval2 from '../Analysis/scenesEval2';
 import Scenes from '../Analysis/scenes';
-import EvalHeader from '../Analysis/header';
 import QueryPage from '../QueryBuilder/queryPage';
 import EvalStatusPage from '../EvaluationStatus/evalStatusPage';
 import {Router, Switch, Route, Link} from 'react-router-dom';
@@ -28,6 +27,7 @@ import 'react-dual-listbox/lib/react-dual-listbox.css';
 
 import brandImage from '../../img/mcs_logo.png';
 import userImage from '../../img/account_icon.png';
+import Navigation from '../Analysis/navigation'
 
 const history = createBrowserHistory();
 
@@ -38,8 +38,8 @@ const AnalysisUI = ({newState, updateHandler}) => {
     if(params.eval) {
         newState.eval = params.eval;
 
-        if(params.test_type) {
-            newState.test_type = params.test_type;
+        if(params.cat_type_pair) {
+            newState.cat_type_pair = params.cat_type_pair;
         } else if(params.category_type) {
             newState.category_type = params.category_type;
         }
@@ -65,22 +65,18 @@ const AnalysisUI = ({newState, updateHandler}) => {
     let hasEval =  (newState.eval !== undefined && newState.eval !== null)
     let isEval2 = hasEval && newState.eval === 'Evaluation 2 Results';
     let hasCatType = (newState.category_type !== undefined && newState.category_type !== null)
-    let hasTestType = (newState.test_type !== undefined && newState.test_type !== null)
+    let hasCatTypePair = (newState.cat_type_pair !== undefined && newState.cat_type_pair !== null)
     let hasTestNum = (newState.test_num !== undefined && newState.test_num !== null)
 
     newState.history = history;
 
-    return <div>
-        <div className="layout">
-
-            <EvalHeader state={newState} updateHandler={updateHandler}/>
-
+    return <div className="layout">
             <div className="layout-board">
+                <Navigation state={newState} updateHandler={updateHandler}></Navigation>
                 { (newState.perf !== undefined && newState.perf !== null) && <Results value={newState}/>}
-                { isEval2 && hasTestType && hasTestNum && <ScenesEval2 value={newState} updateHandler={updateHandler}/> }
-                { (!isEval2) && hasCatType && hasTestNum && <Scenes value={newState} updateHandler={updateHandler}/> }
+                {isEval2 && hasCatTypePair && hasTestNum && <ScenesEval2 className="scene-view" value={newState} updateHandler={updateHandler}/>}
+                {(!isEval2) && hasCatType && hasTestNum && <Scenes className="scene-view" value={newState} updateHandler={updateHandler}/>}
             </div>
-        </div>
     </div>;
 }
 
@@ -108,13 +104,13 @@ function Home({newState}) {
     return <HomePage/>;
 }
 
-function Login({newState, userLoginHandler}) {
+function Login({newState, userLoginHandler, updateHandler}) {
     if(newState.currentUser !== null) {
         if(newState.eval) {
             let analysisString = "/analysis?eval=" + newState.eval;
 
-            if(newState.test_type) {
-                analysisString += "&test_type=" + newState.test_type;
+            if(newState.cat_type_pair) {
+                analysisString += "&cat_type_pair=" + newState.cat_type_pair;
             } else if(newState.category_type) {
                 analysisString += "&category_type=" + newState.category_type;
             } 
@@ -128,6 +124,7 @@ function Login({newState, userLoginHandler}) {
             } 
 
             history.push(analysisString);
+            return <AnalysisUI newState={newState} updateHandler={updateHandler}/>
         } else {
             return <Home newState={newState}/>;
         }
@@ -168,7 +165,7 @@ export class App extends React.Component {
         this.state = queryString.parse(window.location.search);
         this.state.currentUser = null;
         this.state.category_type = null;
-        this.state.test_type = null;
+        this.state.cat_type_pair = null;
         this.state.test_num = null;
         this.state.scene = null;
         this.state.menuIsOpened = false;
@@ -213,8 +210,8 @@ export class App extends React.Component {
         return this.state['eval'] !== null && this.state['eval'] !== undefined;
     }
 
-    doesStateHaveTestType() {
-        return this.state['test_type'] !== null && this.state['test_type'] !== undefined;
+    doesStateHaveCatTypePair() {
+        return this.state['cat_type_pair'] !== null && this.state['cat_type_pair'] !== undefined;
     }
 
     doesStateHaveCategoryType() {
@@ -231,11 +228,11 @@ export class App extends React.Component {
 
     updateHandler(key, item) {
         if(key === 'eval') {
-            this.setState({ [key]: item, test_type: null, category_type: null, test_num: null, scene: null});
-        } else if(key === 'test_type' && this.doesStateHaveCategoryType()) {
+            this.setState({ [key]: item, cat_type_pair: null, category_type: null, test_num: null, scene: null});
+        } else if(key === 'cat_type_pair' && this.doesStateHaveCategoryType()) {
             this.setState({ [key]: item, category_type: null, test_num: null, scene: null});
-        } else if(key === 'category_type' && this.doesStateHaveTestType()) {
-            this.setState({ [key]: item, test_type: null, test_num: null, scene: null});
+        } else if(key === 'category_type' && this.doesStateHaveCatTypePair()) {
+            this.setState({ [key]: item, cat_type_pair: null, test_num: null, scene: null});
         } else if(key === 'scene') {
             this.setState({ [key]: item });
         } else {
@@ -249,8 +246,8 @@ export class App extends React.Component {
         if(this.doesStateHaveEval()) {
             analysisPath += "?eval=" + this.state['eval'];
 
-            if(this.doesStateHaveTestType()) {
-                analysisPath += "&test_type=" + this.state['test_type'];
+            if(this.doesStateHaveCatTypePair()) {
+                analysisPath += "&cat_type_pair=" + this.state['cat_type_pair'];
             } else if(this.doesStateHaveCategoryType()) {
                 analysisPath += "&category_type=" + this.state['category_type'];
             }

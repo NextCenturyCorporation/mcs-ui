@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import _ from "lodash";
+import _, { forEach } from "lodash";
 // TODO: Remove FlagCheckboxMutation component + currentState + related variables?
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
@@ -9,6 +9,7 @@ import ScoreTable from './scoreTable';
 import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
+import PlausabilityGraph from './plausabilityGraph';
 
 const historyQueryName = "createComplexQuery";
 const historyQueryResults = "results";
@@ -36,6 +37,7 @@ const projectionObject = {
     "fullFilename": 1,
     "filename": 1,
     "fileTimestamp": 1,
+    "corner_visit_order": 1,
     "scene.goal.sceneInfo.slices": "$mcsScenes.goal.sceneInfo.slices"
 }
 
@@ -73,6 +75,8 @@ const scoreTableCols = [
     { dataKey: 'score.score_description', title: 'Score'},
     { dataKey: 'score.confidence', title: 'Confidence' }
 ]
+
+const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
 
 class Scenes extends React.Component {
 
@@ -215,6 +219,11 @@ class Scenes extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
+    // TODO: investigating update history query for eval 3+ onwards
+    // currently there are fields needed that are on the scene record
+    // and not the history record, so a projection query is done
+    // (grabbing those things seperately from the history record
+    // breaks sorting on the score table)
     getSceneHistoryQueryObject = (evalName, categoryType, testNum) => {
         return [
             {
@@ -224,7 +233,7 @@ class Scenes extends React.Component {
                 fieldNameLabel: "Test Type",
                 fieldValue1: categoryType,
                 fieldValue2: "",
-                functionOperator: "contains",
+                functionOperator: "equals",
                 collectionDropdownToggle: 1
             },
             {
@@ -292,6 +301,56 @@ class Scenes extends React.Component {
     isSceneHistInteractive = (scenesByPerformer) => {
         return this.getSceneHistoryItem(scenesByPerformer) !== undefined
             && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive";
+    }
+
+    getPointsData(sceneHistItem) {
+        let data = [];
+
+        sceneHistItem.steps.forEach(step => {
+            let plausibility = step["confidence"];
+
+            // For pre-eval 4 VoE data, flip confidence value since we 
+            // had a lot of "implausible: 1" instead of "0".
+            if(this.isPreEval4(sceneHistItem.eval) && step["classification"] === "implausible") {
+                plausibility = 1 - step["confidence"];
+            }
+
+            // It was decided during planning for Eval 4 that agency scenes do not 
+            // require confidence/score value, just a classification/rating
+            if(sceneHistItem["test_type"] === "agents") {
+                // For pre-eval 4 agent data, just use 0/1 values (for unexpected/expected)
+                // if we want to represent them in this graph
+                if(this.isPreEval4(sceneHistItem.eval)) {
+                    if(step["classification"] === "expected") {
+                        plausibility = 1;
+                    } else if(step["classification"] === "unexpected") {
+                        plausibility = 0;
+                    } else {
+                        plausibility = null;
+                    }
+                } else {
+                    // Eval 4+ should have a value between 0.0 and 1.0 in the 
+                    // classification field
+                    plausibility = step["classification"];
+                }
+
+            }
+
+            data.push({y: plausibility, x: step["stepNumber"]})
+        });
+
+        let points = [
+            {id: "Scene " + sceneHistItem.scene_num, color: "hsla(50, 70%, 50%, 0)", data: data}
+        ];
+
+        return points;
+    
+    }
+
+    isPreEval4(evalResultName) {
+        return ["Evaluation 3 Results",
+                "Evaluation 3.5 Results",
+                "Evaluation 3.75 Results"].indexOf(evalResultName) > -1;
     }
 
     render() {
@@ -375,24 +434,51 @@ class Scenes extends React.Component {
                                         }
 
                                         return (
-                                            <div>
+                                            <div className="scene-container">
+                                                <div className="history-selector-sticky">
+                                                    <div className="metadata-group btn-group" role="group">
+                                                        {metadataList.map((metadataLvl, key) =>
+                                                            <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
+                                                                onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
+                                                                    {this.getPrettyMetadataLabel(metadataLvl)}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="performer-group btn-group" role="group">
+                                                        {performerList.map((performer, key) =>
+                                                            <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
+                                                                id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
+                                                                onClick={() => this.setStateObject('currentPerformer', performer)}>
+                                                                    {performer}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
                                                 { this.checkIfScenesExist(scenesByPerformer) &&
                                                     this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
                                                     this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
                                                     <div>
-                                                        <div className="eval3-movies">
+                                                        <div className="eval-movies">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="600" height="400" controls="controls" 
+                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
                                                                     onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="600" height="400" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                            </div>
+
+                                                            <div>
+                                                                <div className="graph-header"><b>Plausibility Graph</b></div>
+                                                                <PlausabilityGraph 
+                                                                    pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
+                                                                    xAxisMax={this.getSceneHistoryItem(scenesByPerformer).steps.length}/>
                                                             </div>
                                                         </div>
-                                                        <PlaybackButtons style= {{paddingLeft:"420px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"420px"}/>
+                                                        <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
                                                         <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={
@@ -410,28 +496,10 @@ class Scenes extends React.Component {
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
                                                 </div>
-                                                <div className="metadata-group btn-group" role="group">
-                                                    {metadataList.map((metadataLvl, key) =>
-                                                        <button className={metadataLvl === this.state.currentMetadataLevel ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                            id={'toggle_metadata_' + key} key={'toggle_' + metadataLvl} type="button"
-                                                            onClick={() => this.setStateObject('currentMetadataLevel', metadataLvl)}>
-                                                                {this.getPrettyMetadataLabel(metadataLvl)}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                                <div className="performer-group btn-group" role="group">
-                                                    {performerList.map((performer, key) =>
-                                                        <button className={performer === this.state.currentPerformer ? 'btn btn-primary active' : 'btn btn-secondary'}
-                                                            id={'toggle_performer_' + key} key={'toggle_' + performer} type="button"
-                                                            onClick={() => this.setStateObject('currentPerformer', performer)}>
-                                                                {performer}
-                                                        </button>
-                                                    )}
-                                                </div>
 
                                                 {this.checkIfScenesExist(scenesByPerformer) &&
                                                     <ScoreTable
-                                                        columns={scoreTableCols}
+                                                        columns={this.props.value.category_type === "reorientation" ? scoreTableColsWithCorners: scoreTableCols}
                                                         currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
                                                         currentSceneNum={this.state.currentSceneNum}
                                                         changeSceneHandler={this.changeScene}
@@ -442,7 +510,7 @@ class Scenes extends React.Component {
                                                 }
 
                                                 { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
-                                                   <ClassificationByStepTable
+                                                    <ClassificationByStepTable
                                                         evaluation={this.props.value.eval}
                                                         currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
                                                     />

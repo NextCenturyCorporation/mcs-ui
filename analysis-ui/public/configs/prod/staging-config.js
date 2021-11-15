@@ -1,4 +1,5 @@
-const  API_URL = 'https://23.20.216.233:9111/api';
-const GRAPHQL_URL = 'https://23.20.216.233:9111/graphql';
+const API_URL = 'https://dev-graphql.machinecommonsense.com/api';
+const GRAPHQL_URL = 'https://dev-graphql.machinecommonsense.com/graphql';
+const RESOURCES_URL = 'https://dev-resources.machinecommonsense.com';
 
-module.exports = {API_URL, GRAPHQL_URL};
+module.exports = {API_URL, GRAPHQL_URL, RESOURCES_URL};

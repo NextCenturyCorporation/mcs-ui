@@ -3,7 +3,7 @@ const { Mongo } = require('@accounts/mongo');
 const { AccountsServer } = require('@accounts/server');
 const { AccountsPassword } = require('@accounts/password');
 const nodemailer = require("nodemailer");
-const { RESET_PASSWORD_URL } = require('./config');
+const { RESET_PASSWORD_URL, MONGO_DB} = require('./config');
 const { MONGO_CONFIGS, AWS_CONFIGS } = require('./account-configs');
 let AWS = require('aws-sdk');
 
@@ -20,7 +20,8 @@ let transporter = nodemailer.createTransport({
 });
 
 // We connect mongoose to our local mongodb database
-const connection = mongoose.connect('mongodb://mcs-mongo:27017/mcs', {
+console.log(MONGO_DB)
+const connection = mongoose.connect('mongodb://mcs-mongo:27017/' + MONGO_DB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
@@ -28,7 +29,7 @@ const connection = mongoose.connect('mongodb://mcs-mongo:27017/mcs', {
         pass: MONGO_CONFIGS.MONGO_PASSWORD
     })
     .then(res => console.log( 'Database Connected' ))
-    .catch(err => console.log( err.message ));
+    .catch(err => console.log( err.message, err ));
 
 const mcsDB = new Mongo(mongoose.connection);
 
