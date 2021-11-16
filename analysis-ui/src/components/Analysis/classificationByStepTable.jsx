@@ -37,7 +37,7 @@ function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
                     <Accordion.Toggle as={Card.Header} className="pointer-on-hover" eventKey="0">
                         <div>
                             <div>
-                                <h3>Selected Scene Rating by Step</h3>
+                                <h3>Selected Scene Rating/Classification by Step</h3>
                             </div>
                             <div>
                                 <h6>(Click Here to Expand/Collapse)</h6>
@@ -52,8 +52,8 @@ function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
                                         <tr>
                                             <th>Step Number</th>
                                             <th>Action</th>
-                                            <th>Rating</th>
-                                            <th>Frame Score</th>
+                                            <th>Rating/Classification</th>
+                                            <th>Frame Score/Confidence</th>
                                             <th>Violations ((x,y) list)</th>
                                             {evaluation !== "Evaluation 3 Results" && evaluation !== "Evaluation 3.5 Results" &&
                                                 <th>Internal State

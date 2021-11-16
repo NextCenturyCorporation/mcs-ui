@@ -59,8 +59,8 @@ const scoreTableCols = [
     { dataKey: 'scene_num', title: 'Scene' },
     { dataKey: 'score.classification', title: 'Answer' },
     { dataKey: 'score.score_description', title: 'Evaluation Score'},
-    { dataKey: 'score.adjusted_confidence', title: 'Adjusted Frame Score' },
-    { dataKey: 'score.confidence', title: 'Frame Score' }
+    { dataKey: 'score.adjusted_confidence', title: 'Adjusted Frame Score/Confidence' },
+    { dataKey: 'score.confidence', title: 'Frame Score/Confidence' }
 ]
 
 // TODO: Merge back in with Scenes view?

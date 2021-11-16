@@ -64,9 +64,9 @@ const historyFieldLabelMapTable= {
     performer: "Performer",
     test_num: "Test Number",
     scene_num: "Scene Number",
-    "score.adjusted_confidence" : "Frame Score Adjusted",
-    "score.classification" : "Rating",
-    "score.confidence" : "Frame Score",
+    "score.adjusted_confidence" : "Frame Score/Confidence Adjusted",
+    "score.classification" : "Rating/Classification",
+    "score.confidence" : "Frame Score/Confidence",
     "score.ground_truth" : "Evaluation Score Numerical Ground Truth",
     "score.mse": "Evaluation Score MSE",
     "score.score" : "Evaluation Score Number Value",
@@ -75,7 +75,7 @@ const historyFieldLabelMapTable= {
     "score.reward": "Evaluation Score Reward",
     "metadata": "Metadata Level",
     "score.weighted_score_worth": "Weighted Evaluation Score Value",
-    "score.weighted_confidence": "Weighted Frame Score",
+    "score.weighted_confidence": "Weighted Frame Score/Confidence",
     "score.weighted_score": "Weighted Evaluation Score",
     "scene_goal_id": "Cube/Scene Goal ID"
 };
@@ -88,9 +88,9 @@ const historyFieldLabelMap = {
     performer: "Performer",
     test_num: "Test Number",
     scene_num: "Scene Number",
-    "score.adjusted_confidence" : "Frame Score Adjusted",
-    "score.classification" : "Rating",
-    "score.confidence" : "Frame Score",
+    "score.adjusted_confidence" : "Frame Score/Confidence Adjusted",
+    "score.classification" : "Rating/Classification",
+    "score.confidence" : "Frame Score/Confidence",
     "score.ground_truth" : "Evaluation Score Numerical Ground Truth",
     "score.mse": "Evaluation Score MSE",
     "score.score" : "Evaluation Score Number Value",
@@ -101,7 +101,7 @@ const historyFieldLabelMap = {
     "score.reward": "Evaluation Score Reward",
     "metadata": "Metadata Level",
     "score.weighted_score_worth": "Weighted Evaluation Score Value",
-    "score.weighted_confidence": "Weighted Frame Score",
+    "score.weighted_confidence": "Weighted Frame Score/Confidence",
     "score.weighted_score": "Weighted Evaluation Score",
     "scene_goal_id": "Cube/Scene Goal ID"
 };
