@@ -24,6 +24,8 @@ class Results extends React.Component {
                     
                     let resultsData = data[complexQueryName].results;
 
+                    console.log(data[complexQueryName]);
+
                     let columns = [];
                     let noneOption = [{value: "", label: "None"}];
                     let optionsToAdd = [];

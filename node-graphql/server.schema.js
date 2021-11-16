@@ -3,7 +3,7 @@ const { mcsDB } = require('./server.mongo');
 const mongoDb = require("mongodb");
 const { MONGO_DB, BUCKET } = require('./config');
 const { GraphQLScalarType, Kind } = require("graphql");
-const { getChartOptions, getChartData } = require('./server.statsFunctions');
+const { getChartOptions, getChartData, processHyperCubeStats } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
 const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyExcludeFieldsTable, 
     sceneExcludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
@@ -136,6 +136,7 @@ const mcsTypeDefs = gql`
     getEvalTestTypes(eval: String): [String]
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
 
   type Mutation {
@@ -396,8 +397,14 @@ const mcsResolvers = {
             }
 
             let results = await getComplexResults();
+            const uniqueResults = results.reduce((unique, o) => {
+                if(!unique.some(obj => obj._id.equals(o._id))) {
+                  unique.push(o);
+                }
+                return unique;
+            },[]);
 
-            return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
+            return {results: uniqueResults, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
         getEvalTestTypes: async(obj, args, context, infow)=> {
             return await mcsDB.db.collection(HISTORY_COLLECTION).distinct(
@@ -453,6 +460,32 @@ const mcsResolvers = {
             return await mcsDB.db.collection('users').find().project({"services":0, "createdAt":0, "updatedAt": 0})
                 .toArray().then(result => {return result});
             
+        },
+        getTestOverviewData: async(obj, args, context, infow) =>{
+            const searchObject = {
+                "eval": args.eval,
+                "category_type": args.categoryType,
+                "performer": args.performer,
+                "metadata": args.metadata
+            };
+
+            const projectObject = {
+                "correct": "$score.weighted_score",
+                "hypercube_id": "$scene_goal_id",
+                "groundTruth": "$score.ground_truth",
+                "scoreWorth": "$score.weighted_score_worth",
+                "testType": "$test_type"
+            };
+
+            if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
+                projectObject["hypercube_id"] = "$category_type"
+            }
+
+            const hypercubeStats = await mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
+                {"$match": searchObject}, {"$group": {"_id": projectObject, "count": {"$sum": 1}}
+            }]).toArray();
+
+            return processHyperCubeStats(hypercubeStats);
         }
     }, 
     Mutation: {
