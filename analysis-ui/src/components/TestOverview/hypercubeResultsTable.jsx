@@ -19,6 +19,16 @@ class HyperCubeResultsTable extends React.Component {
         super(props);
     }
 
+    checkValueToRender(checkValue, partnerValue) {
+        if(isNaN(partnerValue) || partnerValue === 0) {
+            if(isNaN(checkValue) || checkValue === 0) {
+                return "-";
+            } 
+        }
+
+       return checkValue;
+    }
+
     render() {
         return (
             <Query query={getHyperCubeData} variables={{
@@ -48,7 +58,7 @@ class HyperCubeResultsTable extends React.Component {
                                         <TableCell>Total</TableCell>
                                         <TableCell>Mean</TableCell>
                                         <TableCell>dPrime</TableCell>
-                                        <TableCell>Standard Error</TableCell>
+                                        <TableCell>Standard Deviation</TableCell>
                                         <TableCell>SEM</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -56,17 +66,17 @@ class HyperCubeResultsTable extends React.Component {
                                     {hyperCubeData.map((hyperCell, hyperKey) =>
                                         <TableRow key={'hyper_row_' + hyperKey} classes={{ root: 'TableRow'}}>
                                             <TableCell>{hyperCell.hyperCubeID}</TableCell>
-                                            <TableCell>{hyperCell.correct_plausible}</TableCell>
-                                            <TableCell>{hyperCell.incorrect_plausible}</TableCell>
-                                            <TableCell>{hyperCell.hitRate}</TableCell>
-                                            <TableCell>{hyperCell.correct_implausible}</TableCell>
-                                            <TableCell>{hyperCell.incorrect_implausible}</TableCell>
-                                            <TableCell>{hyperCell.falseAlarm}</TableCell>
+                                            <TableCell>{this.checkValueToRender(hyperCell.correct_plausible, hyperCell.incorrect_plausible)}</TableCell>
+                                            <TableCell>{this.checkValueToRender(hyperCell.incorrect_plausible, hyperCell.correct_plausible)}</TableCell>
+                                            <TableCell>{this.checkValueToRender(hyperCell.hitRate, NaN)}</TableCell>
+                                            <TableCell>{this.checkValueToRender(hyperCell.correct_implausible, hyperCell.incorrect_implausible)}</TableCell>
+                                            <TableCell>{this.checkValueToRender(hyperCell.incorrect_implausible, hyperCell.correct_implausible)}</TableCell>
+                                            <TableCell>{this.checkValueToRender(hyperCell.falseAlarm, NaN)}</TableCell>
                                             <TableCell>{hyperCell.total}</TableCell>
                                             <TableCell>{hyperCell.mean}</TableCell>
                                             <TableCell>{hyperCell.dPrime}</TableCell>
+                                            <TableCell>{hyperCell.standardDeviation}</TableCell>
                                             <TableCell>{hyperCell.standardError}</TableCell>
-                                            <TableCell>{hyperCell.sem}</TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>

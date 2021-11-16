@@ -305,28 +305,32 @@ function addPerformanceStats(statArray) {
         statArray[i]["total"] = totalCorrect + totalIncorrect;
         statArray[i]["mean"] = (totalCorrect/statArray[i]["total"]).toFixed(4);
 
-        let zTransformHitRate = 0;
-        if(!isNaN(statArray[i]["hitRate"])) {
-            zTransformHitRate = InvNormApprox(statArray[i]["hitRate"]);
+        if(statArray[i]["hyperCubeID"] === "Totals") {
+            let zTransformHitRate = 0;
+            if(!isNaN(statArray[i]["hitRate"])) {
+                zTransformHitRate = InvNormApprox(statArray[i]["hitRate"]);
+            }
+            let zTransformFalseAlarm = 0;
+            if(!isNaN(statArray[i]["falseAlarm"])) {
+                zTransformFalseAlarm = InvNormApprox(statArray[i]["falseAlarm"]);
+            }
+            statArray[i]["dPrime"] = zTransformHitRate - zTransformFalseAlarm;
+        } else {
+            statArray[i]["dPrime"] = "-";
         }
-        let zTransformFalseAlarm = 0;
-        if(!isNaN(statArray[i]["falseAlarm"])) {
-            zTransformFalseAlarm = InvNormApprox(statArray[i]["falseAlarm"]);
-        }
-        statArray[i]["dPrime"] = zTransformHitRate - zTransformFalseAlarm;
 
-        let standardError = 0;
+        let forStandardDeviation = 0;
         for(let x=0; x < totalCorrect; x++) {
-            standardError = standardError + Math.pow((1 - statArray[i]["mean"]), 2);
+            forStandardDeviation = forStandardDeviation + Math.pow((1 - statArray[i]["mean"]), 2);
         }
 
         for(let y=0; y < totalIncorrect; y++) {
-            standardError = standardError + Math.pow((0 - statArray[i]["mean"]), 2);
+            forStandardDeviation = forStandardDeviation + Math.pow((0 - statArray[i]["mean"]), 2);
         }
 
-        statArray[i]["standardError"] = standardError.toFixed(4);
+        statArray[i]["standardDeviation"] = (Math.sqrt(forStandardDeviation/statArray[i]["total"])).toFixed(4);
 
-        statArray[i]["sem"] = ((Math.sqrt(statArray[i]["standardError"]/statArray[i]["total"]) / Math.sqrt(statArray[i]["total"])) * 100).toFixed(4);
+        statArray[i]["standardError"] = (statArray[i]["standardDeviation"] / Math.sqrt(statArray[i]["total"])).toFixed(4);
     }
 
     return statArray;
