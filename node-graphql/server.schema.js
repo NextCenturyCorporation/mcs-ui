@@ -137,6 +137,7 @@ const mcsTypeDefs = gql`
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean): JSON
     getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String): JSON
+    getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
 
   type Mutation {
@@ -470,7 +471,7 @@ const mcsResolvers = {
             };
 
             const projectObject = {
-                "correct": "$score.weighted_score",
+                "correct": "$score.score",
                 "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
                 "scoreWorth": "$score.weighted_score_worth",
@@ -486,6 +487,32 @@ const mcsResolvers = {
             }]).toArray();
 
             return processHyperCubeStats(hypercubeStats);
+        },
+        getScoreCardData: async(obj, args, context, infow) =>{
+            const searchObject = {
+                "eval": args.eval,
+                "category_type": args.categoryType,
+                "performer": args.performer,
+                "metadata": args.metadata
+            };
+
+            const groupObject = {
+                "_id": {"hypercubeID": "$scene_goal_id"},
+                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed" },
+                "totalAttemptImpossible": { "$sum" : "$score.scorecard.attempt_impossible" },
+                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable" },
+                "totalMultipleContainerLook": { "$sum" : "$score.scorecard.multiple_container_look" },
+                "totalNotMovingTowardObject": { "$sum" : "$score.scorecard.not_moving_toward_object" },
+                "totalRevisits": { "$sum" : "$score.scorecard.revisits" },
+            }
+
+            const scoreCardStats = await mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
+                {"$match": searchObject}, {"$group": groupObject}
+            ]).toArray();
+
+            scoreCardStats.sort((a, b) => (a._id.hypercubeID > b._id.hypercubeID) ? 1 : -1);
+
+            return scoreCardStats;
         }
     }, 
     Mutation: {

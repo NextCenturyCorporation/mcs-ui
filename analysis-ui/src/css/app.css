@@ -1211,7 +1211,10 @@ nav.MuiList-root.nav-list.MuiList-padding {
     margin-left: auto;
 }
 
-.overview-table-container {
-    max-height: 600px;
-    overflow-y: auto;
+.overview-table-container h4 {
+    margin-left: 10px;
+}
+
+.scorecard-holder {
+    margin-top: 40px;
 }
