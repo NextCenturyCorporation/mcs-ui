@@ -331,6 +331,18 @@ function addPerformanceStats(statArray) {
         statArray[i]["standardDeviation"] = (Math.sqrt(forStandardDeviation/statArray[i]["total"])).toFixed(4);
 
         statArray[i]["standardError"] = (statArray[i]["standardDeviation"] / Math.sqrt(statArray[i]["total"])).toFixed(4);
+
+        if(statArray[i]["correct_plausible"] === 0 && statArray[i]["incorrect_plausible"] === 0) {
+            statArray[i]["correct_plausible"] = "-";
+            statArray[i]["incorrect_plausible"] = "-";
+            statArray[i]["hitRate"] = "-";
+        }
+
+        if(statArray[i]["correct_implausible"] === 0 && statArray[i]["incorrect_implausible"] === 0) {
+            statArray[i]["correct_implausible"] = "-";
+            statArray[i]["incorrect_implausible"] = "-";
+            statArray[i]["falseAlarm"] = "-";
+        }
     }
 
     return statArray;

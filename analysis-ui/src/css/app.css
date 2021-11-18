@@ -1218,3 +1218,11 @@ nav.MuiList-root.nav-list.MuiList-padding {
 .scorecard-holder {
     margin-top: 40px;
 }
+
+.overview-results-csv-holder {
+    height: 5px;
+    float: right;
+    position: relative;
+    top: -50px;
+    z-index: 3;
+}

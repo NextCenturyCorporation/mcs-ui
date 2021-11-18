@@ -1,6 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import IconButton from "@material-ui/core/IconButton";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -13,6 +14,15 @@ const getScorecardDataQuery = gql`
         getScoreCardData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
     }`;
 
+const scorecardFields = [
+    {"title": "HyperCubeId", "key": "hypercubeID"},
+    {"title": "Repeat Failed", "key": "totalRepeatFailed"},
+    {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
+    {"title": "Open Unopenable", "key": "totalOpenUnopenable"},
+    {"title": "Multiple Container Look", "key": "totalMultipleContainerLook"},
+    {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
+    {"title": "Revisits", "key": "totalRevisits"}
+];
 class ScoreCardTable extends React.Component {
 
     constructor(props) {
@@ -28,6 +38,24 @@ class ScoreCardTable extends React.Component {
         return currentTotal;
     }
 
+    prepareDataForCSV(scorecardData, titleString){
+        for(let i=0; i < scorecardData.length; i++) {
+            scorecardData[i].hypercubeID = scorecardData[i]._id.hypercubeID;
+        }
+
+        let totals = {};
+        for(let j=0; j < scorecardFields.length; j++) {
+            if(scorecardFields[j].key === "hypercubeID") {
+                totals[scorecardFields[j].key] = "Totals";
+            } else {
+                totals[scorecardFields[j].key] = this.getTotalScoreCardValue(scorecardData, scorecardFields[j].key);
+            }
+        }
+
+        scorecardData.push(totals);
+        this.props.downloadCSV(scorecardData, scorecardFields, titleString)
+    }
+
     render() {
         return (
             <Query query={getScorecardDataQuery} variables={{
@@ -41,44 +69,47 @@ class ScoreCardTable extends React.Component {
                     if (error) return <div>Error</div>
 
                     const scorecardData = data[scorecardDataQueryName];
+                    const tableTitle = "Scorecard (" + this.props.state.category + "/" + 
+                        this.props.state.performer + "/" + this.props.state.metadata + ")";
 
                     return (
                         <>
                         {scorecardData.length > 0 &&
                             <div className="scorecard-holder">
-                                <h4>Scorecard</h4>
+                                <h4>{tableTitle}</h4>
+                                <div className="overview-results-csv-holder">
+                                    <div className="csv-results-child">
+                                        <IconButton onClick={() => {this.prepareDataForCSV(scorecardData, tableTitle)}}>
+                                            <span className="material-icons">
+                                                get_app
+                                            </span>CSV
+                                        </IconButton>
+                                    </div>
+                                </div>
                                 <Table className="score-table" aria-label="simple table" stickyHeader>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>HyperCubeId</TableCell>
-                                            <TableCell>Repeat Failed</TableCell>
-                                            <TableCell>Attempt Impossible</TableCell>
-                                            <TableCell>Open Unopenable</TableCell>
-                                            <TableCell>Multiple Container Look</TableCell>
-                                            <TableCell>Not Moving Toward Object</TableCell>
-                                            <TableCell>Revisits</TableCell>
+                                            {scorecardFields.map((field, key) =>
+                                                <TableCell key={'scorecard_header_cell' + key}>{field.title}</TableCell>
+                                            )}
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {scorecardData.map((scoreCardCell, hyperKey) =>
                                             <TableRow key={'scorecard_row_' + hyperKey} classes={{ root: 'TableRow'}}>
-                                                <TableCell>{scoreCardCell._id.hypercubeID}</TableCell>
-                                                <TableCell>{scoreCardCell.totalRepeatFailed}</TableCell>
-                                                <TableCell>{scoreCardCell.totalAttemptImpossible}</TableCell>
-                                                <TableCell>{scoreCardCell.totalOpenUnopenable}</TableCell>
-                                                <TableCell>{scoreCardCell.totalMultipleContainerLook}</TableCell>
-                                                <TableCell>{scoreCardCell.totalNotMovingTowardObject}</TableCell>
-                                                <TableCell>{scoreCardCell.totalRevisits}</TableCell>
+                                                {scorecardFields.map((field, fieldKey) => 
+                                                    <TableCell key={'scorecard_row_cell_' + hyperKey + fieldKey}>
+                                                        {field["key"] === "hypercubeID" ? scoreCardCell["_id"][field["key"]] : scoreCardCell[field["key"]]}
+                                                    </TableCell>
+                                                )}
                                             </TableRow>
                                         )}
                                         <TableRow classes={{ root: 'TableRow'}}>
-                                            <TableCell>Totals</TableCell>
-                                            <TableCell>{this.getTotalScoreCardValue(scorecardData, "totalRepeatFailed")}</TableCell>
-                                            <TableCell>{this.getTotalScoreCardValue(scorecardData, "totalAttemptImpossible")}</TableCell>
-                                            <TableCell>{this.getTotalScoreCardValue(scorecardData, "totalOpenUnopenable")}</TableCell>
-                                            <TableCell>{this.getTotalScoreCardValue(scorecardData, "totalMultipleContainerLook")}</TableCell>
-                                            <TableCell>{this.getTotalScoreCardValue(scorecardData, "totalNotMovingTowardObject")}</TableCell>
-                                            <TableCell>{this.getTotalScoreCardValue(scorecardData, "totalRevisits")}</TableCell>
+                                            {scorecardFields.map((field, key) =>
+                                                <TableCell key={'scorecard_total_cell' + key}>
+                                                    {field["key"] === "hypercubeID" ? "Totals" : this.getTotalScoreCardValue(scorecardData, field["key"])}
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     </TableBody>
                                 </Table>
