@@ -251,9 +251,9 @@ class Scenes extends React.Component {
             {
                 fieldType:"mcs_scenes." + sceneColEvalName,
                 fieldTypeLabel: sceneColEvalName,
-                fieldName: "eval",
-                fieldNameLabel: "Evaluation Name",
-                fieldValue1: sceneColEvalName,
+                fieldName: "goal.sceneInfo.tertiaryType",
+                fieldNameLabel: "Tertiary Type",
+                fieldValue1: categoryType,
                 fieldValue2: "",
                 functionOperator: "equals",
                 collectionDropdownToggle: 1
