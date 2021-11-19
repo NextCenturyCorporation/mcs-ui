@@ -29,7 +29,7 @@ export const getStats = (resultsData) => {
         standardErrorWeight = standardErrorWeight + Math.pow((resultsData[i].score.weighted_score - correctWeightAvg), 2);
     }
 
-    const sem = ((Math.sqrt(standardError/totalResults) / Math.sqrt(totalResults)) * 100).toFixed(4);
+    const sem = ((Math.sqrt(standardError/totalResults) / Math.sqrt(totalResults))).toFixed(4);
     const semWeighted = ((Math.sqrt(standardErrorWeight/weightedTotal) / Math.sqrt(weightedTotal)) * 100).toFixed(4);
 
     let correctString = " Correct: " + numCorrect + "/" + totalResults + " (" + 

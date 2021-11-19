@@ -14,6 +14,7 @@ import AdminPage from '../Account/adminPage';
 import {accountsClient, accountsGraphQL} from '../../services/accountsService';
 import {createBrowserHistory} from 'history';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import TestOverview from '../TestOverview/overview';
 
 // CSS and Image Stuff 
 import '../../css/app.css';
@@ -102,6 +103,14 @@ function Home({newState}) {
     }
 
     return <HomePage/>;
+}
+
+function TestOverviewPage({newState}) {
+    if(newState.currentUser == null) {
+        history.push('/login');
+    }
+
+    return <TestOverview/>;
 }
 
 function Login({newState, userLoginHandler, updateHandler}) {
@@ -283,10 +292,13 @@ export class App extends React.Component {
                                     <Link className="nav-link" to="/">Home</Link>
                                 </li>
                                 <li className="nav-item">
+                                    <Link className="nav-link" to="/testOverview">Test Overview</Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="nav-link" to="/query">Query Builder</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to={this.getAnalysisUIPath()}>Analysis</Link>
+                                    <Link className="nav-link" to={this.getAnalysisUIPath()}>Scene Analysis</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/evalStatus">Evaluation Status</Link>
@@ -311,6 +323,9 @@ export class App extends React.Component {
                     <Switch>
                         <Route exact path="/">
                             <Home newState={this.state}/>
+                        </Route>
+                        <Route exact path="/testOverview">
+                            <TestOverviewPage newState={this.state}/>
                         </Route>
                         <Route exact path="/query">
                             <QueryBuilder newState={this.state}/>

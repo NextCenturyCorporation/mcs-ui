@@ -262,7 +262,155 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
     }
 }
 
+/****  Found this function at:  https://memory.psych.mun.ca/models/dprime/
+ *      InvNormApprox:  Pass the hit rate and false alarm rate, and this
+ *      	routine returns zHit and zFa.  d' = zHit - zFa.
+ *          Converted from a basic routine provided by:
+ *      Brophy, A. L. (1986).  Alternatives to a table of criterion 
+ *              values in signal detection theory.  Behavior Research 
+ *              Methods, Instruments, & Computers, 18, 285-286.
+ ****/
+function InvNormApprox( ina_p ) {
+
+    var	ina_z;
+    var	ina_r;
+    var	ina_k;
+
+    ina_k = -1;
+    if ( ina_p > 0.5 ) {
+        ina_p = 1 - ina_p;
+        ina_k = 1;
+    }
+
+    if ( ina_p < .00001 ) {
+        ina_z = 4.3;
+        ina_z = ina_z * ina_k;
+        return( ina_z );
+    }
+
+    ina_r = Math.sqrt(- (Math.log(ina_p)));
+    ina_z = (((2.321213*ina_r+4.850141)*ina_r-2.297965)*ina_r-2.787189)/((1.637068*ina_r+3.543889)*ina_r+1);
+
+    ina_z = ina_z * ina_k;
+    return( ina_z );
+}
+
+function addPerformanceStats(statArray) {
+    for(let i=0; i < statArray.length; i++) {
+        const totalCorrect = statArray[i]["correct_plausible"] + statArray[i]["correct_implausible"];
+        const totalIncorrect = statArray[i]["incorrect_plausible"] + statArray[i]["incorrect_implausible"];
+
+        statArray[i]["hitRate"] = (statArray[i]["correct_plausible"]/(statArray[i]["correct_plausible"] + statArray[i]["incorrect_plausible"])).toFixed(4);
+        statArray[i]["falseAlarm"] = (statArray[i]["incorrect_implausible"]/(statArray[i]["correct_implausible"] + statArray[i]["incorrect_implausible"])).toFixed(4);
+        statArray[i]["total"] = totalCorrect + totalIncorrect;
+        statArray[i]["mean"] = (totalCorrect/statArray[i]["total"]).toFixed(4);
+
+        if(statArray[i]["hyperCubeID"] === "Totals") {
+            let zTransformHitRate = 0;
+            if(!isNaN(statArray[i]["hitRate"])) {
+                zTransformHitRate = InvNormApprox(statArray[i]["hitRate"]);
+            }
+            let zTransformFalseAlarm = 0;
+            if(!isNaN(statArray[i]["falseAlarm"])) {
+                zTransformFalseAlarm = InvNormApprox(statArray[i]["falseAlarm"]);
+            }
+            statArray[i]["dPrime"] = zTransformHitRate - zTransformFalseAlarm;
+        } else {
+            statArray[i]["dPrime"] = "-";
+        }
+
+        let forStandardDeviation = 0;
+        for(let x=0; x < totalCorrect; x++) {
+            forStandardDeviation = forStandardDeviation + Math.pow((1 - statArray[i]["mean"]), 2);
+        }
+
+        for(let y=0; y < totalIncorrect; y++) {
+            forStandardDeviation = forStandardDeviation + Math.pow((0 - statArray[i]["mean"]), 2);
+        }
+
+        statArray[i]["standardDeviation"] = (Math.sqrt(forStandardDeviation/statArray[i]["total"])).toFixed(4);
+
+        statArray[i]["standardError"] = (statArray[i]["standardDeviation"] / Math.sqrt(statArray[i]["total"])).toFixed(4);
+
+        if(statArray[i]["correct_plausible"] === 0 && statArray[i]["incorrect_plausible"] === 0) {
+            statArray[i]["correct_plausible"] = "-";
+            statArray[i]["incorrect_plausible"] = "-";
+            statArray[i]["hitRate"] = "-";
+        }
+
+        if(statArray[i]["correct_implausible"] === 0 && statArray[i]["incorrect_implausible"] === 0) {
+            statArray[i]["correct_implausible"] = "-";
+            statArray[i]["incorrect_implausible"] = "-";
+            statArray[i]["falseAlarm"] = "-";
+        }
+    }
+
+    return statArray;
+}
+
+function updateStatObj(hyperCubeObj, statObj) {
+    if(hyperCubeObj["_id"]["correct"] === 1) {
+        if(hyperCubeObj["_id"]["groundTruth"] === 1) {
+            statObj["correct_plausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+        } else if(hyperCubeObj["_id"]["groundTruth"] === 0) {
+            statObj["correct_implausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+        }
+    }
+    else {
+        if(hyperCubeObj["_id"]["groundTruth"] === 1) {
+            statObj["incorrect_plausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+        } else if(hyperCubeObj["_id"]["groundTruth"] === 0) {
+            statObj["incorrect_implausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+        }
+    }
+}
+
+function processHyperCubeStats(hyperCubeProjection) {
+    let statArray = [];
+    let testType = hyperCubeProjection[0]["_id"]["testType"];
+
+    for(let i = 0; i < hyperCubeProjection.length; i++) {
+        let statObj = statArray.find(element => element.hyperCubeID === hyperCubeProjection[i]["_id"]["hypercube_id"]);
+        if(statObj !== undefined) {
+            updateStatObj(hyperCubeProjection[i], statObj);
+        } else {
+            let newStatObj = {
+                "hyperCubeID": hyperCubeProjection[i]["_id"]["hypercube_id"],
+                "correct_plausible": 0,
+                "correct_implausible": 0,
+                "incorrect_plausible": 0,
+                "incorrect_implausible": 0
+            };
+            updateStatObj(hyperCubeProjection[i], newStatObj);
+            statArray.push(newStatObj);
+        }
+    }
+
+    statArray.sort((a, b) => (a.hyperCubeID > b.hyperCubeID) ? 1 : -1);
+
+    let totalStatObj = {
+        "hyperCubeID": "Totals",
+        "correct_plausible": 0,
+        "correct_implausible": 0,
+        "incorrect_plausible": 0,
+        "incorrect_implausible": 0
+    };
+    for(let j = 0; j < statArray.length; j++) {
+        totalStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
+        totalStatObj["correct_implausible"] += statArray[j]["correct_implausible"];
+        totalStatObj["incorrect_plausible"] += statArray[j]["incorrect_plausible"];
+        totalStatObj["incorrect_implausible"] += statArray[j]["incorrect_implausible"];
+    }
+    statArray.push(totalStatObj);
+
+    return {
+        "testType": testType,
+        "stats": addPerformanceStats(statArray)
+    };
+}
+
 module.exports = {
     getChartOptions,
-    getChartData
+    getChartData,
+    processHyperCubeStats
 };

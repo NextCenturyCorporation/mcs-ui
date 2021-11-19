@@ -1197,3 +1197,32 @@ nav.MuiList-root.nav-list.MuiList-padding {
     z-index: 100;
     background-color:#F8F8F8;
 }
+
+.test-overview-area {
+    margin: 10px 20px;
+    flex: 1;
+}
+
+.overview-button-group-holder {
+    display: flex;
+}
+
+.overview-buttom-group-right {
+    margin-left: auto;
+}
+
+.overview-table-container h4 {
+    margin-left: 10px;
+}
+
+.scorecard-holder {
+    margin-top: 40px;
+}
+
+.overview-results-csv-holder {
+    height: 5px;
+    float: right;
+    position: relative;
+    top: -50px;
+    z-index: 3;
+}
