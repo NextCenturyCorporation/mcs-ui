@@ -225,6 +225,8 @@ class Scenes extends React.Component {
     // (grabbing those things seperately from the history record
     // breaks sorting on the score table)
     getSceneHistoryQueryObject = (evalName, categoryType, testNum) => {
+        let sceneColEvalName = evalName.replace("Results", "Scenes");
+
         return [
             {
                 fieldType: "mcs_history." + evalName,
@@ -242,6 +244,16 @@ class Scenes extends React.Component {
                 fieldName: "test_num",
                 fieldNameLabel: "Test Number",
                 fieldValue1: parseInt(testNum),
+                fieldValue2: "",
+                functionOperator: "equals",
+                collectionDropdownToggle: 1
+            },
+            {
+                fieldType:"mcs_scenes." + sceneColEvalName,
+                fieldTypeLabel: sceneColEvalName,
+                fieldName: "goal.sceneInfo.tertiaryType",
+                fieldNameLabel: "Tertiary Type",
+                fieldValue1: categoryType,
                 fieldValue2: "",
                 functionOperator: "equals",
                 collectionDropdownToggle: 1
