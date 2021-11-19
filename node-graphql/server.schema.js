@@ -5,8 +5,8 @@ const { MONGO_DB, BUCKET } = require('./config');
 const { GraphQLScalarType, Kind } = require("graphql");
 const { getChartOptions, getChartData, processHyperCubeStats } = require('./server.statsFunctions');
 const { createComplexMongoQuery } = require('./server.mongoSyntax');
-const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyExcludeFieldsTable, 
-    sceneExcludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
+const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyIncludeFieldsTable, 
+    sceneIncludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
 const spawn = require("child_process").spawn;
 
 let complexQueryProjectionObject = null;
@@ -344,36 +344,14 @@ const mcsResolvers = {
 
             async function getComplexResults() {
                 if(complexQueryProjectionObject === null ){
-                    let historyKeys = [], sceneKeys = [];
-                    let evalNumber;
-
-                    if(mongoQueryObject.historyQuery["eval"] !== undefined) {
-                        evalNumber = getEvalNumFromString(mongoQueryObject.historyQuery["eval"]);
-                    } else {
-                        evalNumber = getEvalNumFromString(mongoQueryObject.sceneQuery["mcsScenes.eval"]);
-                    }
-
-                    const historyEvalName = "Evaluation " + evalNumber + " Results";
-                    const sceneEvalName = "Evaluation " + evalNumber + " Scenes";
-
-                    const historyResults =  await mcsDB.db.collection('collection_keys').findOne({"name": historyEvalName});
-                    historyKeys = historyResults.keys;
-
-                    const sceneResults =  await mcsDB.db.collection('collection_keys').findOne({"name": sceneEvalName});
-                    sceneKeys = sceneResults.keys;
-
                     let projectionObj = {};
 
-                    for(let j=0; j < sceneKeys.length; j++) {
-                        if(!sceneExcludeFieldsTable.includes(sceneKeys[j])) {
-                            projectionObj["scene." + sceneKeys[j]] = "$mcsScenes." + sceneKeys[j];
-                        }
+                    for(let j=0; j < sceneIncludeFieldsTable.length; j++) {
+                        projectionObj["scene." + sceneIncludeFieldsTable[j]] = "$mcsScenes." + sceneIncludeFieldsTable[j];
                     }
 
-                    for(let i=0; i < historyKeys.length; i++) {
-                        if(!historyExcludeFieldsTable.includes(historyKeys[i])) {
-                            projectionObj[historyKeys[i]] = 1;
-                        }
+                    for(let i=0; i < historyIncludeFieldsTable.length; i++) {
+                        projectionObj[historyIncludeFieldsTable[i]] = 1;
                     }
 
                     complexQueryProjectionObject = projectionObj;
