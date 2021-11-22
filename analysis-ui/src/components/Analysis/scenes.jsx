@@ -73,7 +73,7 @@ const scoreTableCols = [
     { dataKey: 'score.confidence', title: 'Confidence', dataType: 'history'}
 ]
 
-const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
+const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
 
 class Scenes extends React.Component {
 
