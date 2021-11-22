@@ -8,9 +8,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import SceneDetails from './sceneDetails';
+import Scorecard from './scorecard';
 
 function ScoreTable({columns, currentPerformerScenes, currentSceneNum, 
-    changeSceneHandler, scenesInOrder, constantsObject, sortable}) {
+    changeSceneHandler, scenesInOrder, constantsObject, sortable, isInteractive}) {
 
     const [sortOption, setSortOption] = useState({sortBy: "", sortOrder: "asc"})
 
@@ -58,6 +59,11 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                             }
                         </TableCell>
                     ))}
+                    {isInteractive &&
+                        <TableCell key="performer_scorecard_header_cell_details">
+                            Scorecard
+                        </TableCell>
+                    }
                         <TableCell key="performer_score_header_cell_details">
                             Details
                         </TableCell>
@@ -84,6 +90,11 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                                 }
                             </TableCell>
                         ))}
+                        {isInteractive &&
+                            <TableCell key={"performer_scorecard_row_" + rowKey + "_cell_details"}>
+                                <Scorecard scorecardObject={scoreObj.score.scorecard} currentSceneNum={currentSceneNum}/>
+                            </TableCell>
+                        }
                         <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
                             <SceneDetails  
                                 currentSceneNum={currentSceneNum}

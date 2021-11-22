@@ -25,10 +25,6 @@ const scorecardFields = [
 ];
 class ScoreCardTable extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     getTotalScoreCardValue(scorecardData, key) {
         let currentTotal = 0;
         for(let i=0; i < scorecardData.length; i++) {
