@@ -62,6 +62,8 @@ const mcsTypeDefs = gql`
     metadata: String
     filename: String
     fileTimestamp: String
+    fullFilename: String
+    corner_visit_order: [JSON]
   }
 
   type Scene {
@@ -115,6 +117,7 @@ const mcsTypeDefs = gql`
 
   type Query {
     msc_eval: [Source]
+    getEvalHistory(eval: String, categoryType: String, testNum: Int) : [History]
     getEval2History(catTypePair: String, testNum: Int) : [History]
     getEval2Scene(testType: String, testNum: Int) : [Scene]
     getEvalScene(eval: String, sceneName: String, testNum: Int) : [Scene]
@@ -179,6 +182,12 @@ const mcsResolvers = {
             let sceneEvalName = "Evaluation " + evalNum + " Scenes";
 
             return await mcsDB.db.collection(SCENES_COLLECTION).find({'eval': sceneEvalName, 'name': {$regex: args["sceneName"]}, 'test_num': args["testNum"]})
+                .toArray().then(result => {return result});
+        },
+        getEvalHistory: async(obj, args, context, infow) => {
+            // Eval 3 onwards
+            return await mcsDB.db.collection(HISTORY_COLLECTION).find({'eval': args["eval"], 
+                'category_type': args["categoryType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getHistorySceneFieldAggregation: async(obj, args, context, infow) => {

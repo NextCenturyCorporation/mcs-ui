@@ -47,13 +47,13 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     <TableRow>
                     {columns.map((col, colKey) => (
                         <TableCell key={"performer_score_header_cell_" + colKey}>
-                            {sortable &&
+                            {sortable && col.dataType !== 'scene' &&
                                 <TableSortLabel active={sortOption.sortBy === col.dataKey} direction={sortOption.sortOrder} 
                                     onClick={() => handleRequestSort(col.dataKey)}>
                                     {col.title}
                                 </TableSortLabel>
                             }
-                            {!sortable &&
+                            {((!sortable) || col.dataType === 'scene') &&
                                 col.title
                             }
                         </TableCell>
@@ -68,7 +68,7 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
                         {columns.map((col, colKey) => (
                             <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
-                                {col.title === 'Score' &&
+                                {col.dataType === 'history' && col.title === 'Score' &&
                                     <div className="score-div">
                                         {displayItemText(scoreObj, col.dataKey) === 'Correct' &&
                                             <i className='material-icons' style={{color: "#008000", fontSize: '20px'}}>check</i>
@@ -79,8 +79,15 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                                         <span className='score-text'>{displayItemText(scoreObj, col.dataKey)}</span>
                                     </div>
                                 }
-                                {col.title !== 'Score' &&
-                                    displayItemText(scoreObj, col.dataKey)
+                                {col.dataType === 'history' && col.title !== 'Score' &&
+                                    <div>
+                                        {displayItemText(scoreObj, col.dataKey)}
+                                    </div>
+                                }
+                                {col.dataType === 'scene' &&
+                                    <div>
+                                        {displayItemText(scenesInOrder[scoreObj.scene_num - 1], col.dataKey)}
+                                    </div>
                                 }
                             </TableCell>
                         ))}
