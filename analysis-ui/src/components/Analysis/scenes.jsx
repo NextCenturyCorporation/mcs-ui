@@ -1,7 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import _, { forEach } from "lodash";
+import _ from "lodash";
 // TODO: Remove FlagCheckboxMutation component + currentState + related variables?
 //import FlagCheckboxMutation from './flagCheckboxMutation';
 import {EvalConstants} from './evalConstants';
@@ -11,40 +11,11 @@ import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
 import PlausabilityGraph from './plausabilityGraph';
 
-const historyQueryName = "createComplexQuery";
-const historyQueryResults = "results";
+const historyQueryName = "getEvalHistory";
 const sceneQueryName = "getEvalScene";
 
 let constantsObject = {};
 //let currentState = {};
-
-const projectionObject = {
-    "eval": 1,
-    "performer": 1,
-    "name": 1,
-    "test_type": 1,
-    "test_num": 1,
-    "scene_num": 1,
-    "scene_goal_id": 1,
-    "score": 1,
-    "steps": 1,
-    "flags": 1,
-    "metadata": 1,
-    "step_counter": 1,
-    "category": 1,
-    "category_type": 1,
-    "category_pair": 1,
-    "fullFilename": 1,
-    "filename": 1,
-    "fileTimestamp": 1,
-    "corner_visit_order": 1,
-    "scene.goal.sceneInfo.slices": "$mcsScenes.goal.sceneInfo.slices"
-}
-
-const create_complex_query = gql`
-    query createComplexQuery($queryObject: JSON!, $projectionObject: JSON!) {
-        createComplexQuery(queryObject: $queryObject, projectionObject: $projectionObject) 
-    }`;
 
 const mcs_scene= gql`
     query getEvalScene($eval: String, $sceneName: String, $testNum: Int){
@@ -61,22 +32,48 @@ const mcs_scene= gql`
             test_num
             scene_num
         }
-  }`;
+    }`;
+
+
+const mcs_history = gql`
+    query getEvalHistory($eval: String, $categoryType: String, $testNum: Int){
+        getEvalHistory(eval: $eval, categoryType: $categoryType, testNum: $testNum) {
+            eval
+            performer
+            name
+            test_type
+            test_num
+            scene_num
+            scene_goal_id
+            score
+            steps
+            flags
+            metadata
+            step_counter
+            category
+            category_type
+            category_pair
+            fullFilename
+            filename
+            fileTimestamp
+            corner_visit_order
+        }
+    }`;
 
 const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
 const scoreTableCols = [
-    { dataKey: 'scene_num', title: 'Scene' },
-    { dataKey: 'scene_goal_id', title: 'Goal ID'},
-    { dataKey: 'scene.goal.sceneInfo.slices', title: 'Slices'},
-    { dataKey: 'score.classification', title: 'Classification' },
-    { dataKey: 'score.score_description', title: 'Score'},
-    { dataKey: 'score.confidence', title: 'Confidence' }
+    { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID', dataType: 'history'},
+    { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
+    { dataKey: 'score.classification', title: 'Classification', dataType: 'history'},
+    { dataKey: 'score.score_description', title: 'Score', dataType: 'history'},
+    { dataKey: 'score.confidence', title: 'Confidence', dataType: 'history'}
 ]
 
-const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
+const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
 
 class Scenes extends React.Component {
 
@@ -219,48 +216,6 @@ class Scenes extends React.Component {
         return name.substring(0, name.indexOf('_')) + '*';
     }
 
-    // TODO: investigating update history query for eval 3+ onwards
-    // currently there are fields needed that are on the scene record
-    // and not the history record, so a projection query is done
-    // (grabbing those things seperately from the history record
-    // breaks sorting on the score table)
-    getSceneHistoryQueryObject = (evalName, categoryType, testNum) => {
-        let sceneColEvalName = evalName.replace("Results", "Scenes");
-
-        return [
-            {
-                fieldType: "mcs_history." + evalName,
-                fieldTypeLabel: evalName,
-                fieldName: "category_type",
-                fieldNameLabel: "Test Type",
-                fieldValue1: categoryType,
-                fieldValue2: "",
-                functionOperator: "equals",
-                collectionDropdownToggle: 1
-            },
-            {
-                fieldType: "mcs_history." + evalName,
-                fieldTypeLabel: evalName,
-                fieldName: "test_num",
-                fieldNameLabel: "Test Number",
-                fieldValue1: parseInt(testNum),
-                fieldValue2: "",
-                functionOperator: "equals",
-                collectionDropdownToggle: 1
-            },
-            {
-                fieldType:"mcs_scenes." + sceneColEvalName,
-                fieldTypeLabel: sceneColEvalName,
-                fieldName: "goal.sceneInfo.tertiaryType",
-                fieldNameLabel: "Tertiary Type",
-                fieldValue1: categoryType,
-                fieldValue2: "",
-                functionOperator: "equals",
-                collectionDropdownToggle: 1
-            }
-        ]
-    }
-
     checkIfScenesExist = (scenesByPerformer) =>{
         return scenesByPerformer !== undefined && scenesByPerformer[this.state.currentMetadataLevel] !== undefined
             && scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer] !== undefined;
@@ -367,22 +322,19 @@ class Scenes extends React.Component {
 
     render() {
         return (
-            <Query query={create_complex_query} variables={
+            <Query query={mcs_history} variables={
                 {    
-                    "queryObject":  this.getSceneHistoryQueryObject(
-                        this.props.value.eval,
-                        this.props.value.category_type,
-                        this.props.value.test_num
-                    ), 
-                    "projectionObject": projectionObject
+                    "eval": this.props.value.eval,
+                    "categoryType": this.props.value.category_type, 
+                    "testNum": parseInt(this.props.value.test_num)
                 }}
                 onCompleted={() => { if(this.props.value.scene === null) { this.changeScene(1); }}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
-                    
-                    const evals = data[historyQueryName][historyQueryResults];
+
+                    const evals = data[historyQueryName];
 
                     let sortedScenes =  _.sortBy(evals, "scene_num");
                     let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
