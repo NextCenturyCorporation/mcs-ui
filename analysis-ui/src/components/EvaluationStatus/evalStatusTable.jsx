@@ -22,13 +22,7 @@ function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStat
 
     let statusObjModal = {};
     if(statusObj[0] !== undefined) {
-        statusObjModal = statusObj[0].evalStatusParams
-    } else {
-        statusObjModal = {
-            testTypes: "",
-            performers: "",
-            metadatas: ""
-        }
+        statusObjModal = statusObj[0].evalStatusParams;
     }
 
     return (
@@ -37,16 +31,18 @@ function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStat
                 <button type="button" className="btn btn-secondary">Configure</button>
             </a>
 
-            <EvalStatusConfigureModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-                statusObj={statusObjModal}
-                testTypes={testTypes}
-                performers={performers}
-                metadatas={metadatas}
-                updateStatusObjHandler={updateStatusObjHandler}
-                evalName={evalName}
-            />
+            {modalShow && 
+                <EvalStatusConfigureModal
+                    show={modalShow}
+                    onHide={() => setModalShow(false)}
+                    statusObj={statusObjModal}
+                    testTypes={testTypes}
+                    performers={performers}
+                    metadatas={metadatas}
+                    updateStatusObjHandler={updateStatusObjHandler}
+                    evalName={evalName}
+                />
+            }
         </>
     );
     
@@ -143,7 +139,7 @@ class EvalStatusTable extends React.Component {
 
         let historyIngested = 0;
         for(let i=0; i < evalStatus.evalStats.length; i++) {
-            if(type === evalStatus.evalStats[i]._id.test_type && performer === evalStatus.evalStats[i]._id.performer &&
+            if(type === evalStatus.evalStats[i]._id.category_type && performer === evalStatus.evalStats[i]._id.performer &&
                 metadata === evalStatus.evalStats[i]._id.metadata) {
                     historyIngested = evalStatus.evalStats[i].count;
             }
@@ -190,6 +186,8 @@ class EvalStatusTable extends React.Component {
                                         label: evalStatus.sceneStats[i]._id.sceneType});
                             }
 
+                            testTypes.sort((a, b) => (a.value > b.value) ? 1 : -1);
+
                             return (
                                 <>
                                     <div className="eval-stats-container">
@@ -208,12 +206,12 @@ class EvalStatusTable extends React.Component {
                                     <div className="eval-stats-body">
                                         {evalStatus.statusObj.length > 0 && 
                                             <div className="charts-container eval-charts-container">
-                                                {evalStatus.statusObj[0].evalStatusParams.testTypes.map((sceneType, sceneTypeKey) => (
+                                                {Object.entries(evalStatus.statusObj[0].evalStatusParams).map(([sceneTypeKey, sceneTypeKeyValue]) => (
                                                     <div className='chart-home-container' key={"table_holder_" + sceneTypeKey}>
                                                         <div className='chart-header'>
                                                             <div className='chart-header-label count-header-size'>
-                                                                <h5>{sceneType.label}</h5> 
-                                                                Count({this.findTypeCount(sceneType.label, evalStatus.sceneStats)})
+                                                                <h5>{sceneTypeKeyValue.label}</h5> 
+                                                                Count({this.findTypeCount(sceneTypeKeyValue.label, evalStatus.sceneStats)})
                                                             </div>
                                                         </div>
                                                         <div className="eval-chart-table">
@@ -221,18 +219,18 @@ class EvalStatusTable extends React.Component {
                                                                 <tbody>
                                                                     <tr>
                                                                         <th></th>
-                                                                        {evalStatus.statusObj[0].evalStatusParams.metadatas.map((metadata, metaKey) => (
+                                                                        {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
                                                                             <th key={"header_" + sceneTypeKey + metaKey}>
                                                                                 {metadata.label}
                                                                             </th>
                                                                         ))}
                                                                     </tr>
-                                                                    {evalStatus.statusObj[0].evalStatusParams.performers.map((performer, performerKey) => (
+                                                                    {sceneTypeKeyValue.performers.map((performer, performerKey) => (
                                                                         <tr key={"performer_row_" + sceneTypeKey + performerKey}>
                                                                             <td>{performer.label}</td>
-                                                                            {evalStatus.statusObj[0].evalStatusParams.metadatas.map((metadata, metaKey) => (
+                                                                            {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
                                                                                 <td key={"performer_row_" + sceneTypeKey + performerKey + metaKey}>
-                                                                                    {this.calculateCellValue(evalStatus, sceneType.label, performer.label, metadata.label)}
+                                                                                    {this.calculateCellValue(evalStatus, sceneTypeKeyValue.label, performer.label, metadata.label)}
                                                                                 </td>
                                                                             ))}
                                                                         </tr>
