@@ -66,6 +66,12 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
             sceneName =  currentScene.name.replace("juliett", "juliett_rerun")
         }
 
+        if(currentScene.eval !== undefined && currentScene.eval === "Evaluation 4 Scenes"
+            && currentScene.goal.category !== 'agents') {
+            // Goal ID is part of debug file names for Eval 4
+            sceneName = sceneName.concat("_", currentScene.goal.sceneInfo.id[0])
+        }
+
         return constantsObject["sceneBucket"] + sceneName + constantsObject["sceneExtension"]
     }
 
