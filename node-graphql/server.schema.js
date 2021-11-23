@@ -288,7 +288,7 @@ const mcsResolvers = {
                     {"_id": {
                         "performer": "$performer", 
                         "metadata": "$metadata",
-                        "test_type": "$test_type"
+                        "category_type": "$category_type"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
@@ -301,7 +301,7 @@ const mcsResolvers = {
                 },
                 {"$group": 
                     {"_id": {
-                        "sceneType": "$goal.sceneInfo.secondaryType"
+                        "sceneType": "$goal.sceneInfo.tertiaryType"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
