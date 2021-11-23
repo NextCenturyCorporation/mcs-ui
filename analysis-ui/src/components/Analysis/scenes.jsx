@@ -457,31 +457,8 @@ class Scenes extends React.Component {
                                                             </div>}
                                                     </div> 
                                                 }
-                                                <div className="scores_header">
-                                                    <h3>Scores</h3>
-                                                </div>
-
-                                                {this.checkIfScenesExist(scenesByPerformer) &&
-                                                    <ScoreTable
-                                                        columns={this.props.value.category_type === "reorientation" ? scoreTableColsWithCorners: scoreTableCols}
-                                                        currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
-                                                        currentSceneNum={this.state.currentSceneNum}
-                                                        changeSceneHandler={this.changeScene}
-                                                        scenesInOrder={scenesInOrder}
-                                                        constantsObject={constantsObject}
-                                                        sortable={true}
-                                                    />
-                                                }
-
-                                                { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
-                                                    <ClassificationByStepTable
-                                                        evaluation={this.props.value.eval}
-                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
-                                                    />
-                                                }
-
                                                 {/* start video logic for interactive scenes */}
-                                                    { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistInteractive(scenesByPerformer)) &&
+                                                { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistInteractive(scenesByPerformer)) &&
                                                         <div>
                                                             <InteractiveScenePlayer evaluation={this.props.value.eval}
                                                                 sceneVidLink={this.getVideoFileName(scenesByPerformer, "_visual")}
@@ -509,6 +486,29 @@ class Scenes extends React.Component {
                                                         </div>
                                                     }
                                                 {/* end video logic for interactive scenes */}
+                                                <div className="scores_header">
+                                                    <h3>Scores</h3>
+                                                </div>
+
+                                                {this.checkIfScenesExist(scenesByPerformer) &&
+                                                    <ScoreTable
+                                                        columns={this.props.value.category_type === "reorientation" ? scoreTableColsWithCorners: scoreTableCols}
+                                                        currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
+                                                        currentSceneNum={this.state.currentSceneNum}
+                                                        changeSceneHandler={this.changeScene}
+                                                        scenesInOrder={scenesInOrder}
+                                                        constantsObject={constantsObject}
+                                                        sortable={true}
+                                                        isInteractive={this.isSceneHistInteractive(scenesByPerformer)}
+                                                    />
+                                                }
+
+                                                { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
+                                                    <ClassificationByStepTable
+                                                        evaluation={this.props.value.eval}
+                                                        currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
+                                                    />
+                                                }
                                             </div>
                                         )
                                     }  else {

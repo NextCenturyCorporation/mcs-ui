@@ -62,7 +62,7 @@ class HyperCubeResultsTable extends React.Component {
         }
 
         const downloader = document.createElement('a'); //create a link
-        downloader.setAttribute('href', "data:text/csv;charset=utf-8," + csvString); //content to download
+        downloader.setAttribute('href', encodeURI("data:text/csv;charset=utf-8," + csvString)); //content to download
         downloader.setAttribute('download', `${tableTitle.replaceAll(' ', '-')}.csv`); //filename of download
         downloader.click(); //download
     }
