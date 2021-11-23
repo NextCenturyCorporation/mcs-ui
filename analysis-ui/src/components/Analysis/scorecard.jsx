@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'
 
-function SceneDetailsModal({show, onHide, scorecardObject, currentSceneNum}) {
+function ScoreCardModal({show, onHide, scorecardObject, currentSceneNum}) {
 
     const closeModal = () => {
         onHide();
@@ -27,7 +27,7 @@ function SceneDetailsModal({show, onHide, scorecardObject, currentSceneNum}) {
             </Modal.Header>
             <Modal.Body>
                 <div className="scene-table-div">
-                    {Object.keys(scorecardObject).map((objectKey, key) => 
+                    {scorecardObject !== undefined && Object.keys(scorecardObject).map((objectKey, key) => 
                         <div key={"scorecard_row_" + key}>{cleanupKeyString(objectKey) + ": " + scorecardObject[objectKey]}</div>
                     )}
                 </div>
@@ -49,7 +49,7 @@ function Scorecard ({scorecardObject, currentSceneNum}) {
                 <i className='material-icons'>fullscreen</i>
             </div>
 
-            <SceneDetailsModal
+            <ScoreCardModal
                 show = {modalShow}
                 onHide = {() => setModalShow(false)}
                 scorecardObject={scorecardObject}

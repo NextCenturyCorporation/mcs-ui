@@ -365,13 +365,6 @@ class Scenes extends React.Component {
                 "Evaluation 3.75 Results"].indexOf(evalResultName) > -1;
     }
 
-    checkIfInteractive(results) {
-        if(results["1"]["category"] === "interactive") {
-            return true;
-        }
-        return false;
-    }
-
     render() {
         return (
             <Query query={create_complex_query} variables={
@@ -554,7 +547,7 @@ class Scenes extends React.Component {
                                                         scenesInOrder={scenesInOrder}
                                                         constantsObject={constantsObject}
                                                         sortable={true}
-                                                        isInteractive={this.checkIfInteractive(scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer])}
+                                                        isInteractive={this.isSceneHistInteractive(scenesByPerformer)}
                                                     />
                                                 }
 
