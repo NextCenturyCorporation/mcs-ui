@@ -8,9 +8,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import SceneDetails from './sceneDetails';
+import Scorecard from './scorecard';
 
 function ScoreTable({columns, currentPerformerScenes, currentSceneNum, 
-    changeSceneHandler, scenesInOrder, constantsObject, sortable}) {
+    changeSceneHandler, scenesInOrder, constantsObject, sortable, isInteractive}) {
 
     const [sortOption, setSortOption] = useState({sortBy: "", sortOrder: "asc"})
 
@@ -47,17 +48,22 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     <TableRow>
                     {columns.map((col, colKey) => (
                         <TableCell key={"performer_score_header_cell_" + colKey}>
-                            {sortable &&
+                            {sortable && col.dataType !== 'scene' &&
                                 <TableSortLabel active={sortOption.sortBy === col.dataKey} direction={sortOption.sortOrder} 
                                     onClick={() => handleRequestSort(col.dataKey)}>
                                     {col.title}
                                 </TableSortLabel>
                             }
-                            {!sortable &&
+                            {((!sortable) || col.dataType === 'scene') &&
                                 col.title
                             }
                         </TableCell>
                     ))}
+                    {isInteractive &&
+                        <TableCell key="performer_scorecard_header_cell_details">
+                            Scorecard
+                        </TableCell>
+                    }
                         <TableCell key="performer_score_header_cell_details">
                             Details
                         </TableCell>
@@ -68,7 +74,7 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
                         {columns.map((col, colKey) => (
                             <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
-                                {col.title === 'Evaluation Score' &&
+                                {col.dataType === 'history' && col.title === 'Evaluation Score' &&
                                     <div className="score-div">
                                         {displayItemText(scoreObj, col.dataKey) === 'Correct' &&
                                             <i className='material-icons' style={{color: "#008000", fontSize: '20px'}}>check</i>
@@ -79,11 +85,23 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                                         <span className='score-text'>{displayItemText(scoreObj, col.dataKey)}</span>
                                     </div>
                                 }
-                                {col.title !== 'Evaluation Score' &&
-                                    displayItemText(scoreObj, col.dataKey)
+                                {col.dataType === 'history' && col.title !== 'Evaluation Score' &&
+                                    <div>
+                                        {displayItemText(scoreObj, col.dataKey)}
+                                    </div>
+                                }
+                                {col.dataType === 'scene' &&
+                                    <div>
+                                        {displayItemText(scenesInOrder[scoreObj.scene_num - 1], col.dataKey)}
+                                    </div>
                                 }
                             </TableCell>
                         ))}
+                        {isInteractive &&
+                            <TableCell key={"performer_scorecard_row_" + rowKey + "_cell_details"}>
+                                <Scorecard scorecardObject={scoreObj.score.scorecard} currentSceneNum={currentSceneNum}/>
+                            </TableCell>
+                        }
                         <TableCell key={"performer_score_row_" + rowKey + "_col_details"}>
                             <SceneDetails  
                                 currentSceneNum={currentSceneNum}
