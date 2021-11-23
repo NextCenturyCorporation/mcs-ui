@@ -68,9 +68,9 @@ const scoreTableCols = [
     { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
     { dataKey: 'scene_goal_id', title: 'Goal ID', dataType: 'history'},
     { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
-    { dataKey: 'score.classification', title: 'Classification', dataType: 'history'},
-    { dataKey: 'score.score_description', title: 'Score', dataType: 'history'},
-    { dataKey: 'score.confidence', title: 'Confidence', dataType: 'history'}
+    { dataKey: 'score.classification', title: 'Rating/Classification', dataType: 'history'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'},
+    { dataKey: 'score.confidence', title: 'Score/Confidence', dataType: 'history'}
 ]
 
 const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])

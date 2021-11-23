@@ -58,9 +58,9 @@ const setConstants = function(evalNum) {
 const scoreTableCols = [
     { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
     { dataKey: 'score.classification', title: 'Answer', dataType: 'history'},
-    { dataKey: 'score.score_description', title: 'Score', dataType: 'history'},
-    { dataKey: 'score.adjusted_confidence', title: 'Adjusted Confidence', dataType: 'history'},
-    { dataKey: 'score.confidence', title: 'Confidence', dataType: 'history'}
+    { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'},
+    { dataKey: 'score.adjusted_confidence', title: 'Adjusted Score/Confidence', dataType: 'history'},
+    { dataKey: 'score.confidence', title: 'Score/Confidence', dataType: 'history'}
 ]
 
 // TODO: Merge back in with Scenes view?
