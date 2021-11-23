@@ -70,7 +70,7 @@ const scoreTableCols = [
     { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
     { dataKey: 'score.classification', title: 'Rating/Classification', dataType: 'history'},
     { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'},
-    { dataKey: 'score.confidence', title: 'Frame Score/Confidence', dataType: 'history'}
+    { dataKey: 'score.confidence', title: 'Score/Confidence', dataType: 'history'}
 ]
 
 const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
