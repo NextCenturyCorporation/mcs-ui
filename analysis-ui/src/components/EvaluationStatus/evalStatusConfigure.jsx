@@ -46,7 +46,7 @@ const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performer
 
     const updatePerformersMetadata = (e) => {
         if(statusObj[e.value] !== undefined) {
-            setMetadata([...statusObj[e.value]["performers"]]);
+            setMetadata([...statusObj[e.value]["metadata"]]);
             setPerformer([...statusObj[e.value]["performers"]]);
         } else {
             setMetadata([]);
