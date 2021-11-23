@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import gql from 'graphql-tag';
 import Select from 'react-select';
 import Modal from 'react-bootstrap/Modal';
@@ -10,20 +10,16 @@ const SET_EVAL_PARAMETERS = gql`
         setEvalStatusParameters(eval: $eval, evalStatusParams: $evalStatusParams) 
   }`;
 
-function EvalStatusConfigureModal({show, onHide, statusObj, testTypes, performers, metadatas, updateStatusObjHandler, evalName}) {
-    const [testType, setTestType] = useState(statusObj.testTypes);
-    const [performer, setPerformer] = useState(statusObj.performers);
-    const [metadata, setMetadata] = useState(statusObj.metadatas);
+const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performers, metadatas, updateStatusObjHandler, evalName}) => {
+    const [testType, setTestType] = useState();
+    const [performer, setPerformer] = useState([]);
+    const [metadata, setMetadata] = useState([]);
     const [saveParamsCall] = useMutation(SET_EVAL_PARAMETERS);
 
     const saveParams = () => {
         saveParamsCall({ variables: { 
             eval: evalName,
-            evalStatusParams: {
-                testTypes: testType,
-                performers: performer,
-                metadatas: metadata
-            }
+            evalStatusParams: statusObj
         } }).then(() => {
             updateStatusObjHandler();
             onHide();
@@ -31,6 +27,32 @@ function EvalStatusConfigureModal({show, onHide, statusObj, testTypes, performer
 
         onHide();
     };
+
+    const addParams = () => {
+        if(statusObj[testType.value] !== undefined) {
+            statusObj[testType.value]["metadata"] = metadata;
+            statusObj[testType.value]["performers"] = performer;
+        } else {
+            let testTypeObj = {
+                label: testType.label,
+                value: testType.value
+            }
+            testTypeObj["metadata"] = metadata;
+            testTypeObj["performers"] = performer;
+            
+            statusObj[testType.value] = testTypeObj;
+        }
+    };
+
+    const updatePerformersMetadata = (e) => {
+        if(statusObj[e.value] !== undefined) {
+            setMetadata([...statusObj[e.value]["performers"]]);
+            setPerformer([...statusObj[e.value]["performers"]]);
+        } else {
+            setMetadata([]);
+            setPerformer([]);
+        }
+    }
 
     const closeModal = () => {
         onHide();
@@ -46,10 +68,18 @@ function EvalStatusConfigureModal({show, onHide, statusObj, testTypes, performer
                     <div className="form-group">
                         <div className="input-login-header">Test Types:</div>
                         <Select
-                            onChange={setTestType}
+                            onChange={e => { setTestType(e); updatePerformersMetadata(e) }}
                             options={testTypes}
                             placeholder="Select the test types..."
-                            defaultValue={testType}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <div className="input-login-header">Metadata:</div>
+                        <Select
+                            onChange={setMetadata}
+                            options={metadatas}
+                            placeholder="Select the metadata levels..."
+                            value={metadata}
                             isMulti
                         />
                     </div>
@@ -59,17 +89,7 @@ function EvalStatusConfigureModal({show, onHide, statusObj, testTypes, performer
                             onChange={setPerformer}
                             options={performers}
                             placeholder="Select the performers..."
-                            defaultValue={performer}
-                            isMulti
-                        />
-                    </div>
-                    <div className="form-group">
-                        <div className="input-login-header">Metadata:</div>
-                        <Select
-                            onChange={setMetadata}
-                            options={metadatas}
-                            placeholder="Select the metadata levels..."
-                            defaultValue={metadata}
+                            value={performer}
                             isMulti
                         />
                     </div>
@@ -77,6 +97,7 @@ function EvalStatusConfigureModal({show, onHide, statusObj, testTypes, performer
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>Cancel</Button>
+                <Button variant="secondary" onClick={addParams}>Add</Button>
                 <Button variant="primary" onClick={saveParams}>Save Parameters</Button>
             </Modal.Footer>
         </Modal>

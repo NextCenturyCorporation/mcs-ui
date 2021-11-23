@@ -40,7 +40,7 @@ class EvalStatusPage extends React.Component {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
-                    const evalOptions = data[sceneFieldQueryName].sort();
+                    const evalOptions = data[sceneFieldQueryName].sort().reverse();
                     let evaluationOptions = [];
                     for(let i=0; i < evalOptions.length; i++) {
                         evaluationOptions.push({value: evalOptions[i], label: evalOptions[i]});
