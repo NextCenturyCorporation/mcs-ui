@@ -177,6 +177,10 @@ class NavList extends React.Component {
                             }
                         }
 
+                        if(this.props.fieldName === "eval") {
+                            options.sort().reverse();
+                        }
+
                         if(this.props.hasFilter) {
                             return (
                                 <>
