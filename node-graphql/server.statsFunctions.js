@@ -258,7 +258,7 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
             categoryStats = calculatePercentage(categoryStats, incorrectCategoryStats, false);
         }
         
-        return {data: categoryStats, total: totalNum};
+        return {data: categoryStats, incorrectData: incorrectCategoryStats, total: totalNum};
     }
 }
 

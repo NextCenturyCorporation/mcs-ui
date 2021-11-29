@@ -93,6 +93,10 @@ class ChartContainer extends React.Component {
     }
 
     checkDataForUndefined(data, performers) {
+        if(data === null || data === undefined) {
+            return [];
+        }
+
         for(let i=0; i < data.length; i++) {
             for(let j=0; j < performers.length; j++) {
                 if(data[i][performers[j]] === undefined) {
@@ -154,7 +158,8 @@ class ChartContainer extends React.Component {
 
                             return (
                                 <ResultsChart chartKeys={performers} chartData={this.checkDataForUndefined(chartData.data, performers)} 
-                                    chartIndex={"test_type"} maxVal={this.getMaxChartValue(chartData.total)} legendLabel={this.getChartLegendLabel()}/>
+                                    chartIndex={"test_type"} maxVal={this.getMaxChartValue(chartData.total)} legendLabel={this.getChartLegendLabel()} 
+                                    isPercent={this.props.isPercent} incorrectData={this.checkDataForUndefined(chartData.incorrectData, performers)}/>
                             )
                         }
                     }

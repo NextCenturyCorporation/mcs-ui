@@ -9,8 +9,28 @@ const formatCategoryTypeString = function(catTypeString) {
     }).join(" ");
 }
 
-const ValueOutside = ({ bars }) => {
-    return bars.map((bar) => {
+const formatBarTextLabel = function(value, bar, incorrectData, isPercent, data) {
+  // If Percent do not calculate totals, already done
+  if(isPercent){
+    return value + "%";
+  }
+
+  // Value 0 = performer, 1 = test type
+  const matchDataKey = bar.key.split(".");
+  const matchingIncorrectObj = incorrectData.find(o => o.test_type === matchDataKey[1]);
+
+  if(matchingIncorrectObj === undefined) {
+    const novelPlausMatch = matchDataKey[1].split(" ");
+    const matchingObj = data.find(o => o.test_type !== matchDataKey[1] && o.test_type.indexOf(novelPlausMatch[0] + " ") > -1);
+
+    return value + " / " + (matchingObj[matchDataKey[0]] + value);;
+  } else {
+    return value + " / " + (matchingIncorrectObj[matchDataKey[0]] + value);
+  }
+}
+
+const ValueOutside = ({props}) => {
+    return props.bars.map((bar) => {
       const {
         key,
         width,
@@ -22,21 +42,23 @@ const ValueOutside = ({ bars }) => {
       return (
         <g key={key} transform={`translate(${x}, ${y})`}>
           <text
-            transform={`translate(${width + 16}, ${height / 2 + 5})`}
+            transform={`translate(${width + 36}, ${height / 2 + 5})`}
             textAnchor="middle"
             fontSize="11px"
           >
-            {value}
+            {formatBarTextLabel(value, bar, props.incorrectData, props.isPercent, props.data)}
           </text>
         </g>
       );
     });
   };
 
-const MyResponsiveBar = ({ data, keys, chartIndex, maxVal, legendLabel}) => {
+const MyResponsiveBar = ({ data, keys, chartIndex, maxVal, legendLabel, isPercent, incorrectData}) => {
     return <ResponsiveBar 
         data={data} 
         keys={keys} 
+        isPercent={isPercent}
+        incorrectData={incorrectData}
         indexBy={chartIndex}
         layout="horizontal"
         groupMode="grouped"
@@ -79,7 +101,7 @@ const MyResponsiveBar = ({ data, keys, chartIndex, maxVal, legendLabel}) => {
             "markers",
             "legends",
             "annotations",
-            (props) => <ValueOutside {...props} />
+            (props) => <ValueOutside props={props}/>
           ]}
     />;
 };
@@ -98,7 +120,8 @@ class ResultsChart extends React.Component {
         return (
             <div style={this.state.styles} className="flex-chart-center">
                 <div style={{ height: "450px", width: "900px" }}>
-                    <MyResponsiveBar data={this.props.chartData} keys={this.props.chartKeys} chartIndex={this.props.chartIndex} maxVal={this.props.maxVal} legendLabel={this.props.legendLabel}/>
+                    <MyResponsiveBar data={this.props.chartData} keys={this.props.chartKeys} chartIndex={this.props.chartIndex} maxVal={this.props.maxVal} 
+                      legendLabel={this.props.legendLabel} isPercent={this.props.isPercent} incorrectData={this.props.incorrectData}/>
                 </div>
           </div>
         );
