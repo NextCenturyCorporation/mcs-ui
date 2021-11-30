@@ -2,7 +2,8 @@ const scenesCollectionName = "mcsScenes.";
 const sceneCollection = "mcs_scenes.";
 const historyCollection = "mcs_history.";
 
-const EQUALS = "equals";
+const EQUALS_INPUT = "equalsInput";
+const EQUALS_DROPDOWN = "equalsDropdown";
 const CONTAINS = "contains";
 const DOES_NOT_CONTAINS = "does_not_contain";
 const BETWEEN = "between";
@@ -39,7 +40,8 @@ const createComplexMongoQuery = function(queryObj){
         let regexObj, mQueryObj, obj1, obj2;
 
         switch(queryObj[i]["functionOperator"]) {
-            case EQUALS:
+            case EQUALS_DROPDOWN:
+            case EQUALS_INPUT:
                 let inObjList;
                 if(isNaN(queryObj[i]["fieldValue1"])) {
                     inObjList = queryObj[i]["fieldValue1"].split("__,__");

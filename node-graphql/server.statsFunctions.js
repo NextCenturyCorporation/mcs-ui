@@ -50,14 +50,8 @@ function getChartOptions(evalType, metadata, hasNovelty) {
 
 function updateOverall(statsObj, scoreStatsObj, performer, weight) {
     if(statsObj.hasOwnProperty(performer)) {
-        if(weight === 0) {
-            console.log(statsObj[performer] + (scoreStatsObj["count"] * weight));
-        }
         statsObj[performer] = statsObj[performer] + (scoreStatsObj["count"] * weight);
     } else {
-        if(weight === 0) {
-            console.log(scoreStatsObj["count"] * weight);
-        }
         statsObj[performer] = scoreStatsObj["count"] * weight;
     }
 }

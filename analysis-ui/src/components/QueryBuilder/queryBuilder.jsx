@@ -18,7 +18,7 @@ const ParamDisplayByOperator =({queryLine}) => {
     } else {
         return(
             <>
-                <div className="query-field-param-operator">{queryLine.functionOperator}</div>
+                <div className="query-field-param-operator">{queryLine.functionOperator.indexOf("equal") > -1 ? "equals" : queryLine.functionOperator}</div>
                 <span className="material-icons query-param-spacer">add</span>
                 <div className="query-field-param">{queryLine.fieldValue1.toString().replace(/__,__/g, ",")}</div>
             </>
