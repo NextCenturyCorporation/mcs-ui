@@ -23,7 +23,7 @@ const formatBarTextLabel = function(value, bar, incorrectData, isPercent, data) 
     const novelPlausMatch = matchDataKey[1].split(" ");
     const matchingObj = data.find(o => o.test_type !== matchDataKey[1] && o.test_type.indexOf(novelPlausMatch[0] + " ") > -1);
 
-    return value + " / " + (matchingObj[matchDataKey[0]] + value);;
+    return value + " / " + (matchingObj[matchDataKey[0]] + value);
   } else {
     return value + " / " + (matchingIncorrectObj[matchDataKey[0]] + value);
   }
