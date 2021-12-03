@@ -281,7 +281,7 @@ class QueryResultsTable extends React.Component {
                     `${this.state.sortBy !== "" ? `_sorted-by-${this.state.sortOrder === "asc" ? "ascending" : "descending"}-${this.state.sortBy.replaceAll(/[._]/g, '-')}`: ""}.csv`;
         
         let downloader = document.createElement('a'); //create a link
-        downloader.setAttribute('href', csvContent); //content to download
+        downloader.setAttribute('href', encodeURI(csvContent)); //content to download
         downloader.setAttribute('download', filename); //filename of download
         downloader.click(); //download
     }
