@@ -131,7 +131,7 @@ const mcsTypeDefs = gql`
     getHistorySceneFieldAggregation(fieldName: String, eval: String, catType: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getCollectionFields(collectionName: String): [dropDownObj]
-    createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
+    createComplexQuery(queryObject: JSON, projectionObject: JSON, currentPage: Int, resultsPerPage: Int): JSON
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String): JSON
@@ -371,28 +371,46 @@ const mcsResolvers = {
                         {$match: mongoQueryObject.historyQuery},
                         {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                         {$unwind:'$mcsScenes'},
-                        {$project: complexQueryProjectionObject}
+                        {$redact: {$cond: [{$eq: ["$evalNumber", "$mcsScenes.evalNumber"]}, "$$KEEP", "$$PRUNE"]}},
+                        {$facet: {
+                            paginatedResults: [{$skip: args["currentPage"] * args["resultsPerPage"]}, {$limit: args["resultsPerPage"]}, {$project: complexQueryProjectionObject}],
+                            metadata: [
+                                { $group: {
+                                    _id: null,
+                                    total: {$sum: 1},
+                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                                    totalCorrect: {$sum: "$score.score"},
+                                    totalCorrectWeighted: {$sum: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}
+                                }}
+                            ]
+                        }}
                     ]).toArray();
                 } else {
                     return mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
                         {$match: mongoQueryObject.historyQuery},
                         {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
                         {$unwind:'$mcsScenes'},
+                        {$redact: {$cond: [{$eq: ["$evalNumber", "$mcsScenes.evalNumber"]}, "$$KEEP", "$$PRUNE"]}},
                         {$match: mongoQueryObject.sceneQuery},
-                        {$project: complexQueryProjectionObject}
+                        {$facet: {
+                            paginatedResults: [{$skip: args["currentPage"] * args["resultsPerPage"]}, {$limit: args["resultsPerPage"]}, {$project: complexQueryProjectionObject}],
+                            metadata: [
+                                { $group: {
+                                    _id: null,
+                                    total: {$sum: 1},
+                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                                    totalCorrect: {$sum: "$score.score"},
+                                    totalCorrectWeighted: {$sum: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}
+                                }}
+                            ]
+                        }}
                     ]).toArray();
                 }
             }
 
             let results = await getComplexResults();
-            const uniqueResults = results.reduce((unique, o) => {
-                if(!unique.some(obj => obj._id.equals(o._id))) {
-                  unique.push(o);
-                }
-                return unique;
-            },[]);
 
-            return {results: uniqueResults, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
+            return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
         getEvalTestTypes: async(obj, args, context, infow)=> {
             return await mcsDB.db.collection(HISTORY_COLLECTION).distinct(

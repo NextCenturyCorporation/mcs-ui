@@ -95,9 +95,7 @@ class QueryResultsTable extends React.Component {
             groupBy: this.props.groupBy.value,
             sortBy: this.props.sortBy.property,
             sortOrder: this.props.sortBy.sortOrder,
-            expandedGroups: [],
-            page: 0,
-            rowsPerPage: 10
+            expandedGroups: []
         };
 
         this.handleChangePage = this.handleChangePage.bind(this);
@@ -174,14 +172,11 @@ class QueryResultsTable extends React.Component {
     }
 
     handleChangePage = (event, newPage) => {
-        this.setState({page: newPage});
+        this.props.pageUpdateHandler(newPage);
     }
 
     handleChangeRowsPerPage = (event) => {
-        this.setState({
-            rowsPerPage: parseInt(event.target.value, 10),
-            page: 0
-        });
+        this.props.rowsUpdatehandler(event.target.value);
     };
 
     setQueryGroupBy = (event) => {
@@ -213,11 +208,11 @@ class QueryResultsTable extends React.Component {
     }
 
     downloadCSV = () => {
-        let { rows, columns } = this.props;
+        let {columns } = this.props;
         let columnData = this.getColumnData(columns);
-        let groupedData = this.getGroupedData(rows);
+        let groupedData = this.getGroupedData(this.props.rows);
 
-        let columnDelimiter = '\t';
+        let columnDelimiter = ',';
         let rowDelimter = '\n';
         let csvString = ''; //append all content to this really long string
 
@@ -287,12 +282,12 @@ class QueryResultsTable extends React.Component {
     }
 
     render() {
-        let { rows, columns } = this.props;
+        let { columns } = this.props;
         let columnData = this.getColumnData(columns);
-        let groupedData = this.getGroupedData(rows);
+        let groupedData = this.getGroupedData(this.props.rows);
         let { sortBy, sortOrder } = this.state;
-        const emptyRows = this.state.rowsPerPage - 
-            Math.min(this.state.rowsPerPage, groupedData.length - this.state.page * this.state.rowsPerPage);
+        const emptyRows = this.props.rowsPerPage - 
+            Math.min(this.props.rowsPerPage, groupedData.length);
     
         return (
             <div className="query-results-table-holder">
@@ -304,7 +299,7 @@ class QueryResultsTable extends React.Component {
                             </span>CSV
                         </IconButton>
                     </div>
-                    <div className="csv-results-child">
+                    {/* <div className="csv-results-child">
                         <div className="results-group-chooser">
                             <div className="query-builder-label">Group Table By</div>
                             <Select className="results-groupby-selector"
@@ -313,7 +308,7 @@ class QueryResultsTable extends React.Component {
                                 onChange={this.setQueryGroupBy}
                                 options={this.props.groupByOptions}/>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="results-table-scroll">
                     <Table stickyHeader>
@@ -335,9 +330,7 @@ class QueryResultsTable extends React.Component {
                         <TableBody>
                             {this.state.groupBy === "" && 
                                 <React.Fragment>
-                                    {(this.state.rowsPerPage > 0 ? 
-                                        groupedData.slice(this.state.page * this.state.rowsPerPage, 
-                                            this.state.page * this.state.rowsPerPage + this.state.rowsPerPage) : groupedData).map((rowItem, rowKey) => (
+                                    {groupedData.map((rowItem, rowKey) => (
                                         <TableRow key={'table_row_' + rowKey}>
                                             <TableCell key={'table_cell_' + rowKey + "_link"}>
                                                 <ToolTipWithStyles arrow={true} title='View Details' placement='right'>
@@ -416,11 +409,11 @@ class QueryResultsTable extends React.Component {
                         <TableFooter className="query-results-footer">
                             <TableRow>
                                 <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                    rowsPerPageOptions={[5, 10, 25, 50]}
                                     colSpan={3}
-                                    count={groupedData.length}
-                                    rowsPerPage={this.state.rowsPerPage}
-                                    page={this.state.page}
+                                    count={this.props.totalResultCount}
+                                    rowsPerPage={this.props.rowsPerPage}
+                                    page={this.props.page}
                                     SelectProps={{
                                         inputProps: { 'aria-label': 'rows per page' },
                                         native: true,
