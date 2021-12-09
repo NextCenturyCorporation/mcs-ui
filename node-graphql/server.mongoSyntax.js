@@ -2,6 +2,7 @@ const scenesCollectionName = "mcsScenes.";
 const sceneCollection = "mcs_scenes.";
 const historyCollection = "mcs_history.";
 
+const EQUALS = "equals";
 const EQUALS_INPUT = "equalsInput";
 const EQUALS_DROPDOWN = "equalsDropdown";
 const CONTAINS = "contains";
@@ -40,6 +41,7 @@ const createComplexMongoQuery = function(queryObj){
         let regexObj, mQueryObj, obj1, obj2;
 
         switch(queryObj[i]["functionOperator"]) {
+            case EQUALS:
             case EQUALS_DROPDOWN:
             case EQUALS_INPUT:
                 let inObjList;
