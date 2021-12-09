@@ -8,8 +8,8 @@ import {PerformanceStatistics} from './performanceStatistics';
 const complexQueryName = "createComplexQuery";
 
 const create_complex_query = gql`
-    query createComplexQuery($queryObject: JSON!, $currentPage: Int!, $resultsPerPage: Int!) {
-        createComplexQuery(queryObject: $queryObject, currentPage: $currentPage, resultsPerPage: $resultsPerPage) 
+    query createComplexQuery($queryObject: JSON!, $currentPage: Int!, $resultsPerPage: Int!, $sortBy: String, $sortOrder: String, $groupBy: String) {
+        createComplexQuery(queryObject: $queryObject, currentPage: $currentPage, resultsPerPage: $resultsPerPage, sortBy: $sortBy, sortOrder: $sortOrder, groupBy: $groupBy) 
     }`;
 
 class Results extends React.Component {
@@ -23,6 +23,8 @@ class Results extends React.Component {
 
         this.pageUpdateHandler = this.pageUpdateHandler.bind(this);
         this.rowsUpdatehandler = this.rowsUpdatehandler.bind(this);
+        this.getGroupingRows = this.getGroupingRows.bind(this);
+        this.getCSVDownloadData = this.getCSVDownloadData.bind(this);
     }
 
     pageUpdateHandler(newPage) {
@@ -36,21 +38,60 @@ class Results extends React.Component {
         });
     }
 
-    render() {
+    async getGroupingRows(rowTotal, key, parameter) {
+        const groupObject = {
+            fieldType: this.props.queryObj[0].fieldType,
+            fieldName: key,
+            fieldValue1: parameter
+        };
+
+        const queryObject = this.props.queryObj.concat([groupObject]);
+
+        const result = await this.props.client.query({
+            query: create_complex_query,
+            variables: {
+                "queryObject": queryObject,
+                "currentPage": 0,
+                "resultsPerPage": rowTotal,
+                "sortBy": ""
+            }
+        });
+        
+        return result.data[complexQueryName].results[0].results;
+    }
+
+    async getCSVDownloadData(totalRows) {
+        const result = await this.props.client.query({
+            query: create_complex_query,
+            variables: {
+                "queryObject": this.props.queryObj,
+                "currentPage": 0,
+                "resultsPerPage": totalRows,
+                "sortBy": ""
+            }
+        });
+
+        return result.data[complexQueryName].results[0];
+    }
+
+    render() { 
         return (
             <Query query={create_complex_query} variables={
                 {
                     "queryObject": this.props.queryObj,
                     "currentPage": this.state.page,
-                    "resultsPerPage": this.state.rowsPerPage
+                    "resultsPerPage": this.state.rowsPerPage,
+                    "sortBy": this.props.sortBy.property,
+                    "sortOrder": this.props.sortBy.sortOrder,
+                    "groupBy": this.props.groupBy.value
                 }}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Results are currently loading ... </div> 
                     if (error) return <div>Error</div>
-                    
-                    console.log(data[complexQueryName]);
-                    let resultsData = data[complexQueryName].results[0].paginatedResults;
+
+                    let resultsData = data[complexQueryName].results.length > 1 ? 
+                            data[complexQueryName].results : data[complexQueryName].results[0].results;
                     const metadata = data[complexQueryName].results[0].metadata[0];
 
                     let columns = [];
@@ -83,7 +124,8 @@ class Results extends React.Component {
                                 </div>
                                 <QueryResultsTable columns={columns} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} rows={resultsData} name={this.props.name}
                                     groupByOptions={options} setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} ref={this.props.queryResultsTableRef}
-                                    page={this.state.page} rowsPerPage={this.state.rowsPerPage} pageUpdateHandler={this.pageUpdateHandler} rowsUpdatehandler={this.rowsUpdatehandler} totalResultCount={metadata.total}/>
+                                    page={this.state.page} rowsPerPage={this.state.rowsPerPage} pageUpdateHandler={this.pageUpdateHandler} rowsUpdatehandler={this.rowsUpdatehandler} totalResultCount={metadata.total}
+                                    getGroupingRows={this.getGroupingRows} getCSVDownloadData={this.getCSVDownloadData}/>
                             </div>
                         );
                     }
@@ -101,7 +143,8 @@ class ResultsTable extends React.Component {
             return(<div>Enter some parameters to see query results.</div>);
         } else {
             return(<Results queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} name={this.props.name}
-                setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>)
+                setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}
+                client={this.props.client}/>)
         }
     }
 };
@@ -112,7 +155,8 @@ class QueryResults extends React.Component {
         return (
             <div className="query-results-holder">
                 <ResultsTable queryObj={this.props.queryObj} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} name={this.props.name}
-                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>
+                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}
+                    client={this.props.client}/>
             </div>
         );
     }

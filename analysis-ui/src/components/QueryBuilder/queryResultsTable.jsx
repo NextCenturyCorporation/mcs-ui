@@ -92,9 +92,6 @@ class QueryResultsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            groupBy: this.props.groupBy.value,
-            sortBy: this.props.sortBy.property,
-            sortOrder: this.props.sortBy.sortOrder,
             expandedGroups: []
         };
 
@@ -108,15 +105,40 @@ class QueryResultsTable extends React.Component {
     };
   
     getGroupedData = rows => {
-        const { sortBy, sortOrder } = this.state;
         const expandedGroups = {};
 
-        if(this.state.groupBy === "") {
+        if(this.props.groupBy.value === "") {
+            return rows;
+        }
+
+        let groupedData = {};
+        for(let i=0; i < rows.length; i++) {
+            let groupArray = [];
+            if(this.state.expandedGroups[rows[i]._id.groupField] !== undefined) {
+                groupArray = this.state.expandedGroups[rows[i]._id.groupField];
+            }
+            groupedData[rows[i]._id.groupField] = groupArray;
+        }
+
+        Object.keys(groupedData).forEach(item => {
+            expandedGroups[item] = this.state.expandedGroups[item];
+        });
+
+        this.groups = expandedGroups;
+        return groupedData;
+    };
+
+    getGroupedCSVData = rows => {
+        const sortBy = this.props.sortBy.property;
+        const sortOrder = this.props.sortBy.sortOrder;
+        const expandedGroups = {};
+
+        if(this.props.groupBy.value === "") {
             return rows.sort(getSorting(sortOrder, sortBy));
         }
 
         const groupedData = rows.reduce((acc, item) => {
-            let key =_.get(item, this.state.groupBy)
+            let key =_.get(item, this.props.groupBy.value);
             let groupData = acc[key] || [];
             acc[key] = groupData.concat([item]);
             return acc;
@@ -134,20 +156,12 @@ class QueryResultsTable extends React.Component {
     handleRequestSort = sortBy => {
         let sortOrderCheck = "desc";
         if(typeof(sortBy) === "string") {
-            if (this.state.sortBy === sortBy && this.state.sortOrder === "desc") {
+            if (this.props.sortBy.property === sortBy && this.props.sortBy.sortOrder === "desc") {
                 sortOrderCheck = "asc";
             }
-            this.setState({ 
-                sortOrder: sortOrderCheck, 
-                sortBy: sortBy
-            });
             this.props.setTableSortBy({property: sortBy, sortOrder: sortOrderCheck});
         }
         else {
-            this.setState({ 
-                sortOrder: sortBy.sortOrder, 
-                sortBy: sortBy.property 
-            });
             this.props.setTableSortBy({property: sortBy.property, sortOrder: sortBy.sortOrderCheck});
         }
     };
@@ -155,16 +169,18 @@ class QueryResultsTable extends React.Component {
     expandRow = groupVal => {
         const curr = this.groups[groupVal];
         let expandedGroups = this.state.expandedGroups;
-    
-        if (curr) {
-            expandedGroups = expandedGroups.filter(item => item !== groupVal);
-        } else {
-            if (expandedGroups.indexOf(groupVal) === -1) {
-                expandedGroups = expandedGroups.concat([groupVal]);
-            }
+
+        if(curr) {
+            expandedGroups[groupVal] = undefined;
+            this.setState({ expandedGroups: expandedGroups });
+            return;
         }
-        
-        this.setState({ expandedGroups: expandedGroups });
+
+        const metadataRow = this.getGroupMetadata(groupVal);
+        this.props.getGroupingRows(metadataRow.total, groupVal, this.props.groupBy.value).then((data) => {
+            expandedGroups[groupVal] = data;
+            this.setState({ expandedGroups: expandedGroups });
+        });
     };
 
     getToolTipTextForTable = (rowItem, key) => {
@@ -180,7 +196,6 @@ class QueryResultsTable extends React.Component {
     };
 
     setQueryGroupBy = (event) => {
-        this.setState({groupBy: event.value});
         this.props.setGroupBy(event);
     }
 
@@ -207,85 +222,96 @@ class QueryResultsTable extends React.Component {
         }
     }
 
+    getGroupMetadata = (key) => {
+        for(let i=0; i < this.props.rows.length; i++) {
+            if(key == this.props.rows[i]._id.groupField) {
+                return this.props.rows[i];
+            }
+        }
+        return {};
+    }
+
     downloadCSV = () => {
-        let {columns } = this.props;
-        let columnData = this.getColumnData(columns);
-        let groupedData = this.getGroupedData(this.props.rows);
+        this.props.getCSVDownloadData(this.props.totalResultCount).then((data) => {
+            console.log("getCSVDownloadData", data);
+            let {columns} = this.props;
+            let columnData = this.getColumnData(columns);
+            let groupedData = this.getGroupedCSVData(data.results);
 
-        let columnDelimiter = ',';
-        let rowDelimter = '\n';
-        let csvString = ''; //append all content to this really long string
+            let columnDelimiter = ',';
+            let rowDelimter = '\n';
+            let csvString = ''; //append all content to this really long string
 
-        let keysToCSV = []
-        let titles = [];
+            let keysToCSV = []
+            let titles = [];
 
-        if(this.state.groupBy !== "") {
-            titles.push("Group Table By");
-            titles.push("Group");
-        }
+            if(this.props.groupBy.value !== "") {
+                titles.push("Group Table By");
+                titles.push("Group");
+            }
 
-        columnData.forEach(item => {
-            keysToCSV.push(item.dataKey);
-            titles.push(item.title);
-        });
-    
-        if(this.state.groupBy === "") {
-            let stats = getStats(groupedData);
-            csvString += `Total Results: ${groupedData.length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
-                columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
-        }
-
-        csvString += titles.join(columnDelimiter).toUpperCase() + rowDelimter;
-        const appendDataStringToCSV = (data) => {
-            keysToCSV.forEach(element => {
-                let value = _.get(data, element);
-                if(value !== undefined && value !== null && value.constructor === Array)
-                    value = value[0];
-                if(String(value).includes("OPICS (OSU, UU, NYU)")) //csv files automatically use commas as column seperators
-                    value = "OPICS (OSU-UU-NYU)";
-                csvString += value !== undefined && value !== null ? String(value) + columnDelimiter: columnDelimiter;
-            });
-            csvString = csvString.slice(0, -1) + rowDelimter; //replace last column delimiter with row delimiter
-        }
-
-        let groupByTitle = "";
-        if(this.state.groupBy === "") {
-            groupedData.forEach(data => {
-                appendDataStringToCSV(data);
-            });
-        } else {
             columnData.forEach(item => {
-                if(item.dataKey === this.state.groupBy)
-                    groupByTitle = item.title
+                keysToCSV.push(item.dataKey);
+                titles.push(item.title);
             });
-            const groupedByObjectsAsArray = Object.entries(groupedData);
-            groupedByObjectsAsArray.forEach(groupedByObject => {
-                let stats = getStats(groupedByObject[1]);
-                csvString += `Total Results: ${groupedByObject[1].length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
-                    columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
-                groupedByObject[1].forEach(data => {
-                    csvString += groupByTitle + columnDelimiter;
-                    csvString += String(groupedByObject[0]) !== 'undefined' && String(groupedByObject[0]) !== 'null' ? String(groupedByObject[0]) + columnDelimiter : columnDelimiter;
-                    appendDataStringToCSV(data);
-                })
-            })
-        }
-
-        let csvContent = "data:text/csv;charset=utf-8," + csvString; //encode csv format
-        let filename = `${_.kebabCase(this.props.name)}${this.state.groupBy !== "" ? "_grouped-by-" +_.kebabCase(groupByTitle) : ""}` + 
-                    `${this.state.sortBy !== "" ? `_sorted-by-${this.state.sortOrder === "asc" ? "ascending" : "descending"}-${this.state.sortBy.replaceAll(/[._]/g, '-')}`: ""}.csv`;
         
-        let downloader = document.createElement('a'); //create a link
-        downloader.setAttribute('href', encodeURI(csvContent)); //content to download
-        downloader.setAttribute('download', filename); //filename of download
-        downloader.click(); //download
+            if(this.props.groupBy.value === "") {
+                let stats = getStats(data.metadata[0]);
+                csvString += `Total Results: ${groupedData.length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
+                    columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
+            }
+
+            csvString += titles.join(columnDelimiter).toUpperCase() + rowDelimter;
+            const appendDataStringToCSV = (data) => {
+                keysToCSV.forEach(element => {
+                    let value = _.get(data, element);
+                    if(value !== undefined && value !== null && value.constructor === Array)
+                        value = value[0];
+                    if(String(value).includes("OPICS (OSU, UU, NYU)")) //csv files automatically use commas as column seperators
+                        value = "OPICS (OSU-UU-NYU)";
+                    csvString += value !== undefined && value !== null ? String(value) + columnDelimiter: columnDelimiter;
+                });
+                csvString = csvString.slice(0, -1) + rowDelimter; //replace last column delimiter with row delimiter
+            }
+
+            let groupByTitle = "";
+            if(this.props.groupBy.value === "") {
+                groupedData.forEach(data => {
+                    appendDataStringToCSV(data);
+                });
+            } else {
+                columnData.forEach(item => {
+                    if(item.dataKey === this.props.groupBy.value)
+                        groupByTitle = item.title
+                });
+                const groupedByObjectsAsArray = Object.entries(groupedData);
+                groupedByObjectsAsArray.forEach(groupedByObject => {
+                    let stats = getStats(this.getGroupMetadata(groupedByObject[0]));
+                    csvString += `Total Results: ${groupedByObject[1].length}` + columnDelimiter + stats.correct.substring(1).replaceAll(',', '') + 
+                        columnDelimiter + stats.incorrect.substring(1).replaceAll(',', '') + rowDelimter
+                    groupedByObject[1].forEach(data => {
+                        csvString += groupByTitle + columnDelimiter;
+                        csvString += String(groupedByObject[0]) !== 'undefined' && String(groupedByObject[0]) !== 'null' ? String(groupedByObject[0]) + columnDelimiter : columnDelimiter;
+                        appendDataStringToCSV(data);
+                    })
+                })
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8," + csvString; //encode csv format
+            let filename = `${_.kebabCase(this.props.name)}${this.props.groupBy.value !== "" ? "_grouped-by-" +_.kebabCase(groupByTitle) : ""}` + 
+                        `${this.props.sortBy.property !== "" ? `_sorted-by-${this.props.sortBy.sortOrder === "asc" ? "ascending" : "descending"}-${this.props.sortBy.property.replaceAll(/[._]/g, '-')}`: ""}.csv`;
+            
+            let downloader = document.createElement('a'); //create a link
+            downloader.setAttribute('href', encodeURI(csvContent)); //content to download
+            downloader.setAttribute('download', filename); //filename of download
+            downloader.click(); //download
+        });
     }
 
     render() {
         let { columns } = this.props;
         let columnData = this.getColumnData(columns);
         let groupedData = this.getGroupedData(this.props.rows);
-        let { sortBy, sortOrder } = this.state;
         const emptyRows = this.props.rowsPerPage - 
             Math.min(this.props.rowsPerPage, groupedData.length);
     
@@ -299,7 +325,7 @@ class QueryResultsTable extends React.Component {
                             </span>CSV
                         </IconButton>
                     </div>
-                    {/* <div className="csv-results-child">
+                    <div className="csv-results-child">
                         <div className="results-group-chooser">
                             <div className="query-builder-label">Group Table By</div>
                             <Select className="results-groupby-selector"
@@ -308,7 +334,7 @@ class QueryResultsTable extends React.Component {
                                 onChange={this.setQueryGroupBy}
                                 options={this.props.groupByOptions}/>
                         </div>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="results-table-scroll">
                     <Table stickyHeader>
@@ -320,7 +346,7 @@ class QueryResultsTable extends React.Component {
 
                                 {columnData.map((item, key) => (
                                     <TableCell key={'result_table_cell_' + key} className="results-table-header-cell">
-                                        <TableSortLabel active={sortBy === item.dataKey} direction={sortOrder} 
+                                        <TableSortLabel active={this.props.sortBy.property === item.dataKey} direction={this.props.sortBy.sortOrder} 
                                             onClick={this.handleRequestSort.bind(null, item.dataKey)}>{item.title}
                                         </TableSortLabel>
                                     </TableCell>
@@ -328,7 +354,7 @@ class QueryResultsTable extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.groupBy === "" && 
+                            {this.props.groupBy.value === "" && 
                                 <React.Fragment>
                                     {groupedData.map((rowItem, rowKey) => (
                                         <TableRow key={'table_row_' + rowKey}>
@@ -358,7 +384,7 @@ class QueryResultsTable extends React.Component {
                                     )}
                                 </React.Fragment>
                             }
-                            {this.state.groupBy !== "" && 
+                            {this.props.groupBy.value !== "" && 
                                 <>
                                     {Object.keys(groupedData).sort().map(key => {return (
                                         <React.Fragment key={"react_frag_row_" + key}>
@@ -370,9 +396,9 @@ class QueryResultsTable extends React.Component {
                                                         </Icon>
                                                     </IconButton>
                                                     <span className="grouped_table_row_span">
-                                                        {key + " (" + groupedData[key].length + ")"}
+                                                        {key + " (" + (this.getGroupMetadata(key)).total + ")"}
                                                     </span>
-                                                    <PerformanceStatistics resultsData={groupedData[key]}/>
+                                                    <PerformanceStatistics resultsData={this.getGroupMetadata(key)}/>
                                                 </TableCell>
                                             </TableRow>
 
@@ -404,7 +430,7 @@ class QueryResultsTable extends React.Component {
                         </TableBody>
                     </Table>  
                 </div>
-                {this.state.groupBy === "" && 
+                {this.props.groupBy.value === "" && 
                     <table>
                         <TableFooter className="query-results-footer">
                             <TableRow>

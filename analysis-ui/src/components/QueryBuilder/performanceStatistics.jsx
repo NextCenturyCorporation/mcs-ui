@@ -10,6 +10,7 @@ export const getStats = (resultsData) => {
 
     const correctAvg = (numCorrect/totalResults).toFixed(4);
     const correctWeightAvg = (numCorrectWeight/weightedTotal).toFixed(4);
+    
     let standardError = 0;
     for(let i=0; i < numCorrect; i++) {
         standardError = standardError + Math.pow((1 - correctAvg), 2);
@@ -20,10 +21,10 @@ export const getStats = (resultsData) => {
 
     let standardErrorWeight = 0;
     for(let i=0; i < numCorrectWeight; i++) {
-        standardError = standardError + Math.pow((1 - correctWeightAvg), 2);
+        standardErrorWeight = standardErrorWeight + Math.pow((1 - correctWeightAvg), 2);
     }
     for(let i=0; i < numIncorrectWeight; i++) {
-        standardError = standardError + Math.pow((0 - correctWeightAvg), 2);
+        standardErrorWeight = standardErrorWeight + Math.pow((0 - correctWeightAvg), 2);
     }
 
     const sem = ((Math.sqrt(standardError/totalResults) / Math.sqrt(totalResults)) * 100).toFixed(4);
