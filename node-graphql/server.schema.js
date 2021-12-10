@@ -131,7 +131,7 @@ const mcsTypeDefs = gql`
     getHistorySceneFieldAggregation(fieldName: String, eval: String, catType: String) : [StringOrFloat]
     getSceneFieldAggregation(fieldName: String, eval: String) : [StringOrFloat]
     getCollectionFields(collectionName: String): [dropDownObj]
-    createComplexQuery(queryObject: JSON, projectionObject: JSON): JSON
+    createComplexQuery(queryObject: JSON, projectionObject: JSON, currentPage: Int, resultsPerPage: Int, sortBy: String, sortOrder: String, groupBy: String): JSON
     getSavedQueries: [savedQueryObj]
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String): JSON
@@ -366,33 +366,92 @@ const mcsResolvers = {
                     complexQueryProjectionObject = projectionObj;
                 }
 
-                if(Object.keys(mongoQueryObject.sceneQuery).length === 0) {
-                    return mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
-                        {$match: mongoQueryObject.historyQuery},
-                        {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
-                        {$unwind:'$mcsScenes'},
-                        {$project: complexQueryProjectionObject}
-                    ]).toArray();
-                } else {
-                    return mcsDB.db.collection(HISTORY_COLLECTION).aggregate([
-                        {$match: mongoQueryObject.historyQuery},
-                        {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
-                        {$unwind:'$mcsScenes'},
-                        {$match: mongoQueryObject.sceneQuery},
-                        {$project: complexQueryProjectionObject}
-                    ]).toArray();
+                // Build Sort Parameters before creating the pipeline
+                let sortObj = {}
+                let sceneSort = false;
+                if(args["sortBy"] !== null && args["sortBy"] !== undefined && args["sortBy"] !== ""){
+                    const sortOrder = args["sortOrder"] === "asc" ? 1 : -1;
+                    sortObj[args["sortBy"]] = sortOrder;
+                    sceneSort = args["sortBy"].indexOf("scene.") > -1 ? true : false;
                 }
+
+                // Dynamically Build the aggregation pipeline, starting with an initial match
+                let aggregationObjectArray = [{$match: mongoQueryObject.historyQuery}];
+
+                // If we are not sorting on a scene field, it is better to sort early before the unwind otherwise
+                //   you can't take advantage of any indexes and the sort is very slow.
+                if(Object.keys(sortObj).length !== 0 && !sceneSort) {
+                    aggregationObjectArray.push({$sort: sortObj});
+                }
+
+                // Here we add the rest of the pipeline, the lookup finds the matching scene file, unwind flattens the scene file
+                //   into the history file, and redact removes any duplicate scene file records if from a different eval
+                aggregationObjectArray = aggregationObjectArray.concat([
+                    {$lookup:{'from': SCENES_COLLECTION, 'localField':'name', 'foreignField': 'name', 'as': 'mcsScenes'}},
+                    {$unwind:'$mcsScenes'},
+                    {$redact: {$cond: [{$eq: ["$evalNumber", "$mcsScenes.evalNumber"]}, "$$KEEP", "$$PRUNE"]}}
+                ]);
+
+                // If the performer used any query parameters from a scene object we now reduce the returned history results to 
+                //   only return objects that meet the scene requirements
+                if(Object.keys(mongoQueryObject.sceneQuery).length > 0) {
+                    aggregationObjectArray.push({$match: mongoQueryObject.sceneQuery});
+                } 
+
+                // if the sort is on a scene field, we have to wait until after removing all non matching scenes before 
+                //    doing the sort
+                if(Object.keys(sortObj).length !== 0 && sceneSort) {
+                    aggregationObjectArray.push({$sort: sortObj});
+                }
+
+                // Add grouping here 
+                if(args["groupBy"] !== null && args["groupBy"] !== undefined && args["groupBy"] !== ""){
+                    aggregationObjectArray.push(
+                        {$facet: {
+                            results: [
+                                { $group: {
+                                    _id: {"groupField": "$" + args["groupBy"]}, 
+                                    total: {$sum: 1},
+                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                                    totalCorrect: {$sum: "$score.score"},
+                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                }}
+                            ],
+                            metadata: [
+                                { $group: {
+                                    _id: null,
+                                    total: {$sum: 1},
+                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                                    totalCorrect: {$sum: "$score.score"},
+                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                }}
+                            ]
+                        }}
+                    );
+                } else {
+                    // Add the pagination features here, along with return metadata for the displayed statistics
+                    aggregationObjectArray.push(
+                        {$facet: {
+                            results: [{$skip: args["currentPage"] * args["resultsPerPage"]}, {$limit: args["resultsPerPage"]}, {$project: complexQueryProjectionObject}],
+                            metadata: [
+                                { $group: {
+                                    _id: null,
+                                    total: {$sum: 1},
+                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                                    totalCorrect: {$sum: "$score.score"},
+                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                }}
+                            ]
+                        }}
+                    );
+                }
+
+                return mcsDB.db.collection(HISTORY_COLLECTION).aggregate(aggregationObjectArray, { "allowDiskUse" : true }).toArray();
             }
 
             let results = await getComplexResults();
-            const uniqueResults = results.reduce((unique, o) => {
-                if(!unique.some(obj => obj._id.equals(o._id))) {
-                  unique.push(o);
-                }
-                return unique;
-            },[]);
 
-            return {results: uniqueResults, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
+            return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable};
         },
         getEvalTestTypes: async(obj, args, context, infow)=> {
             return await mcsDB.db.collection(HISTORY_COLLECTION).distinct(

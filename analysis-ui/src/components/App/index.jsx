@@ -81,12 +81,12 @@ const AnalysisUI = ({newState, updateHandler}) => {
     </div>;
 }
 
-function QueryBuilder({newState}) {
+function QueryBuilder({newState, client}) {
     if(newState.currentUser == null) {
         history.push('/login');
     }
 
-    return <QueryPage currentUser={newState.currentUser}/>
+    return <QueryPage currentUser={newState.currentUser} client={client}/>
 }
 
 function EvalStatus({newState}) {
@@ -328,7 +328,7 @@ export class App extends React.Component {
                             <TestOverviewPage newState={this.state}/>
                         </Route>
                         <Route exact path="/query">
-                            <QueryBuilder newState={this.state}/>
+                            <QueryBuilder newState={this.state} client={this.props.client}/>
                         </Route>
                         <Route path="/analysis">
                             <AnalysisUI newState={this.state} updateHandler={this.updateHandler}/>

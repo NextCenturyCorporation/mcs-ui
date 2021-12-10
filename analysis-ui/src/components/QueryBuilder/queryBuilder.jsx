@@ -104,7 +104,8 @@ class ComplexQueryBuilder extends React.Component {
                     </div>
                 </div>
                 <QueryResults queryObj={this.props.saveQueryObject} tabId={this.props.tabId} queryMongoId={this.props.queryMongoId} currentTab={this.props.currentTab} name={this.props.name}
-                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>
+                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} 
+                    queryResultsTableRef={this.props.queryResultsTableRef} client={this.props.client}/>
             </div>
         );
     }
