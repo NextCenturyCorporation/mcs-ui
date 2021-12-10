@@ -18,7 +18,7 @@ const ParamDisplayByOperator =({queryLine}) => {
     } else {
         return(
             <>
-                <div className="query-field-param-operator">{queryLine.functionOperator}</div>
+                <div className="query-field-param-operator">{queryLine.functionOperator.indexOf("equal") > -1 ? "equals" : queryLine.functionOperator}</div>
                 <span className="material-icons query-param-spacer">add</span>
                 <div className="query-field-param">{queryLine.fieldValue1.toString().replace(/__,__/g, ",")}</div>
             </>
@@ -104,7 +104,8 @@ class ComplexQueryBuilder extends React.Component {
                     </div>
                 </div>
                 <QueryResults queryObj={this.props.saveQueryObject} tabId={this.props.tabId} queryMongoId={this.props.queryMongoId} currentTab={this.props.currentTab} name={this.props.name}
-                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} queryResultsTableRef={this.props.queryResultsTableRef}/>
+                    setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} 
+                    queryResultsTableRef={this.props.queryResultsTableRef} client={this.props.client}/>
             </div>
         );
     }

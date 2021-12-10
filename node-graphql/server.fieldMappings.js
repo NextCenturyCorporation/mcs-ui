@@ -520,6 +520,9 @@ const sceneFieldLabelMapTable = {
     "goal.sceneInfo.count.wall": "Count Wall",
     "goal.sceneInfo.name": "Scene Info Name",
     "goal.sceneInfo.hypercubeId": "Hypercube Id",
+    "goal.sceneInfo.slices": "Hypercube Slices",
+    "goal.sceneInfo.setup": "Hypercube Setup",
+    "goal.sceneInfo.movement": "Hypercube Movement",
     "goal.habituation_total": "Habituation Total",
     "goal.answer.choice": "Goal Answer Choice",
     "goal.sceneInfo.id": "Cube ID"
@@ -561,6 +564,9 @@ const sceneIncludeFieldsTable = [
     "goal.sceneInfo.count.wall",
     "goal.sceneInfo.name",
     "goal.sceneInfo.hypercubeId",
+    "goal.sceneInfo.slices",
+    "goal.sceneInfo.setup",
+    "goal.sceneInfo.movement",
     "goal.habituation_total",
     "goal.answer.choice",
     "goal.sceneInfo.id"

@@ -6,6 +6,6 @@ import {ApolloProvider} from 'react-apollo';
 import {apolloClient} from './services/accountsService';
 
 ReactDOM.render(
-  <ApolloProvider client={apolloClient}><App /></ApolloProvider>,
+  <ApolloProvider client={apolloClient}><App client={apolloClient}/></ApolloProvider>,
   document.getElementById("root")
 );

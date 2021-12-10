@@ -7,7 +7,8 @@ import { Query } from 'react-apollo';
 import Select from 'react-select';
 
 const functionOptions = [
-    {value: "equals", label: "equals"},
+    {value: "equalsInput", label: "equals (input)"},
+    {value: "equalsDropdown", label: "equals (dropdown)"},
     {value: "contains", label: "contains"},
     {value: "does_not_contain", label: "does not contain"},
     {value: "between", label: "between"},
@@ -89,7 +90,7 @@ class QueryLineItem extends React.Component {
             fieldNameLabel: "",
             fieldValue1: "",
             fieldValue2: "",
-            functionOperator: "equals",
+            functionOperator: "equalsInput",
             collectionDropdownToggle: 0
         };
 
@@ -146,7 +147,7 @@ class QueryLineItem extends React.Component {
             fieldName: "",
             fieldValue1: "",
             fieldValue2: "",
-            functionOperator: "equals",
+            functionOperator: "equalsInput",
             collectionDropdownToggle: this.state.collectionDropdownToggle === 0 ? 1 : 0
         });
     }
