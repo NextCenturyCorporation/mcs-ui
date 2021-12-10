@@ -103,13 +103,14 @@ class FieldValuesDropdown extends React.Component {
     render() {
         return (
             <>
-                {this.props.functionOperator === "equals" &&
+                {(this.props.functionOperator === "equalsDropdown" || this.props.functionOperator === "equalsDropdown") &&
                     <div className="query-field-value-selector-equals">
                         <FieldDropdownSelector fieldType={this.props.fieldType} fieldName={this.props.fieldName} selectFieldValueHandler={this.props.selectDropDownValue}/>
                     </div>
                 }
                 {(this.props.functionOperator === "contains" || this.props.functionOperator === "does_not_contain" ||
-                    this.props.functionOperator === "greater_than" || this.props.functionOperator === "less_than") &&
+                    this.props.functionOperator === "greater_than" || this.props.functionOperator === "less_than" ||
+                    this.props.functionOperator === "equalsInput") &&
                     <div className="query-field-value-selector">
                         <div className="query-builder-label">Value</div>
                         <input className="form-control query-field-input" placeholder="Enter a value..." type="text" onChange={this.props.selectFieldValueHandler1}/>
