@@ -51,6 +51,7 @@ const Eval4 = {
     movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-4/",
     sceneExtension: "_debug.json",
+    logExtension: "_log.txt"
 }
 
 const Eval5 = {
@@ -60,6 +61,7 @@ const Eval5 = {
     movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-5/",
     sceneExtension: "_debug.json",
+    logExtension: "_log.txt"
 }
 
 const Eval6 = {
@@ -69,6 +71,7 @@ const Eval6 = {
     movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-6/",
     sceneExtension: "_debug.json",
+    logExtension: "_log.txt"
 }
 
 const Eval7 = {
@@ -78,6 +81,7 @@ const Eval7 = {
     movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-7/",
     sceneExtension: "_debug.json",
+    logExtension: "_log.txt"
 }
 
 const Eval8 = {
@@ -87,6 +91,7 @@ const Eval8 = {
     movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-8/",
     sceneExtension: "_debug.json",
+    logExtension: "_log.txt"
 }
 
 export const EvalConstants = {
