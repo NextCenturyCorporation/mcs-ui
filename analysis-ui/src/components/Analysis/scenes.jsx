@@ -455,11 +455,13 @@ class Scenes extends React.Component {
                                                         </div>
                                                         <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
                                                             playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
-                                                        <div className="scene-text">Links to other videos/files:</div>
+                                                        <div className="scene-text">Links for other videos/files:</div>
+                                                            { (this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                             <div className="scene-text">
                                                                 <a href={
                                                                     this.getVideoFileName(scenesByPerformer, "_heatmap")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
+                                                            }
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
