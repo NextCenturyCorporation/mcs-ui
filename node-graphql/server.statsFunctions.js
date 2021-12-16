@@ -356,6 +356,10 @@ function updateStatObj(hyperCubeObj, statObj) {
         } else if(hyperCubeObj["_id"]["groundTruth"] === 0) {
             statObj["incorrect_implausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
         }
+
+        if(hyperCubeObj["_id"]["description"] === "No answer") {
+            statObj["did_not_answer"] += hyperCubeObj["count"];
+        }
     }
 }
 
@@ -373,7 +377,8 @@ function processHyperCubeStats(hyperCubeProjection) {
                 "correct_plausible": 0,
                 "correct_implausible": 0,
                 "incorrect_plausible": 0,
-                "incorrect_implausible": 0
+                "incorrect_implausible": 0,
+                "did_not_answer": 0
             };
             updateStatObj(hyperCubeProjection[i], newStatObj);
             statArray.push(newStatObj);
@@ -387,13 +392,15 @@ function processHyperCubeStats(hyperCubeProjection) {
         "correct_plausible": 0,
         "correct_implausible": 0,
         "incorrect_plausible": 0,
-        "incorrect_implausible": 0
+        "incorrect_implausible": 0,
+        "did_not_answer": 0
     };
     for(let j = 0; j < statArray.length; j++) {
         totalStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
         totalStatObj["correct_implausible"] += statArray[j]["correct_implausible"];
         totalStatObj["incorrect_plausible"] += statArray[j]["incorrect_plausible"];
         totalStatObj["incorrect_implausible"] += statArray[j]["incorrect_implausible"];
+        totalStatObj["did_not_answer"] += statArray[j]["did_not_answer"];
     }
     statArray.push(totalStatObj);
 

@@ -23,6 +23,7 @@ const overViewTableFields = [
     {"title": "Correct Implausible", "key": "correct_implausible"},
     {"title": "Incorrect Implausible", "key": "incorrect_implausible"},
     {"title": "False Alarm", "key": "falseAlarm"},
+    {"title": "No Answer", "key": "did_not_answer"},
     {"title": "Total", "key": "total"},
     {"title": "Mean", "key": "mean"},
     {"title": "dPrime", "key": "dPrime"},
@@ -84,6 +85,8 @@ class HyperCubeResultsTable extends React.Component {
 
                     const tableTitle = "Overview Stats (" + this.props.state.category + "/" + 
                         this.props.state.performer + "/" + this.props.state.metadata + ")";
+
+                    console.log(hyperCubeData);
 
                     return (
                         <>

@@ -521,7 +521,8 @@ const mcsResolvers = {
                 "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
                 "scoreWorth": "$score.weighted_score_worth",
-                "testType": "$test_type"
+                "testType": "$test_type",
+                "description": "$score.score_description"
             };
 
             if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
