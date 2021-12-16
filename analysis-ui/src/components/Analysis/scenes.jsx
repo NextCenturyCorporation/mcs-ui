@@ -10,6 +10,7 @@ import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
 import PlausabilityGraph from './plausabilityGraph';
+import ToggleItem from './toggleItem';
 
 const historyQueryName = "getEvalHistory";
 const sceneQueryName = "getEvalScene";
@@ -429,6 +430,13 @@ class Scenes extends React.Component {
                                                                     {performer}
                                                             </button>
                                                         )}
+                                                    </div>
+
+                                                    {/* TODO: MCS-485: make functional, add videos, update playback button component */}
+                                                    <div className="btn-group" role="group">
+                                                        <ToggleItem propertyName="showPlausabililtyGraph" defaultValue={true} label="Plausability Graph"/>
+                                                        <ToggleItem propertyName="showSegmentationVid" defaultValue={false} label="Segmentation"/>
+                                                        <ToggleItem propertyName="showDepthMapVid" defaultValue={false} label="Depth"/>
                                                     </div>
                                                 </div>
                                                 { this.checkIfScenesExist(scenesByPerformer) &&
