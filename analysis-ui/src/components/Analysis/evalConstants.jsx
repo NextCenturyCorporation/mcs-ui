@@ -1,10 +1,16 @@
 import {RESOURCES_URL} from '../../services/config';
 
+const baseEvalConstant = {
+    movieExtension: ".mp4",
+    sceneExtension: "_debug.json",
+    logExtension: "_log.txt" // note that there are only logs for Eval 4+
+}
+
 const Eval2 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-2-inphys-videos/",
     interactiveMoviesBucket: RESOURCES_URL + "/eval-2/",
     topDownMoviesBucket: RESOURCES_URL + "/eval-2-top-down/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-2-scenes/",
     sceneExtension: "-debug.json",
 
@@ -18,75 +24,51 @@ const Eval2 = {
 };
 
 const Eval3 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-3/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-3/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-3/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-3-scenes/",
-    sceneExtension: "_debug.json",
 }
 
 const Eval3_5 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-3.5/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-3.5/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-3.5/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-3.5/", 
-    sceneExtension: "_debug.json",
 }
 
 const Eval3_75 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-3.75/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-3.75/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-3.75/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-3.75/",
-    sceneExtension: "_debug.json",
 }
 
 const Eval4 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-resources-4/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-resources-4/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-resources-4/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-4/",
-    sceneExtension: "_debug.json",
 }
 
 const Eval5 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-resources-5/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-resources-5/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-resources-5/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-5/",
-    sceneExtension: "_debug.json",
 }
 
 const Eval6 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-resources-6/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-resources-6/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-resources-6/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-6/",
-    sceneExtension: "_debug.json",
 }
 
 const Eval7 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-resources-7/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-resources-7/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-resources-7/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-7/",
-    sceneExtension: "_debug.json",
 }
 
 const Eval8 = {
+    ...baseEvalConstant,
     moviesBucket: RESOURCES_URL + "/eval-resources-8/",
-    interactiveMoviesBucket: RESOURCES_URL + "/eval-resources-8/",
-    topDownMoviesBucket: RESOURCES_URL + "/eval-resources-8/",
-    movieExtension: ".mp4",
     sceneBucket: RESOURCES_URL + "/eval-scenes-8/",
-    sceneExtension: "_debug.json",
 }
 
 export const EvalConstants = {

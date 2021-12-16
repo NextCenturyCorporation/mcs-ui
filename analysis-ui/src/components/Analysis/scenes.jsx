@@ -320,6 +320,18 @@ class Scenes extends React.Component {
                 "Evaluation 3.75 Results"].indexOf(evalResultName) > -1;
     }
 
+    getLogFileName = (scenesByPerformer) => {
+        let sceneItem = this.getSceneHistoryItem(scenesByPerformer);
+        if(sceneItem === undefined || sceneItem === null) {
+            return "";
+        }
+
+        return constantsObject["moviesBucket"] +
+            sceneItem.fullFilename +
+            "_" + sceneItem.fileTimestamp +
+            constantsObject["logExtension"];
+    }
+
     render() {
         return (
             <Query query={mcs_history} variables={
@@ -443,11 +455,13 @@ class Scenes extends React.Component {
                                                         </div>
                                                         <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
                                                             playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
-                                                        <div className="scene-text">Links for other videos:</div>
+                                                        <div className="scene-text">Links for other videos/files:</div>
+                                                            { (this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                             <div className="scene-text">
                                                                 <a href={
                                                                     this.getVideoFileName(scenesByPerformer, "_heatmap")} target="_blank" rel="noopener noreferrer">Heatmap</a>
                                                             </div>
+                                                            }
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
@@ -455,6 +469,10 @@ class Scenes extends React.Component {
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
                                                             </div>}
+                                                            { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
+                                                            <div className="scene-text"><a href={
+                                                                this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">Log File</a></div>
+                                                            }
                                                     </div> 
                                                 }
                                                 {/* start video logic for interactive scenes */}
