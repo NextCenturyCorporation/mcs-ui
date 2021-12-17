@@ -289,13 +289,22 @@ function InvNormApprox( ina_p ) {
     return( ina_z );
 }
 
-function addPerformanceStats(statArray) {
+function addPerformanceStats(statArray, includeDoNotAnswer) {
     for(let i=0; i < statArray.length; i++) {
         const totalCorrect = statArray[i]["correct_plausible"] + statArray[i]["correct_implausible"];
-        const totalIncorrect = statArray[i]["incorrect_plausible"] + statArray[i]["incorrect_implausible"];
+        let totalIncorrect = statArray[i]["incorrect_plausible"] + statArray[i]["incorrect_implausible"];
 
-        statArray[i]["hitRate"] = (statArray[i]["correct_plausible"]/(statArray[i]["correct_plausible"] + statArray[i]["incorrect_plausible"])).toFixed(4);
-        statArray[i]["falseAlarm"] = (statArray[i]["incorrect_implausible"]/(statArray[i]["correct_implausible"] + statArray[i]["incorrect_implausible"])).toFixed(4);
+        let incorrectPlausible = statArray[i]["incorrect_plausible"];
+        let incorrectImplausible = statArray[i]["incorrect_implausible"];
+
+        if(includeDoNotAnswer) {
+            totalIncorrect += statArray[i]["did_not_answer_plausible"] + statArray[i]["did_not_answer_implausible"];
+            incorrectPlausible += statArray[i]["did_not_answer_plausible"];
+            incorrectImplausible += statArray[i]["did_not_answer_implausible"];
+        }
+
+        statArray[i]["hitRate"] = (statArray[i]["correct_plausible"]/(statArray[i]["correct_plausible"] + incorrectPlausible)).toFixed(4);
+        statArray[i]["falseAlarm"] = (incorrectImplausible/(statArray[i]["correct_implausible"] + incorrectImplausible)).toFixed(4);
         statArray[i]["total"] = totalCorrect + totalIncorrect;
         statArray[i]["mean"] = (totalCorrect/statArray[i]["total"]).toFixed(4);
 
@@ -326,15 +335,17 @@ function addPerformanceStats(statArray) {
 
         statArray[i]["standardError"] = (statArray[i]["standardDeviation"] / Math.sqrt(statArray[i]["total"])).toFixed(4);
 
-        if(statArray[i]["correct_plausible"] === 0 && statArray[i]["incorrect_plausible"] === 0) {
+        if(statArray[i]["correct_plausible"] === 0 && statArray[i]["incorrect_plausible"] === 0 && statArray[i]["did_not_answer_plausible"] === 0) {
             statArray[i]["correct_plausible"] = "-";
             statArray[i]["incorrect_plausible"] = "-";
+            statArray[i]["did_not_answer_plausible"] = "-";
             statArray[i]["hitRate"] = "-";
         }
 
-        if(statArray[i]["correct_implausible"] === 0 && statArray[i]["incorrect_implausible"] === 0) {
+        if(statArray[i]["correct_implausible"] === 0 && statArray[i]["incorrect_implausible"] === 0 && statArray[i]["did_not_answer_implausible"] === 0) {
             statArray[i]["correct_implausible"] = "-";
             statArray[i]["incorrect_implausible"] = "-";
+            statArray[i]["did_not_answer_implausible"] = "-";
             statArray[i]["falseAlarm"] = "-";
         }
     }
@@ -351,19 +362,23 @@ function updateStatObj(hyperCubeObj, statObj) {
         }
     }
     else {
-        if(hyperCubeObj["_id"]["groundTruth"] === 1) {
-            statObj["incorrect_plausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
-        } else if(hyperCubeObj["_id"]["groundTruth"] === 0) {
-            statObj["incorrect_implausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
-        }
-
         if(hyperCubeObj["_id"]["description"] === "No answer") {
-            statObj["did_not_answer"] += hyperCubeObj["count"];
+            if(hyperCubeObj["_id"]["groundTruth"] === 1) {
+                statObj["did_not_answer_plausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+            } else if(hyperCubeObj["_id"]["groundTruth"] === 0) {
+                statObj["did_not_answer_implausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+            }
+        } else {
+            if(hyperCubeObj["_id"]["groundTruth"] === 1) {
+                statObj["incorrect_plausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+            } else if(hyperCubeObj["_id"]["groundTruth"] === 0) {
+                statObj["incorrect_implausible"] += hyperCubeObj["count"] * hyperCubeObj["_id"]["scoreWorth"];
+            }
         }
     }
 }
 
-function processHyperCubeStats(hyperCubeProjection) {
+function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer) {
     let statArray = [];
     let testType = hyperCubeProjection[0]["_id"]["testType"];
 
@@ -378,7 +393,8 @@ function processHyperCubeStats(hyperCubeProjection) {
                 "correct_implausible": 0,
                 "incorrect_plausible": 0,
                 "incorrect_implausible": 0,
-                "did_not_answer": 0
+                "did_not_answer_plausible": 0,
+                "did_not_answer_implausible": 0
             };
             updateStatObj(hyperCubeProjection[i], newStatObj);
             statArray.push(newStatObj);
@@ -393,20 +409,22 @@ function processHyperCubeStats(hyperCubeProjection) {
         "correct_implausible": 0,
         "incorrect_plausible": 0,
         "incorrect_implausible": 0,
-        "did_not_answer": 0
+        "did_not_answer_plausible": 0,
+        "did_not_answer_implausible": 0
     };
     for(let j = 0; j < statArray.length; j++) {
         totalStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
         totalStatObj["correct_implausible"] += statArray[j]["correct_implausible"];
         totalStatObj["incorrect_plausible"] += statArray[j]["incorrect_plausible"];
         totalStatObj["incorrect_implausible"] += statArray[j]["incorrect_implausible"];
-        totalStatObj["did_not_answer"] += statArray[j]["did_not_answer"];
+        totalStatObj["did_not_answer_plausible"] += statArray[j]["did_not_answer_plausible"];
+        totalStatObj["did_not_answer_implausible"] += statArray[j]["did_not_answer_implausible"];
     }
     statArray.push(totalStatObj);
 
     return {
         "testType": testType,
-        "stats": addPerformanceStats(statArray)
+        "stats": addPerformanceStats(statArray, includeDoNotAnswer)
     };
 }
 
