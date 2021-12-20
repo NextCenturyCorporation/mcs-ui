@@ -139,7 +139,7 @@ const mcsTypeDefs = gql`
     getEvalTestTypes(eval: String): [String]
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean): JSON
-    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
 
@@ -521,7 +521,8 @@ const mcsResolvers = {
                 "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
                 "scoreWorth": "$score.weighted_score_worth",
-                "testType": "$test_type"
+                "testType": "$test_type",
+                "description": "$score.score_description"
             };
 
             if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
@@ -532,7 +533,7 @@ const mcsResolvers = {
                 {"$match": searchObject}, {"$group": {"_id": projectObject, "count": {"$sum": 1}}
             }]).toArray();
 
-            return processHyperCubeStats(hypercubeStats);
+            return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer);
         },
         getScoreCardData: async(obj, args, context, infow) =>{
             const searchObject = {

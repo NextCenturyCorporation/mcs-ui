@@ -11,17 +11,19 @@ import ScoreCardTable from './scorecardTable';
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
-    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!) {
-        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
+    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!) {
+        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer) 
     }`;
 
 const overViewTableFields = [
     {"title": "HyperCubeId", "key": "hyperCubeID"},
     {"title": "Correct Plausible", "key": "correct_plausible"},
     {"title": "Incorrect Plausible", "key": "incorrect_plausible"},
+    {"title": "No Answer Plausible", "key": "did_not_answer_plausible"},
     {"title": "Hit Rate", "key": "hitRate"},
     {"title": "Correct Implausible", "key": "correct_implausible"},
     {"title": "Incorrect Implausible", "key": "incorrect_implausible"},
+    {"title": "No Answer Implausible", "key": "did_not_answer_implausible"},
     {"title": "False Alarm", "key": "falseAlarm"},
     {"title": "Total", "key": "total"},
     {"title": "Mean", "key": "mean"},
@@ -73,7 +75,8 @@ class HyperCubeResultsTable extends React.Component {
                 "eval": this.props.state.eval,
                 "categoryType": this.props.state.category,
                 "performer": this.props.state.performer,
-                "metadata": this.props.state.metadata}}>
+                "metadata": this.props.state.metadata,
+                "useDidNotAnswer": this.props.state.useDidNotAnswer}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -84,6 +87,7 @@ class HyperCubeResultsTable extends React.Component {
 
                     const tableTitle = "Overview Stats (" + this.props.state.category + "/" + 
                         this.props.state.performer + "/" + this.props.state.metadata + ")";
+
 
                     return (
                         <>

@@ -3,6 +3,7 @@ import EvalNavItem from './evalNavItem';
 import CategoryNavItem from './categoryNavItem';
 import ButtonGroupNavItem from './buttonGroupNavItem';
 import HyperCubeResultsTable from './hypercubeResultsTable';
+import Switch from "react-switch";
 
 class TestOverview extends React.Component {
 
@@ -12,13 +13,19 @@ class TestOverview extends React.Component {
             eval: "",
             category: "",
             performer: "",
-            metadata: ""
+            metadata: "",
+            useDidNotAnswer: true
         }
         this.stateUpdateHandler = this.stateUpdateHandler.bind(this);
+        this.toggleUseDidNotAnswer = this.toggleUseDidNotAnswer.bind(this);
     }
 
     stateUpdateHandler(key, value) {
         this.setState({[key]: value});
+    }
+
+    toggleUseDidNotAnswer() {
+        this.setState(prevState => ({useDidNotAnswer: !prevState.useDidNotAnswer}));
     }
 
     render() {
@@ -51,6 +58,12 @@ class TestOverview extends React.Component {
                                         <ButtonGroupNavItem fieldName="performer" state={this.state} stateUpdateHandler={this.stateUpdateHandler}/>
                                     </div>
                                     <div className="overview-buttom-group-right">
+                                        <label className="no-answer-toggle-holder">
+                                            <div className="switch-container">
+                                                <Switch onChange={this.toggleUseDidNotAnswer} checked={this.state.useDidNotAnswer}/>
+                                            </div>
+                                            <span>Include No Answers in Calculations</span>
+                                        </label>
                                         <ButtonGroupNavItem fieldName="metadata" state={this.state} stateUpdateHandler={this.stateUpdateHandler}/>
                                     </div>
                                 </div>

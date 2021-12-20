@@ -1226,3 +1226,14 @@ nav.MuiList-root.nav-list.MuiList-padding {
     top: -50px;
     z-index: 3;
 }
+
+.no-answer-toggle-holder {
+    margin-right: 20px;
+}
+
+.switch-container {
+    position: relative;
+    display: inline-block;
+    top: 6px;
+    margin-right: 5px;
+}
