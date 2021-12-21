@@ -138,7 +138,7 @@ const mcsTypeDefs = gql`
     getUsers: JSON
     getEvalTestTypes(eval: String): [String]
     getHomeChartOptions(eval: String, evalType: String): JSON
-    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean): JSON
+    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
     getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
@@ -470,7 +470,8 @@ const mcsResolvers = {
         getHomeChart: async(obj, args, context, infow)=> {
             let groupObject = {
                 "performer": "$performer",
-                "correct": "$score.score"
+                "correct": "$score.score",
+                "description": "$score.score_description"
             };
 
             let searchObject = {
@@ -501,7 +502,7 @@ const mcsResolvers = {
 
             scoreStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
 
-            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType, args.isNovelty);
+            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType, args.isNovelty, args.useDidNotAnswer);
         },
         getUsers: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('users').find().project({"services":0, "createdAt":0, "updatedAt": 0})
