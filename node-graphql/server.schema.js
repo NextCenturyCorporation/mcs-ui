@@ -404,6 +404,14 @@ const mcsResolvers = {
                     aggregationObjectArray.push({$sort: sortObj});
                 }
 
+                const groupQueryData = {
+                    total: {$sum: 1},
+                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                    totalCorrect: {$sum: "$score.score"},
+                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}},
+                    totalNoAnswer: {$sum: {$cond: {if: {$eq: ["$score.score_description", "No answer"]}, then: 1, else: 0}}}
+                }
+
                 // Add grouping here 
                 if(args["groupBy"] !== null && args["groupBy"] !== undefined && args["groupBy"] !== ""){
                     aggregationObjectArray.push(
@@ -411,19 +419,13 @@ const mcsResolvers = {
                             results: [
                                 { $group: {
                                     _id: {"groupField": "$" + args["groupBy"]}, 
-                                    total: {$sum: 1},
-                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
-                                    totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    ... groupQueryData
                                 }}
                             ],
                             metadata: [
                                 { $group: {
                                     _id: null,
-                                    total: {$sum: 1},
-                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
-                                    totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    ...groupQueryData
                                 }}
                             ]
                         }}
@@ -436,10 +438,7 @@ const mcsResolvers = {
                             metadata: [
                                 { $group: {
                                     _id: null,
-                                    total: {$sum: 1},
-                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
-                                    totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    ...groupQueryData
                                 }}
                             ]
                         }}
