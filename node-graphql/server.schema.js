@@ -138,8 +138,8 @@ const mcsTypeDefs = gql`
     getUsers: JSON
     getEvalTestTypes(eval: String): [String]
     getHomeChartOptions(eval: String, evalType: String): JSON
-    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean): JSON
-    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String): JSON
+    getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
 
@@ -404,6 +404,14 @@ const mcsResolvers = {
                     aggregationObjectArray.push({$sort: sortObj});
                 }
 
+                const groupQueryData = {
+                    total: {$sum: 1},
+                    totalWeighted: {$sum: "$score.weighted_score_worth"},
+                    totalCorrect: {$sum: "$score.score"},
+                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}},
+                    totalNoAnswer: {$sum: {$cond: {if: {$eq: ["$score.score_description", "No answer"]}, then: 1, else: 0}}}
+                }
+
                 // Add grouping here 
                 if(args["groupBy"] !== null && args["groupBy"] !== undefined && args["groupBy"] !== ""){
                     aggregationObjectArray.push(
@@ -411,19 +419,13 @@ const mcsResolvers = {
                             results: [
                                 { $group: {
                                     _id: {"groupField": "$" + args["groupBy"]}, 
-                                    total: {$sum: 1},
-                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
-                                    totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    ... groupQueryData
                                 }}
                             ],
                             metadata: [
                                 { $group: {
                                     _id: null,
-                                    total: {$sum: 1},
-                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
-                                    totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    ...groupQueryData
                                 }}
                             ]
                         }}
@@ -436,10 +438,7 @@ const mcsResolvers = {
                             metadata: [
                                 { $group: {
                                     _id: null,
-                                    total: {$sum: 1},
-                                    totalWeighted: {$sum: "$score.weighted_score_worth"},
-                                    totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    ...groupQueryData
                                 }}
                             ]
                         }}
@@ -470,7 +469,8 @@ const mcsResolvers = {
         getHomeChart: async(obj, args, context, infow)=> {
             let groupObject = {
                 "performer": "$performer",
-                "correct": "$score.score"
+                "correct": "$score.score",
+                "description": "$score.score_description"
             };
 
             let searchObject = {
@@ -501,7 +501,7 @@ const mcsResolvers = {
 
             scoreStats.sort((a, b) => (a._id.performer > b._id.performer) ? 1 : -1);
 
-            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType, args.isNovelty);
+            return getChartData(args.isPlausibility, args.isPercent, scoreStats, args.isWeighted, args.evalType, args.isNovelty, args.useDidNotAnswer);
         },
         getUsers: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('users').find().project({"services":0, "createdAt":0, "updatedAt": 0})
@@ -521,7 +521,8 @@ const mcsResolvers = {
                 "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
                 "scoreWorth": "$score.weighted_score_worth",
-                "testType": "$test_type"
+                "testType": "$test_type",
+                "description": "$score.score_description"
             };
 
             if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
@@ -532,7 +533,7 @@ const mcsResolvers = {
                 {"$match": searchObject}, {"$group": {"_id": projectObject, "count": {"$sum": 1}}
             }]).toArray();
 
-            return processHyperCubeStats(hypercubeStats);
+            return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer);
         },
         getScoreCardData: async(obj, args, context, infow) =>{
             const searchObject = {
