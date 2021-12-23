@@ -414,7 +414,8 @@ const mcsResolvers = {
                                     total: {$sum: 1},
                                     totalWeighted: {$sum: "$score.weighted_score_worth"},
                                     totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}},
+                                    totalNoAnswer: {$sum: {$cond: {if: {$eq: ["$score.score_description", "No answer"]}, then: 1, else: 0}}}
                                 }}
                             ],
                             metadata: [
@@ -423,7 +424,8 @@ const mcsResolvers = {
                                     total: {$sum: 1},
                                     totalWeighted: {$sum: "$score.weighted_score_worth"},
                                     totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}},
+                                    totalNoAnswer: {$sum: {$cond: {if: {$eq: ["$score.score_description", "No answer"]}, then: 1, else: 0}}}
                                 }}
                             ]
                         }}
@@ -439,7 +441,8 @@ const mcsResolvers = {
                                     total: {$sum: 1},
                                     totalWeighted: {$sum: "$score.weighted_score_worth"},
                                     totalCorrect: {$sum: "$score.score"},
-                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}}
+                                    totalCorrectWeighted: {$sum: {$cond: {if: {$eq: ["$score.weighted_score_worth", "$score.weighted_score"]}, then: "$score.weighted_score_worth", else: {$multiply: ["$score.weighted_score", "$score.weighted_score_worth"]}}}},
+                                    totalNoAnswer: {$sum: {$cond: {if: {$eq: ["$score.score_description", "No answer"]}, then: 1, else: 0}}}
                                 }}
                             ]
                         }}

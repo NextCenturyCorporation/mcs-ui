@@ -3,7 +3,8 @@ import React from 'react';
 export const getStats = (resultsData) => {
     const totalResults = resultsData.total;
     let numCorrect = resultsData.totalCorrect;
-    let numIncorrect = totalResults - numCorrect;
+    let numNoAnswer = resultsData.totalNoAnswer;
+    let numIncorrect = totalResults - numCorrect - numNoAnswer;
     let weightedTotal = resultsData.totalWeighted;
     let numCorrectWeight = resultsData.totalCorrectWeighted;
     let numIncorrectWeight = weightedTotal - numCorrectWeight;
@@ -36,8 +37,10 @@ export const getStats = (resultsData) => {
     let incorrectString = " Incorrect: " + numIncorrect + "/" + totalResults + " (" + 
         (numIncorrect/totalResults * 100).toFixed(2)+ "%) Weighted: " + numIncorrectWeight + "/" + weightedTotal +
         " (" + (numIncorrectWeight/weightedTotal * 100).toFixed(2)+ "%)";
+    let numNoAnswerString = " No Answers: " + numNoAnswer + "/" + totalResults + " (" + 
+        (numNoAnswer/totalResults * 100).toFixed(2)+ "%)"
 
-    return {correct:correctString, incorrect:incorrectString};
+    return {correct:correctString, incorrect:incorrectString, numNoAnswer: numNoAnswerString};
 }
 
 export const PerformanceStatistics = ({resultsData}) => {
@@ -49,6 +52,9 @@ export const PerformanceStatistics = ({resultsData}) => {
             </div>
             <div className="query-num-performance">
                 {stats.incorrect}
+            </div>
+            <div className="query-num-performance">
+                {stats.numNoAnswer}
             </div>
         </>
     );
