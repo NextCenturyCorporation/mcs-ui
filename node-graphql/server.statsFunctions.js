@@ -147,7 +147,7 @@ function checkCorrespondingValuesArray(data1, data2) {
     }
 }
 
-function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalType, isNovelty) {
+function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalType, isNovelty, useDidNotAnswer) {
     if(isPlausibility || isNovelty) {
         let plausibleTerm = evalType === 'agents' ? 'Expected' : 'Plausible';
         let implausibleTerm = evalType === 'agents' ? 'Unexpected' : 'Implausible';
@@ -176,11 +176,13 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
                     updateOverall(scoreImplausibleCorrect, scoreStats[i], performer, weightedValue);
                 }
             } else {
-                updateOverall(scoreOverallIncorrect, scoreStats[i], performer, weightedValue);
-                if(scoreStats[i]["_id"]["plausibililty"] === 1 || scoreStats[i]["_id"]["hasNovelty"]) {
-                    updateOverall(scorePlausibleIncorrect, scoreStats[i], performer, weightedValue);
-                } else {
-                    updateOverall(scoreImplausibleIncorrect, scoreStats[i], performer, weightedValue);
+                if(useDidNotAnswer || (!useDidNotAnswer && scoreStats[i]["_id"]["description"] !== "No answer")) {
+                    updateOverall(scoreOverallIncorrect, scoreStats[i], performer, weightedValue);
+                    if(scoreStats[i]["_id"]["plausibililty"] === 1 || scoreStats[i]["_id"]["hasNovelty"]) {
+                        updateOverall(scorePlausibleIncorrect, scoreStats[i], performer, weightedValue);
+                    } else {
+                        updateOverall(scoreImplausibleIncorrect, scoreStats[i], performer, weightedValue);
+                    }
                 }
             }
         }
@@ -227,10 +229,12 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
                 // Update Category/Plausibility
                 updateCategory(categoryStats, scoreStats[i], performer, weightedValue);
             } else {
-                // Update Overall/Total
-                updateOverall(incorrectOverallStats, scoreStats[i], performer, weightedValue);
-                // Update Category/Plausibility
-                updateCategory(incorrectCategoryStats, scoreStats[i], performer, weightedValue);
+                if(useDidNotAnswer || (!useDidNotAnswer && scoreStats[i]["_id"]["description"] !== "No answer")) {
+                    // Update Overall/Total
+                    updateOverall(incorrectOverallStats, scoreStats[i], performer, weightedValue);
+                    // Update Category/Plausibility
+                    updateCategory(incorrectCategoryStats, scoreStats[i], performer, weightedValue);
+                }
             }
         }
 

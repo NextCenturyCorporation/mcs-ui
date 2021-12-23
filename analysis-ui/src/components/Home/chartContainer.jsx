@@ -7,8 +7,10 @@ import ResultsChart from './resultsChart';
 
 const getHomeChart = "getHomeChart";
 const get_home_chart = gql`
-    query getHomeChart($eval: String!, $evalType: String!, $isPercent: Boolean, $metadata: String!, $isPlausibility: Boolean, $isNovelty: Boolean, $isWeighted: Boolean){
-        getHomeChart(eval: $eval, evalType: $evalType, isPercent: $isPercent, metadata: $metadata, isPlausibility: $isPlausibility, isNovelty: $isNovelty, isWeighted: $isWeighted) 
+    query getHomeChart($eval: String!, $evalType: String!, $isPercent: Boolean, $metadata: String!, $isPlausibility: Boolean, 
+                $isNovelty: Boolean, $isWeighted: Boolean, $useDidNotAnswer: Boolean){
+        getHomeChart(eval: $eval, evalType: $evalType, isPercent: $isPercent, metadata: $metadata, isPlausibility: $isPlausibility, 
+            isNovelty: $isNovelty, isWeighted: $isWeighted, useDidNotAnswer: $useDidNotAnswer) 
     }`;
 
 class ChartContainer extends React.Component {
@@ -147,7 +149,8 @@ class ChartContainer extends React.Component {
                         "metadata": this.state.metadata,
                         "isPlausibility": this.state.isPlausibility,
                         "isNovelty": this.state.isNovelty,
-                        "isWeighted": this.state.isWeighted}}>
+                        "isWeighted": this.state.isWeighted,
+                        "useDidNotAnswer": this.props.useDidNotAnswer}}>
                     {
                         ({ loading, error, data }) => {
                             if (loading) return <div></div> 
