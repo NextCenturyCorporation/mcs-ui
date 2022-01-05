@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import {ToggleButton, ToggleButtonGroup} from 'react-bootstrap';
 import Select from 'react-select';
 import ChartContainer from './chartContainer';
+import Switch from "react-switch";
 
 const evalTestTypes = "getEvalTestTypes";
 const get_eval_test_types = gql`
@@ -26,11 +27,13 @@ class HomeCharts extends React.Component {
 
         this.state = {
             numPercentToggle: 'number',
-            currentEval: props.evaluationOptions[0]
+            currentEval: props.evaluationOptions[0],
+            useDidNotAnswer: true
         }
 
         this.handleNumPercentChange = this.handleNumPercentChange.bind(this);
         this.selectEvaluation = this.selectEvaluation.bind(this);
+        this.toggleUseDidNotAnswer = this.toggleUseDidNotAnswer.bind(this);
     }
 
     handleNumPercentChange(val) {
@@ -56,6 +59,10 @@ class HomeCharts extends React.Component {
         });
     }
 
+    toggleUseDidNotAnswer() {
+        this.setState(prevState => ({useDidNotAnswer: !prevState.useDidNotAnswer}));
+    }
+
     render() {
         return (
             <div className="home-container">
@@ -71,6 +78,12 @@ class HomeCharts extends React.Component {
                         </div>
                     </div>
                     <div className="toggle-percent-number-container">
+                        <label className="no-answer-toggle-holder">
+                            <div className="switch-container">
+                                <Switch onChange={this.toggleUseDidNotAnswer} checked={this.state.useDidNotAnswer}/>
+                            </div>
+                            <span>Include No Answers in Calculations</span>
+                        </label>
                         <ToggleButtonGroup type="checkbox" value={this.state.numPercentToggle} onChange={this.handleNumPercentChange}>
                             <ToggleButton variant="secondary" value={"number"}># Number</ToggleButton>
                             <ToggleButton variant="secondary" value={"percent"}>% Percent</ToggleButton>
@@ -101,7 +114,7 @@ class HomeCharts extends React.Component {
 
                                                     return (
                                                         <ChartContainer testType={testType} isPercent={this.state.numPercentToggle === 'percent'} 
-                                                            eval={this.state.currentEval} chartOptions={chartOptions}/>
+                                                            eval={this.state.currentEval} chartOptions={chartOptions} useDidNotAnswer={this.state.useDidNotAnswer}/>
 
                                                     )
                                                 }
