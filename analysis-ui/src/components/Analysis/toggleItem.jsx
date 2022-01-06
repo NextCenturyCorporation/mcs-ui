@@ -1,23 +1,39 @@
 import React, {useState} from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import { blue } from '@material-ui/core/colors';
 import Switch from '@material-ui/core/Switch';
+
+const BlueSwitch = withStyles({
+  switchBase: {
+    '&$checked': {
+      color: blue[700],
+    },
+    '&$checked + $track': {
+      backgroundColor: blue[700],
+    },
+  },
+  checked: {},
+  track: {},
+})(Switch);
 
 // useLocalStorage hook implementation taken from here:
 // implementation taken from here: https://usehooks.com/useLocalStorage/
 
-function ToggleItem({propertyName, defaultValue, label}) {
+function ToggleItem({propertyName, defaultValue, label, changeHandler}) {
     const [localStorageProp, setLocalStorageProp] = useLocalStorage(propertyName, defaultValue);
 
     const toggleValue = () => {
-        setLocalStorageProp(!localStorageProp);
+        let newLocalStoragePropVal = !localStorageProp;
+        setLocalStorageProp(newLocalStoragePropVal);
+        changeHandler(newLocalStoragePropVal);
     }
 
     return (
         <div>
-            <Switch
+            <BlueSwitch
                 checked={localStorageProp}
                 onChange={() => toggleValue()}
                 name="checkedValue"
-                color="primary"
             /> {label}
         </div>                                                   
     );

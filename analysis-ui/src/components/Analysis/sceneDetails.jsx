@@ -86,9 +86,9 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
 
                         {currentScene !== undefined && currentScene !== null &&
                         <div className="download-scene">
-                            <a href={getSceneLink(currentScene)} download>
+                            <a href={getSceneLink(currentScene)} download target="_blank" rel="noopener noreferrer">
                                 <i className='material-icons'>get_app</i>
-                                <span className="download-scene-text">Download .JSON</span>
+                                <span className="download-scene-text">Right Click to Download .JSON</span>
                             </a>
                         </div>}
                     </div>

@@ -1,7 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {ResponsiveLine} from '@nivo/line';
-import _ from 'lodash';
-import $ from 'jquery';
 
 const MyResponsiveLine = ({ data, xAxisMax, xTicks }) => (
     <ResponsiveLine

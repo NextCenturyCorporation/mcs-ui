@@ -10,7 +10,7 @@ import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
 import PlausabilityGraph from './plausabilityGraph';
-import ToggleItem from './toggleItem';
+import ToggleItem from './toggleItem'; // TODO: MCS-485: Rename?
 
 const historyQueryName = "getEvalHistory";
 const sceneQueryName = "getEvalScene";
@@ -76,6 +76,15 @@ const scoreTableCols = [
 
 const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
 
+// local storage property identifiers
+const plausibilityLSPropName = "showPlausabilityGraph";
+const segmentationLSPropName = "showSegmentationVid";
+const depthMapLSPropName = "showDepthMapVid";
+
+const getLocalStorageProp = function(propName, defaultVal) {
+    return window.localStorage.getItem(propName) !== null ? JSON.parse(window.localStorage.getItem(propName)) : defaultVal;
+}
+
 class Scenes extends React.Component {
 
     constructor(props) {
@@ -93,9 +102,13 @@ class Scenes extends React.Component {
             playAll: false,
             speed: "1x",
             sceneViewLoaded: false,
-            topDownLoaded: false
+            topDownLoaded: false,
+            showPlausabilityGraph: getLocalStorageProp(plausibilityLSPropName, true),
+            showSegmentationVid: getLocalStorageProp(segmentationLSPropName, false),
+            showDepthMapVid: getLocalStorageProp(depthMapLSPropName, false)
         };
     }
+
 
     setInitialMetadataLevel = (metadata) => {
         if(this.state.currentMetadataLevel === "") {
@@ -271,6 +284,11 @@ class Scenes extends React.Component {
             && this.getSceneHistoryItem(scenesByPerformer)["category"] === "interactive";
     }
 
+    isSceneHistPassive = (scenesByPerformer) => {
+        return this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
+            this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive"
+    }
+
     getPointsData(sceneHistItem) {
         let data = [];
 
@@ -331,6 +349,22 @@ class Scenes extends React.Component {
             sceneItem.fullFilename +
             "_" + sceneItem.fileTimestamp +
             constantsObject["logExtension"];
+    }
+
+    togglePlausibilityGraph = (newValue) => {
+        this.setStateObject(plausibilityLSPropName, newValue);   
+    }
+
+    toggleSegmentationVideo = (newValue) => {
+        this.setStateObject(segmentationLSPropName, newValue);
+    }
+
+    toggleDepthVideo = (newValue) => {
+        this.setStateObject(depthMapLSPropName, newValue);
+    }
+
+    isNotLevel1 = () => {
+        return this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== 'level1';
     }
 
     render() {
@@ -432,58 +466,69 @@ class Scenes extends React.Component {
                                                         )}
                                                     </div>
 
-                                                    {/* TODO: MCS-485: make functional, add videos, update playback button component */}
+                                                    {/* TODO: MCS-485: update playback button component*/}
                                                     <div className="btn-group" role="group">
-                                                        <ToggleItem propertyName="showPlausabililtyGraph" defaultValue={true} label="Plausability Graph"/>
-                                                        <ToggleItem propertyName="showSegmentationVid" defaultValue={false} label="Segmentation"/>
-                                                        <ToggleItem propertyName="showDepthMapVid" defaultValue={false} label="Depth"/>
+                                                        {(this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistPassive(scenesByPerformer)) &&
+                                                            <ToggleItem propertyName={plausibilityLSPropName} defaultValue={this.state[plausibilityLSPropName]} 
+                                                                label="Plausability Graph" changeHandler={this.togglePlausibilityGraph}/>
+                                                        }
+                                                        {this.isNotLevel1() &&
+                                                            <ToggleItem propertyName={segmentationLSPropName} defaultValue={this.state[segmentationLSPropName]}
+                                                                label="Segmentation" changeHandler={this.toggleSegmentationVideo}/>
+                                                        }
+                                                        <ToggleItem propertyName={depthMapLSPropName} defaultValue={this.state[depthMapLSPropName]}
+                                                            label="Depth" changeHandler={this.toggleDepthVideo}/>
                                                     </div>
                                                 </div>
-                                                { this.checkIfScenesExist(scenesByPerformer) &&
-                                                    this.getSceneHistoryItem(scenesByPerformer) !== undefined &&
-                                                    this.getSceneHistoryItem(scenesByPerformer)["category"] === "passive" && 
+                                                { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistPassive(scenesByPerformer)) && 
                                                     <div>
-                                                        <div className="eval-movies">
+                                                        <div className="eval-movie-row">
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
-                                                                <video id="interactiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
+                                                                <video id="interactiveMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
                                                                     onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
-                                                                <video id="topDownInteractiveMoviePlayer" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                <video id="topDownInteractiveMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_topdown")} width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
                                                             </div>
 
-                                                            <div>
+                                                            {this.state[plausibilityLSPropName] && <div>
                                                                 <div className="graph-header"><b>Plausibility Graph</b></div>
-                                                                <PlausabilityGraph 
-                                                                    pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
-                                                                    xAxisMax={this.getSceneHistoryItem(scenesByPerformer).steps.length}/>
-                                                            </div>
+                                                                    <PlausabilityGraph 
+                                                                        pointsData={this.getPointsData(this.getSceneHistoryItem(scenesByPerformer))}
+                                                                        xAxisMax={this.getSceneHistoryItem(scenesByPerformer).steps.length}/>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div className="eval-movie-row">
+                                                            {this.state[depthMapLSPropName] &&
+                                                                <div>
+                                                                    {/* TODO: MCS-485: update onLoadedData, onended events */}
+                                                                    <video id="depthMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_depth")}        width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                    <div><b>Depth</b></div>
+                                                                </div>
+                                                            }
+                                                            {this.isNotLevel1() && this.state[segmentationLSPropName] &&
+                                                                <div>
+                                                                    <video id="segmentationMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_segmentation")} width="525" height="350" controls="controls" 
+                                                                        onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
+                                                                    <div><b>Segmentation</b></div>
+                                                                </div>
+                                                            }
                                                         </div>
                                                         <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
                                                             playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
-                                                        <div className="scene-text">Links for other videos/files:</div>
-                                                            { (this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
-                                                            <div className="scene-text">
-                                                                <a href={
-                                                                    this.getVideoFileName(scenesByPerformer, "_heatmap")} target="_blank" rel="noopener noreferrer">Heatmap</a>
-                                                            </div>
-                                                            }
-                                                            <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
-                                                            </div>
-                                                            {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
-                                                            <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
-                                                            </div>}
-                                                            { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
+
+                                                        { /* TODO: MCS-485: PUT LOG FILE IN SCORE TABLE */}
+                                                        { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                             <div className="scene-text"><a href={
-                                                                this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">Log File</a></div>
+                                                                this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">View Log File</a></div>
                                                             }
                                                     </div> 
                                                 }
                                                 {/* start video logic for interactive scenes */}
+                                                {/* TODO: MCS-485 - add vids for depth/seg here */}
                                                 { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistInteractive(scenesByPerformer)) &&
                                                         <div>
                                                             <InteractiveScenePlayer evaluation={this.props.value.eval}
@@ -505,10 +550,16 @@ class Scenes extends React.Component {
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
                                                             </div>
-                                                            {this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== "level1" && 
-                                                            <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
-                                                            </div>} 
+                                                            {this.isNotLevel1() && 
+                                                                <div className="scene-text">
+                                                                    <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
+                                                                </div>
+                                                            } 
+                                                            { /* TODO: MCS-485: PUT LOG FILE IN SCORE TABLE */}
+                                                            { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
+                                                                <div className="scene-text"><a href={
+                                                                    this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">View Log File</a></div>
+                                                                }
                                                         </div>
                                                     }
                                                 {/* end video logic for interactive scenes */}

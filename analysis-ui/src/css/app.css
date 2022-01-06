@@ -230,10 +230,17 @@ ol, ul {
     margin-bottom: 25px;
 }
 
-.eval-movies {
-    margin: 15px;
+.eval-movie-row {
+    margin: 0 0 0 15px;
     display: flex;
     align-items: center;
+}
+
+.eval-movie {
+    font-size: 0;
+    margin: 0;
+    padding: 0;    
+    float: left;
 }
 
 .graph-header {
