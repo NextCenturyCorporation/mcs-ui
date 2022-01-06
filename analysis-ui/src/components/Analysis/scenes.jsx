@@ -534,6 +534,8 @@ class Scenes extends React.Component {
                                                             <InteractiveScenePlayer evaluation={this.props.value.eval}
                                                                 sceneVidLink={this.getVideoFileName(scenesByPerformer, "_visual")}
                                                                 topDownLink={this.getVideoFileName(scenesByPerformer, "_topdown")}
+                                                                depthLink={this.getVideoFileName(scenesByPerformer, "_depth")}
+                                                                segLink={this.getVideoFileName(scenesByPerformer, "_segmentation")}
                                                                 sceneHistoryItem={this.getSceneHistoryItem(scenesByPerformer)}
                                                                 ref={this.playBackButtons}
                                                                 upOneScene={this.upOneScene}
@@ -545,7 +547,9 @@ class Scenes extends React.Component {
                                                                 setSceneViewLoaded={this.setSceneViewLoaded}
                                                                 setTopDownLoaded={this.setTopDownLoaded}
                                                                 speed={this.state.speed}
-                                                                paddingLeft={"570px"}/>
+                                                                paddingLeft={"570px"}
+                                                                displayDepth={this.state[depthMapLSPropName]}
+                                                                displaySeg={this.state[segmentationLSPropName]}/>
                                                             <div className="scene-text">Links for other videos:</div>
                                                             <div className="scene-text">
                                                                 <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>

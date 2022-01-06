@@ -318,7 +318,6 @@ ol, ul {
 .steps-holder {
     width: 400px;
     display: inline-block;
-    height: 350px;
     margin: 10px;
 }
 
@@ -330,14 +329,9 @@ ol, ul {
 
 .steps-container {
     width: 370px;
-    height: 310px;
     overflow-y: auto;
     padding: 20px;
     border: 1px solid #000;
-}
-
-.steps-container {
-    width: 100%;
 }
 
 .step-div.pointer {
