@@ -3,10 +3,14 @@ import { convertValueToString } from './displayTextUtils';
 import PlaybackButtons from './playbackButtons';
 
 const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, depthLink, segLink, sceneHistoryItem, 
-    upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft, displayDepth, displaySeg}, ref) => {
+    upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft,
+    displayDepth, displaySeg, setDepthLoaded, setSegLoaded, setSyncVideos}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const scenePlayer = useRef(null);
+    const topDownPlayer = useRef(null);
+    const depthPlayer = useRef(null);
+    const segPlayer = useRef(null);
     const stepZero = useRef(null);
     const stepElems = useRef([]);
     const currentFPS = 20; // for eval 3+ videos
@@ -29,6 +33,15 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                 setCurrentStep(location);
                 setCurrentTime(timeToJumpTo);
                 scenePlayer.current.currentTime = timeToJumpTo;
+                topDownPlayer.current.currentTime = timeToJumpTo;
+
+                if(depthPlayer.current !== null) {
+                    depthPlayer.current.currentTime = timeToJumpTo;
+                }
+
+                if(segPlayer.current !== null) {
+                    segPlayer.current.currentTime = timeToJumpTo;
+                }
             }
         }
     }
@@ -54,7 +67,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
 
 
     const initializeStepView = () => {
-        setSceneViewLoaded()
+        setSceneViewLoaded();
         scrollStepIntoView(currentStep);
     }
 
@@ -99,7 +112,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                     </div>
                     {displayDepth &&
                         <div className="depth-holder">
-                            <video id="depthMoviePlayer" src={depthLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
+                            <video id="depthMoviePlayer" ref={depthPlayer} src={depthLink} width="500" height="350" controls="controls" onLoadedData={setDepthLoaded}/>
                         </div>
                     }
                 </div>
@@ -117,16 +130,16 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                 </div>
                 <div className="video-column">
                     <div className="top-down-holder">
-                        <video id="topDownInteractiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
+                        <video id="topDownInteractiveMoviePlayer" ref={topDownPlayer} src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
                     </div>
                     {displaySeg &&
                         <div className="segmentation-holder">
-                            <video id="segmentationMoviePlayer" src={segLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
+                            <video id="segmentationMoviePlayer" ref={segPlayer} src={segLink} width="500" height="350" controls="controls" onLoadedData={setSegLoaded}/>
                         </div>
                     }
                 </div>
             </div>
-            <PlaybackButtons ref={ref} paddingLeft={paddingLeft} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed}/>
+            <PlaybackButtons ref={ref} paddingLeft={paddingLeft} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed} setSyncVideos={setSyncVideos}/>
         </div>
     );
 })

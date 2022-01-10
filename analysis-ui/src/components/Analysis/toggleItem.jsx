@@ -19,7 +19,7 @@ const BlueSwitch = withStyles({
 // useLocalStorage hook implementation taken from here:
 // implementation taken from here: https://usehooks.com/useLocalStorage/
 
-function ToggleItem({propertyName, defaultValue, label, changeHandler}) {
+function ToggleItem({propertyName, defaultValue, label, changeHandler, toggleDisabled}) {
     const [localStorageProp, setLocalStorageProp] = useLocalStorage(propertyName, defaultValue);
 
     const toggleValue = () => {
@@ -34,6 +34,7 @@ function ToggleItem({propertyName, defaultValue, label, changeHandler}) {
                 checked={localStorageProp}
                 onChange={() => toggleValue()}
                 name="checkedValue"
+                disabled={toggleDisabled}
             /> {label}
         </div>                                                   
     );

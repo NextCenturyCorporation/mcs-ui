@@ -100,9 +100,12 @@ class Scenes extends React.Component {
             categoryType: props.value.category_type,
             testNum: props.value.test_num,
             playAll: false,
+            syncVideos: false,
             speed: "1x",
             sceneViewLoaded: false,
             topDownLoaded: false,
+            depthLoaded: false,
+            segLoaded: false,
             showPlausabilityGraph: getLocalStorageProp(plausibilityLSPropName, true),
             showSegmentationVid: getLocalStorageProp(segmentationLSPropName, false),
             showDepthMapVid: getLocalStorageProp(depthMapLSPropName, false)
@@ -160,16 +163,28 @@ class Scenes extends React.Component {
                 });
             }
             this.props.updateHandler("scene", sceneNum);
-            this.resetPlaybackButtons();
-            if(matchSpeed) 
-                this.setSceneSpeed(this.state.speed)
-            if(!matchSpeed) {
-                this.setState({playAll:false})
-                this.setSceneSpeed("1x");
-            }
-            this.setState({sceneViewLoaded:false})
-            this.setState({topDownLoaded:false})
+
+            this.resetVideoState(matchSpeed);
         }
+    }
+
+    resetVideoState = (matchSpeed) => {
+        this.resetPlaybackButtons();
+
+        if(matchSpeed) 
+            this.setSceneSpeed(this.state.speed)
+        if(!matchSpeed) {
+            this.setState({playAll:false})
+            this.setSceneSpeed("1x");
+        }
+
+        this.setState({playAll:false})
+        this.setSceneSpeed("1x");
+
+        this.setState({sceneViewLoaded:false})
+        this.setState({topDownLoaded:false})
+        this.setState({depthLoaded:false})
+        this.setState({segLoaded:false})
     }
 
     resetPlaybackButtons = () => {
@@ -179,6 +194,10 @@ class Scenes extends React.Component {
 
     setSceneSpeed = speed => {
         this.setState({speed:speed})
+    }
+
+    setSyncVideos = (value) => {
+        this.setState({syncVideos: value});
     }
 
     upOneScene = () => {
@@ -202,14 +221,43 @@ class Scenes extends React.Component {
     }
     
     setVideoSpeedAndPlay = () => {
-        if(this.state.sceneViewLoaded && this.state.topDownLoaded) {
+        let checkSegLoaded = this.state[segmentationLSPropName] === true && this.isNotLevel1();
+        let checkDepthLoaded = this.state[depthMapLSPropName] === true;
+
+        if(this.state.sceneViewLoaded && this.state.topDownLoaded &&
+            ((!checkSegLoaded) || (checkSegLoaded && this.state.segLoaded)) && 
+            ((!checkDepthLoaded) || (checkDepthLoaded && this.state.depthLoaded))) {
             let topDownVideo = document.getElementById("topDownInteractiveMoviePlayer");
             let sceneVideo = document.getElementById("interactiveMoviePlayer");
-            sceneVideo.playbackRate = this.state.speed.slice(0, -1);
-            topDownVideo.playbackRate = this.state.speed.slice(0, -1);
+
+            // optionally displayed videos:
+            let depthVideo = document.getElementById("depthMoviePlayer");
+            let segVideo = document.getElementById("segmentationMoviePlayer");
+
+            let playbackRate = this.state.speed.slice(0, -1);
+
+            sceneVideo.playbackRate = playbackRate
+            topDownVideo.playbackRate = playbackRate
+
+            if(depthVideo !== null) {
+                depthVideo.playbackRate = playbackRate;
+            }
+
+            if(segVideo !== null) {
+                segVideo.playbackRate = playbackRate;
+            }
+
             if(this.state.playAll) {
                 topDownVideo.play();
                 sceneVideo.play();
+
+                if(depthVideo !== null) {
+                    depthVideo.play();
+                }
+
+                if(segVideo !== null) {
+                    segVideo.play();
+                }
             }
         }
     }
@@ -222,6 +270,18 @@ class Scenes extends React.Component {
 
     setTopDownLoaded = () => {
         this.setState({topDownLoaded:true}, ()=> {
+            this.setVideoSpeedAndPlay();
+        });
+    }
+
+    setDepthLoaded = () => {
+        this.setState({depthLoaded:true}, ()=> {
+            this.setVideoSpeedAndPlay();
+        });
+    }
+
+    setSegLoaded = () => {
+        this.setState({segLoaded:true}, ()=> {
             this.setVideoSpeedAndPlay();
         });
     }
@@ -263,8 +323,9 @@ class Scenes extends React.Component {
         if(sceneItem === undefined || sceneItem === null) {
             return "";
         }
-
-        this.resetPlaybackButtons();
+        if(this.state.syncVideos === true) {
+            this.resetPlaybackButtons();
+        }
         if(sceneItem.eval === "Evaluation 3 Results") {
             return constantsObject["moviesBucket"] +
                 sceneItem.filename +
@@ -357,10 +418,12 @@ class Scenes extends React.Component {
 
     toggleSegmentationVideo = (newValue) => {
         this.setStateObject(segmentationLSPropName, newValue);
+        this.resetVideoState(false);
     }
 
     toggleDepthVideo = (newValue) => {
         this.setStateObject(depthMapLSPropName, newValue);
+        this.resetVideoState(false);
     }
 
     isNotLevel1 = () => {
@@ -466,7 +529,6 @@ class Scenes extends React.Component {
                                                         )}
                                                     </div>
 
-                                                    {/* TODO: MCS-485: update playback button component*/}
                                                     <div className="btn-group" role="group">
                                                         {(this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistPassive(scenesByPerformer)) &&
                                                             <ToggleItem propertyName={plausibilityLSPropName} defaultValue={this.state[plausibilityLSPropName]} 
@@ -474,10 +536,10 @@ class Scenes extends React.Component {
                                                         }
                                                         {this.isNotLevel1() &&
                                                             <ToggleItem propertyName={segmentationLSPropName} defaultValue={this.state[segmentationLSPropName]}
-                                                                label="Segmentation" changeHandler={this.toggleSegmentationVideo}/>
+                                                                label="Segmentation" changeHandler={this.toggleSegmentationVideo} toggleDisabled={this.state.syncVideos}/>
                                                         }
                                                         <ToggleItem propertyName={depthMapLSPropName} defaultValue={this.state[depthMapLSPropName]}
-                                                            label="Depth" changeHandler={this.toggleDepthVideo}/>
+                                                            label="Depth" changeHandler={this.toggleDepthVideo} toggleDisabled={this.state.syncVideos}/>
                                                     </div>
                                                 </div>
                                                 { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistPassive(scenesByPerformer)) && 
@@ -504,21 +566,21 @@ class Scenes extends React.Component {
                                                         <div className="eval-movie-row">
                                                             {this.state[depthMapLSPropName] &&
                                                                 <div>
-                                                                    {/* TODO: MCS-485: update onLoadedData, onended events */}
-                                                                    <video id="depthMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_depth")}        width="525" height="350" controls="controls" onLoadedData={this.setTopDownLoaded}/>
+                                                                    <video id="depthMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_depth")}        width="525" height="350" controls="controls" onLoadedData={this.setDepthLoaded}/>
                                                                     <div><b>Depth</b></div>
                                                                 </div>
                                                             }
                                                             {this.isNotLevel1() && this.state[segmentationLSPropName] &&
                                                                 <div>
                                                                     <video id="segmentationMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_segmentation")} width="525" height="350" controls="controls" 
-                                                                        onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
+                                                                        onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSegLoaded}/>
                                                                     <div><b>Segmentation</b></div>
                                                                 </div>
                                                             }
                                                         </div>
                                                         <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}/>
+                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}
+                                                            setSyncVideos={this.setSyncVideos}/>
 
                                                         { /* TODO: MCS-485: PUT LOG FILE IN SCORE TABLE */}
                                                         { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
@@ -528,7 +590,6 @@ class Scenes extends React.Component {
                                                     </div> 
                                                 }
                                                 {/* start video logic for interactive scenes */}
-                                                {/* TODO: MCS-485 - add vids for depth/seg here */}
                                                 { (this.checkIfScenesExist(scenesByPerformer) && this.isSceneHistInteractive(scenesByPerformer)) &&
                                                         <div>
                                                             <InteractiveScenePlayer evaluation={this.props.value.eval}
@@ -549,16 +610,12 @@ class Scenes extends React.Component {
                                                                 speed={this.state.speed}
                                                                 paddingLeft={"570px"}
                                                                 displayDepth={this.state[depthMapLSPropName]}
-                                                                displaySeg={this.state[segmentationLSPropName]}/>
+                                                                displaySeg={this.state[segmentationLSPropName]}
+                                                                setDepthLoaded={this.setDepthLoaded}
+                                                                setSegLoaded={this.setSegLoaded}
+                                                                setSyncVideos={this.setSyncVideos}
+                                                                />
                                                             <div className="scene-text">Links for other videos:</div>
-                                                            <div className="scene-text">
-                                                                <a href={this.getVideoFileName(scenesByPerformer, "_depth")} target="_blank" rel="noopener noreferrer">Depth</a>
-                                                            </div>
-                                                            {this.isNotLevel1() && 
-                                                                <div className="scene-text">
-                                                                    <a href={this.getVideoFileName(scenesByPerformer, "_segmentation")} target="_blank" rel="noopener noreferrer">Segmentation</a>
-                                                                </div>
-                                                            } 
                                                             { /* TODO: MCS-485: PUT LOG FILE IN SCORE TABLE */}
                                                             { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                                 <div className="scene-text"><a href={
