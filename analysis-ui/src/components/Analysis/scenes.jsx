@@ -582,7 +582,6 @@ class Scenes extends React.Component {
                                                             playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}
                                                             setSyncVideos={this.setSyncVideos}/>
 
-                                                        { /* TODO: MCS-485: PUT LOG FILE IN SCORE TABLE */}
                                                         { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                             <div className="scene-text"><a href={
                                                                 this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">View Log File</a></div>
@@ -615,8 +614,6 @@ class Scenes extends React.Component {
                                                                 setSegLoaded={this.setSegLoaded}
                                                                 setSyncVideos={this.setSyncVideos}
                                                                 />
-                                                            <div className="scene-text">Links for other videos:</div>
-                                                            { /* TODO: MCS-485: PUT LOG FILE IN SCORE TABLE */}
                                                             { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                                 <div className="scene-text"><a href={
                                                                     this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">View Log File</a></div>

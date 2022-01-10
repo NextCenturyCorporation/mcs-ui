@@ -315,6 +315,10 @@ ol, ul {
     margin: 10px;
 }
 
+.depth-holder {
+    margin-left: 10px;
+}
+
 .steps-holder {
     width: 400px;
     display: inline-block;
@@ -325,6 +329,7 @@ ol, ul {
     width: 500px;
     display: inline-block;
     height: 350px;
+    margin: 10px 0 10px 0;
 }
 
 .steps-container {
@@ -349,6 +354,8 @@ ol, ul {
 
 .movie-playback-buttons-holder {
     display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .movie-playback-buttons-container {
