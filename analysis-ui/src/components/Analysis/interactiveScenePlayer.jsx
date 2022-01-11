@@ -4,7 +4,7 @@ import PlaybackButtons from './playbackButtons';
 
 const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, depthLink, segLink, sceneHistoryItem, 
     upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft,
-    displayDepth, displaySeg, setDepthLoaded, setSegLoaded, setSyncVideos}, ref) => {
+    displayDepth, displaySeg, setDepthLoaded, setSegLoaded, setSyncVideos, onPlaybackEnded}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const scenePlayer = useRef(null);
@@ -108,7 +108,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                     <div className="interactive-movie-holder">
                         <video id="interactiveMoviePlayer" ref={scenePlayer}
                         src={sceneVidLink} width="500" height="350" controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
-                        onEnded={() => playAllState ? downOneScene(numOfScenes) : null}/>
+                        onEnded={() => onPlaybackEnded(numOfScenes, true)}/>
                     </div>
                     {displayDepth &&
                         <div className="depth-holder">

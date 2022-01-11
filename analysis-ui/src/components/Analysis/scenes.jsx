@@ -10,7 +10,7 @@ import ClassificationByStepTable from './classificationByStepTable';
 import InteractiveScenePlayer from './interactiveScenePlayer';
 import PlaybackButtons from './playbackButtons'
 import PlausabilityGraph from './plausabilityGraph';
-import ToggleItem from './toggleItem'; // TODO: MCS-485: Rename?
+import ToggleItem from './toggleItem';
 
 const historyQueryName = "getEvalHistory";
 const sceneQueryName = "getEvalScene";
@@ -178,9 +178,6 @@ class Scenes extends React.Component {
             this.setSceneSpeed("1x");
         }
 
-        this.setState({playAll:false})
-        this.setSceneSpeed("1x");
-
         this.setState({sceneViewLoaded:false})
         this.setState({topDownLoaded:false})
         this.setState({depthLoaded:false})
@@ -210,6 +207,13 @@ class Scenes extends React.Component {
             if (this.state.currentSceneNum < numOfScenes) {
                 this.changeScene(this.state.currentSceneNum+1, true);
             }
+        }
+    }
+
+    onPlaybackEnded = (numScenes, checkState) => {
+        this.downOneScene(numScenes, checkState);
+        if(this.state.syncVideos && ((!this.state.playAll) || this.state.currentSceneNum === numScenes)) {
+            this.setSyncVideos(false);
         }
     }
 
@@ -548,7 +552,7 @@ class Scenes extends React.Component {
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
                                                                 <video id="interactiveMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
-                                                                    onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
+                                                                    onEnded={() => this.onPlaybackEnded(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
@@ -573,7 +577,7 @@ class Scenes extends React.Component {
                                                             {this.isNotLevel1() && this.state[segmentationLSPropName] &&
                                                                 <div>
                                                                     <video id="segmentationMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_segmentation")} width="525" height="350" controls="controls" 
-                                                                        onEnded={() => this.downOneScene(numOfScenes, true)} onLoadedData={this.setSegLoaded}/>
+                                                                        onLoadedData={this.setSegLoaded}/>
                                                                     <div><b>Segmentation</b></div>
                                                                 </div>
                                                             }
@@ -613,6 +617,7 @@ class Scenes extends React.Component {
                                                                 setDepthLoaded={this.setDepthLoaded}
                                                                 setSegLoaded={this.setSegLoaded}
                                                                 setSyncVideos={this.setSyncVideos}
+                                                                onPlaybackEnded={this.onPlaybackEnded}
                                                                 />
                                                             { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                                 <div className="scene-text"><a href={
