@@ -292,9 +292,6 @@ const mcsResolvers = {
                 metadataArray.push({label: metadatas[i], value: metadatas[i]});
             }
 
-            //const evalListStr =  args.eval.split(" ");
-            //const regexObj = {$options: 'i', $regex: ".*" + (evalListStr[0] + " " + evalListStr[1]) + ".*"};
-
             const evalStats = await mcsDB.db.collection(evalHistoryCollection).aggregate([
                 {"$group": 
                     {"_id": {
