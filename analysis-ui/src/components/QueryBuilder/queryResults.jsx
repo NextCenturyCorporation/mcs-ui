@@ -93,6 +93,7 @@ class Results extends React.Component {
                     let resultsData = data[complexQueryName].results.length > 1 ? 
                             data[complexQueryName].results : data[complexQueryName].results[0].results;
                     const metadata = data[complexQueryName].results[0].metadata[0];
+                    const historyCollection = data[complexQueryName].historyCollection;
 
                     let columns = [];
                     let noneOption = [{value: "", label: "None"}];
@@ -125,7 +126,7 @@ class Results extends React.Component {
                                 <QueryResultsTable columns={columns} tabId={this.props.tabId} currentTab={this.props.currentTab} queryMongoId={this.props.queryMongoId} rows={resultsData} name={this.props.name}
                                     groupByOptions={options} setTableSortBy={this.props.setTableSortBy} sortBy={this.props.sortBy} setGroupBy={this.props.setGroupBy} groupBy={this.props.groupBy} ref={this.props.queryResultsTableRef}
                                     page={this.state.page} rowsPerPage={this.state.rowsPerPage} pageUpdateHandler={this.pageUpdateHandler} rowsUpdatehandler={this.rowsUpdatehandler} totalResultCount={metadata.total}
-                                    getGroupingRows={this.getGroupingRows} getCSVDownloadData={this.getCSVDownloadData}/>
+                                    getGroupingRows={this.getGroupingRows} getCSVDownloadData={this.getCSVDownloadData} historyCollection={historyCollection}/>
                             </div>
                         );
                     }

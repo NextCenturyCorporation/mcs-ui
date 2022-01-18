@@ -80,7 +80,7 @@ class HyperCubeResultsTable extends React.Component {
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
-                    if (error) return <div>Error</div>
+                    if (error) return <div>Overview data does not exist for these attributes.</div>
 
                     const hyperCubeData = data[hyperCubeDataQueryName]["stats"];
                     const testType = data[hyperCubeDataQueryName]["testType"];

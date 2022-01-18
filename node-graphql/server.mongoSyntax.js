@@ -1,6 +1,6 @@
 const scenesCollectionName = "mcsScenes.";
-const sceneCollection = "mcs_scenes.";
-const historyCollection = "mcs_history.";
+const sceneCollectionIdentifier = "scenes";
+const historyCollectionIdentifier = "results";
 
 const EQUALS = "equals";
 const EQUALS_INPUT = "equalsInput";
@@ -24,18 +24,19 @@ const checkifValueIsNumber = function(str) {
 const createComplexMongoQuery = function(queryObj){
     let historyQueryObj = {};
     let sceneQueryObj = {};
+    let historyCollection = "";
+    let sceneCollection = "";
 
     for(let i=0; i < queryObj.length; i++) {
         let searchPrefix = "";
-        let evalName = "";
 
-        if(queryObj[i]["fieldType"].indexOf(sceneCollection) > -1) {
+        if(queryObj[i]["fieldType"].indexOf(sceneCollectionIdentifier) > -1) {
+            sceneCollection = queryObj[i]["fieldType"];
             searchPrefix = scenesCollectionName;
-            evalName = queryObj[i]["fieldType"].substring(sceneCollection.length);
-            sceneQueryObj[searchPrefix + "eval"] = evalName;
+            sceneQueryObj[searchPrefix + "eval"] = queryObj[i]["fieldTypeLabel"];
         } else {
-            evalName = queryObj[i]["fieldType"].substring(historyCollection.length);
-            historyQueryObj[searchPrefix + "eval"] = evalName;
+            historyCollection = queryObj[i]["fieldType"];
+            historyQueryObj["eval"] = queryObj[i]["fieldTypeLabel"];
         }
 
         let regexObj, mQueryObj, obj1, obj2;
@@ -138,10 +139,20 @@ const createComplexMongoQuery = function(queryObj){
                 console.log("Error function operator not found.")
           }
     }
+
+    if(sceneCollection === "") {
+        sceneCollection = historyCollection.replace("results", "scenes");
+    }
+
+    if(historyCollection === "") {
+        historyCollection = sceneCollection.replace("scenes", "results");
+    }
     
     let mongoQueryObj = {
         historyQuery: historyQueryObj,
-        sceneQuery: sceneQueryObj
+        sceneQuery: sceneQueryObj,
+        historyCollection: historyCollection,
+        sceneCollection: sceneCollection
     };
 
     return mongoQueryObj;
