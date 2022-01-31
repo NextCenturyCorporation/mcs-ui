@@ -3,7 +3,7 @@ import { convertValueToString } from './displayTextUtils';
 import PlaybackButtons from './playbackButtons';
 
 const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, depthLink, segLink, sceneHistoryItem, 
-    upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft,
+    upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed,
     displayDepth, displaySeg, setDepthLoaded, setSegLoaded, setSyncVideos, onPlaybackEnded}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
@@ -139,7 +139,9 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                     }
                 </div>
             </div>
-            <PlaybackButtons ref={ref} paddingLeft={paddingLeft} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed} setSyncVideos={setSyncVideos}/>
+            <div className="playback-btns-interactive">
+                <PlaybackButtons ref={ref} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed} setSyncVideos={setSyncVideos}/>
+            </div>
         </div>
     );
 })

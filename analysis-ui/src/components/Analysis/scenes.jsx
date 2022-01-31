@@ -582,10 +582,11 @@ class Scenes extends React.Component {
                                                                 </div>
                                                             }
                                                         </div>
-                                                        <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                            playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}
-                                                            setSyncVideos={this.setSyncVideos}/>
-
+                                                        <div className="playback-btns-passive">
+                                                            <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                                playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed}
+                                                                setSyncVideos={this.setSyncVideos}/>
+                                                        </div>
                                                         { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                             <div className="scene-text"><a href={
                                                                 this.getLogFileName(scenesByPerformer)} target="_blank" rel="noopener noreferrer">View Log File</a></div>
@@ -611,7 +612,6 @@ class Scenes extends React.Component {
                                                                 setSceneViewLoaded={this.setSceneViewLoaded}
                                                                 setTopDownLoaded={this.setTopDownLoaded}
                                                                 speed={this.state.speed}
-                                                                paddingLeft={"570px"}
                                                                 displayDepth={this.state[depthMapLSPropName]}
                                                                 displaySeg={this.state[segmentationLSPropName]}
                                                                 setDepthLoaded={this.setDepthLoaded}

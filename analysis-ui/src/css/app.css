@@ -1252,3 +1252,12 @@ nav.MuiList-root.nav-list.MuiList-padding {
     width: 500px;
     height: 350px;
 }
+
+.playback-btns-interactive {
+    display: flex;
+    justify-content: center;
+}
+
+.playback-btns-passive {
+    padding-left: 345px;
+}
