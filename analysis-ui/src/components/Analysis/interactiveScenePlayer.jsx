@@ -106,13 +106,13 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
             <div className="movie-steps-holder">
                 <div className="video-column">
                     <div className="interactive-movie-holder">
-                        <video id="interactiveMoviePlayer" ref={scenePlayer}
-                        src={sceneVidLink} width="500" height="350" controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
+                        <video id="interactiveMoviePlayer" className="interactive-vid" ref={scenePlayer}
+                        src={sceneVidLink} controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
                         onEnded={() => onPlaybackEnded(numOfScenes, true)}/>
                     </div>
                     {displayDepth &&
                         <div className="depth-holder">
-                            <video id="depthMoviePlayer" ref={depthPlayer} src={depthLink} width="500" height="350" controls="controls" onLoadedData={setDepthLoaded}/>
+                            <video id="depthMoviePlayer" className="interactive-vid" ref={depthPlayer} src={depthLink} controls="controls" onLoadedData={setDepthLoaded}/>
                         </div>
                     }
                 </div>
@@ -130,11 +130,11 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                 </div>
                 <div className="video-column">
                     <div className="top-down-holder">
-                        <video id="topDownInteractiveMoviePlayer" ref={topDownPlayer} src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
+                        <video id="topDownInteractiveMoviePlayer" className="interactive-vid" ref={topDownPlayer} src={topDownLink} controls="controls" onLoadedData={setTopDownLoaded}/>
                     </div>
                     {displaySeg &&
                         <div className="segmentation-holder">
-                            <video id="segmentationMoviePlayer" ref={segPlayer} src={segLink} width="500" height="350" controls="controls" onLoadedData={setSegLoaded}/>
+                            <video id="segmentationMoviePlayer" className="interactive-vid" ref={segPlayer} src={segLink} controls="controls" onLoadedData={setSegLoaded}/>
                         </div>
                     }
                 </div>

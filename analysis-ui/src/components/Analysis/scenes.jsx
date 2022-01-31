@@ -582,7 +582,7 @@ class Scenes extends React.Component {
                                                                 </div>
                                                             }
                                                         </div>
-                                                        <PlaybackButtons style= {{paddingLeft:"345px"}} ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
+                                                        <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
                                                             playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} paddingLeft={"345px"}
                                                             setSyncVideos={this.setSyncVideos}/>
 

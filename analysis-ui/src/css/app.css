@@ -241,6 +241,8 @@ ol, ul {
     margin: 0;
     padding: 0;    
     float: left;
+    width: 525px;
+    height: 350px;
 }
 
 .graph-header {
@@ -1244,4 +1246,9 @@ nav.MuiList-root.nav-list.MuiList-padding {
     display: inline-block;
     top: 6px;
     margin-right: 5px;
+}
+
+.interactive-vid {
+    width: 500px;
+    height: 350px;
 }
