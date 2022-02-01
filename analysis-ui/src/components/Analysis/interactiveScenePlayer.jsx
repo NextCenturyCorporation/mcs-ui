@@ -2,10 +2,15 @@ import React, {useState, useRef, useEffect} from 'react';
 import { convertValueToString } from './displayTextUtils';
 import PlaybackButtons from './playbackButtons';
 
-const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, sceneHistoryItem, upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed, paddingLeft}, ref) => {
+const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, depthLink, segLink, sceneHistoryItem, 
+    upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed,
+    displayDepth, displaySeg, setDepthLoaded, setSegLoaded, setSyncVideos, onPlaybackEnded}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
     const scenePlayer = useRef(null);
+    const topDownPlayer = useRef(null);
+    const depthPlayer = useRef(null);
+    const segPlayer = useRef(null);
     const stepZero = useRef(null);
     const stepElems = useRef([]);
     const currentFPS = 20; // for eval 3+ videos
@@ -28,6 +33,15 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                 setCurrentStep(location);
                 setCurrentTime(timeToJumpTo);
                 scenePlayer.current.currentTime = timeToJumpTo;
+                topDownPlayer.current.currentTime = timeToJumpTo;
+
+                if(depthPlayer.current !== null) {
+                    depthPlayer.current.currentTime = timeToJumpTo;
+                }
+
+                if(segPlayer.current !== null) {
+                    segPlayer.current.currentTime = timeToJumpTo;
+                }
             }
         }
     }
@@ -53,7 +67,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
 
 
     const initializeStepView = () => {
-        setSceneViewLoaded()
+        setSceneViewLoaded();
         scrollStepIntoView(currentStep);
     }
 
@@ -71,17 +85,40 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
         }
     }
 
+    const getStepsHolderHeight = () => {
+        if(displayDepth || displaySeg) {
+            return "700px"
+        } else {
+            return "350px"
+        }
+    }
+
+    const getStepsCtrHeight = () => {
+        if(displayDepth || displaySeg) {
+            return "660px"
+        } else {
+            return "310px"
+        }
+    }
+
     return (
         <div>
             <div className="movie-steps-holder">
-                <div className="interactive-movie-holder">
-                    <video id="interactiveMoviePlayer" ref={scenePlayer}
-                    src={sceneVidLink} width="500" height="350" controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
-                    onEnded={() => playAllState ? downOneScene(numOfScenes) : null}/>
+                <div className="video-column">
+                    <div className="interactive-movie-holder">
+                        <video id="interactiveMoviePlayer" className="interactive-vid" ref={scenePlayer}
+                        src={sceneVidLink} controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
+                        onEnded={() => onPlaybackEnded(numOfScenes, true)}/>
+                    </div>
+                    {displayDepth &&
+                        <div className="depth-holder">
+                            <video id="depthMoviePlayer" className="interactive-vid" ref={depthPlayer} src={depthLink} controls="controls" onLoadedData={setDepthLoaded}/>
+                        </div>
+                    }
                 </div>
-                <div className="steps-holder">
+                <div className="steps-holder" style={{height: getStepsHolderHeight()}}>
                     <h5>Performer Steps:</h5>
-                    <div className="steps-container">
+                    <div className="steps-container" style={{height: getStepsCtrHeight()}}>
                         <div id="stepHolder0" className={currentStep === 0 ? "step-div step-highlight" : "step-div"} ref={stepZero} onClick={() => goToVideoLocation(0)}>0: Starting Position</div>
                         {sceneHistoryItem !== undefined &&
                             sceneHistoryItem.steps.map((stepObject, key) => 
@@ -91,11 +128,20 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                         )}
                     </div>
                 </div>
-                <div className="top-down-holder">
-                    <video id="topDownInteractiveMoviePlayer" src={topDownLink} width="500" height="350" controls="controls" onLoadedData={setTopDownLoaded}/>
+                <div className="video-column">
+                    <div className="top-down-holder">
+                        <video id="topDownInteractiveMoviePlayer" className="interactive-vid" ref={topDownPlayer} src={topDownLink} controls="controls" onLoadedData={setTopDownLoaded}/>
+                    </div>
+                    {displaySeg &&
+                        <div className="segmentation-holder">
+                            <video id="segmentationMoviePlayer" className="interactive-vid" ref={segPlayer} src={segLink} controls="controls" onLoadedData={setSegLoaded}/>
+                        </div>
+                    }
                 </div>
             </div>
-            <PlaybackButtons ref={ref} paddingLeft={paddingLeft} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed}/>
+            <div className="playback-btns-interactive">
+                <PlaybackButtons ref={ref} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed} setSyncVideos={setSyncVideos}/>
+            </div>
         </div>
     );
 })

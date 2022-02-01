@@ -5,7 +5,8 @@ const defaultColor = "#5f7485"
 const selectedColor = "#99d6ff"
 const sceneMovieName = "interactiveMoviePlayer";
 const topDownMovieName = "topDownInteractiveMoviePlayer";
-
+const segMovieName = "segmentationMoviePlayer";
+const depthMovieName = "depthMoviePlayer";
 class SpeedOption extends React.Component {
     render() {
         return (
@@ -31,24 +32,62 @@ class PlaybackButtons extends React.Component {
         this.props.setSceneSpeed(speedChange);
         document.getElementById(sceneMovieName).playbackRate = speedChange.slice(0, -1);
         document.getElementById(topDownMovieName).playbackRate = speedChange.slice(0,-1);
+        if(document.getElementById(segMovieName) !== null) {
+            document.getElementById(segMovieName).playbackRate = speedChange.slice(0,-1);
+        }
+
+        if(document.getElementById(depthMovieName) !== null) {
+            document.getElementById(depthMovieName).playbackRate = speedChange.slice(0,-1);
+        }
     }
 
     pause = () => {
         document.getElementById(sceneMovieName).playbackRate = 0;
         document.getElementById(topDownMovieName).playbackRate = 0;
+
+        if(document.getElementById(segMovieName) !== null) {
+            document.getElementById(segMovieName).playbackRate = 0;
+        }
+
+        if(document.getElementById(depthMovieName) !== null) {
+            document.getElementById(depthMovieName).playbackRate = 0;
+        }
+
         this.setState({paused:!this.state.paused}, () => {
             document.getElementById(sceneMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
             document.getElementById(topDownMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
+            if(document.getElementById(segMovieName) !== null) {
+                document.getElementById(segMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
+            }
+
+            if(document.getElementById(depthMovieName) !== null) {
+                document.getElementById(depthMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
+            }
         });
+
+
+        this.props.setSyncVideos(false);
     }
 
     setLoop = reset => {
-        let video1 = document.getElementById(sceneMovieName);
-        let video2 = document.getElementById(topDownMovieName);
-        if(video1!==null && video2!==null) {
-            this.setState({looping: reset ? false : !video1.loop}, () => {
-                video1.loop = reset ? false : this.state.looping;
-                video2.loop = reset ? false : this.state.looping;
+        let sceneVid = document.getElementById(sceneMovieName);
+        let topDownVid = document.getElementById(topDownMovieName);
+
+        // optionally displayed videos
+        let depthVid = document.getElementById(depthMovieName);
+        let segVid = document.getElementById(segMovieName);
+
+        if(sceneVid!==null && topDownVid!==null) {
+            this.setState({looping: reset ? false : !sceneVid.loop}, () => {
+                sceneVid.loop = reset ? false : this.state.looping;
+                topDownVid.loop = reset ? false : this.state.looping;
+                if(depthVid !== null) {
+                    depthVid.loop = reset ? false : this.state.looping;
+                }
+
+                if(segVid !== null) {
+                    segVid.loop = reset ? false : this.state.looping;
+                }
                 document.getElementById("loopButton").style.background = this.state.looping ? selectedColor : "white";
             });
         }
@@ -60,25 +99,51 @@ class PlaybackButtons extends React.Component {
     }
 
     playMoviesInSync = () => {
+        this.props.setSyncVideos(true);
+
         let sceneMovie = document.getElementById(sceneMovieName);
         let topDownMovie = document.getElementById(topDownMovieName);
+        let depthMovie = document.getElementById(depthMovieName);
+        let segMovie = document.getElementById(segMovieName);
 
         if(!this.state.paused) {
             sceneMovie.currentTime = 0;
             topDownMovie.currentTime = 0;
+            if(depthMovie !== null) {
+                depthMovie.currentTime = 0;
+            }
+
+            if(segMovie !== null) {
+                segMovie.currentTime = 0;
+            }
         }
 
         sceneMovie.playbackRate = this.props.speed.slice(0, -1);
         topDownMovie.playbackRate = this.props.speed.slice(0, -1);
+        if(depthMovie !== null) {
+            depthMovie.playbackRate = this.props.speed.slice(0, -1);
+        }
+
+        if(segMovie !== null) {
+            segMovie.playbackRate = this.props.speed.slice(0, -1);
+        }
         sceneMovie.play();
         topDownMovie.play();
+
+        if(depthMovie !== null) {
+            depthMovie.play();
+        }
+
+        if(segMovie !== null) {
+            segMovie.play();
+        }
         this.setState({paused:false});
         document.getElementById("pauseButton").style.background = "white";
     }
 
     render() {
         return (
-            <div id="playbackButtons" className="movie-playback-buttons-holder" style={{paddingLeft:this.props.paddingLeft}}>
+            <div id="playbackButtons" className="movie-playback-buttons-holder">
             <button className="movie-playback-button" style={{borderRadius: '10px 0px 0px 10px'}} onClick={this.props.upOneScene}>
                 <span style={{color:defaultColor}} className="material-icons">
                     arrow_upward
