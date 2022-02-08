@@ -274,8 +274,6 @@ const mcsResolvers = {
             let performersArray = [];
             let metadataArray = [];
 
-            console.log(args);
-
             const statusObj = await mcsDB.db.collection('eval_status').find({"eval": args.evalName})
                 .toArray().then(result => {return result});
 
