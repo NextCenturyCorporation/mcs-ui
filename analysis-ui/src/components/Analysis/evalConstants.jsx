@@ -72,13 +72,13 @@ const Eval8 = {
 }
 
 export const EvalConstants = {
-    "Evaluation 2 Results": Eval2, 
-    "Evaluation 3 Results": Eval3,
-    "Evaluation 3.5 Results": Eval3_5,
-    "Evaluation 3.75 Results": Eval3_75,
-    "Evaluation 4 Results": Eval4,
-    "Evaluation 5 Results": Eval5,
-    "Evaluation 6 Results": Eval6,
-    "Evaluation 7 Results": Eval7,
-    "Evaluation 8 Results": Eval8     
+    "eval_2_results": Eval2, 
+    "eval_3_results": Eval3,
+    "eval_3_5_results": Eval3_5,
+    "eval_3_75_results": Eval3_75,
+    "eval_4_results": Eval4,
+    "eval_5_results": Eval5,
+    "eval_6_results": Eval6,
+    "eval_7_results": Eval7,
+    "eval_8_results": Eval8     
 }

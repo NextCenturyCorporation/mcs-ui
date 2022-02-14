@@ -35,7 +35,7 @@ const CollectionsDropdown = ({selectCollection, fieldValue, collectionDropdownTo
                 if (loading) return <div>Loading ...</div> 
                 if (error) return <div>Error</div>
                 
-                const options = data[getCollectionsName].sort((a, b) => (a.label > b.label) ? 1 : -1);
+                const options = data[getCollectionsName].sort((a, b) => (a.label < b.label) ? 1 : -1);
 
                 return (
                     <div className="query-collection-selector">
@@ -56,7 +56,7 @@ const CollectionsDropdown = ({selectCollection, fieldValue, collectionDropdownTo
 }
 
 const FunctionsDropdown = ({onFunctionSelect, functionValue, collectionDropdownToggle}) => {
-    const options = functionOptions.sort((a, b) => (a.label > b.label) ? 1 : -1);
+    const options = functionOptions.sort((a, b) => (a.label < b.label) ? 1 : -1);
     let defaultValue;
 
     for(let i=0; i < options.length; i ++) {
@@ -157,7 +157,7 @@ class QueryLineItem extends React.Component {
             <>
                 <CollectionsDropdown selectCollection={this.selectCollection} fieldValue={this.state.fieldType} collectionDropdownToggle={this.state.collectionDropdownToggle}/>
                 <span className="material-icons query-add-spacer">add</span>
-                <FieldDropdown fieldType={this.state.fieldType} selectFieldHandler={this.selectField}/>
+                <FieldDropdown fieldType={this.state.fieldType} fieldTypeLabel={this.state.fieldTypeLabel} selectFieldHandler={this.selectField}/>
                 <span className="material-icons query-add-spacer">add</span>
                 <FunctionsDropdown onFunctionSelect={this.selectFunction} functionValue={this.state.functionOperator} collectionDropdownToggle={this.state.collectionDropdownToggle}/>
                 <span className="material-icons query-add-spacer">add</span>

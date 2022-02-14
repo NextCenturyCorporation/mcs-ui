@@ -84,9 +84,9 @@ const SceneFieldValueDropDown = ({fieldName, selectFieldValueHandler,  evalName}
 
 const FieldDropdownSelector =({fieldType, fieldName, selectFieldValueHandler}) => {
     const evalName = fieldType.substring(fieldType.indexOf('.') + 1);
-    if(fieldType.indexOf('mcs_history') > -1 && fieldName !== "") {
+    if(fieldType.indexOf('results') > -1 && fieldName !== "") {
         return(<HistoryFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler} evalName={evalName}/>);
-    } else if (fieldType.indexOf('mcs_scenes') > -1 && fieldName !== "") {
+    } else if (fieldType.indexOf('scenes') > -1 && fieldName !== "") {
         return(<SceneFieldValueDropDown fieldName={fieldName} selectFieldValueHandler={selectFieldValueHandler} evalName={evalName}/>);
     } else {
         return(<BasicFieldDropDown options={{}} isDisabled={true}/>)

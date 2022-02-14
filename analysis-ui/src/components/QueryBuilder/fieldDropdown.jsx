@@ -47,8 +47,8 @@ const CollectionFieldDropDown = ({collectionName, onSelectHandler}) => {
 };
 
 const FieldSelector =({fieldType, onSelectHandler}) => {
-    if(fieldType.indexOf('mcs_history') > -1 || fieldType.indexOf('mcs_scenes') > -1) {
-        return(<CollectionFieldDropDown collectionName={fieldType.substring(fieldType.indexOf('.') + 1)} onSelectHandler={onSelectHandler}/>);
+    if(fieldType !== undefined && fieldType !== "") {
+        return(<CollectionFieldDropDown collectionName={fieldType} onSelectHandler={onSelectHandler}/>);
     } else {
         return(<BasicFieldDropDown options={{}} isDisabled={true}/>)
     }
@@ -64,7 +64,7 @@ class FieldDropdown extends React.Component {
     render() {
         return (
             <div style={{zIndex:'11'}} className="query-field-selector">
-                <FieldSelector fieldType={this.props.fieldType} onSelectHandler={this.props.selectFieldHandler}/>
+                <FieldSelector fieldType={this.props.fieldTypeLabel} onSelectHandler={this.props.selectFieldHandler}/>
             </div>
         );
     }

@@ -12,8 +12,8 @@ const CSV_URL_RESULTS_SUFFIX = "_Results.csv";
 const EvaluationStatusQuery = "getEvaluationStatus";
 
 const get_evaluation_status = gql`
-    query getEvaluationStatus($eval: String!){
-        getEvaluationStatus(eval: $eval)
+    query getEvaluationStatus($eval: String!, $evalName: String!){
+        getEvaluationStatus(eval: $eval, evalName: $evalName)
     }`;
 
 function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStatusObjHandler, evalName}) {
@@ -96,7 +96,7 @@ class EvalStatusTable extends React.Component {
             currentEval: props.evaluationOptions[0],
             counter: props.counter,
             currentUser: props.currentUser,
-            evalNumber: props.evaluationOptions[0].value.replace(/[^0-9.]/g,'')
+            evalNumber: props.evaluationOptions[0].label.replace(/[^0-9.]/g,'')
         }
 
         this.selectEvaluation = this.selectEvaluation.bind(this);
@@ -106,7 +106,7 @@ class EvalStatusTable extends React.Component {
     selectEvaluation(target){
         this.setState({
             currentEval: target,
-            evalNumber: target.value.replace(/[^0-9.]/g,'')
+            evalNumber: target.label.replace(/[^0-9.]/g,'')
         });
     }
 
@@ -171,7 +171,7 @@ class EvalStatusTable extends React.Component {
                     </div>
                 </div>
                 {this.state.currentEval !== '' &&
-                    <Query query={get_evaluation_status} variables={{"eval": this.state.currentEval.value}} fetchPolicy={'no-cache'}>
+                    <Query query={get_evaluation_status} variables={{"eval": this.state.currentEval.value, "evalName": this.state.currentEval.label}} fetchPolicy={'no-cache'}>
                     {
                         ({ loading, error, data, refetch }) => {
                             setRefetch(refetch);
@@ -199,7 +199,7 @@ class EvalStatusTable extends React.Component {
                                                     <CreateCSV/>
                                                 }
                                                 <ConfigureEval statusObj={evalStatus.statusObj} testTypes={testTypes} performers={evalStatus.performers}
-                                                    metadatas={evalStatus.metadatas} updateStatusObjHandler={this.updateTableRefresh} evalName={this.state.currentEval.value}/>
+                                                    metadatas={evalStatus.metadatas} updateStatusObjHandler={this.updateTableRefresh} evalName={this.state.currentEval.label}/>
                                             </div>
                                         </div>
                                     </div>
