@@ -303,8 +303,7 @@ class ScenesEval2 extends React.Component {
                                                         setSceneSpeed={this.setSceneSpeed}
                                                         setSceneViewLoaded={this.setSceneViewLoaded}
                                                         setTopDownLoaded={this.setTopDownLoaded}
-                                                        speed={this.state.speed}
-                                                        paddingLeft={"570px"}/>
+                                                        speed={this.state.speed}/>
                                                 }
                                             </div>
                                         )

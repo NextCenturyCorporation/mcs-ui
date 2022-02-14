@@ -15,8 +15,8 @@ const GET_FIELD_AGG = gql`
   }`;
 
 const GET_HISTORY_FIELD_AGG = gql`
-    query getHistorySceneFieldAggregation($fieldName: String!){
-        getHistorySceneFieldAggregation(fieldName: $fieldName) 
+    query getHistoryCollectionMapping{
+        getHistoryCollectionMapping
   }`;
 
 const GET_HISTORY_FIELD_AGG_WITH_EVAL = gql`
@@ -43,6 +43,8 @@ class NavListItem extends React.Component {
     checkSelected() {
         if(this.props.stateName === 'test_num') {
             return this.props.state[this.props.stateName] === this.props.item.toString();
+        } else if (this.props.stateName === 'eval') {
+            return this.props.state[this.props.stateName] === this.props.item.value;
         } else {
             return this.props.state[this.props.stateName] === this.props.item;
         }
@@ -63,7 +65,7 @@ class NavListItem extends React.Component {
         if(this.props.stateName === 'eval') {
             // We have 2 cases: "eval 2" and "every other eval"
             // don't append other params if picking a different eval (old params likely don't apply)
-            params = "?eval=" + this.props.item;
+            params = "?eval=" + this.props.item.value;
         } else if(isEval2 && this.props.stateName === 'cat_type_pair') {
 
             paramsToAppend += "&cat_type_pair=" + this.props.item;
@@ -95,14 +97,17 @@ class NavListItem extends React.Component {
         }
 
         const newLocation = '/analysis' + params;
+
+        const listItemValue = this.props.item.value !== undefined ? this.props.item.value : this.props.item;
+        const listItemlabel = this.props.item.label !== undefined ? this.props.item.label : this.props.item;
     
         return (
             <LinkContainer to={newLocation}>
                 <ListItem className="nav-list-item" id={this.props.stateName + "_" + this.props.itemKey}
                     button
                     selected={this.checkSelected()}
-                    onClick={() => this.updateState(this.props.item, this.props.stateName)}>
-                    <ListItemText primary={this.props.item} />
+                    onClick={() => this.updateState(listItemValue, this.props.stateName)}>
+                    <ListItemText primary={listItemlabel} />
                 </ListItem>
             </LinkContainer>
         )
@@ -141,7 +146,7 @@ class NavList extends React.Component {
 
         if(this.props.fieldName === 'eval') {
             queryName = GET_HISTORY_FIELD_AGG;
-            dataName = "getHistorySceneFieldAggregation";
+            dataName = "getHistoryCollectionMapping";
             variablesToQuery['eval'] = null;
         } else if((this.props.fieldName === 'cat_type_pair' || this.props.fieldName === 'category_type') && this.props.state.eval) {
             variablesToQuery['eval'] = this.props.state.eval;
@@ -178,7 +183,7 @@ class NavList extends React.Component {
                         }
 
                         if(this.props.fieldName === "eval") {
-                            options.sort().reverse();
+                            options.sort((a, b) => (a.label < b.label) ? 1 : -1)
                         }
 
                         if(this.props.hasFilter) {

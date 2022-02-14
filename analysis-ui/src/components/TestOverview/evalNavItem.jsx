@@ -5,11 +5,12 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-const historyFieldQueryName = "getHistorySceneFieldAggregation";
+const historyFieldQueryName = "getHistoryCollectionMapping";
 const history_field_aggregation = gql`
-    query getHistorySceneFieldAggregation($fieldName: String!){
-        getHistorySceneFieldAggregation(fieldName: $fieldName) 
-    }`;
+    query getHistoryCollectionMapping{
+        getHistoryCollectionMapping
+  }`;
+
 
 let evalOptions = [];
 
@@ -30,7 +31,7 @@ class EvalNavItem extends React.Component {
 
     checkEvalLoaded() {
         if(this.props.state.eval === "" && evalOptions.length > 0) {
-            this.updateSelectedEval(evalOptions[0]);
+            this.updateSelectedEval(evalOptions[0].value);
             clearInterval(this.intervalMethodEval);
         }
     }
@@ -49,27 +50,27 @@ class EvalNavItem extends React.Component {
 
     render() {
         return (
-            <Query query={history_field_aggregation} variables={{"fieldName": "eval"}}>
+            <Query query={history_field_aggregation} >
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
-                    evalOptions = data[historyFieldQueryName].sort();
+                    evalOptions = data[historyFieldQueryName];
                     evalOptions.sort((a, b) => (a.label < b.label) ? 1 : -1);
 
                     // Remove Evaluation 2 Results because this page is designed to show hypercube results
                     //    and we did not have a hypercube design for Evaluation 2
-                    evalOptions = evalOptions.filter(element => element !== "Evaluation 2 Results");
+                    evalOptions = evalOptions.filter(element => element.label !== "Evaluation 2 Results");
 
                     return (
                         <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
                             {evalOptions.map((item,key) =>
                                 <ListItem className="nav-list-item" id={"eval_" + key} key={"eval_" + key}
                                     button
-                                    selected={this.checkSelected(item)}
-                                    onClick={() => this.updateSelectedEval(item)}>
-                                    <ListItemText primary={item} />
+                                    selected={this.checkSelected(item.value)}
+                                    onClick={() => this.updateSelectedEval(item.value)}>
+                                    <ListItemText primary={item.label} />
                                 </ListItem>
                             )}
                         </List>

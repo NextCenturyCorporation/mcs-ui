@@ -4,11 +4,14 @@ import Select from 'react-select';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import {useMutation} from 'react-apollo';
+import cloneDeep from 'lodash/cloneDeep';
 
 const SET_EVAL_PARAMETERS = gql`
     mutation setEvalStatusParameters($eval: String!, $evalStatusParams: JSON!){
         setEvalStatusParameters(eval: $eval, evalStatusParams: $evalStatusParams) 
   }`;
+
+let tempStatusObj = {};
 
 const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performers, metadatas, updateStatusObjHandler, evalName}) => {
     const [testType, setTestType] = useState();
@@ -17,10 +20,16 @@ const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performer
     const [saveParamsCall] = useMutation(SET_EVAL_PARAMETERS);
 
     const saveParams = () => {
+        if(Object.keys(tempStatusObj).length === 0) {
+            onHide();
+            return;
+        }
+
         saveParamsCall({ variables: { 
             eval: evalName,
-            evalStatusParams: statusObj
+            evalStatusParams: tempStatusObj
         } }).then(() => {
+            tempStatusObj = {};
             updateStatusObjHandler();
             onHide();
         });
@@ -42,6 +51,8 @@ const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performer
             
             statusObj[testType.value] = testTypeObj;
         }
+
+        tempStatusObj = cloneDeep(statusObj);
     };
 
     const updatePerformersMetadata = (e) => {
@@ -55,6 +66,7 @@ const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performer
     }
 
     const closeModal = () => {
+        tempStatusObj = {};
         onHide();
     }
 
