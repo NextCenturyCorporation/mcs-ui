@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import _ from "lodash";
 import { convertValueToString } from './displayTextUtils';
 
-function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
+function ClassificationByStepTable ({evaluation, currentSceneHistItem, isInteractive}) {
 
     const [showInternalState, toggleShowInternalState] = useState(false);
 
@@ -52,9 +52,15 @@ function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
                                         <tr>
                                             <th>Step Number</th>
                                             <th>Action</th>
-                                            <th>Rating/Classification</th>
-                                            <th>Frame Score/Confidence</th>
-                                            <th>Violations ((x,y) list)</th>
+                                            {!isInteractive &&
+                                                <>
+                                                    <th>Rating/Classification</th>
+                                                    <th>Frame Score/Confidence</th>
+                                                    <th>Violations ((x,y) list)</th>
+                                                </>
+                                            }
+                                            <th>Time Between Steps (ms)</th>
+                                            <th>FPS</th>
                                             {evaluation !== "Evaluation 3 Results" && evaluation !== "Evaluation 3.5 Results" &&
                                                 <th>Internal State
                                                     <br/>
@@ -70,14 +76,20 @@ function ClassificationByStepTable ({evaluation, currentSceneHistItem}) {
                                             <tr key={'performer_classification_by_step_row_' + key}>
                                                 <td>{stepObj.stepNumber}</td>
                                                 <td>{stepObj.action}</td>
-                                                <td>{stepObj.classification}</td>
-                                                <td>{stepObj.confidence}</td>
-                                                <td>
-                                                    {stepObj.action !== 'EndHabituation' && stepObj.violations_xy_list !== undefined
-                                                    && stepObj.violations_xy_list !== null &&
-                                                            convertXYArrayToString(stepObj.violations_xy_list)                                                                     
-                                                    }
-                                                </td>
+                                                {!isInteractive &&
+                                                    <>
+                                                        <td>{stepObj.classification}</td>
+                                                        <td>{stepObj.confidence}</td>
+                                                        <td>
+                                                            {stepObj.action !== 'EndHabituation' && stepObj.violations_xy_list !== undefined
+                                                            && stepObj.violations_xy_list !== null &&
+                                                                    convertXYArrayToString(stepObj.violations_xy_list)                                                                     
+                                                            }
+                                                        </td>
+                                                    </>
+                                                }
+                                                <td>{Math.round(stepObj.delta_time_millis)}</td>
+                                                <td>{stepObj.output.physics_frames_per_second}</td>
                                                 {evaluation !== "Evaluation 3 Results" && evaluation !== "Evaluation 3.5 Results" &&
                                                     <td className="internal-state-cell">
                                                         <span className={showInternalState ? "" : "display-none"}>

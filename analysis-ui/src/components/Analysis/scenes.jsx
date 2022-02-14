@@ -643,10 +643,11 @@ class Scenes extends React.Component {
                                                     />
                                                 }
 
-                                                { (this.checkIfScenesExist(scenesByPerformer) && (!this.isSceneHistInteractive(scenesByPerformer))) && 
+                                                { (this.checkIfScenesExist(scenesByPerformer)) && 
                                                     <ClassificationByStepTable
                                                         evaluation={this.props.value.eval}
                                                         currentSceneHistItem={this.getSceneHistoryItem(scenesByPerformer)}
+                                                        isInteractive={this.isSceneHistInteractive(scenesByPerformer)}
                                                     />
                                                 }
                                             </div>
