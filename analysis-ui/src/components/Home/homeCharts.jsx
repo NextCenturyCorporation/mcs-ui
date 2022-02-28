@@ -97,14 +97,15 @@ class HomeCharts extends React.Component {
                             if (loading) return <div></div> 
                             if (error) return <div>Error</div>
 
-                            let testTypes = data[evalTestTypes].sort().reverse()
+                            let testTypes = data[evalTestTypes];
+                            testTypes.sort((a, b) => (a._id.testType < b._id.testType) ? 1 : -1);
                             
                             return (
                                 <div className='charts-container'>
                                     {
                                         testTypes.map(testType =>
                                             <Query query={get_home_chart_options} variables={
-                                                {"eval": this.state.currentEval.value, "evalType": testType}} key={"home_chart_" + testType}>
+                                                {"eval": this.state.currentEval.value, "evalType": testType._id.testType}} key={"home_chart_" + testType._id.testType}>
                                             {
                                                 ({ loading, error, data }) => {
                                                     if (loading) return <div>No stats yet</div> 
@@ -113,7 +114,7 @@ class HomeCharts extends React.Component {
                                                     const chartOptions = data[homeChartOptions]
 
                                                     return (
-                                                        <ChartContainer testType={testType} isPercent={this.state.numPercentToggle === 'percent'} 
+                                                        <ChartContainer testType={testType._id.testType} category={testType._id.category} isPercent={this.state.numPercentToggle === 'percent'} 
                                                             eval={this.state.currentEval} chartOptions={chartOptions} useDidNotAnswer={this.state.useDidNotAnswer}/>
 
                                                     )

@@ -139,7 +139,7 @@ const mcsTypeDefs = gql`
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String, evalName: String): JSON
     getUsers: JSON
-    getEvalTestTypes(eval: String): [String]
+    getEvalTestTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
     getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean): JSON
@@ -455,8 +455,11 @@ const mcsResolvers = {
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable, historyCollection: mongoQueryObject.historyCollection};
         },
         getEvalTestTypes: async(obj, args, context, infow)=> {
-            return await mcsDB.db.collection(args.eval).distinct(
-                "test_type").then(result => {return result});
+            return await mcsDB.db.collection(args.eval).aggregate( 
+                [
+                    {"$group": { "_id": { testType: "$test_type", category: "$category" } } }
+                ]
+            ).toArray();;
         },
         getHomeChartOptions: async(obj, args, context, infow)=> {
             const metadata =  await mcsDB.db.collection(args.eval).distinct(

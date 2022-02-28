@@ -124,7 +124,7 @@ class ChartContainer extends React.Component {
             <div className='chart-home-container'>
                 <div className='chart-header'>
                     <div className='chart-header-label'>
-                        <h4>{this.toUpperFirstLetters(this.props.testType)}</h4>
+                        <h4>{this.toUpperFirstLetters(this.props.category + " " + this.props.testType)}</h4>
                     </div>
                     <div className='chart-header-select'>
                         <Select
