@@ -711,6 +711,12 @@ ol, ul {
     overflow: visible !important;
 }
 
+.results-chart-container {
+    height: 450px;
+    width: 900px;
+    padding-top: 30px;
+}
+
 .chart-header {
     display: flex;
     padding: 5px 0 0 20px;
