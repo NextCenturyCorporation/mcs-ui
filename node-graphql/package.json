@@ -19,6 +19,7 @@
     "lodash": "^4.17.21",
     "mongodb": "^3.7.3",
     "mongoose": "^5.13.14",
-    "nodemailer": "^6.4.16"
+    "nodemailer": "^6.4.16",
+    "url-exist": "^2.0.0"
   }
 }

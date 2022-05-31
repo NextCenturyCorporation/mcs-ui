@@ -8,6 +8,7 @@ const { createComplexMongoQuery } = require('./server.mongoSyntax');
 const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyIncludeFieldsTable, 
     sceneIncludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
 const spawn = require("child_process").spawn;
+const urlExist = require("url-exist");
 
 let complexQueryProjectionObject = null;
 const HISTORY_COLLECTION = "mcs_history";
@@ -121,6 +122,7 @@ const mcsTypeDefs = gql`
     getHistoryCollectionMapping: JSON
     getSceneCollectionMapping: JSON
     getEvalHistory(eval: String, categoryType: String, testNum: Int) : [History]
+    getLinkStatus(url: String): Boolean
     getEval2History(catTypePair: String, testNum: Int) : [History]
     getEval2Scene(testType: String, testNum: Int) : [Scene]
     getEvalScene(eval: String, sceneName: String, testNum: Int) : [Scene]
@@ -167,6 +169,9 @@ const mcsResolvers = {
         msc_eval: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({})
                 .toArray().then(result => {return result});
+        },
+        getLinkStatus: async(obj, args, context, infow) => {
+            return await urlExist(args["url"]);
         },
         getEval2History: async(obj, args, context, infow) => {
             // Eval 2
