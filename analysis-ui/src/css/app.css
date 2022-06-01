@@ -787,6 +787,10 @@ ol, ul {
     display: flex;
 }
 
+.nav-tabs .nav-item .nav-link.load-query-active {
+    border-color: #dee2e6 #dee2e6;
+    background-color: #fff;
+}
 
 .load-query-nav {
     display: flex;
@@ -854,14 +858,19 @@ ol, ul {
 .query-tab-controls button {
     background: #e6f2f9;
     border-bottom: 0px;
-    border-top: 2px solid #dee2e6;
-    border-right: 2px solid #dee2e6;
-    border-left: 2px solid#dee2e6;
+    border-top: 0px;
+    border-right: 0px;
+    border-left: 0px;
     border-radius: 5px 5px 0px 0px;
 }
 
 .query-tab-controls button.selected {
     background: white;
+    border-bottom: 0px;
+    border-top: 2px solid #dee2e6;
+    border-right: 2px solid #dee2e6;
+    border-left: 2px solid#dee2e6;
+    margin-bottom: -2px;
 }
 
 .query-tab-controls-span {

@@ -167,7 +167,13 @@ class QueryPage extends React.Component {
         this.setState({ 
             showLoadQuery: !this.state.showLoadQuery
         });
-        document.getElementById('load_query_icon').classList.toggle('selected')
+        document.getElementById('load_query_icon').classList.toggle('selected');
+        let a = document.getElementsByClassName("nav-link active")
+        console.log(a)
+        for (let i=0; i<a.length; i++) {
+            a[i].className = ('nav-link load-query-active');
+            console.log(a[i])
+        }
     }
 
     render() {
