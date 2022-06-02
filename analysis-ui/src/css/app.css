@@ -267,6 +267,10 @@ ol, ul {
     padding: 20px;
 }
 
+/* .score-table {
+    background-color: white;
+} */
+
 .performer-group, .metadata-group, .score-table-div, .scene-group, .scene-table-div {
     display: flex;
     margin: 5px 10px 10px 10px;
@@ -1450,8 +1454,20 @@ nav.MuiList-root.nav-list.MuiList-padding {
     margin-left: 10px;
 }
 
-.scorecard-holder {
-    margin-top: 40px;
+.overview-nav-link {
+    margin-right: 5px;
+}
+
+.overview-table-container {
+    background-color: white;
+    padding: 15px;
+    border-left: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+.overview-table-container .MuiTableCell-stickyHeader{
+    background-color: white;
 }
 
 .single-scorecard-item {
@@ -1480,6 +1496,20 @@ nav.MuiList-root.nav-list.MuiList-padding {
     position: relative;
     top: -50px;
     z-index: 3;
+}
+
+.overview-results-slice-chooser {
+    height: 5px;
+    float: right;
+    position: relative;
+    top: -35px;
+    z-index: 4;
+    margin-right:25px;
+}
+
+.slice-header {
+    font-weight: bold;
+    padding-right: 8px;
 }
 
 .no-answer-toggle-holder {

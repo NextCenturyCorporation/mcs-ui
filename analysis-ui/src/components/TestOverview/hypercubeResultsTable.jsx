@@ -7,16 +7,16 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import ScoreCardTable from './scorecardTable';
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
-    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!, $weightedPassing: Boolean!) {
-        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing) 
-    }`;
 
-const overViewTableFields = [
-    {"title": "HyperCubeId", "key": "hyperCubeID"},
+query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!, $weightedPassing: Boolean!, $statType: String!, $sliceLevel: Int!) {
+    getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing, statType: $statType, sliceLevel: $sliceLevel) 
+
+}`;
+
+const overViewTableFieldsStatic = [
     {"title": "Correct Plausible", "key": "correct_plausible"},
     {"title": "Incorrect Plausible", "key": "incorrect_plausible"},
     {"title": "No Answer Plausible", "key": "did_not_answer_plausible"},
@@ -36,37 +36,13 @@ class HyperCubeResultsTable extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.downloadCSV = this.downloadCSV.bind(this);
+        this.state = {
+            sliceLevel: 1
+        }
     }
 
-    downloadCSV(tableData, tableHeaders, tableTitle) {
-        const columnDelimiter = ',';
-        const rowDelimter = '\n';
-        let csvString = tableTitle + rowDelimter;
-
-        for(let i=0; i < tableHeaders.length; i++) {
-            if(i === tableHeaders.length -1) {
-                csvString += tableHeaders[i].title + rowDelimter;
-            } else {
-                csvString += tableHeaders[i].title + columnDelimiter;
-            }
-        }
-
-        for(let x=0; x < tableData.length; x++) {
-            for(let y=0; y < tableHeaders.length; y++) {
-                if(y === tableHeaders.length -1) {
-                    csvString += tableData[x][tableHeaders[y].key] + rowDelimter;
-                } else {
-                    csvString += tableData[x][tableHeaders[y].key]  + columnDelimiter;
-                }
-            }
-        }
-
-        const downloader = document.createElement('a'); //create a link
-        downloader.setAttribute('href', encodeURI("data:text/csv;charset=utf-8," + csvString)); //content to download
-        downloader.setAttribute('download', `${tableTitle.replaceAll(' ', '-')}.csv`); //filename of download
-        downloader.click(); //download
+    updateSliceLevel(newSliceLevel) {
+        this.setState({sliceLevel: newSliceLevel});
     }
 
     render() {
@@ -77,31 +53,48 @@ class HyperCubeResultsTable extends React.Component {
                 "performer": this.props.state.performer,
                 "metadata": this.props.state.metadata,
                 "useDidNotAnswer": this.props.state.useDidNotAnswer,
-                "weightedPassing": this.props.state.weightedPassing}}>
+                "weightedPassing": this.props.state.weightedPassing,
+                "statType": this.props.hyperCubePivotValue,
+                "sliceLevel": this.state.sliceLevel}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Overview data does not exist for these attributes.</div>
 
                     const hyperCubeData = data[hyperCubeDataQueryName]["stats"];
-                    const testType = data[hyperCubeDataQueryName]["testType"];
 
                     const tableTitle = "Overview Stats (" + this.props.state.category + "/" + 
                         this.props.state.performer + "/" + this.props.state.metadata + ")";
 
+                    let overViewTableFields = [{"title": this.props.hyperCubePivotValue, "key": this.props.hyperCubePivotValue}];
+                    overViewTableFields = overViewTableFields.concat(overViewTableFieldsStatic);
+
+                    const notActiveButtonClasses = "btn btn-outline-secondary";
+                    const activeButtonClasses = "btn btn-outline-secondary active";
 
                     return (
                         <>
                             <h4>{tableTitle}</h4>
                             <div className="overview-results-csv-holder">
                                 <div className="csv-results-child">
-                                    <IconButton onClick={() => {this.downloadCSV(hyperCubeData, overViewTableFields, tableTitle)}}>
+                                    <IconButton onClick={() => {this.props.downloadCSV(hyperCubeData, overViewTableFields, tableTitle)}}>
                                         <span className="material-icons">
                                             get_app
                                         </span>CSV
                                     </IconButton>
                                 </div>
                             </div>
+                            {this.props.hyperCubePivotValue === "slice" &&
+                                <div className="overview-results-slice-chooser">
+                                    <span className="slice-header">Slice level: </span>
+                                    <div className="btn-group me-2" role="group">
+                                        <button type="button" className={this.state.sliceLevel === 1 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(1)}>1</button>
+                                        <button type="button" className={this.state.sliceLevel === 2 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(2)}>2</button>
+                                        <button type="button" className={this.state.sliceLevel === 3 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(3)}>3</button>
+                                        <button type="button" className={this.state.sliceLevel === 4 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(4)}>4</button>
+                                    </div>
+                                </div>
+                            }
                             <Table className="score-table" aria-label="simple table" stickyHeader>
                                 <TableHead>
                                     <TableRow>
@@ -122,11 +115,6 @@ class HyperCubeResultsTable extends React.Component {
                                     )}
                                 </TableBody>
                             </Table>
-
-                            {/* Exclude Evaluation 3 Results because we didn't have scorecard functionality yet */}
-                            {((testType === "interactive" || testType === 'retrieval') && this.props.state.eval !== "eval_3_results")  &&
-                                <ScoreCardTable state={this.props.state} downloadCSV={this.downloadCSV}/>
-                            }
                         </>
                     )
                 }
