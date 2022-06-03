@@ -842,7 +842,7 @@ ol, ul {
 }
 
 .load-query-search-load-line p {
-    margin: 5px 15px;
+    margin: 7.5px 15px;
     color: grey;
 }
 
@@ -870,7 +870,7 @@ ol, ul {
     border-top: 2px solid #dee2e6;
     border-right: 2px solid #dee2e6;
     border-left: 2px solid#dee2e6;
-    margin-bottom: -2px;
+    margin-bottom: -1px;
 }
 
 .query-tab-controls-span {
@@ -885,6 +885,7 @@ ol, ul {
 
 .query-builder-nav .nav-item button, .load-query-nav .nav-item button {
     padding: 5px 30px;
+    border-color: #dee2e6 #dee2e6;
 }
 
 .load-query-nav span button {
@@ -896,7 +897,7 @@ ol, ul {
 .load-query-nav span button.selected {
     text-decoration: underline;
     text-underline-offset: 4px;
-    color: blue;
+    color: #1db4f0;
 }
 
 .query-tab-contents {

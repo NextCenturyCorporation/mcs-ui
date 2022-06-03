@@ -35,9 +35,9 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     const [search, setSearch] = useState("");
     const [selectedQueries, setSelectedQueries] = useState([]);
 
-    const loadQuery = (query) => {
-        loadQueryHandler(query);
-        onHide();
+    const loadQuery = () => {
+        let queries = selectedQueries
+        loadQueryHandler(queries);
     }
 
     const closeModal = () => {
@@ -103,7 +103,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                 <LoadQuerySearchBar setSearch={setSearch}/>
                                 <span>
                                     <p>({selectedQueries.length}) Selected</p>
-                                    <button type="button" onClick={() => loadQuery("")}>Load Selected</button>
+                                    <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>
                             <table className="load-query-table">

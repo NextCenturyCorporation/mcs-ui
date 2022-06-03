@@ -53,16 +53,38 @@ class QueryPage extends React.Component {
 
         this.props.currentUser["queryBuilderState"] = this.state;
     }
+    
+    async addMultipleTabs(queryObjects) {
+        let additionalTabs = [];
+        for (let i=this.state.totalTab; i<queryObjects.length - 1 + this.state.totalTab; i++) {
+            additionalTabs.push({
+                id: this.state.totalTab+i, 
+                name: "Query " + (i),
+                tabQueryObj: [],
+                groupBy: {value: "", label: ""},
+                sortBy: {property: "", sortOrder: "desc"},
+                mongoId: ""
+            })
+        }
+        let newArray = this.state.queryTabs.concat(additionalTabs);
 
-    updateQueryState = (newArray, newCurrentTab) => {
+        this.setState({ 
+            totalTab: this.state.totalTab+queryObjects.length, 
+            queryTabs: newArray
+        });
+
+        this.props.currentUser["queryBuilderState"] = this.state;
+    }
+
+    async updateQueryState(newArray, newCurrentTab) {
         newCurrentTab = newCurrentTab !== undefined && newCurrentTab !== null ? newCurrentTab : this.state.currentTab;
         this.setState({ 
             queryTabs: newArray,
             currentTab: newCurrentTab,
             currentTabMongoId: newArray[newCurrentTab-1].mongoId
         });
-
         this.props.currentUser["queryBuilderState"] = this.state;
+        console.log(3)
     }
 
     updateQueryNameHandler = (queryId, newQueryName, queryMongoId) => {
@@ -76,13 +98,24 @@ class QueryPage extends React.Component {
 
         this.updateQueryState(newArray);
     }
+    
+    async loadQueryHandler(queryObjects) {
+        await this.addMultipleTabs(queryObjects);
+        this.loadQueryFunction(queryObjects);
+    }
 
-    loadQueryHandler = (queryObj) => {
-        queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null || queryObj.groupBy === "" ? {value: "", label: "None"} : queryObj.groupBy;
-        queryObj.sortBy = queryObj.sortBy === null || queryObj.sortBy === undefined || queryObj.sortBy === "" ? {property: "", sortOrder: "desc"} : queryObj.sortBy;
-        this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, queryObj.sortBy, this.state.currentTab, queryObj.name, queryObj._id);
-        if(this.queryResultsTableRef.current !== null) {
-            this.queryResultsTableRef.current.updateTableGroupAndSortBy(queryObj.groupBy, queryObj.sortBy);
+    async loadQueryFunction(queryObjects) {
+        for (let i=0; i<queryObjects.length; i++) {
+            let queryObj = queryObjects[i]
+            queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null || queryObj.groupBy === "" ? {value: "", label: "None"} : queryObj.groupBy;
+            queryObj.sortBy = queryObj.sortBy === null || queryObj.sortBy === undefined || queryObj.sortBy === "" ? {property: "", sortOrder: "desc"} : queryObj.sortBy;
+            console.log(1)
+            await this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, queryObj.sortBy, this.state.currentTab, queryObj.name, queryObj._id);
+            console.log(5)
+            if(this.queryResultsTableRef.current !== null) {
+                this.queryResultsTableRef.current.updateTableGroupAndSortBy(queryObj.groupBy, queryObj.sortBy);
+            }
+            await this.changeQueryTab(this.state.currentTab+1)
         }
     }
 
@@ -97,7 +130,8 @@ class QueryPage extends React.Component {
         this.updateQueryState(newArray);
     }
 
-    updateQueryObjForTab = (queryObj, groupBy, sortBy, queryId, tabName, mongoQueryId) => {
+    async updateQueryObjForTab(queryObj, groupBy, sortBy, queryId, tabName, mongoQueryId) {
+        console.log(2)
         let newArray = this.state.queryTabs.concat();
         for(let i=0; i < newArray.length; i++) {
             if(newArray[i].id === queryId) {
@@ -110,7 +144,8 @@ class QueryPage extends React.Component {
                 }
             }
         } 
-        this.updateQueryState(newArray);
+        await this.updateQueryState(newArray);
+        console.log(4)
     }
     
     setTableSortBy = (sortObject) => {
@@ -124,7 +159,10 @@ class QueryPage extends React.Component {
         this.updateQueryState(newArray);
     }
 
-    changeQueryTab = (objectKey) => {
+    async changeQueryTab(objectKey) {
+        if (this.state.showLoadQuery)
+            this.showLoadQuery();
+
         if(objectKey === this.state.currentTab) {
             return;
         }
@@ -168,12 +206,8 @@ class QueryPage extends React.Component {
             showLoadQuery: !this.state.showLoadQuery
         });
         document.getElementById('load_query_icon').classList.toggle('selected');
-        let a = document.getElementsByClassName("nav-link active")
-        console.log(a)
-        for (let i=0; i<a.length; i++) {
-            a[i].className = ('nav-link load-query-active');
-            console.log(a[i])
-        }
+        let activeTab = document.getElementsByClassName("nav-link active");
+        activeTab[0].classList.toggle('load-query-active');
     }
 
     render() {
@@ -190,7 +224,7 @@ class QueryPage extends React.Component {
                     <div className="query-tab-controls">
                         <span className="query-tab-controls-span">
                             <a href="#addTab" onClick={this.addTab} className="icon-link">
-                                <span className="material-icons icon-margin-right">
+                                <span className="material-icons icon-margin-center" style={{margin:"2px 10px"}}>
                                     add
                                 </span>
                             </a>
