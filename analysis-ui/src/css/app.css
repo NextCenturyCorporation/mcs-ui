@@ -839,12 +839,16 @@ ol, ul {
 .load-query-search-load-line span {
     display: flex;
     flex-direction: row;
-    margin-right: 30px;
+    padding-right: 30px;
 }
 
-.load-query-search-load-line p {
+.load-query-search-load-line a {
     margin: 7.5px 15px;
     color: grey;
+}
+
+.load-query-search-load-line a:hover {
+    text-decoration: none;
 }
 
 .load-query-search-load-line button {
@@ -922,11 +926,6 @@ ol, ul {
 .load-query-header {
     font-size: 25px;
     padding: 20px 45px;
-}
-
-.load-query-modal {
-    min-width: 97vw;
-    min-height: 97vh;
 }
 
 .icon-margin-right {
@@ -1025,12 +1024,28 @@ ol, ul {
     background-color: #1d99f052;
 }
 
+.load-query-table tbody tr.selected-row:hover {
+    background-color: #0066ff77 !important;
+}
+
+.load-query-table tbody tr:nth-child(even).selected-row:hover {
+    background-color: #0066ff83 !important;
+}
+
+.load-query-table tbody tr:hover{
+    background-color: #aad2ee52 !important;
+}
+
+.load-query-table tbody tr:nth-child(even):hover {
+    background-color: #aad2ee75 !important;
+}
+
 .load-query-table tbody tr:nth-child(even) {
     background-color: #f3f3f3cb;
 }
 
 .load-query-table tbody tr:nth-child(even).selected-row {
-    background-color: #1d99f073;
+    background-color: #229cf373;
 }
 
 .load-query-modal-title {

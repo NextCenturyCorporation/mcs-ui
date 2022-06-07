@@ -54,12 +54,12 @@ class QueryPage extends React.Component {
         this.props.currentUser["queryBuilderState"] = this.state;
     }
     
-    addMultipleTabs = (queryObjects) => {
+    addMultipleTabs = async (queryObjects) => {
         let additionalTabs = [];
-        for (let i=this.state.totalTab; i<queryObjects.length + this.state.totalTab - 1; i++) {
+        for (let i=this.state.totalTab + 1; i<queryObjects.length + this.state.totalTab + 1; i++) {
             additionalTabs.push({
-                id: this.state.totalTab + (i - this.state.totalTab + 1), 
-                name: "Query " + (this.state.totalTab + (i - this.state.totalTab + 1)),
+                id: this.state.totalTab + (i - this.state.totalTab), 
+                name: "Query " + (this.state.totalTab + (i - this.state.totalTab)),
                 tabQueryObj: [],
                 groupBy: {value: "", label: ""},
                 sortBy: {property: "", sortOrder: "desc"},
@@ -68,10 +68,19 @@ class QueryPage extends React.Component {
         }
         let newArray = this.state.queryTabs.concat(additionalTabs);
 
+        await new Promise(resolve => {
+            this.setState({ 
+                totalTab: newArray.length, 
+                queryTabs: newArray
+            }, () => {
+                this.props.currentUser["queryBuilderState"] = this.state;
+                resolve()
+            })
+        });
+
         return new Promise(resolve => {
             this.setState({ 
-                totalTab: this.state.totalTab+queryObjects.length-1, 
-                queryTabs: newArray
+                currentTab: newArray.length - queryObjects.length + 1, 
             }, () => {
                 this.props.currentUser["queryBuilderState"] = this.state;
                 resolve()
@@ -82,16 +91,12 @@ class QueryPage extends React.Component {
 
     updateQueryState = (newArray, newCurrentTab) => {
         newCurrentTab = newCurrentTab !== undefined && newCurrentTab !== null ? newCurrentTab : this.state.currentTab;
-        return new Promise(resolve => 
-        {
+        return new Promise(resolve => {
             this.setState({ 
                 queryTabs: newArray,
                 currentTab: newCurrentTab,
                 currentTabMongoId: newArray[newCurrentTab-1].mongoId
-
-            },
-            () => {
-                console.log(3)
+            }, () => {
                 this.props.currentUser["queryBuilderState"] = this.state;
                 resolve();
             })
@@ -121,9 +126,7 @@ class QueryPage extends React.Component {
             let queryObj = queryObjects[i]['query']
             queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null || queryObj.groupBy === "" ? {value: "", label: "None"} : queryObj.groupBy;
             queryObj.sortBy = queryObj.sortBy === null || queryObj.sortBy === undefined || queryObj.sortBy === "" ? {property: "", sortOrder: "desc"} : queryObj.sortBy;
-            console.log(1)
             await this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, queryObj.sortBy, this.state.currentTab, queryObj.name, queryObj._id);
-            console.log(5)
             if(this.queryResultsTableRef.current !== null) {
                 this.queryResultsTableRef.current.updateTableGroupAndSortBy(queryObj.groupBy, queryObj.sortBy);
             }
@@ -143,7 +146,6 @@ class QueryPage extends React.Component {
     }
 
     updateQueryObjForTab = async (queryObj, groupBy, sortBy, queryId, tabName, mongoQueryId) => {
-        console.log(2)
         let newArray = this.state.queryTabs.concat();
         for(let i=0; i < newArray.length; i++) {
             if(newArray[i].id === queryId) {
@@ -157,7 +159,6 @@ class QueryPage extends React.Component {
             }
         }
         await this.updateQueryState(newArray);
-        console.log(4)
     }
     
     setTableSortBy = (sortObject) => {
@@ -182,7 +183,6 @@ class QueryPage extends React.Component {
         $('#tabObj_button_' + this.state.currentObjectNum ).toggleClass( "active" );
         $('#tabObj_button_' + objectKey ).toggleClass( "active" );
 
-        console.log(this.state.queryTabs[objectKey-1])
         return new Promise(resolve => {
             this.setState({ 
                     currentTab: objectKey,
@@ -240,11 +240,11 @@ class QueryPage extends React.Component {
                     </ul>
                     <div className="query-tab-controls">
                         <span className="query-tab-controls-span">
-                            <a href="#addTab" onClick={this.addTab} className="icon-link">
-                                <span className="material-icons icon-margin-center" style={{margin:"2px 10px"}}>
+                            <button id={'load_query_icon_add'} onClick={this.addTab}>
+                                <span className="material-icons icon-margin-center">
                                     add
                                 </span>
-                            </a>
+                            </button>
                             <button id={'load_query_icon'} onClick={() => this.showLoadQuery()}>
                                 <span className="material-icons icon-margin-center">
                                     folder_open

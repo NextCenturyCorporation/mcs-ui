@@ -71,11 +71,6 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
         }
     }
 
-    /////////////////////////////////////////////
-    useEffect(() => {
-        console.log(selectedQueries)
-    }, [selectedQueries]);
-
     useEffect(() => {
         updateSelectedBasedOnSearch();
     }, [search])
@@ -83,22 +78,21 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     useEffect(() => {
         updateSelectedBasedOnSearch();
     }, [activeTab])
-    ////////////////////////////////////////////
 
-    const setSelected = (key, query, button) => {
+    const setSelected = (key, button) => {
         const checkbox = document.getElementById('load_query_checkbox_' + key);
         checkbox.checked = !checkbox.checked;
         if (!button) {
             const row = document.getElementById('load_query_row_' + key);
+            let query = JSON.parse(row.getAttribute('query'));
             row.classList.toggle('selected-row');
             manageSelectedQueries(query, key, !checkbox.checked)
         }
     }
 
-    const clearOrSelectAll = (e) => {
-        let clearAll = !e.target.checked
-        console.log(e.target.checked)
+    const selectOrClearAll = (e) => {
         let checkboxes = document.getElementsByClassName('load-query-checkbox');
+        let clearAll = !e.target.checked
         if (clearAll) {
             for (let i=0; i<checkboxes.length; i++) {
                 checkboxes[i].checked = false;
@@ -110,12 +104,18 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
             setSelectedQueries([]);
         }
         else {
+            let selected = []
             for (let i=0; i<checkboxes.length; i++) {
-                checkboxes[i].checked = true;
-                let row = checkboxes[i].parentNode.parentNode;
-                row.classList.toggle('selected-row');
+                if (!checkboxes[i].checked) {
+                    checkboxes[i].checked = true;
+                    let row = checkboxes[i].parentNode.parentNode;
+                    row.classList.toggle('selected-row');
+                    let query = JSON.parse(row.getAttribute('query'));
+                    let key = parseInt(row.getAttribute('id').replace('load_query_row_', ''));
+                    selected.push({'query': query, 'key': key})
+                }
             }
-            setSelectedQueries([]);
+            setSelectedQueries([...selectedQueries, ...selected])
         }
     }
 
@@ -132,7 +132,6 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                         queries = queries.filter(query => query.user.id === currentUser.id)
                     }
                     queries.sort(function(a, b){return b.createdDate - a.createdDate});
-
                     return (
                         <div className="load-query-contents">
                             <header className='load-query-header'>Load Query</header>
@@ -145,7 +144,8 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                             <div className="load-query-search-load-line">
                                 <LoadQuerySearchBar setSearch={setSearch}/>
                                 <span>
-                                    <p>({selectedQueries.length}) Selected</p>
+                                    <a href='#selected' data-toggle="tooltip" 
+                                    title='Selecting one query will replace the current query tab. Selecting more than one query will append mutiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
                                     <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>
@@ -153,7 +153,10 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                 <thead>
                                     <tr>
                                         <th style={{columnWidth: '1vw'}}>
-                                            <input type="checkbox" id="header_checkbox" onClick={(e) => clearOrSelectAll(e)}/>
+                                            <a href='#' data-toggle="tooltip" title="Checking this box will select all of the queries matching the search parameters. 
+                                            If there are no search parameters, all queries will be selected. Unchecking this box will clear all selections.">
+                                                <input type="checkbox" id="header_checkbox" onClick={(e) => selectOrClearAll(e)}/>
+                                            </a>
                                         </th>
                                         <th style={{columnWidth: '50vw'}}>Title</th>
                                         <th style={{columnWidth: '10vw'}}>Date</th>
@@ -164,14 +167,15 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {queries.map((query, key) =>
+                                    {
+                                        queries.map((query, key) =>
                                         (search === "" ||
                                         (query.name.toLowerCase().includes(search.toLowerCase()) || 
                                         query.description.toLowerCase().includes(search.toLowerCase()) || 
                                         query.user.username.toLowerCase().includes(search.toLowerCase()))) &&
-                                        <tr key={'load_query_row_' + key} id={'load_query_row_' + key} onClick={() => setSelected(key, query, false)}>
+                                        <tr key={'load_query_row_' + key} id={'load_query_row_' + key} onClick={() => setSelected(key, false)} query={JSON.stringify(query)}>
                                             <td>
-                                                <input type="checkbox" className='load-query-checkbox' id={'load_query_checkbox_' + key} onClick={() => setSelected(key, query, true)}/>
+                                                <input type="checkbox" className='load-query-checkbox' id={'load_query_checkbox_' + key} onClick={() => setSelected(key, true)}/>
                                             </td>
                                             <td>{query.name}</td>
                                             <td>{(new Date(query.createdDate)).toLocaleString()}</td>
