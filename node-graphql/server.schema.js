@@ -53,6 +53,7 @@ const mcsTypeDefs = gql`
     test_num: Int
     scene_num: Int
     score: JSON
+    slices: [String]
     steps: JSON
     flags: JSON
     step_counter: Float

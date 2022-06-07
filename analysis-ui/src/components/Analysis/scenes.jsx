@@ -47,6 +47,7 @@ const mcs_history = gql`
             scene_num
             scene_goal_id
             score
+            slices
             steps
             flags
             metadata
@@ -66,22 +67,22 @@ const setConstants = function(evalNum) {
 }
 
 const scoreTableColsPassive = [
-    { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
-    { dataKey: 'scene_goal_id', title: 'Goal ID', dataType: 'history'},
-    { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
-    { dataKey: 'score.classification', title: 'Rating/Classification', dataType: 'history'},
-    { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'},
-    { dataKey: 'score.confidence', title: 'Score/Confidence', dataType: 'history'}
+    { dataKey: 'scene_num', title: 'Scene'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'slices', title: 'Slices'},
+    { dataKey: 'score.classification', title: 'Rating/Classification'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score'},
+    { dataKey: 'score.confidence', title: 'Score/Confidence'}
 ]
 
 const scoreTableColsInteractive = [
-    { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
-    { dataKey: 'scene_goal_id', title: 'Goal ID', dataType: 'history'},
-    { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
-    { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'}
+    { dataKey: 'scene_num', title: 'Scene'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'slices', title: 'Slices'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score'}
 ]
 
-const scoreTableColsWithCorners = scoreTableColsInteractive.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
+const scoreTableColsWithCorners = scoreTableColsInteractive.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
 
 // local storage property identifiers
 const plausibilityLSPropName = "showPlausabilityGraph";
