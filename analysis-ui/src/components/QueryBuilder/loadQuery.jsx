@@ -36,34 +36,53 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     const [selectedQueries, setSelectedQueries] = useState([]);
 
     const loadQuery = () => {
-        let queries = selectedQueries
+        let queries = selectedQueries;
         loadQueryHandler(queries);
     }
 
-    const closeModal = () => {
-        setSearch("");
-        onHide();
-    }
-
-    const manageSelectedQueries = (query, remove) => {
+    const manageSelectedQueries = (query, key, remove) => {
         let length = selectedQueries.length
         if (remove) {
             length -= 1
-            setSelectedQueries(selectedQueries.filter(item => item.name !== query.name && item.createdDate !== query.createdDate));
+            setSelectedQueries(selectedQueries.filter(item => key != item.key));
         }
         else {
             length += 1
-            setSelectedQueries([...selectedQueries, query]);
+            setSelectedQueries([...selectedQueries, {'query': query, 'key': key}]);
         }
         const checkbox = document.getElementById('header_checkbox') 
         checkbox.checked = length > 0
         
     }
 
+    const updateSelectedBasedOnSearch = () => {
+        let checkboxes = document.getElementsByClassName('load-query-checkbox');
+        for (let i = 0; i < checkboxes.length; i++) {
+            let row = checkboxes[i].parentNode.parentNode;
+            for(let j = 0; j<selectedQueries.length; j++) {
+                let key = parseInt(row.getAttribute('id').replace('load_query_row_', ''));
+                if (key == selectedQueries[j].key) {
+                    if (!row.className.includes('selected-row') && !checkboxes[i].checked) {
+                        row.classList.toggle('selected-row');
+                        checkboxes[i].checked = true;
+                    }
+                }
+            }
+        }
+    }
+
     /////////////////////////////////////////////
     useEffect(() => {
         console.log(selectedQueries)
     }, [selectedQueries]);
+
+    useEffect(() => {
+        updateSelectedBasedOnSearch();
+    }, [search])
+
+    useEffect(() => {
+        updateSelectedBasedOnSearch();
+    }, [activeTab])
     ////////////////////////////////////////////
 
     const setSelected = (key, query, button) => {
@@ -72,7 +91,31 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
         if (!button) {
             const row = document.getElementById('load_query_row_' + key);
             row.classList.toggle('selected-row');
-            manageSelectedQueries(query, !checkbox.checked)
+            manageSelectedQueries(query, key, !checkbox.checked)
+        }
+    }
+
+    const clearOrSelectAll = (e) => {
+        let clearAll = !e.target.checked
+        console.log(e.target.checked)
+        let checkboxes = document.getElementsByClassName('load-query-checkbox');
+        if (clearAll) {
+            for (let i=0; i<checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+                let row = checkboxes[i].parentNode.parentNode;
+                if (row.className.includes('selected-row')) {
+                    row.classList.toggle('selected-row');
+                }
+            }
+            setSelectedQueries([]);
+        }
+        else {
+            for (let i=0; i<checkboxes.length; i++) {
+                checkboxes[i].checked = true;
+                let row = checkboxes[i].parentNode.parentNode;
+                row.classList.toggle('selected-row');
+            }
+            setSelectedQueries([]);
         }
     }
 
@@ -110,14 +153,14 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                 <thead>
                                     <tr>
                                         <th style={{columnWidth: '1vw'}}>
-                                            <input type="checkbox" id="header_checkbox"/>
+                                            <input type="checkbox" id="header_checkbox" onClick={(e) => clearOrSelectAll(e)}/>
                                         </th>
                                         <th style={{columnWidth: '50vw'}}>Title</th>
                                         <th style={{columnWidth: '10vw'}}>Date</th>
                                         {activeTab === 'load_all_queries' &&
                                             <th style={{columnWidth: '1vw'}}>User</th>
                                         }
-                                        <th style={{columnWidth: '30vw'}}>Comment</th>
+                                        <th style={{columnWidth: '28vw'}}>Comment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
