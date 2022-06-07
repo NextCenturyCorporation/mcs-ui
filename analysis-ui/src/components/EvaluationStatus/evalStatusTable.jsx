@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Query } from 'react-apollo';
+import { Query, useQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 import Select from 'react-select';
 import EvalStatusConfigureModal from './evalStatusConfigure';
@@ -10,10 +10,16 @@ const CSV_URL_PREFIX = RESOURCES_URL + "/csv-db-files/Evaluation_";
 const CSV_URL_SCENE_SUFFIX = "_Scenes.csv";
 const CSV_URL_RESULTS_SUFFIX = "_Results.csv";
 const EvaluationStatusQuery = "getEvaluationStatus";
+const getLinkStatusQueryName = "getLinkStatus";
 
 const get_evaluation_status = gql`
     query getEvaluationStatus($eval: String!, $evalName: String!){
         getEvaluationStatus(eval: $eval, evalName: $evalName)
+    }`;
+
+const get_link_status = gql`
+    query getLinkStatus($url: String!){
+        getLinkStatus(url: $url)
     }`;
 
 function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStatusObjHandler, evalName}) {
@@ -66,11 +72,15 @@ function CreateCSV() {
 }
 
 function CSVDownloadLink({url, linkText}) {
+    const {data, refetch} = useQuery(get_link_status, {variables: {url}, fetchPolicy: 'no-cache'});
     const [linkActive, updateLinkActive] = useState();
+
     useEffect(() => {
         const getUrl = async () => {
-            const linkCheck = await fetch(url);
-            updateLinkActive(linkCheck.ok);
+            refetch({variables: {url}});
+            if(data !== undefined && data[getLinkStatusQueryName] !== undefined) {
+                updateLinkActive(data[getLinkStatusQueryName]);
+            }
         }
         getUrl();
     });
