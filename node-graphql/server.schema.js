@@ -171,12 +171,12 @@ const mcsResolvers = {
         },
         getEval2History: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection(args.eval).find({'cat_type_pair': args["catTypePair"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection('eval_2_results').find({'cat_type_pair': args["catTypePair"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval2Scene: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection(args.eval.replace("results", "scenes")).find({'test_type': args["testType"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection('eval_2_scenes').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
@@ -213,7 +213,7 @@ const mcsResolvers = {
             let whereClause = {};
 
             if(args["catType"]) {
-                if(args["eval"] === "Evaluation 2 Results") {
+                if(args["eval"] === "eval_2_results") {
                     whereClause["cat_type_pair"] = args["catType"];
                 } else {
                     whereClause["category_type"] = args["catType"];

@@ -64,7 +64,7 @@ const AnalysisUI = ({newState, updateHandler}) => {
     }
 
     let hasEval =  (newState.eval !== undefined && newState.eval !== null)
-    let isEval2 = hasEval && newState.eval === 'Evaluation 2 Results';
+    let isEval2 = hasEval && newState.eval === 'eval_2_results';
     let hasCatType = (newState.category_type !== undefined && newState.category_type !== null)
     let hasCatTypePair = (newState.cat_type_pair !== undefined && newState.cat_type_pair !== null)
     let hasTestNum = (newState.test_num !== undefined && newState.test_num !== null)

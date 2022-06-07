@@ -24,7 +24,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
 
     const goToVideoLocation = (location) => {
         if(location !== currentStep) {
-            if(evaluation === "Evaluation 2 Results") {
+            if(evaluation === "eval_2_results") {
                 setCurrentStep(location);
                 scenePlayer.current.currentTime = location;
             } else {
@@ -47,7 +47,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
     }
 
     const highlightStep = (e) => {
-        if(evaluation === "Evaluation 2 Results") {
+        if(evaluation === "eval_2_results") {
             // For eval 2, first step is at 0.2 
             let currentTimeNum = Math.floor(scenePlayer.current.currentTime + 0.8);
             if(currentTimeNum !== currentStep) {
