@@ -272,6 +272,13 @@ ol, ul {
     margin: 5px 10px 10px 10px;
 }
 
+.score-table-div {
+    width: 98%;
+    overflow: scroll;
+    padding: 0 8px 8px 0;
+    max-height: 500px;
+}
+
 .score-table-div .table, .object-contents .table {
     border: 1px solid black;
     padding: 5px 15px 5px 15px; 
@@ -943,12 +950,6 @@ ol, ul {
     margin: 30px;
 }
 
-.results-table-scroll {
-    width: 98%;
-    overflow-x: scroll;
-    padding: 0 8px 8px 0;
-    max-height: 700px;
-}
 
 .results-table-scroll thead tr th {
     position: sticky;
