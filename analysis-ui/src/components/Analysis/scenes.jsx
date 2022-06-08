@@ -47,6 +47,7 @@ const mcs_history = gql`
             scene_num
             scene_goal_id
             score
+            slices
             steps
             flags
             metadata
@@ -65,16 +66,23 @@ const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
-const scoreTableCols = [
-    { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
-    { dataKey: 'scene_goal_id', title: 'Goal ID', dataType: 'history'},
-    { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
-    { dataKey: 'score.classification', title: 'Rating/Classification', dataType: 'history'},
-    { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'},
-    { dataKey: 'score.confidence', title: 'Score/Confidence', dataType: 'history'}
+const scoreTableColsPassive = [
+    { dataKey: 'scene_num', title: 'Scene'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'slices', title: 'Slices'},
+    { dataKey: 'score.classification', title: 'Rating/Classification'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score'},
+    { dataKey: 'score.confidence', title: 'Score/Confidence'}
 ]
 
-const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
+const scoreTableColsInteractive = [
+    { dataKey: 'scene_num', title: 'Scene'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'slices', title: 'Slices'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score'}
+]
+
+const scoreTableColsWithCorners = scoreTableColsInteractive.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
 
 // local storage property identifiers
 const plausibilityLSPropName = "showPlausabilityGraph";
@@ -434,6 +442,17 @@ class Scenes extends React.Component {
         return this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== 'level1';
     }
 
+    getScoreTableCols = (isInteractive, categoryType) => {
+        if(isInteractive) {
+            if(categoryType === "reorientation") {
+                return scoreTableColsWithCorners;
+            } else {
+                return scoreTableColsInteractive;
+            }
+        }
+        return scoreTableColsPassive;
+    }
+
     render() {
         return (
             <Query query={mcs_history} variables={
@@ -632,7 +651,7 @@ class Scenes extends React.Component {
 
                                                 {this.checkIfScenesExist(scenesByPerformer) &&
                                                     <ScoreTable
-                                                        columns={this.props.value.category_type === "reorientation" ? scoreTableColsWithCorners: scoreTableCols}
+                                                        columns={this.getScoreTableCols(this.isSceneHistInteractive(scenesByPerformer), this.props.value.category_type)}
                                                         currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
                                                         currentSceneNum={this.state.currentSceneNum}
                                                         changeSceneHandler={this.changeScene}

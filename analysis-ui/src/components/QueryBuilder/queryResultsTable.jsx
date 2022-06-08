@@ -211,7 +211,7 @@ class QueryResultsTable extends React.Component {
     }
 
     getAnalysisPageURL = (item) => {
-        if(item.eval === "Evaluation 2 Results") {
+        if(item.eval === "eval_2_results") {
             let catTypePair = item.category === "interactive" ? item.category_pair + "_" + item.category_type : item.category_type;
             return "/analysis?eval=" + this.props.historyCollection + "&cat_type_pair=" + catTypePair +
                 "&test_num=" + item.test_num + "&scene=" + item.scene_num;

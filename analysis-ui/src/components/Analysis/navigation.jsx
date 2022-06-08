@@ -29,7 +29,7 @@ const GET_HISTORY_FIELD_AGG_WITH_EVAL_AND_CAT_TYPE = gql`
         getHistorySceneFieldAggregation(fieldName: $fieldName, eval: $eval, catType: $catType) 
     }`;
 
-const EVAL_2_IDENTIFIER = "Evaluation 2 Results";
+const EVAL_2_IDENTIFIER = "eval_2_results";
 
 class NavListItem extends React.Component {
 
