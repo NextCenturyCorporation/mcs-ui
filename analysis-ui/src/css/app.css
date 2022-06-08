@@ -950,6 +950,12 @@ ol, ul {
     margin: 30px;
 }
 
+.results-table-scroll {
+    width: 98%;
+    overflow-x: scroll;
+    padding: 0 8px 8px 0;
+    max-height: 700px;
+}
 
 .results-table-scroll thead tr th {
     position: sticky;
