@@ -145,7 +145,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                 <LoadQuerySearchBar setSearch={setSearch}/>
                                 <span>
                                     <a href='#selected' data-toggle="tooltip" 
-                                    title='Selecting one query will replace the current query tab. Selecting more than one query will append mutiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
+                                    title='Selecting one query will replace the current query tab. Selecting more than one query will append multiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
                                     <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>

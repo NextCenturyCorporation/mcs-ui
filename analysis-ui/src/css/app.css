@@ -992,6 +992,10 @@ ol, ul {
     text-underline-offset: 2px;
 }
 
+.load-query-table tr {
+    cursor: default;
+}
+
 .load-query-table th, .load-query-table td {
     padding: 12px 15px;
     text-align: left;
