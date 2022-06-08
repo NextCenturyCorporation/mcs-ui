@@ -62,7 +62,7 @@ class EvalNavItem extends React.Component {
                     // Remove Evaluation 2 Results because this page is designed to show hypercube results
                     //    and we did not have a hypercube design for Evaluation 2
 
-                    evalOptions = evalOptions.filter(element => element.label !== "eval_2_results");
+                    evalOptions = evalOptions.filter(element => element.label !== "Evaluation 2 Results");
 
                     return (
                         <List className="nav-list" component="nav" aria-label="secondary mailbox folder">
