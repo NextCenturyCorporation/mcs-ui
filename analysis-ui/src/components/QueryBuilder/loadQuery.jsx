@@ -41,18 +41,10 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     }
 
     const manageSelectedQueries = (query, key, remove) => {
-        let length = selectedQueries.length
-        if (remove) {
-            length -= 1
+        if (remove)
             setSelectedQueries(selectedQueries.filter(item => key != item.key));
-        }
-        else {
-            length += 1
+        else
             setSelectedQueries([...selectedQueries, {'query': query, 'key': key}]);
-        }
-        const checkbox = document.getElementById('header_checkbox') 
-        checkbox.checked = length > 0
-        
     }
 
     const updateSelectedBasedOnSearch = () => {
@@ -70,6 +62,12 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
             }
         }
     }
+
+    useEffect(() => {
+        let checkbox = document.getElementById('header_checkbox');
+        if (checkbox !== null)
+            checkbox.checked = selectedQueries.length > 0;
+    }, [selectedQueries])
 
     useEffect(() => {
         updateSelectedBasedOnSearch();
