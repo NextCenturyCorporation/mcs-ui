@@ -64,18 +64,8 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     }
 
     useEffect(() => {
-        let checkbox = document.getElementById('header_checkbox');
-        if (checkbox !== null)
-            checkbox.checked = selectedQueries.length > 0;
-    }, [selectedQueries])
-
-    useEffect(() => {
         updateSelectedBasedOnSearch();
-    }, [search])
-
-    useEffect(() => {
-        updateSelectedBasedOnSearch();
-    }, [activeTab])
+    }, [search, activeTab])
 
     const setSelected = (key, button) => {
         const checkbox = document.getElementById('load_query_checkbox_' + key);
@@ -153,7 +143,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                         <th style={{columnWidth: '1vw'}}>
                                             <a href='#' data-toggle="tooltip" title="Checking this box will select all of the queries matching the search parameters. 
                                             If there are no search parameters, all queries will be selected. Unchecking this box will clear all selections.">
-                                                <input type="checkbox" id="header_checkbox" onClick={(e) => selectOrClearAll(e)}/>
+                                                <input type="checkbox" id="header_checkbox" checked={selectedQueries.length > 0} onClick={(e) => selectOrClearAll(e)}/>
                                             </a>
                                         </th>
                                         <th style={{columnWidth: '50vw'}}>Title</th>
