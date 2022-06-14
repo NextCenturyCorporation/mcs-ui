@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import Modal from 'react-bootstrap/Modal';
+import React, {useState} from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
@@ -47,57 +46,16 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
             setSelectedQueries([...selectedQueries, {'query': query, 'key': key}]);
     }
 
-    const updateSelectedBasedOnSearch = () => {
-        let checkboxes = document.getElementsByClassName('load-query-checkbox');
-        for (let i = 0; i < checkboxes.length; i++) {
-            let row = checkboxes[i].parentNode.parentNode;
-            for(let j = 0; j<selectedQueries.length; j++) {
-                let key = parseInt(row.getAttribute('id').replace('load_query_row_', ''));
-                if (key == selectedQueries[j].key) {
-                    if (!row.className.includes('selected-row') && !checkboxes[i].checked) {
-                        row.classList.toggle('selected-row');
-                        checkboxes[i].checked = true;
-                    }
-                }
-            }
-        }
-    }
-
-    useEffect(() => {
-        updateSelectedBasedOnSearch();
-    }, [search, activeTab])
-
-    const setSelected = (key, button) => {
-        const checkbox = document.getElementById('load_query_checkbox_' + key);
-        checkbox.checked = !checkbox.checked;
-        if (!button) {
-            const row = document.getElementById('load_query_row_' + key);
-            let query = JSON.parse(row.getAttribute('query'));
-            row.classList.toggle('selected-row');
-            manageSelectedQueries(query, key, !checkbox.checked)
-        }
-    }
-
     const selectOrClearAll = (e) => {
         let checkboxes = document.getElementsByClassName('load-query-checkbox');
         let clearAll = !e.target.checked
-        if (clearAll) {
-            for (let i=0; i<checkboxes.length; i++) {
-                checkboxes[i].checked = false;
-                let row = checkboxes[i].parentNode.parentNode;
-                if (row.className.includes('selected-row')) {
-                    row.classList.toggle('selected-row');
-                }
-            }
+        if (clearAll)
             setSelectedQueries([]);
-        }
         else {
             let selected = []
             for (let i=0; i<checkboxes.length; i++) {
                 if (!checkboxes[i].checked) {
-                    checkboxes[i].checked = true;
                     let row = checkboxes[i].parentNode.parentNode;
-                    row.classList.toggle('selected-row');
                     let query = JSON.parse(row.getAttribute('query'));
                     let key = parseInt(row.getAttribute('id').replace('load_query_row_', ''));
                     selected.push({'query': query, 'key': key})
@@ -105,6 +63,10 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
             }
             setSelectedQueries([...selectedQueries, ...selected])
         }
+    }
+
+    const isSelected = (key) => {
+        return selectedQueries.some((element) => element.key == key)
     }
 
     return (
@@ -161,9 +123,10 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                         (query.name.toLowerCase().includes(search.toLowerCase()) || 
                                         query.description.toLowerCase().includes(search.toLowerCase()) || 
                                         query.user.username.toLowerCase().includes(search.toLowerCase()))) &&
-                                        <tr key={'load_query_row_' + key} id={'load_query_row_' + key} onClick={() => setSelected(key, false)} query={JSON.stringify(query)}>
+                                        <tr key={'load_query_row_' + key} id={'load_query_row_' + key} className={isSelected(key) ? 'selected-row' : ''}
+                                            onClick={() => manageSelectedQueries(query, key, isSelected(key))} query={JSON.stringify(query)}>
                                             <td>
-                                                <input type="checkbox" className='load-query-checkbox' id={'load_query_checkbox_' + key} onClick={() => setSelected(key, true)}/>
+                                                <input type="checkbox" className='load-query-checkbox' checked={isSelected(key)}/>
                                             </td>
                                             <td>{query.name}</td>
                                             <td>{(new Date(query.createdDate)).toLocaleString()}</td>
