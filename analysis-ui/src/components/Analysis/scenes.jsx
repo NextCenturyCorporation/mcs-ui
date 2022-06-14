@@ -171,25 +171,23 @@ class Scenes extends React.Component {
                 });
             }
             
-            
             if (downOneOrUpOneScene) {
                 let sceneRow = document.getElementById("score_table_row_scene_" + sceneNum);
                 if (sceneRow !== null) {
                     let currentScrollPosition = document.documentElement.scrollTop;
-                    let pos = sceneRow.style.position;
+                    let rowPosition = sceneRow.style.position;
                     let top = sceneRow.style.top;
                     sceneRow.style.position = 'relative';
                     sceneRow.style.top = '-30px';
                     sceneRow.scrollIntoView({block: 'start'});
                     sceneRow.style.top = top;
-                    sceneRow.style.position = pos;
+                    sceneRow.style.position = rowPosition;
                     document.documentElement.scrollTop = currentScrollPosition;
                 }
             }
             
             this.props.updateHandler("scene", sceneNum);
             this.resetVideoState(matchSpeed);
-            
         }
     }
 
