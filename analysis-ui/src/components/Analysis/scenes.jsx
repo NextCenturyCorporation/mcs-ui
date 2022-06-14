@@ -149,7 +149,7 @@ class Scenes extends React.Component {
         this.setState({[key]: value});
     }
 
-    changeScene = (sceneNum, matchSpeed=false) => {
+    changeScene = (sceneNum, matchSpeed=false, downOneOrUpOneScene=false) => {
         if(this.state.currentSceneNum !== sceneNum) {
             this.setState({ currentSceneNum: sceneNum});
             let pathname = this.props.value.history.location.pathname;
@@ -171,11 +171,20 @@ class Scenes extends React.Component {
                 });
             }
             
-            let currentScrollPosition = document.documentElement.scrollTop;
-            let sceneRow = document.getElementById("score_table_row_scene_" + sceneNum);
-            if (sceneRow !== null) {
-                sceneRow.scrollIntoView({block: 'nearest'});
-                document.documentElement.scrollTop = currentScrollPosition;
+            
+            if (downOneOrUpOneScene) {
+                let sceneRow = document.getElementById("score_table_row_scene_" + sceneNum);
+                if (sceneRow !== null) {
+                    let currentScrollPosition = document.documentElement.scrollTop;
+                    let pos = sceneRow.style.position;
+                    let top = sceneRow.style.top;
+                    sceneRow.style.position = 'relative';
+                    sceneRow.style.top = '-30px';
+                    sceneRow.scrollIntoView({block: 'start'});
+                    sceneRow.style.top = top;
+                    sceneRow.style.position = pos;
+                    document.documentElement.scrollTop = currentScrollPosition;
+                }
             }
             
             this.props.updateHandler("scene", sceneNum);
@@ -215,13 +224,13 @@ class Scenes extends React.Component {
 
     upOneScene = () => {
         if(this.state.currentSceneNum-1 > 0)
-            this.changeScene(this.state.currentSceneNum-1);
+            this.changeScene(this.state.currentSceneNum-1, false, true);
     }
 
     downOneScene = (numOfScenes, checkState) => {
         if((checkState && this.state.playAll) || !checkState) {
             if (this.state.currentSceneNum < numOfScenes) {
-                this.changeScene(this.state.currentSceneNum+1, true);
+                this.changeScene(this.state.currentSceneNum+1, true, true);
             }
         }
     }

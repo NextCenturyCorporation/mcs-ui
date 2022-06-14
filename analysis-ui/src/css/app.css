@@ -276,7 +276,7 @@ ol, ul {
     width: 98%;
     overflow: scroll;
     padding: 0 8px 8px 0;
-    max-height: 500px;
+    max-height: 295px;
 }
 
 .score-table-div .table, .object-contents .table {
