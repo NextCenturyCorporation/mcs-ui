@@ -38,7 +38,7 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
     };
 
     const getCurrentScene = (scenesInOrder) => {
-        return scenesInOrder[currentSceneNum - 1];
+        return scenesInOrder.find(scene => scene.scene_num === currentSceneNum);
     }
 
     return (

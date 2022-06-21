@@ -299,7 +299,9 @@ class Scenes extends React.Component {
     }
 
     getSceneNamePrefix = (name) => {
-        return name.substring(0, name.indexOf('_')) + '*';
+        let secondToLastIndex = name.lastIndexOf('_', name.lastIndexOf('_')-1)
+
+        return name.substring(0, secondToLastIndex) + '*';
     }
 
     checkIfScenesExist = (scenesByPerformer) =>{
