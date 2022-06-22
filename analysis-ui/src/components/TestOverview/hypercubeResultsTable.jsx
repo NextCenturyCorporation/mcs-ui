@@ -11,8 +11,8 @@ import ScoreCardTable from './scorecardTable';
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
-    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!) {
-        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer) 
+    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!, $weightedPassing: Boolean!) {
+        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing) 
     }`;
 
 const overViewTableFields = [
@@ -76,7 +76,8 @@ class HyperCubeResultsTable extends React.Component {
                 "categoryType": this.props.state.category,
                 "performer": this.props.state.performer,
                 "metadata": this.props.state.metadata,
-                "useDidNotAnswer": this.props.state.useDidNotAnswer}}>
+                "useDidNotAnswer": this.props.state.useDidNotAnswer,
+                "weightedPassing": this.props.state.weightedPassing}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
