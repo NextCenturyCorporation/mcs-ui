@@ -1056,7 +1056,7 @@ ol, ul {
     transform: scale(1.6);
 }
 
-.load-query-table .header-checkbox {
+.load-query-table .header-checkbox, .load-query-table .user {
     column-width: 1vw;
 }
 
@@ -1065,10 +1065,6 @@ ol, ul {
 }
 
 .load-query-table .date {
-    column-width: 10vw;
-}
-
-.load-query-table .user {
     column-width: 10vw;
 }
 
