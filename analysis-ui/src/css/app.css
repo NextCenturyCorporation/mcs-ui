@@ -1274,3 +1274,8 @@ nav.MuiList-root.nav-list.MuiList-padding {
 .playback-btns-passive {
     padding-left: 345px;
 }
+
+.analysis-table-selected-row {
+    position: relative;
+    top: -30px;
+}
