@@ -1052,19 +1052,28 @@ ol, ul {
     background-color: #229cf373;
 }
 
-.load-query-modal-title {
-    flex-shrink: 0;
-    padding-left: 50px;
-    padding-top: 40px;
-}
-
-.load-query-modal .modal-header {
-    border-bottom: 0px;
-    margin-bottom: -20px;
-}
-
 .load-query-checkbox {
     transform: scale(1.6);
+}
+
+.load-query-table .header-checkbox {
+    column-width: 1vw;
+}
+
+.load-query-table .name {
+    column-width: 50vw;
+}
+
+.load-query-table .date {
+    column-width: 10vw;
+}
+
+.load-query-table .user {
+    column-width: 10vw;
+}
+
+.load-query-table .comment {
+    column-width: 28vw;
 }
 
 .load-query-search-container {

@@ -102,18 +102,18 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                             <table className="load-query-table">
                                 <thead>
                                     <tr>
-                                        <th style={{columnWidth: '1vw'}}>
+                                        <th className='header-checkbox'>
                                             <a href='#' data-toggle="tooltip" title="Checking this box will select all of the queries matching the search parameters. 
                                             If there are no search parameters, all queries will be selected. Unchecking this box will clear all selections.">
                                                 <input type="checkbox" id="header_checkbox" checked={selectedQueries.length > 0} onClick={(e) => selectOrClearAll(e)}/>
                                             </a>
                                         </th>
-                                        <th style={{columnWidth: '50vw'}}>Title</th>
-                                        <th style={{columnWidth: '10vw'}}>Date</th>
+                                        <th className='name'>Title</th>
+                                        <th className='date'>Date</th>
                                         {activeTab === 'load_all_queries' &&
-                                            <th style={{columnWidth: '1vw'}}>User</th>
+                                            <th className='user'>User</th>
                                         }
-                                        <th style={{columnWidth: '28vw'}}>Comment</th>
+                                        <th className='comment'>Comment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
