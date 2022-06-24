@@ -272,6 +272,13 @@ ol, ul {
     margin: 5px 10px 10px 10px;
 }
 
+.score-table-div {
+    width: 98%;
+    overflow: scroll;
+    padding: 0 8px 8px 0;
+    max-height: 295px;
+}
+
 .score-table-div .table, .object-contents .table {
     border: 1px solid black;
     padding: 5px 15px 5px 15px; 
@@ -1266,4 +1273,9 @@ nav.MuiList-root.nav-list.MuiList-padding {
 
 .playback-btns-passive {
     padding-left: 345px;
+}
+
+.analysis-table-selected-row {
+    position: relative;
+    top: -30px;
 }
