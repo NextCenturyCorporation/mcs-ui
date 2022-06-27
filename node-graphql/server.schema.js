@@ -145,7 +145,7 @@ const mcsTypeDefs = gql`
     getEvalTestTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
-    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
 
@@ -525,10 +525,15 @@ const mcsResolvers = {
                 "correct": "$score.score",
                 "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
-                "scoreWorth": "$score.weighted_score_worth",
                 "testType": "$test_type",
                 "description": "$score.score_description"
             };
+
+            if(args.weightedPassing) {
+                projectObject["scoreWorth"] = "$score.weighted_score_worth";
+            } else {
+                projectObject["scoreWorth"] = {"$literal": 1};
+            }
 
             if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
                 projectObject["hypercube_id"] = "$category_type"
