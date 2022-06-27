@@ -18,7 +18,8 @@ class QueryPage extends React.Component {
             }],
             currentTab: 1,
             totalTab: 1,
-            currentTabMongoId: ""
+            currentTabMongoId: "",
+            showLoadQuery: false
         };
 
         this.queryResultsTableRef = React.createRef();
@@ -35,7 +36,7 @@ class QueryPage extends React.Component {
         }
     }
 
-    addTab = (event) => {
+    addTab = () => {
         let newArray = this.state.queryTabs.concat({
             id: this.state.totalTab+1, 
             name: "Query " + (this.state.totalTab+1),
@@ -52,6 +53,28 @@ class QueryPage extends React.Component {
 
         this.props.currentUser["queryBuilderState"] = this.state;
     }
+    
+    addMultipleTabs = async (queryObjects) => {
+        let additionalTabs = [];
+        for (let i=this.state.totalTab + 1; i<queryObjects.length + this.state.totalTab + 1; i++) {
+            additionalTabs.push({
+                id: this.state.totalTab + (i - this.state.totalTab), 
+                name: "Query " + (this.state.totalTab + (i - this.state.totalTab)),
+                tabQueryObj: [],
+                groupBy: {value: "", label: ""},
+                sortBy: {property: "", sortOrder: "desc"},
+                mongoId: ""
+            })
+        }
+        let newArray = this.state.queryTabs.concat(additionalTabs);
+
+        this.setState({ 
+            totalTab: newArray.length, 
+            queryTabs: newArray,
+            currentTab: newArray.length - queryObjects.length + 1
+        });
+        this.props.currentUser["queryBuilderState"] = this.state;
+    }
 
     updateQueryState = (newArray, newCurrentTab) => {
         newCurrentTab = newCurrentTab !== undefined && newCurrentTab !== null ? newCurrentTab : this.state.currentTab;
@@ -59,8 +82,7 @@ class QueryPage extends React.Component {
             queryTabs: newArray,
             currentTab: newCurrentTab,
             currentTabMongoId: newArray[newCurrentTab-1].mongoId
-        });
-
+        })
         this.props.currentUser["queryBuilderState"] = this.state;
     }
 
@@ -75,13 +97,23 @@ class QueryPage extends React.Component {
 
         this.updateQueryState(newArray);
     }
+    
+    loadQueryHandler = async (queryObjects) => {
+        if (queryObjects.length > 1)
+            await this.addMultipleTabs(queryObjects);
+        this.loadQueries(queryObjects);
+    }
 
-    loadQueryHandler = (queryObj) => {
-        queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null || queryObj.groupBy === "" ? {value: "", label: "None"} : queryObj.groupBy;
-        queryObj.sortBy = queryObj.sortBy === null || queryObj.sortBy === undefined || queryObj.sortBy === "" ? {property: "", sortOrder: "desc"} : queryObj.sortBy;
-        this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, queryObj.sortBy, this.state.currentTab, queryObj.name, queryObj._id);
-        if(this.queryResultsTableRef.current !== null) {
-            this.queryResultsTableRef.current.updateTableGroupAndSortBy(queryObj.groupBy, queryObj.sortBy);
+    loadQueries = (queryObjects) => {
+        for (let i=0; i<queryObjects.length; i++) {
+            let queryObj = queryObjects[i]['query']
+            queryObj.groupBy = queryObj.groupBy === undefined ||  queryObj.groupBy === null || queryObj.groupBy === "" ? {value: "", label: "None"} : queryObj.groupBy;
+            queryObj.sortBy = queryObj.sortBy === null || queryObj.sortBy === undefined || queryObj.sortBy === "" ? {property: "", sortOrder: "desc"} : queryObj.sortBy;
+            this.updateQueryObjForTab(queryObj.queryObj, queryObj.groupBy, queryObj.sortBy, this.state.currentTab, queryObj.name, queryObj._id);
+            if(this.queryResultsTableRef.current !== null) {
+                this.queryResultsTableRef.current.updateTableGroupAndSortBy(queryObj.groupBy, queryObj.sortBy);
+            }
+            this.changeQueryTab(this.state.currentTab + (i+1 < queryObjects.length ? 1 : 0))
         }
     }
 
@@ -108,7 +140,7 @@ class QueryPage extends React.Component {
                     newArray[i].mongoId = mongoQueryId;
                 }
             }
-        } 
+        }
         this.updateQueryState(newArray);
     }
     
@@ -124,6 +156,9 @@ class QueryPage extends React.Component {
     }
 
     changeQueryTab = (objectKey) => {
+        if (this.state.showLoadQuery)
+            this.showLoadQuery();
+
         if(objectKey === this.state.currentTab) {
             return;
         }
@@ -131,11 +166,11 @@ class QueryPage extends React.Component {
         $('#tabObj_button_' + this.state.currentObjectNum ).toggleClass( "active" );
         $('#tabObj_button_' + objectKey ).toggleClass( "active" );
 
-        this.setState({ 
-                currentTab: objectKey,
-                currentTabMongoId: this.state.queryTabs[objectKey-1].mongoId
-            });
 
+        this.setState({ 
+            currentTab: objectKey,
+            currentTabMongoId: this.state.queryTabs[objectKey-1].mongoId
+        })
         this.props.currentUser["queryBuilderState"] = this.state;
     }
 
@@ -162,6 +197,15 @@ class QueryPage extends React.Component {
         this.updateQueryState(newArray, newCurrentTab);
     }
 
+    showLoadQuery = () => {
+        this.setState({ 
+            showLoadQuery: !this.state.showLoadQuery
+        });
+        document.getElementById('load_query_icon').classList.toggle('selected');
+        let activeTab = document.getElementsByClassName("nav-link active");
+        activeTab[0].classList.toggle('load-query-active');
+    }
+
     render() {
         return (
             <div className="query-page-contents">
@@ -174,16 +218,23 @@ class QueryPage extends React.Component {
                         )}
                     </ul>
                     <div className="query-tab-controls">
-                        <a href="#addTab" onClick={this.addTab} className="icon-link">
-                            <span className="material-icons icon-margin-right">
-                                add
-                            </span>
-                        </a>
-                        <LoadQuery currentUser={this.props.currentUser} loadQueryHandler={this.loadQueryHandler}/>
+                        <span className="query-tab-controls-span">
+                            <button id={'load_query_icon_add'} onClick={this.addTab}>
+                                <span className="material-icons icon-margin-center">
+                                    add
+                                </span>
+                            </button>
+                            <button id={'load_query_icon'} onClick={() => this.showLoadQuery()}>
+                                <span className="material-icons icon-margin-center">
+                                    folder_open
+                                </span>
+                            </button>
+                        </span>
                     </div>
                 </div>
                 <div className="query-tab-contents">
-                    {this.state.queryTabs.map((tabObj, key) => 
+                    {this.state.showLoadQuery && <LoadQuery currentUser={this.props.currentUser} loadQueryHandler={this.loadQueryHandler}/>}
+                    {!this.state.showLoadQuery && this.state.queryTabs.map((tabObj, key) => 
                         <div key={'query_tab_' + key} className={tabObj.id === this.state.currentTab ? null : 'd-none'}>
                             <ComplexQueryBuilder queryId={tabObj.id} saveQueryObject={tabObj.tabQueryObj} currentUser={this.props.currentUser} 
                                 updateQueryNameHandler={this.updateQueryNameHandler} updateQueryObjForTab={this.updateQueryObjForTab} numberTabs={this.state.queryTabs.length}
