@@ -552,12 +552,54 @@ const mcsResolvers = {
 
             const groupObject = {
                 "_id": {"hypercubeID": "$scene_goal_id"},
-                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed" },
                 "totalAttemptImpossible": { "$sum" : "$score.scorecard.attempt_impossible" },
-                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable" },
-                "totalMultipleContainerLook": { "$sum" : "$score.scorecard.multiple_container_look" },
+                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable.total_unopenable_attempts" },
+                // A couple values changed slightly...
+                // Eval 4 value
+                //"totalMultipleContainerLook": { "$sum" : "$score.scorecard.multiple_container_look" },
+                //"eval4RepeatFailed": { "$sum" : "$score.scorecard.repeat_failed" },
+                // Eval 5 value
+                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed.total_repeat_failed" },
+                "totalContainerRelook": { "$sum" : "$score.scorecard.container_relook" },
+                // end
                 "totalNotMovingTowardObject": { "$sum" : "$score.scorecard.not_moving_toward_object" },
                 "totalRevisits": { "$sum" : "$score.scorecard.revisits" },
+                "totalCorrectPlatform": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.correct_platform_side", 1, 0 ]
+                    }
+                },
+                "totalCorrectDoorOpened": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.correct_door_opened", 1, 0 ]
+                    }
+                },
+                "totalFastestPath": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.fastest_path", 1, 0 ]
+                    }
+                },
+                // start ramp stats
+                "totalRampWentUp": { "$sum" : "$score.scorecard.ramp_actions.went_up" },
+                "totalRampWentDown": { "$sum" : "$score.scorecard.ramp_actions.went_down" },
+                "totalRampWentUpAbandoned": { "$sum" : "$score.scorecard.ramp_actions.went_up_abandoned" },
+                "totalRampWentDownAbandoned": { "$sum" : "$score.scorecard.ramp_actions.went_down_abandoned" },
+                "totalRampFellOff": { "$sum" : "$score.scorecard.ramp_actions.ramp_fell_off" },
+                // end ramp stats
+                // start tool use stats
+                "totalMoveToolSuccess": { "$sum" : "$score.scorecard.tool_usage.MoveObject" },
+                "totalMoveToolFailed": { "$sum" : "$score.scorecard.tool_usage.MoveObject_failed" },
+                "totalPushToolSuccess": { "$sum" : "$score.scorecard.tool_usage.PushObject" },
+                "totalPushToolFailed": { "$sum" : "$score.scorecard.tool_usage.PushObject_failed" },
+                "totalPullToolSuccess": { "$sum" : "$score.scorecard.tool_usage.PullObject" },
+                "totalPullToolFailed": { "$sum" : "$score.scorecard.tool_usage.PullObject_failed" },
+                "totalRotateToolSuccess": { "$sum" : "$score.scorecard.tool_usage.RotateObject" },
+                "totalRotateToolFailed": { "$sum" : "$score.scorecard.tool_usage.RotateObject_failed" },
+                "totalTorqueToolSuccess": { "$sum" : "$score.scorecard.tool_usage.TorqueObject" },
+                "totalTorqueToolFailed": { "$sum" : "$score.scorecard.tool_usage.TorqueObject_failed" },
+                // end tool use stats
+                "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
+                "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" }
             }
 
             const scoreCardStats = await mcsDB.db.collection(args.eval).aggregate([

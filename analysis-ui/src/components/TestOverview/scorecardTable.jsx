@@ -14,6 +14,8 @@ const getScorecardDataQuery = gql`
         getScoreCardData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
     }`;
 
+
+/*
 const scorecardFields = [
     {"title": "HyperCubeId", "key": "hypercubeID"},
     {"title": "Repeat Failed", "key": "totalRepeatFailed"},
@@ -22,6 +24,35 @@ const scorecardFields = [
     {"title": "Multiple Container Look", "key": "totalMultipleContainerLook"},
     {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
     {"title": "Revisits", "key": "totalRevisits"}
+];*/
+const scorecardFields = [
+    {"title": "HyperCubeId", "key": "hypercubeID"},
+    {"title": "Repeat Failed", "key": "totalRepeatFailed"},
+    {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
+    {"title": "Open Unopenable", "key": "totalOpenUnopenable"},
+    {"title": "Multiple Container Look", "key": "totalContainerRelook"},
+    {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
+    {"title": "Revisits", "key": "totalRevisits"},
+    {"title": "Ramp Went Up", "key": "totalRampWentUp"},
+    {"title": "Ramp Went Down", "key": "totalRampWentDown"},
+    {"title": "Ramp Went Up Abandoned", "key": "totalRampWentUpAbandoned"},
+    {"title": "Ramp Went Down Abandoned", "key": "totalRampWentDownAbandoned"},
+    {"title": "Ramp Fell Off", "key": "totalRampFellOff"},
+    {"title": "Correct Platform", "key": "totalCorrectPlatform"},
+    {"title": "Correct Door Opened", "key": "totalCorrectDoorOpened"},
+    {"title": "Fastest Path", "key": "totalFastestPath"},
+    {"title": "Move Tool Success", "key": "totalMoveToolSuccess"},
+    {"title": "Move Tool Failure", "key": "totalMoveToolFailed"},
+    {"title": "Push Tool Success", "key": "totalPushToolSuccess"},
+    {"title": "Push Tool Failure", "key": "totalPushToolFailed"},
+    {"title": "Pull Tool Success", "key": "totalPullToolSuccess"},
+    {"title": "Pull Tool Failure", "key": "totalPullToolFailed"},
+    {"title": "Rotate Tool Success", "key": "totalRotateToolSuccess"},
+    {"title": "Rotate Tool Failure", "key": "totalRotateToolFailed"},
+    {"title": "Torque Tool Success", "key": "totalTorqueToolSuccess"},
+    {"title": "Torque Tool Failure", "key": "totalTorqueToolFailed"},
+    {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
+    {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"}
 ];
 class ScoreCardTable extends React.Component {
 
