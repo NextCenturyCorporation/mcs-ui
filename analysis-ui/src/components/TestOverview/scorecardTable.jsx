@@ -14,17 +14,6 @@ const getScorecardDataQuery = gql`
         getScoreCardData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
     }`;
 
-
-/*
-const scorecardFields = [
-    {"title": "HyperCubeId", "key": "hypercubeID"},
-    {"title": "Repeat Failed", "key": "totalRepeatFailed"},
-    {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
-    {"title": "Open Unopenable", "key": "totalOpenUnopenable"},
-    {"title": "Multiple Container Look", "key": "totalMultipleContainerLook"},
-    {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
-    {"title": "Revisits", "key": "totalRevisits"}
-];*/
 const scorecardFields = [
     {"title": "HyperCubeId", "key": "hypercubeID"},
     {"title": "Repeat Failed", "key": "totalRepeatFailed"},

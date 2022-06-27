@@ -554,14 +554,8 @@ const mcsResolvers = {
                 "_id": {"hypercubeID": "$scene_goal_id"},
                 "totalAttemptImpossible": { "$sum" : "$score.scorecard.attempt_impossible" },
                 "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable.total_unopenable_attempts" },
-                // A couple values changed slightly...
-                // Eval 4 value
-                //"totalMultipleContainerLook": { "$sum" : "$score.scorecard.multiple_container_look" },
-                //"eval4RepeatFailed": { "$sum" : "$score.scorecard.repeat_failed" },
-                // Eval 5 value
                 "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed.total_repeat_failed" },
                 "totalContainerRelook": { "$sum" : "$score.scorecard.container_relook" },
-                // end
                 "totalNotMovingTowardObject": { "$sum" : "$score.scorecard.not_moving_toward_object" },
                 "totalRevisits": { "$sum" : "$score.scorecard.revisits" },
                 "totalCorrectPlatform": {
