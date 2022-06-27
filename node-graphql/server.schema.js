@@ -480,17 +480,14 @@ const mcsResolvers = {
             let groupObject = {
                 "performer": "$performer",
                 "correct": "$score.score",
-                "description": "$score.score_description"
+                "description": "$score.score_description",
+                "weight": "$score.weighted_score_worth",
+                "weight_score": "$score.weighted_score"
             };
 
             let searchObject = {
                 "test_type": args.evalType
             };
-
-            if(args.evalType !== 'interactive') {
-                groupObject["weight"] = "$score.weighted_score_worth";
-                groupObject["weight_score"] = "$score.weighted_score";
-            }
 
             if(args.metadata !== "total" && args.metadata !== undefined && args.metadata !== null) {
                 searchObject["metadata"] = args.metadata;

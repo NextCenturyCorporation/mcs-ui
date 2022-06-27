@@ -23,7 +23,7 @@ class ChartContainer extends React.Component {
             metadata: this.getMetadataLevel(props.chartOptions[0]),
             isPlausibility: this.getPlausibility(props.chartOptions[0]),
             isNovelty: this.getNovelty(props.chartOptions[0]),
-            isWeighted: this.props.testType.toLowerCase() === 'interactive'? false : true
+            isWeighted: true
         }
 
         this.toggleChartOptions = this.toggleChartOptions.bind(this);
@@ -141,7 +141,7 @@ class ChartContainer extends React.Component {
                             defaultValue={this.state.chartOption}
                         />
                     </div>
-                    {this.props.testType.toLowerCase() === 'intuitive physics' &&
+                    {this.props.testType.toLowerCase() !== 'agents' &&
                         <div className="chart-weight-toggle">
                             <ToggleButtonGroup type="checkbox" value={this.state.isWeighted} onChange={this.handleWeightedToggle}>
                                 <ToggleButton variant="secondary" value={true}>{this.props.testType.toLowerCase() === 'agents' ? 'Paired' : 'Weighted'}</ToggleButton>
