@@ -14,10 +14,12 @@ class TestOverview extends React.Component {
             category: "",
             performer: "",
             metadata: "",
-            useDidNotAnswer: true
+            useDidNotAnswer: true,
+            weightedPassing: true
         }
         this.stateUpdateHandler = this.stateUpdateHandler.bind(this);
         this.toggleUseDidNotAnswer = this.toggleUseDidNotAnswer.bind(this);
+        this.toggleWeightedPassing = this.toggleWeightedPassing.bind(this);
     }
 
     stateUpdateHandler(key, value) {
@@ -26,6 +28,10 @@ class TestOverview extends React.Component {
 
     toggleUseDidNotAnswer() {
         this.setState(prevState => ({useDidNotAnswer: !prevState.useDidNotAnswer}));
+    }
+
+    toggleWeightedPassing() {
+        this.setState(prevState => ({weightedPassing: !prevState.weightedPassing}));
     }
 
     render() {
@@ -58,6 +64,12 @@ class TestOverview extends React.Component {
                                         <ButtonGroupNavItem fieldName="performer" state={this.state} stateUpdateHandler={this.stateUpdateHandler}/>
                                     </div>
                                     <div className="overview-buttom-group-right">
+                                        <label className="no-answer-toggle-holder">
+                                            <div className="switch-container">
+                                                <Switch onChange={this.toggleWeightedPassing} checked={this.state.weightedPassing}/>
+                                            </div>
+                                            <span>Passing/Weighted Scoring</span>
+                                        </label>
                                         <label className="no-answer-toggle-holder">
                                             <div className="switch-container">
                                                 <Switch onChange={this.toggleUseDidNotAnswer} checked={this.state.useDidNotAnswer}/>

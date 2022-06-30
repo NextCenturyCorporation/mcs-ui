@@ -149,7 +149,7 @@ class Scenes extends React.Component {
         this.setState({[key]: value});
     }
 
-    changeScene = (sceneNum, matchSpeed=false) => {
+    changeScene = (sceneNum, matchSpeed=false, downOneOrUpOneScene=false) => {
         if(this.state.currentSceneNum !== sceneNum) {
             this.setState({ currentSceneNum: sceneNum});
             let pathname = this.props.value.history.location.pathname;
@@ -170,8 +170,15 @@ class Scenes extends React.Component {
                     search: searchString + sceneToUpdate
                 });
             }
+            let sceneRow = document.getElementById("score_table_row_scene_" + sceneNum);
+            if (sceneRow !== null && downOneOrUpOneScene) {
+                let currentScrollPosition = document.documentElement.scrollTop;
+                sceneRow.classList.toggle('analysis-table-selected-row');
+                sceneRow.scrollIntoView({block: 'start'});
+                sceneRow.classList.toggle('analysis-table-selected-row');
+                document.documentElement.scrollTop = currentScrollPosition;
+            }
             this.props.updateHandler("scene", sceneNum);
-
             this.resetVideoState(matchSpeed);
         }
     }
@@ -207,13 +214,13 @@ class Scenes extends React.Component {
 
     upOneScene = () => {
         if(this.state.currentSceneNum-1 > 0)
-            this.changeScene(this.state.currentSceneNum-1);
+            this.changeScene(this.state.currentSceneNum-1, false, true);
     }
 
     downOneScene = (numOfScenes, checkState) => {
         if((checkState && this.state.playAll) || !checkState) {
             if (this.state.currentSceneNum < numOfScenes) {
-                this.changeScene(this.state.currentSceneNum+1, true);
+                this.changeScene(this.state.currentSceneNum+1, true, true);
             }
         }
     }

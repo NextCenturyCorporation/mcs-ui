@@ -43,7 +43,7 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
 
     return (
         <div className="score-table-div">
-            <Table className="score-table" aria-label="simple table">
+            <Table className="score-table" aria-label="simple table" stickyHeader>
                 <TableHead>
                     <TableRow>
                     {columns.map((col, colKey) => (
@@ -71,7 +71,7 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                 </TableHead>
                 <TableBody>
                 {currentPerformerScenes !== undefined && _.values(currentPerformerScenes).sort(getSorting(sortOption.sortOrder, sortOption.sortBy)).map((scoreObj, rowKey) => 
-                    <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
+                    <TableRow classes={{ root: 'TableRow'}} id={'score_table_row_scene_' + (parseInt(rowKey) + 1)} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
                         {columns.map((col, colKey) => (
                             <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
                                 {col.title === 'Evaluation Score' &&
