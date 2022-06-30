@@ -1267,3 +1267,7 @@ nav.MuiList-root.nav-list.MuiList-padding {
 .playback-btns-passive {
     padding-left: 345px;
 }
+
+.single-scorecard-item {
+    margin-bottom: 1rem;
+}
