@@ -581,16 +581,28 @@ const mcsResolvers = {
                 "totalRampFellOff": { "$sum" : "$score.scorecard.ramp_actions.ramp_fell_off" },
                 // end ramp stats
                 // start tool use stats
-                "totalMoveToolSuccess": { "$sum" : "$score.scorecard.tool_usage.MoveObject" },
-                "totalMoveToolFailed": { "$sum" : "$score.scorecard.tool_usage.MoveObject_failed" },
-                "totalPushToolSuccess": { "$sum" : "$score.scorecard.tool_usage.PushObject" },
-                "totalPushToolFailed": { "$sum" : "$score.scorecard.tool_usage.PushObject_failed" },
-                "totalPullToolSuccess": { "$sum" : "$score.scorecard.tool_usage.PullObject" },
-                "totalPullToolFailed": { "$sum" : "$score.scorecard.tool_usage.PullObject_failed" },
-                "totalRotateToolSuccess": { "$sum" : "$score.scorecard.tool_usage.RotateObject" },
-                "totalRotateToolFailed": { "$sum" : "$score.scorecard.tool_usage.RotateObject_failed" },
-                "totalTorqueToolSuccess": { "$sum" : "$score.scorecard.tool_usage.TorqueObject" },
-                "totalTorqueToolFailed": { "$sum" : "$score.scorecard.tool_usage.TorqueObject_failed" },
+                "totalMoveToolSuccess": { 
+                    "$sum" : {
+                        "$add": [
+                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject", 0] }
+                        ]
+                    }
+                },
+                "totalMoveToolFailure": { 
+                    "$sum" : {
+                        "$add": [
+                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject_failed", 0] }
+                        ]
+                    }
+                },
                 // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
                 "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" }

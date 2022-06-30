@@ -14,7 +14,17 @@ const getScorecardDataQuery = gql`
         getScoreCardData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
     }`;
 
-const scorecardFields = [
+const scorecardFieldsPreEval5 = [
+    {"title": "HyperCubeId", "key": "hypercubeID"},
+    {"title": "Repeat Failed", "key": "totalRepeatFailed"},
+    {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
+    {"title": "Open Unopenable", "key": "totalOpenUnopenable"},
+    {"title": "Multiple Container Look", "key": "totalContainerRelook"},
+    {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
+    {"title": "Revisits", "key": "totalRevisits"}
+];
+
+const scorecardFieldsLatest = [
     {"title": "HyperCubeId", "key": "hypercubeID"},
     {"title": "Repeat Failed", "key": "totalRepeatFailed"},
     {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
@@ -31,15 +41,7 @@ const scorecardFields = [
     {"title": "Correct Door Opened", "key": "totalCorrectDoorOpened"},
     {"title": "Fastest Path", "key": "totalFastestPath"},
     {"title": "Move Tool Success", "key": "totalMoveToolSuccess"},
-    {"title": "Move Tool Failure", "key": "totalMoveToolFailed"},
-    {"title": "Push Tool Success", "key": "totalPushToolSuccess"},
-    {"title": "Push Tool Failure", "key": "totalPushToolFailed"},
-    {"title": "Pull Tool Success", "key": "totalPullToolSuccess"},
-    {"title": "Pull Tool Failure", "key": "totalPullToolFailed"},
-    {"title": "Rotate Tool Success", "key": "totalRotateToolSuccess"},
-    {"title": "Rotate Tool Failure", "key": "totalRotateToolFailed"},
-    {"title": "Torque Tool Success", "key": "totalTorqueToolSuccess"},
-    {"title": "Torque Tool Failure", "key": "totalTorqueToolFailed"},
+    {"title": "Move Tool Failure", "key": "totalMoveToolFailure"},
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"}
 ];
@@ -54,7 +56,7 @@ class ScoreCardTable extends React.Component {
         return currentTotal;
     }
 
-    prepareDataForCSV(scorecardData, titleString){
+    prepareDataForCSV(scorecardData, titleString, scorecardFields){
         for(let i=0; i < scorecardData.length; i++) {
             scorecardData[i].hypercubeID = scorecardData[i]._id.hypercubeID;
         }
@@ -72,6 +74,10 @@ class ScoreCardTable extends React.Component {
         this.props.downloadCSV(scorecardData, scorecardFields, titleString)
     }
 
+    isPreEval5(evalResults) {
+        return evalResults === "eval_4_results" || evalResults === "eval_3_results";
+    }
+
     render() {
         return (
             <Query query={getScorecardDataQuery} variables={{
@@ -84,6 +90,7 @@ class ScoreCardTable extends React.Component {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
+                    const scorecardFields = this.isPreEval5(this.props.state.eval) ? scorecardFieldsPreEval5 : scorecardFieldsLatest;
                     const scorecardData = data[scorecardDataQueryName];
                     const tableTitle = "Scorecard (" + this.props.state.category + "/" + 
                         this.props.state.performer + "/" + this.props.state.metadata + ")";
@@ -95,7 +102,7 @@ class ScoreCardTable extends React.Component {
                                 <h4>{tableTitle}</h4>
                                 <div className="overview-results-csv-holder">
                                     <div className="csv-results-child">
-                                        <IconButton onClick={() => {this.prepareDataForCSV(scorecardData, tableTitle)}}>
+                                        <IconButton onClick={() => {this.prepareDataForCSV(scorecardData, tableTitle, scorecardFields)}}>
                                             <span className="material-icons">
                                                 get_app
                                             </span>CSV
