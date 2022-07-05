@@ -40,8 +40,8 @@ const scorecardFieldsLatest = [
     {"title": "Correct Platform", "key": "totalCorrectPlatform"},
     {"title": "Correct Door Opened", "key": "totalCorrectDoorOpened"},
     {"title": "Fastest Path", "key": "totalFastestPath"},
-    {"title": "Move Tool Success", "key": "totalMoveToolSuccess"},
-    {"title": "Move Tool Failure", "key": "totalMoveToolFailure"},
+    {"title": "Move Tool Success (Push, Rotate, etc)", "key": "totalMoveToolSuccess"},
+    {"title": "Move Tool Failure (Push, Rotate, etc)", "key": "totalMoveToolFailure"},
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"}
 ];
