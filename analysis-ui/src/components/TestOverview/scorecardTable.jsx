@@ -14,7 +14,7 @@ const getScorecardDataQuery = gql`
         getScoreCardData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
     }`;
 
-const scorecardFieldsPreEval5 = [
+const scorecardFieldsEval4 = [
     {"title": "HyperCubeId", "key": "hypercubeID"},
     {"title": "Repeat Failed", "key": "totalRepeatFailed"},
     {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
@@ -74,10 +74,6 @@ class ScoreCardTable extends React.Component {
         this.props.downloadCSV(scorecardData, scorecardFields, titleString)
     }
 
-    isPreEval5(evalResults) {
-        return evalResults === "eval_4_results" || evalResults === "eval_3_results";
-    }
-
     render() {
         return (
             <Query query={getScorecardDataQuery} variables={{
@@ -90,7 +86,8 @@ class ScoreCardTable extends React.Component {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
-                    const scorecardFields = this.isPreEval5(this.props.state.eval) ? scorecardFieldsPreEval5 : scorecardFieldsLatest;
+                    const isEval4 = this.props.state.eval === "eval_4_results";
+                    const scorecardFields = isEval4 ? scorecardFieldsEval4 : scorecardFieldsLatest;
                     const scorecardData = data[scorecardDataQueryName];
                     const tableTitle = "Scorecard (" + this.props.state.category + "/" + 
                         this.props.state.performer + "/" + this.props.state.metadata + ")";
@@ -109,33 +106,35 @@ class ScoreCardTable extends React.Component {
                                         </IconButton>
                                     </div>
                                 </div>
-                                <Table className="score-table" aria-label="simple table" stickyHeader>
-                                    <TableHead>
-                                        <TableRow>
-                                            {scorecardFields.map((field, key) =>
-                                                <TableCell key={'scorecard_header_cell' + key}>{field.title}</TableCell>
+                                <div className="scorecard-table-container">
+                                    <Table className="score-table" aria-label="simple table">
+                                        <TableHead>
+                                            <TableRow>
+                                                {scorecardFields.map((field, key) =>
+                                                    <TableCell key={'scorecard_header_cell' + key}>{field.title}</TableCell>
+                                                )}
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {scorecardData.map((scoreCardCell, hyperKey) =>
+                                                <TableRow key={'scorecard_row_' + hyperKey} classes={{ root: 'TableRow'}}>
+                                                    {scorecardFields.map((field, fieldKey) => 
+                                                        <TableCell key={'scorecard_row_cell_' + hyperKey + fieldKey}>
+                                                            {field["key"] === "hypercubeID" ? scoreCardCell["_id"][field["key"]] : scoreCardCell[field["key"]]}
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
                                             )}
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {scorecardData.map((scoreCardCell, hyperKey) =>
-                                            <TableRow key={'scorecard_row_' + hyperKey} classes={{ root: 'TableRow'}}>
-                                                {scorecardFields.map((field, fieldKey) => 
-                                                    <TableCell key={'scorecard_row_cell_' + hyperKey + fieldKey}>
-                                                        {field["key"] === "hypercubeID" ? scoreCardCell["_id"][field["key"]] : scoreCardCell[field["key"]]}
+                                            <TableRow classes={{ root: 'TableRow'}}>
+                                                {scorecardFields.map((field, key) =>
+                                                    <TableCell key={'scorecard_total_cell' + key}>
+                                                        {field["key"] === "hypercubeID" ? "Totals" : this.getTotalScoreCardValue(scorecardData, field["key"])}
                                                     </TableCell>
                                                 )}
                                             </TableRow>
-                                        )}
-                                        <TableRow classes={{ root: 'TableRow'}}>
-                                            {scorecardFields.map((field, key) =>
-                                                <TableCell key={'scorecard_total_cell' + key}>
-                                                    {field["key"] === "hypercubeID" ? "Totals" : this.getTotalScoreCardValue(scorecardData, field["key"])}
-                                                </TableCell>
-                                            )}
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
+                                        </TableBody>
+                                    </Table>
+                                </div>
                             </div>
                         }
                         </>

@@ -1411,6 +1411,7 @@ nav.MuiList-root.nav-list.MuiList-padding {
 }
 
 .test-overview-area {
+    max-width: 80%;
     margin: 10px 20px;
     flex: 1;
 }
@@ -1433,6 +1434,22 @@ nav.MuiList-root.nav-list.MuiList-padding {
 
 .single-scorecard-item {
     margin-bottom: 1rem;
+}
+
+.scorecard-table-container table.MuiTable-root {
+    flex-wrap: nowrap;
+    border-collapse: separate;
+}
+
+.scorecard-table-container {
+    width: 100%;
+    max-height: 700px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.scorecard-table-container th.MuiTableCell-root.MuiTableCell-head {
+    min-width: 130px;
 }
 
 .overview-results-csv-holder {
