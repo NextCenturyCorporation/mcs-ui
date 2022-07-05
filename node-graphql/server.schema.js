@@ -607,7 +607,8 @@ const mcsResolvers = {
                 },
                 // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
-                "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" }
+                "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
+                "totalWalkedIntoStructures": { "$sum" : "$score.scorecard.walked_into_structures" }
             }
 
             const scoreCardStats = await mcsDB.db.collection(args.eval).aggregate([
