@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
+import DeleteQuery from './deleteQuery';
 
 const getSavedQueriesName = "getSavedQueries";
 
@@ -41,7 +42,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
 
     const manageSelectedQueries = (query, key, remove) => {
         if (remove)
-            setSelectedQueries(selectedQueries.filter(item => key != item.key));
+            setSelectedQueries(selectedQueries.filter(item => key !== item.key));
         else
             setSelectedQueries([...selectedQueries, {'query': query, 'key': key}]);
     }
@@ -66,7 +67,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     }
 
     const isSelected = (key) => {
-        return selectedQueries.some((element) => element.key == key)
+        return selectedQueries.some((element) => element.key === key)
     }
 
     return (
@@ -94,8 +95,9 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                             <div className="load-query-search-load-line">
                                 <LoadQuerySearchBar setSearch={setSearch}/>
                                 <span>
-                                    <a href='#selected' data-toggle="tooltip" 
+                                    <a href='#selected' data-toggle="tooltip" style={{marginRight: '-5px'}}
                                     title='Selecting one query will replace the current query tab. Selecting more than one query will append multiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
+                                    <DeleteQuery selectedQueries={selectedQueries} currentUser={currentUser} getSavedQueries={LOAD_SAVED_QUERIES} getSavedQueriesName={getSavedQueriesName}/>
                                     <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>

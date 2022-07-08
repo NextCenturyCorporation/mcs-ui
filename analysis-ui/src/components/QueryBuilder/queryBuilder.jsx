@@ -67,9 +67,17 @@ class ComplexQueryBuilder extends React.Component {
                 <div className="query-controls">
                     <SaveQuery queryObj={this.props.saveQueryObject} currentUser={this.props.currentUser}
                         queryId={this.props.queryId} updateQueryNameHandler={this.props.updateQueryNameHandler} sortBy={this.props.sortBy} groupBy={this.props.groupBy}/>
+                    <a href="#updateQueryLink" onClick={() => console.log("Update")} className="icon-link">
+                        <span className="material-icons icon-margin-left">update</span>
+                        <span className="icon-link-text">Update</span>
+                    </a>
                     <a href="#clearQueryLink" onClick={this.clearQuery} className="icon-link">
                         <span className="material-icons icon-margin-left">settings_backup_restore</span>
                         <span className="icon-link-text">Clear</span>
+                    </a>
+                    <a href="#deleteQueryLink" onClick={() => console.log("Delete")} className="icon-link">
+                        <span className="material-icons icon-margin-left">delete_forever</span>
+                        <span className="icon-link-text">Delete</span>
                     </a>
                     {this.props.numberTabs > 1 && 
                         <a href="#closeTabLink" onClick={this.closeTab} className="icon-link close-tab-link">
