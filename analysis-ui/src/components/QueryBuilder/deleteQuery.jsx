@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import {useMutation} from 'react-apollo';
@@ -12,6 +12,7 @@ const DELETE_QUERY = gql`
   }`;
 
 function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, currentUser, getSavedQueries, getSavedQueriesName, clearOrCloseTabsOnDeleteQuery, resetLoadQuerySelections}) {
+    const [totalUserQueries, setTotalUserQueries] = useState('');
     const [deleteQueryCall] = useMutation(DELETE_QUERY, getSavedQueries !== null ? {
         refetchQueries: [
           {query: getSavedQueries}, getSavedQueriesName
@@ -41,22 +42,29 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
     }
 
     const getTotalUserQueries = () => {
-        if (deleteFromQueryTabId !== null) 
-            return 'This'
+        if (deleteFromQueryTabId !== null) {
+            setTotalUserQueries('this');
+            return;
+        }
         let count = 0;
         selectedQueries.forEach(item => count += (item.query.user.id === currentUser.id ? 1 : 0));
-        return count;
+        setTotalUserQueries(count);
+        
     }
 
     const correctQueryString = () => {
-        const totalUserQueries = getTotalUserQueries();
         return `${totalUserQueries} ${deleteFromQueryTabId !== null || totalUserQueries === 1 ? 'Query' : 'Queries'}`;
     }
 
+    useEffect(() => {
+        getTotalUserQueries();
+    }, [show])
+
+
     return (
-        <Modal show={show} onHide={onHide} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal show={show} onHide={onHide} size={deleteFromQueryTabId !== null ? "lg" : "xl"} aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">{deleteFromQueryTabId !== null ? "Permanently Delete Currently Selected Query Tab" : `Delete ${correctQueryString()} For User - ${currentUser.username}`}</Modal.Title>
+                <Modal.Title id="contained-modal-title-vcenter">{deleteFromQueryTabId !== null ? "Permanently Delete this Query?" : `Delete ${correctQueryString()} for User - ${currentUser.username}`}</Modal.Title>
             </Modal.Header>
             {
                 deleteFromQueryTabId === null &&
@@ -85,7 +93,7 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
             }
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>Cancel</Button>
-                <Button variant="primary" onClick={deleteQuery}>Confirm Delete {correctQueryString()} (Cannot be Undone)</Button>
+                <Button variant="primary" onClick={deleteQuery}>Delete {correctQueryString()} (Cannot be Undone)</Button>
             </Modal.Footer>
         </Modal>
     );
