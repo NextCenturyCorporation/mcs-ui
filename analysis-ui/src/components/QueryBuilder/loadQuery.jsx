@@ -30,7 +30,7 @@ function LoadQuerySearchBar({setSearch}) {
     )
 }
     
-function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
+function LoadQueryPage({currentUser, loadQueryHandler, clearOrCloseTabsOnDeleteQuery}) {
     const [activeTab, setActiveTab] = useState("load_all_queries");
     const [search, setSearch] = useState("");
     const [selectedQueries, setSelectedQueries] = useState([]);
@@ -97,7 +97,8 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                                 <span>
                                     <a href='#selected' data-toggle="tooltip" style={{marginRight: '-5px'}}
                                     title='Selecting one query will replace the current query tab. Selecting more than one query will append multiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
-                                    <DeleteQuery selectedQueries={selectedQueries} currentUser={currentUser} getSavedQueries={LOAD_SAVED_QUERIES} getSavedQueriesName={getSavedQueriesName}/>
+                                    <DeleteQuery selectedQueries={selectedQueries} deleteFromQueryTabId={null} currentUser={currentUser} getSavedQueries={LOAD_SAVED_QUERIES} getSavedQueriesName={getSavedQueriesName}
+                                        showText={false} clearOrCloseTabsOnDeleteQuery={clearOrCloseTabsOnDeleteQuery} resetLoadQuerySelections={() => setSelectedQueries([])}/>
                                     <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>
@@ -149,11 +150,12 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     );
 }
 
-function LoadQuery ({currentUser, loadQueryHandler}) {
+function LoadQuery ({currentUser, loadQueryHandler, clearOrCloseTabsOnDeleteQuery}) {
     return (
         <LoadQueryPage
             currentUser = {currentUser}
             loadQueryHandler = {loadQueryHandler}
+            clearOrCloseTabsOnDeleteQuery = {clearOrCloseTabsOnDeleteQuery}
         />
     );
     

@@ -3,6 +3,7 @@ import QueryLineItem from './queryLine';
 import QueryResults from './queryResults';
 import SaveQuery from './saveQuery';
 import CancelPresentation from '@material-ui/icons/CancelPresentation';
+import DeleteQuery from './deleteQuery';
 
 const ParamDisplayByOperator =({queryLine}) => {
     if(queryLine.functionOperator === "between" || queryLine.functionOperator === "and" || queryLine.functionOperator === "or") {
@@ -40,7 +41,7 @@ class ComplexQueryBuilder extends React.Component {
     }
 
     clearQuery = () => {
-        this.props.updateQueryObjForTab([], null, null, this.props.queryId, "Query " + this.props.queryId, "");
+        this.props.updateQueryObjForTab([], null, null, this.props.queryId, "Query " + this.props.queryId, "", "", {});
     }
 
     removeQueryRow = (key) => {
@@ -67,18 +68,21 @@ class ComplexQueryBuilder extends React.Component {
                 <div className="query-controls">
                     <SaveQuery queryObj={this.props.saveQueryObject} currentUser={this.props.currentUser}
                         queryId={this.props.queryId} updateQueryNameHandler={this.props.updateQueryNameHandler} sortBy={this.props.sortBy} groupBy={this.props.groupBy}/>
-                    <a href="#updateQueryLink" onClick={() => console.log("Update")} className="icon-link">
-                        <span className="material-icons icon-margin-left">update</span>
-                        <span className="icon-link-text">Update</span>
-                    </a>
                     <a href="#clearQueryLink" onClick={this.clearQuery} className="icon-link">
                         <span className="material-icons icon-margin-left">settings_backup_restore</span>
                         <span className="icon-link-text">Clear</span>
                     </a>
-                    <a href="#deleteQueryLink" onClick={() => console.log("Delete")} className="icon-link">
-                        <span className="material-icons icon-margin-left">delete_forever</span>
-                        <span className="icon-link-text">Delete</span>
-                    </a>
+                    {this.props.currentUser !== null && this.props.currentUser.id === this.props.queryUserId &&
+                        <>
+                            <a href="#updateQueryLink" onClick={() => console.log("Update")} className="icon-link">
+                                <span className="material-icons icon-margin-left">update</span>
+                                <span className="icon-link-text">Update</span>
+                            </a>
+                            <DeleteQuery selectedQueries={[]} deleteFromQueryTabId={this.props.currentTabMongoId} currentUser={this.props.currentUser}
+                                getSavedQueries={null} getSavedQueriesName={null} showText={true} clearOrCloseTabsOnDeleteQuery={this.props.clearOrCloseTabsOnDeleteQuery}
+                                resetLoadQuerySelections={null}/>
+                        </>
+                    }
                     {this.props.numberTabs > 1 && 
                         <a href="#closeTabLink" onClick={this.closeTab} className="icon-link close-tab-link">
                             <CancelPresentation/>
