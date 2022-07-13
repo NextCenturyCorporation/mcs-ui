@@ -23,7 +23,7 @@ class ChartContainer extends React.Component {
             metadata: this.getMetadataLevel(props.chartOptions[0]),
             isPlausibility: this.getPlausibility(props.chartOptions[0]),
             isNovelty: this.getNovelty(props.chartOptions[0]),
-            isWeighted: this.props.testType.toLowerCase() === 'interactive'? false : true
+            isWeighted: true
         }
 
         this.toggleChartOptions = this.toggleChartOptions.bind(this);
@@ -119,12 +119,20 @@ class ChartContainer extends React.Component {
         });
     }
 
+    getDisplayName() {
+        if(this.props.eval.value.indexOf("2") < 0 && this.props.eval.value.indexOf("3") < 0) {
+            return this.toUpperFirstLetters(this.props.category + " " + this.props.testType);
+        } else {
+            return this.toUpperFirstLetters(this.props.testType);
+        }
+    }
+
     render() {
         return (
             <div className='chart-home-container'>
                 <div className='chart-header'>
                     <div className='chart-header-label'>
-                        <h4>{this.toUpperFirstLetters(this.props.testType)}</h4>
+                        <h4>{this.getDisplayName()}</h4>
                     </div>
                     <div className='chart-header-select'>
                         <Select
@@ -133,7 +141,7 @@ class ChartContainer extends React.Component {
                             defaultValue={this.state.chartOption}
                         />
                     </div>
-                    {this.props.testType.toLowerCase() === 'intuitive physics' &&
+                    {this.props.testType.toLowerCase() !== 'agents' &&
                         <div className="chart-weight-toggle">
                             <ToggleButtonGroup type="checkbox" value={this.state.isWeighted} onChange={this.handleWeightedToggle}>
                                 <ToggleButton variant="secondary" value={true}>{this.props.testType.toLowerCase() === 'agents' ? 'Paired' : 'Weighted'}</ToggleButton>

@@ -38,23 +38,23 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
     };
 
     const getCurrentScene = (scenesInOrder) => {
-        return scenesInOrder[currentSceneNum - 1];
+        return scenesInOrder.find(scene => scene.scene_num === currentSceneNum);
     }
 
     return (
         <div className="score-table-div">
-            <Table className="score-table" aria-label="simple table">
+            <Table className="score-table" aria-label="simple table" stickyHeader>
                 <TableHead>
                     <TableRow>
                     {columns.map((col, colKey) => (
                         <TableCell key={"performer_score_header_cell_" + colKey}>
-                            {sortable && col.dataType !== 'scene' &&
+                            {sortable &&
                                 <TableSortLabel active={sortOption.sortBy === col.dataKey} direction={sortOption.sortOrder} 
                                     onClick={() => handleRequestSort(col.dataKey)}>
                                     {col.title}
                                 </TableSortLabel>
                             }
-                            {((!sortable) || col.dataType === 'scene') &&
+                            {(!sortable) &&
                                 col.title
                             }
                         </TableCell>
@@ -71,10 +71,10 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                 </TableHead>
                 <TableBody>
                 {currentPerformerScenes !== undefined && _.values(currentPerformerScenes).sort(getSorting(sortOption.sortOrder, sortOption.sortBy)).map((scoreObj, rowKey) => 
-                    <TableRow classes={{ root: 'TableRow'}} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
+                    <TableRow classes={{ root: 'TableRow'}} id={'score_table_row_scene_' + (parseInt(rowKey) + 1)} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
                         {columns.map((col, colKey) => (
                             <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
-                                {col.dataType === 'history' && col.title === 'Evaluation Score' &&
+                                {col.title === 'Evaluation Score' &&
                                     <div className="score-div">
                                         {displayItemText(scoreObj, col.dataKey) === 'Correct' &&
                                             <i className='material-icons' style={{color: "#008000", fontSize: '20px'}}>check</i>
@@ -85,14 +85,9 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                                         <span className='score-text'>{displayItemText(scoreObj, col.dataKey)}</span>
                                     </div>
                                 }
-                                {col.dataType === 'history' && col.title !== 'Evaluation Score' &&
+                                {col.title !== 'Evaluation Score' &&
                                     <div>
                                         {displayItemText(scoreObj, col.dataKey)}
-                                    </div>
-                                }
-                                {col.dataType === 'scene' &&
-                                    <div>
-                                        {displayItemText(scenesInOrder[scoreObj.scene_num - 1], col.dataKey)}
                                     </div>
                                 }
                             </TableCell>

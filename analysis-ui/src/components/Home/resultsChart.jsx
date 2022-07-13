@@ -119,7 +119,7 @@ class ResultsChart extends React.Component {
     render() {
         return (
             <div style={this.state.styles} className="flex-chart-center">
-                <div style={{ height: "450px", width: "900px" }}>
+                <div className="results-chart-container">
                     <MyResponsiveBar data={this.props.chartData} keys={this.props.chartKeys} chartIndex={this.props.chartIndex} maxVal={this.props.maxVal} 
                       legendLabel={this.props.legendLabel} isPercent={this.props.isPercent} incorrectData={this.props.incorrectData}/>
                 </div>

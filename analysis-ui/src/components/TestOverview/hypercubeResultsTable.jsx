@@ -11,8 +11,8 @@ import ScoreCardTable from './scorecardTable';
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
-    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!) {
-        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer) 
+    query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!, $weightedPassing: Boolean!) {
+        getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing) 
     }`;
 
 const overViewTableFields = [
@@ -76,7 +76,8 @@ class HyperCubeResultsTable extends React.Component {
                 "categoryType": this.props.state.category,
                 "performer": this.props.state.performer,
                 "metadata": this.props.state.metadata,
-                "useDidNotAnswer": this.props.state.useDidNotAnswer}}>
+                "useDidNotAnswer": this.props.state.useDidNotAnswer,
+                "weightedPassing": this.props.state.weightedPassing}}>
             {
                 ({ loading, error, data }) => {
                     if (loading) return <div>Loading ...</div> 
@@ -123,7 +124,7 @@ class HyperCubeResultsTable extends React.Component {
                             </Table>
 
                             {/* Exclude Evaluation 3 Results because we didn't have scorecard functionality yet */}
-                            {((testType === "interactive" || testType === 'retrieval') && this.props.state.eval !== "Evaluation 3 Results")  &&
+                            {((testType === "interactive" || testType === 'retrieval') && this.props.state.eval !== "eval_3_results")  &&
                                 <ScoreCardTable state={this.props.state} downloadCSV={this.downloadCSV}/>
                             }
                         </>

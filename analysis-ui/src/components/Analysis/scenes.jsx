@@ -47,6 +47,7 @@ const mcs_history = gql`
             scene_num
             scene_goal_id
             score
+            slices
             steps
             flags
             metadata
@@ -65,16 +66,23 @@ const setConstants = function(evalNum) {
     constantsObject = EvalConstants[evalNum];
 }
 
-const scoreTableCols = [
-    { dataKey: 'scene_num', title: 'Scene', dataType: 'history'},
-    { dataKey: 'scene_goal_id', title: 'Goal ID', dataType: 'history'},
-    { dataKey: 'goal.sceneInfo.slices', title: 'Slices', dataType: 'scene'},
-    { dataKey: 'score.classification', title: 'Rating/Classification', dataType: 'history'},
-    { dataKey: 'score.score_description', title: 'Evaluation Score', dataType: 'history'},
-    { dataKey: 'score.confidence', title: 'Score/Confidence', dataType: 'history'}
+const scoreTableColsPassive = [
+    { dataKey: 'scene_num', title: 'Scene'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'slices', title: 'Slices'},
+    { dataKey: 'score.classification', title: 'Rating/Classification'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score'},
+    { dataKey: 'score.confidence', title: 'Score/Confidence'}
 ]
 
-const scoreTableColsWithCorners = scoreTableCols.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order', dataType: 'history'}])
+const scoreTableColsInteractive = [
+    { dataKey: 'scene_num', title: 'Scene'},
+    { dataKey: 'scene_goal_id', title: 'Goal ID'},
+    { dataKey: 'slices', title: 'Slices'},
+    { dataKey: 'score.score_description', title: 'Evaluation Score'}
+]
+
+const scoreTableColsWithCorners = scoreTableColsInteractive.concat([{ dataKey: 'corner_visit_order', title: 'Corner Visit Order'}])
 
 // local storage property identifiers
 const plausibilityLSPropName = "showPlausabilityGraph";
@@ -141,7 +149,7 @@ class Scenes extends React.Component {
         this.setState({[key]: value});
     }
 
-    changeScene = (sceneNum, matchSpeed=false) => {
+    changeScene = (sceneNum, matchSpeed=false, downOneOrUpOneScene=false) => {
         if(this.state.currentSceneNum !== sceneNum) {
             this.setState({ currentSceneNum: sceneNum});
             let pathname = this.props.value.history.location.pathname;
@@ -162,8 +170,15 @@ class Scenes extends React.Component {
                     search: searchString + sceneToUpdate
                 });
             }
+            let sceneRow = document.getElementById("score_table_row_scene_" + sceneNum);
+            if (sceneRow !== null && downOneOrUpOneScene) {
+                let currentScrollPosition = document.documentElement.scrollTop;
+                sceneRow.classList.toggle('analysis-table-selected-row');
+                sceneRow.scrollIntoView({block: 'start'});
+                sceneRow.classList.toggle('analysis-table-selected-row');
+                document.documentElement.scrollTop = currentScrollPosition;
+            }
             this.props.updateHandler("scene", sceneNum);
-
             this.resetVideoState(matchSpeed);
         }
     }
@@ -199,13 +214,13 @@ class Scenes extends React.Component {
 
     upOneScene = () => {
         if(this.state.currentSceneNum-1 > 0)
-            this.changeScene(this.state.currentSceneNum-1);
+            this.changeScene(this.state.currentSceneNum-1, false, true);
     }
 
     downOneScene = (numOfScenes, checkState) => {
         if((checkState && this.state.playAll) || !checkState) {
             if (this.state.currentSceneNum < numOfScenes) {
-                this.changeScene(this.state.currentSceneNum+1, true);
+                this.changeScene(this.state.currentSceneNum+1, true, true);
             }
         }
     }
@@ -291,7 +306,9 @@ class Scenes extends React.Component {
     }
 
     getSceneNamePrefix = (name) => {
-        return name.substring(0, name.indexOf('_')) + '*';
+        let secondToLastIndex = name.lastIndexOf('_', name.lastIndexOf('_')-1)
+
+        return name.substring(0, secondToLastIndex) + '*';
     }
 
     checkIfScenesExist = (scenesByPerformer) =>{
@@ -432,6 +449,17 @@ class Scenes extends React.Component {
 
     isNotLevel1 = () => {
         return this.state.currentMetadataLevel !== "" && this.state.currentMetadataLevel !== 'level1';
+    }
+
+    getScoreTableCols = (isInteractive, categoryType) => {
+        if(isInteractive) {
+            if(categoryType === "reorientation") {
+                return scoreTableColsWithCorners;
+            } else {
+                return scoreTableColsInteractive;
+            }
+        }
+        return scoreTableColsPassive;
     }
 
     render() {
@@ -632,7 +660,7 @@ class Scenes extends React.Component {
 
                                                 {this.checkIfScenesExist(scenesByPerformer) &&
                                                     <ScoreTable
-                                                        columns={this.props.value.category_type === "reorientation" ? scoreTableColsWithCorners: scoreTableCols}
+                                                        columns={this.getScoreTableCols(this.isSceneHistInteractive(scenesByPerformer), this.props.value.category_type)}
                                                         currentPerformerScenes={scenesByPerformer[this.state.currentMetadataLevel][this.state.currentPerformer]}
                                                         currentSceneNum={this.state.currentSceneNum}
                                                         changeSceneHandler={this.changeScene}

@@ -8,6 +8,7 @@ const { createComplexMongoQuery } = require('./server.mongoSyntax');
 const {  historyFieldLabelMap, historyExcludeFields, sceneExcludeFields,  sceneFieldLabelMap, historyIncludeFieldsTable, 
     sceneIncludeFieldsTable, historyFieldLabelMapTable, sceneFieldLabelMapTable } = require('./server.fieldMappings');
 const spawn = require("child_process").spawn;
+const urlExist = require("url-exist");
 
 let complexQueryProjectionObject = null;
 const HISTORY_COLLECTION = "mcs_history";
@@ -53,6 +54,7 @@ const mcsTypeDefs = gql`
     test_num: Int
     scene_num: Int
     score: JSON
+    slices: [String]
     steps: JSON
     flags: JSON
     step_counter: Float
@@ -121,6 +123,7 @@ const mcsTypeDefs = gql`
     getHistoryCollectionMapping: JSON
     getSceneCollectionMapping: JSON
     getEvalHistory(eval: String, categoryType: String, testNum: Int) : [History]
+    getLinkStatus(url: String): Boolean
     getEval2History(catTypePair: String, testNum: Int) : [History]
     getEval2Scene(testType: String, testNum: Int) : [Scene]
     getEvalScene(eval: String, sceneName: String, testNum: Int) : [Scene]
@@ -139,10 +142,10 @@ const mcsTypeDefs = gql`
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String, evalName: String): JSON
     getUsers: JSON
-    getEvalTestTypes(eval: String): [String]
+    getEvalTestTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
-    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
   }
 
@@ -168,14 +171,17 @@ const mcsResolvers = {
             return await mcsDB.db.collection('msc_eval').find({})
                 .toArray().then(result => {return result});
         },
+        getLinkStatus: async(obj, args, context, infow) => {
+            return await urlExist(args["url"]);
+        },
         getEval2History: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection(args.eval).find({'cat_type_pair': args["catTypePair"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection('eval_2_results').find({'cat_type_pair': args["catTypePair"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEval2Scene: async(obj, args, context, infow) => {
             // Eval 2
-            return await mcsDB.db.collection(args.eval.replace("results", "scenes")).find({'test_type': args["testType"], 'test_num': args["testNum"]})
+            return await mcsDB.db.collection('eval_2_scenes').find({'test_type': args["testType"], 'test_num': args["testNum"]})
                 .toArray().then(result => {return result});
         },
         getEvalScene: async(obj, args, context, infow) => {
@@ -212,7 +218,7 @@ const mcsResolvers = {
             let whereClause = {};
 
             if(args["catType"]) {
-                if(args["eval"] === "Evaluation 2 Results") {
+                if(args["eval"] === "eval_2_results") {
                     whereClause["cat_type_pair"] = args["catType"];
                 } else {
                     whereClause["category_type"] = args["catType"];
@@ -455,8 +461,11 @@ const mcsResolvers = {
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable, historyCollection: mongoQueryObject.historyCollection};
         },
         getEvalTestTypes: async(obj, args, context, infow)=> {
-            return await mcsDB.db.collection(args.eval).distinct(
-                "test_type").then(result => {return result});
+            return await mcsDB.db.collection(args.eval).aggregate( 
+                [
+                    {"$group": { "_id": { testType: "$test_type", category: "$category" } } }
+                ]
+            ).toArray();;
         },
         getHomeChartOptions: async(obj, args, context, infow)=> {
             const metadata =  await mcsDB.db.collection(args.eval).distinct(
@@ -471,17 +480,14 @@ const mcsResolvers = {
             let groupObject = {
                 "performer": "$performer",
                 "correct": "$score.score",
-                "description": "$score.score_description"
+                "description": "$score.score_description",
+                "weight": "$score.weighted_score_worth",
+                "weight_score": "$score.weighted_score"
             };
 
             let searchObject = {
                 "test_type": args.evalType
             };
-
-            if(args.evalType !== 'interactive') {
-                groupObject["weight"] = "$score.weighted_score_worth";
-                groupObject["weight_score"] = "$score.weighted_score";
-            }
 
             if(args.metadata !== "total" && args.metadata !== undefined && args.metadata !== null) {
                 searchObject["metadata"] = args.metadata;
@@ -519,10 +525,15 @@ const mcsResolvers = {
                 "correct": "$score.score",
                 "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
-                "scoreWorth": "$score.weighted_score_worth",
                 "testType": "$test_type",
                 "description": "$score.score_description"
             };
+
+            if(args.weightedPassing) {
+                projectObject["scoreWorth"] = "$score.weighted_score_worth";
+            } else {
+                projectObject["scoreWorth"] = {"$literal": 1};
+            }
 
             if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
                 projectObject["hypercube_id"] = "$category_type"
@@ -543,12 +554,61 @@ const mcsResolvers = {
 
             const groupObject = {
                 "_id": {"hypercubeID": "$scene_goal_id"},
-                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed" },
                 "totalAttemptImpossible": { "$sum" : "$score.scorecard.attempt_impossible" },
-                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable" },
-                "totalMultipleContainerLook": { "$sum" : "$score.scorecard.multiple_container_look" },
+                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable.total_unopenable_attempts" },
+                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed.total_repeat_failed" },
+                "totalContainerRelook": { "$sum" : "$score.scorecard.container_relook" },
                 "totalNotMovingTowardObject": { "$sum" : "$score.scorecard.not_moving_toward_object" },
                 "totalRevisits": { "$sum" : "$score.scorecard.revisits" },
+                "totalCorrectPlatform": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.correct_platform_side", 1, 0 ]
+                    }
+                },
+                "totalCorrectDoorOpened": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.correct_door_opened", 1, 0 ]
+                    }
+                },
+                "totalFastestPath": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.fastest_path", 1, 0 ]
+                    }
+                },
+                // start ramp stats
+                "totalRampWentUp": { "$sum" : "$score.scorecard.ramp_actions.went_up" },
+                "totalRampWentDown": { "$sum" : "$score.scorecard.ramp_actions.went_down" },
+                "totalRampWentUpAbandoned": { "$sum" : "$score.scorecard.ramp_actions.went_up_abandoned" },
+                "totalRampWentDownAbandoned": { "$sum" : "$score.scorecard.ramp_actions.went_down_abandoned" },
+                "totalRampFellOff": { "$sum" : "$score.scorecard.ramp_actions.ramp_fell_off" },
+                // end ramp stats
+                // start tool use stats
+                "totalMoveToolSuccess": { 
+                    "$sum" : {
+                        "$add": [
+                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject", 0] }
+                        ]
+                    }
+                },
+                "totalMoveToolFailure": { 
+                    "$sum" : {
+                        "$add": [
+                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject_failed", 0] }
+                        ]
+                    }
+                },
+                // end tool use stats
+                "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
+                "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
+                "totalWalkedIntoStructures": { "$sum" : "$score.scorecard.walked_into_structures" }
             }
 
             const scoreCardStats = await mcsDB.db.collection(args.eval).aggregate([
