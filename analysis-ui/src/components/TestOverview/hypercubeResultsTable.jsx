@@ -124,7 +124,7 @@ class HyperCubeResultsTable extends React.Component {
                             </Table>
 
                             {/* Exclude Evaluation 3 Results because we didn't have scorecard functionality yet */}
-                            {((testType === "interactive" || testType === 'retrieval') && this.props.state.eval !== "Evaluation 3 Results")  &&
+                            {((testType === "interactive" || testType === 'retrieval') && this.props.state.eval !== "eval_3_results")  &&
                                 <ScoreCardTable state={this.props.state} downloadCSV={this.downloadCSV}/>
                             }
                         </>

@@ -14,14 +14,37 @@ const getScorecardDataQuery = gql`
         getScoreCardData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata) 
     }`;
 
-const scorecardFields = [
+const scorecardFieldsEval4 = [
     {"title": "HyperCubeId", "key": "hypercubeID"},
     {"title": "Repeat Failed", "key": "totalRepeatFailed"},
     {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
     {"title": "Open Unopenable", "key": "totalOpenUnopenable"},
-    {"title": "Multiple Container Look", "key": "totalMultipleContainerLook"},
+    {"title": "Multiple Container Look", "key": "totalContainerRelook"},
     {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
     {"title": "Revisits", "key": "totalRevisits"}
+];
+
+const scorecardFieldsLatest = [
+    {"title": "HyperCubeId", "key": "hypercubeID"},
+    {"title": "Repeat Failed", "key": "totalRepeatFailed"},
+    {"title": "Attempt Impossible", "key": "totalAttemptImpossible"},
+    {"title": "Open Unopenable", "key": "totalOpenUnopenable"},
+    {"title": "Multiple Container Look", "key": "totalContainerRelook"},
+    {"title": "Not Moving Toward Object", "key": "totalNotMovingTowardObject"},
+    {"title": "Revisits", "key": "totalRevisits"},
+    {"title": "Ramp Went Up", "key": "totalRampWentUp"},
+    {"title": "Ramp Went Down", "key": "totalRampWentDown"},
+    {"title": "Ramp Went Up Abandoned", "key": "totalRampWentUpAbandoned"},
+    {"title": "Ramp Went Down Abandoned", "key": "totalRampWentDownAbandoned"},
+    {"title": "Ramp Fell Off", "key": "totalRampFellOff"},
+    {"title": "Correct Platform", "key": "totalCorrectPlatform"},
+    {"title": "Correct Door Opened", "key": "totalCorrectDoorOpened"},
+    {"title": "Fastest Path", "key": "totalFastestPath"},
+    {"title": "Move Tool Success (Push/Rotate/etc)", "key": "totalMoveToolSuccess"},
+    {"title": "Move Tool Failure (Push/Rotate/etc)", "key": "totalMoveToolFailure"},
+    {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
+    {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"},
+    {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"}
 ];
 class ScoreCardTable extends React.Component {
 
@@ -34,7 +57,7 @@ class ScoreCardTable extends React.Component {
         return currentTotal;
     }
 
-    prepareDataForCSV(scorecardData, titleString){
+    prepareDataForCSV(scorecardData, titleString, scorecardFields){
         for(let i=0; i < scorecardData.length; i++) {
             scorecardData[i].hypercubeID = scorecardData[i]._id.hypercubeID;
         }
@@ -64,6 +87,8 @@ class ScoreCardTable extends React.Component {
                     if (loading) return <div>Loading ...</div> 
                     if (error) return <div>Error</div>
 
+                    const isEval4 = this.props.state.eval === "eval_4_results";
+                    const scorecardFields = isEval4 ? scorecardFieldsEval4 : scorecardFieldsLatest;
                     const scorecardData = data[scorecardDataQueryName];
                     const tableTitle = "Scorecard (" + this.props.state.category + "/" + 
                         this.props.state.performer + "/" + this.props.state.metadata + ")";
@@ -75,40 +100,42 @@ class ScoreCardTable extends React.Component {
                                 <h4>{tableTitle}</h4>
                                 <div className="overview-results-csv-holder">
                                     <div className="csv-results-child">
-                                        <IconButton onClick={() => {this.prepareDataForCSV(scorecardData, tableTitle)}}>
+                                        <IconButton onClick={() => {this.prepareDataForCSV(scorecardData, tableTitle, scorecardFields)}}>
                                             <span className="material-icons">
                                                 get_app
                                             </span>CSV
                                         </IconButton>
                                     </div>
                                 </div>
-                                <Table className="score-table" aria-label="simple table" stickyHeader>
-                                    <TableHead>
-                                        <TableRow>
-                                            {scorecardFields.map((field, key) =>
-                                                <TableCell key={'scorecard_header_cell' + key}>{field.title}</TableCell>
+                                <div className="scorecard-table-container">
+                                    <Table className="score-table" aria-label="simple table">
+                                        <TableHead>
+                                            <TableRow>
+                                                {scorecardFields.map((field, key) =>
+                                                    <TableCell key={'scorecard_header_cell' + key}>{field.title}</TableCell>
+                                                )}
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {scorecardData.map((scoreCardCell, hyperKey) =>
+                                                <TableRow key={'scorecard_row_' + hyperKey} classes={{ root: 'TableRow'}}>
+                                                    {scorecardFields.map((field, fieldKey) => 
+                                                        <TableCell key={'scorecard_row_cell_' + hyperKey + fieldKey}>
+                                                            {field["key"] === "hypercubeID" ? scoreCardCell["_id"][field["key"]] : scoreCardCell[field["key"]]}
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
                                             )}
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {scorecardData.map((scoreCardCell, hyperKey) =>
-                                            <TableRow key={'scorecard_row_' + hyperKey} classes={{ root: 'TableRow'}}>
-                                                {scorecardFields.map((field, fieldKey) => 
-                                                    <TableCell key={'scorecard_row_cell_' + hyperKey + fieldKey}>
-                                                        {field["key"] === "hypercubeID" ? scoreCardCell["_id"][field["key"]] : scoreCardCell[field["key"]]}
+                                            <TableRow classes={{ root: 'TableRow'}}>
+                                                {scorecardFields.map((field, key) =>
+                                                    <TableCell key={'scorecard_total_cell' + key}>
+                                                        {field["key"] === "hypercubeID" ? "Totals" : this.getTotalScoreCardValue(scorecardData, field["key"])}
                                                     </TableCell>
                                                 )}
                                             </TableRow>
-                                        )}
-                                        <TableRow classes={{ root: 'TableRow'}}>
-                                            {scorecardFields.map((field, key) =>
-                                                <TableCell key={'scorecard_total_cell' + key}>
-                                                    {field["key"] === "hypercubeID" ? "Totals" : this.getTotalScoreCardValue(scorecardData, field["key"])}
-                                                </TableCell>
-                                            )}
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
+                                        </TableBody>
+                                    </Table>
+                                </div>
                             </div>
                         }
                         </>

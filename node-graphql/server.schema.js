@@ -554,12 +554,61 @@ const mcsResolvers = {
 
             const groupObject = {
                 "_id": {"hypercubeID": "$scene_goal_id"},
-                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed" },
                 "totalAttemptImpossible": { "$sum" : "$score.scorecard.attempt_impossible" },
-                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable" },
-                "totalMultipleContainerLook": { "$sum" : "$score.scorecard.multiple_container_look" },
+                "totalOpenUnopenable": { "$sum" : "$score.scorecard.open_unopenable.total_unopenable_attempts" },
+                "totalRepeatFailed": { "$sum" : "$score.scorecard.repeat_failed.total_repeat_failed" },
+                "totalContainerRelook": { "$sum" : "$score.scorecard.container_relook" },
                 "totalNotMovingTowardObject": { "$sum" : "$score.scorecard.not_moving_toward_object" },
                 "totalRevisits": { "$sum" : "$score.scorecard.revisits" },
+                "totalCorrectPlatform": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.correct_platform_side", 1, 0 ]
+                    }
+                },
+                "totalCorrectDoorOpened": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.correct_door_opened", 1, 0 ]
+                    }
+                },
+                "totalFastestPath": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.fastest_path", 1, 0 ]
+                    }
+                },
+                // start ramp stats
+                "totalRampWentUp": { "$sum" : "$score.scorecard.ramp_actions.went_up" },
+                "totalRampWentDown": { "$sum" : "$score.scorecard.ramp_actions.went_down" },
+                "totalRampWentUpAbandoned": { "$sum" : "$score.scorecard.ramp_actions.went_up_abandoned" },
+                "totalRampWentDownAbandoned": { "$sum" : "$score.scorecard.ramp_actions.went_down_abandoned" },
+                "totalRampFellOff": { "$sum" : "$score.scorecard.ramp_actions.ramp_fell_off" },
+                // end ramp stats
+                // start tool use stats
+                "totalMoveToolSuccess": { 
+                    "$sum" : {
+                        "$add": [
+                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject", 0] }
+                        ]
+                    }
+                },
+                "totalMoveToolFailure": { 
+                    "$sum" : {
+                        "$add": [
+                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject_failed", 0] },
+                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject_failed", 0] }
+                        ]
+                    }
+                },
+                // end tool use stats
+                "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
+                "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
+                "totalWalkedIntoStructures": { "$sum" : "$score.scorecard.walked_into_structures" }
             }
 
             const scoreCardStats = await mcsDB.db.collection(args.eval).aggregate([
