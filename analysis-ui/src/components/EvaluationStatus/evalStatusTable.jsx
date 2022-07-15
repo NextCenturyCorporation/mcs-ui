@@ -11,6 +11,7 @@ const CSV_URL_SCENE_SUFFIX = "_Scenes.csv";
 const CSV_URL_RESULTS_SUFFIX = "_Results.csv";
 const EvaluationStatusQuery = "getEvaluationStatus";
 const getLinkStatusQueryName = "getLinkStatus";
+const completedEvals = ["2", "3", "3.5", "3.75", "4"];
 
 const get_evaluation_status = gql`
     query getEvaluationStatus($eval: String!, $evalName: String!){
@@ -71,7 +72,7 @@ function CreateCSV() {
     );
 }
 
-function CSVDownloadLink({url, linkText}) {
+function CSVDownloadLink({url, linkText, evalNumber}) {
     const {data, refetch} = useQuery(get_link_status, {variables: {url}, fetchPolicy: 'no-cache'});
     const [linkActive, updateLinkActive] = useState();
 
@@ -121,7 +122,9 @@ class EvalStatusTable extends React.Component {
     }
 
     updateTableRefresh() {
+        this.props.continueUpdating();
         this.refetch();
+        this.reloadTable();
     }
 
     findTypeCount(type, sceneStats) {
@@ -133,7 +136,6 @@ class EvalStatusTable extends React.Component {
     }
     
     reloadTable() {
-        this.updateTableRefresh();
         this.setState({
             counter: this.props.counter
         });
@@ -162,9 +164,13 @@ class EvalStatusTable extends React.Component {
 
     render() {
         const setRefetch = refetch => {this.refetch = refetch};
-        if(this.state.counter !== this.props.counter) {
-            this.reloadTable();
+        if(!completedEvals.includes(this.state.evalNumber)) {
+            this.props.continueUpdating();
+            if(this.state.counter !== this.props.counter)
+                this.reloadTable();
         }
+        else
+            this.props.stopUpdating();
         
         return (
             <div className="home-container">
@@ -202,8 +208,8 @@ class EvalStatusTable extends React.Component {
                                 <>
                                     <div className="eval-stats-container">
                                         <div className="eval-stats-configure">
-                                            <CSVDownloadLink linkText={"Download Scenes"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_SCENE_SUFFIX}/>
-                                            <CSVDownloadLink linkText={"Download Results"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_RESULTS_SUFFIX}/>
+                                            <CSVDownloadLink linkText={"Download Scenes"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_SCENE_SUFFIX} evalNumber={this.state.evalNumber}/>
+                                            <CSVDownloadLink linkText={"Download Results"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_RESULTS_SUFFIX} evalNumber={this.state.evalNumber}/>
                                             <div className="eval-button-holder">
                                                 {this.state.currentUser.admin === true &&
                                                     <CreateCSV/>
@@ -224,30 +230,33 @@ class EvalStatusTable extends React.Component {
                                                                 Count({this.findTypeCount(sceneTypeKeyValue.label, evalStatus.sceneStats)})
                                                             </div>
                                                         </div>
-                                                        <div className="eval-chart-table">
-                                                            <table>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <th></th>
-                                                                        {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
-                                                                            <th key={"header_" + sceneTypeKey + metaKey}>
-                                                                                {metadata.label}
-                                                                            </th>
-                                                                        ))}
-                                                                    </tr>
-                                                                    {sceneTypeKeyValue.performers.map((performer, performerKey) => (
-                                                                        <tr key={"performer_row_" + sceneTypeKey + performerKey}>
-                                                                            <td>{performer.label}</td>
+                                                        {
+                                                            sceneTypeKeyValue.metadata !== null && sceneTypeKeyValue.performers !== null &&
+                                                            <div className="eval-chart-table">
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th></th>
                                                                             {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
-                                                                                <td key={"performer_row_" + sceneTypeKey + performerKey + metaKey}>
-                                                                                    {this.calculateCellValue(evalStatus, sceneTypeKeyValue.label, performer.label, metadata.label)}
-                                                                                </td>
+                                                                                <th key={"header_" + sceneTypeKey + metaKey}>
+                                                                                    {metadata.label}
+                                                                                </th>
                                                                             ))}
                                                                         </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                                        {sceneTypeKeyValue.performers.map((performer, performerKey) => (
+                                                                            <tr key={"performer_row_" + sceneTypeKey + performerKey}>
+                                                                                <td>{performer.label}</td>
+                                                                                {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
+                                                                                    <td key={"performer_row_" + sceneTypeKey + performerKey + metaKey}>
+                                                                                        {this.calculateCellValue(evalStatus, sceneTypeKeyValue.label, performer.label, metadata.label)}
+                                                                                    </td>
+                                                                                ))}
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        }   
                                                     </div>
                                                 ))}
                                             </div>
