@@ -8,10 +8,10 @@ import HyperCubeResultsTable from './hypercubeResultsTable';
 import Switch from "react-switch";
 import ScoreCardTable from './scorecardTable';
 
-const getTestTypeQueryName = "getTestType";
-const getTestType = gql`
-    query getTestType($eval: String!, $categoryType: String!) {
-        getTestType(eval: $eval, categoryType: $categoryType) 
+const getTestTypeQueryName = "getTestTypeOverviewData";
+const getTestTypeOverviewData = gql`
+    query getTestTypeOverviewData($eval: String!, $categoryType: String!) {
+        getTestTypeOverviewData(eval: $eval, categoryType: $categoryType) 
     }`;
 class TestOverview extends React.Component {
 
@@ -106,7 +106,7 @@ class TestOverview extends React.Component {
                     </div>
                     <div className="test-overview-area">
                         {(this.state.eval !== "" && this.state.category !== "") &&
-                            <Query query={getTestType} variables={{
+                            <Query query={getTestTypeOverviewData} variables={{
                                 "eval": this.state.eval,
                                 "categoryType": this.state.category}}>
                             {
@@ -115,6 +115,21 @@ class TestOverview extends React.Component {
                                     if (error) return <div>Overview data does not exist for these attributes.</div>
 
                                 const testType = data[getTestTypeQueryName]["testType"];
+                                const numberSlices = data[getTestTypeQueryName]["sliceNumber"];
+                                const sliceKeywords = data[getTestTypeQueryName]["sliceKeywords"];
+
+                                let numberSliceArray = [];
+                                for(let i=0; i < numberSlices; i++) {
+                                    numberSliceArray[i] = i + 1;
+                                }
+
+                                let sliceKeywordsObjArray = [];
+                                for(let i=0; i < sliceKeywords.length; i++) {
+                                    sliceKeywordsObjArray.push({
+                                        label: sliceKeywords[i],
+                                        value: sliceKeywords[i]
+                                    })
+                                }
 
                                 return(
                                     <>
@@ -162,7 +177,7 @@ class TestOverview extends React.Component {
                                                         <HyperCubeResultsTable state={this.state} downloadCSV={this.downloadCSV} hyperCubePivotValue="hyperCubeID"/>
                                                     }
                                                     {"BySlice" === this.state.currentTab && 
-                                                        <HyperCubeResultsTable state={this.state} downloadCSV={this.downloadCSV} hyperCubePivotValue="slice"/>
+                                                        <HyperCubeResultsTable state={this.state} downloadCSV={this.downloadCSV} hyperCubePivotValue="slice" numberSliceArray={numberSliceArray} sliceKeywords={sliceKeywordsObjArray}/>
                                                     }
                                                     {"Scorecard" === this.state.currentTab && 
                                                         <ScoreCardTable state={this.state} downloadCSV={this.downloadCSV}/>

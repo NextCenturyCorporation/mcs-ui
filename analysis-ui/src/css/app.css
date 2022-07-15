@@ -279,6 +279,16 @@ ol, ul {
     max-height: 295px;
 }
 
+.slice-keywords-chooser {
+    display: inline-block;
+    position: relative;
+    width: 350px;
+}
+
+.keyword-label {
+    font-size: 12px;
+}
+
 .score-table-div .table, .object-contents .table {
     border: 1px solid black;
     padding: 5px 15px 5px 15px; 

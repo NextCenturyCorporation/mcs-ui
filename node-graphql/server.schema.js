@@ -146,9 +146,9 @@ const mcsTypeDefs = gql`
     getEvalTestTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
-    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean, statType: String, sliceLevel: Int): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean, statType: String, sliceLevel: Int, sliceType: String, sliceKeywords: JSON): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
-    getTestType(eval: String, categoryType: String): JSON
+    getTestTypeOverviewData(eval: String, categoryType: String): JSON
   }
 
   type Mutation {
@@ -242,11 +242,27 @@ const mcsResolvers = {
             return await mcsDB.db.collection('msc_eval').find({'test': args["test"]})
                 .toArray().then(result => {return result});
         },
-        getTestType: async(obj, args, context, infow) => {
+        getTestTypeOverviewData: async(obj, args, context, infow) => {
             let result = await mcsDB.db.collection(args.eval).findOne({'category_type': args["categoryType"]});
 
+            let sliceKeywords = [];
+            let sliceNumber = 0;
+            let getAllSliceKeywords = async function() {
+                newSliceKeywords = await mcsDB.db.collection(args.eval).distinct("slices." + sliceNumber, {"category_type": args["categoryType"]});
+                sliceKeywords = sliceKeywords.concat(newSliceKeywords);
+
+                if(newSliceKeywords.length > 0) {
+                    sliceNumber++;
+                    await getAllSliceKeywords();
+                }
+            }
+
+            await getAllSliceKeywords();
+
             return {
-                "testType": result.test_type
+                "testType": result.test_type,
+                "sliceNumber": sliceNumber,
+                "sliceKeywords": sliceKeywords
             };
         },
         getEvalByBlock: async(obj, args, context, infow) => {
@@ -564,9 +580,9 @@ const mcsResolvers = {
             }]).toArray();
 
             if(args.statType === "hyperCubeID") {
-                return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "hypercube_id", "hyperCubeID", null);
+                return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "hypercube_id", "hyperCubeID", null, null, null);
             } else {
-                return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "slices", "slice", args.sliceLevel);
+                return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "slices", "slice", args.sliceLevel,  args.sliceType, args.sliceKeywords);
             }
         },
         getScoreCardData: async(obj, args, context, infow) =>{

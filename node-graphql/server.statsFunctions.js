@@ -384,34 +384,57 @@ function updateStatObj(hyperCubeObj, statObj) {
 
 function processStatNameField(statName, sliceLevel) {
     if(Array.isArray(statName)) {
+        return statName[sliceLevel - 1];
+    } else {
+        return statName;
+    }
+}
+
+function processStatNameKeywords(statName, sliceKeywords) {
+    let sliceKeywordValues = [];
+    for(let i=0; i < sliceKeywords.length; i++) {
+        sliceKeywordValues.push(sliceKeywords[i]["value"]);
+    }
+
+    const containsAll = sliceKeywordValues.every(element => statName.includes(element));
+
+    if(containsAll && sliceKeywordValues.length > 0) {
         let statStr = "";
 
-        // Using sliceLevel to limit the number of items shown in the slice and will combine things to higher levels
-        let sliceArrayLength = statName.length;
-        if(sliceLevel < sliceArrayLength) {
-            sliceArrayLength = sliceLevel;
-        }
+        for(let i=0; i < sliceKeywordValues.length; i++) {
+            statStr += sliceKeywordValues[i];
 
-        for(let i=0; i < sliceArrayLength; i++) {
-            statStr += statName[i];
-
-            if(i < sliceArrayLength -1) {
+            if(i < sliceKeywordValues.length - 1) {
                 statStr += ", ";
             }
         }
 
         return statStr;
     } else {
-        return statName;
+        return null;
     }
 }
 
-function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, statName, sliceLevel) {
+function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, statName, sliceLevel, sliceType, sliceKeywords) {
     let statArray = [];
     let testType = hyperCubeProjection[0]["_id"]["testType"];
 
     for(let i = 0; i < hyperCubeProjection.length; i++) {
-        let statObj = statArray.find(element => element[statName] === processStatNameField(hyperCubeProjection[i]["_id"][statId], sliceLevel));
+        let statObj;
+        let newStatName;
+
+        if(sliceType === "level" || sliceType === null) {
+            newStatName = processStatNameField(hyperCubeProjection[i]["_id"][statId], sliceLevel);
+            statObj = statArray.find(element => element[statName] === newStatName);
+        } else {
+            newStatName = processStatNameKeywords(hyperCubeProjection[i]["_id"][statId], sliceKeywords);
+
+            if(newStatName === null) {
+                continue;
+            }
+            statObj = statArray.find(element => element[statName] === newStatName);
+        }
+
         if(statObj !== undefined) {
             updateStatObj(hyperCubeProjection[i], statObj);
         } else {
@@ -423,7 +446,7 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
                 "did_not_answer_plausible": 0,
                 "did_not_answer_implausible": 0
             };
-            newStatObj[statName] = processStatNameField(hyperCubeProjection[i]["_id"][statId], sliceLevel);
+            newStatObj[statName] = newStatName;
             updateStatObj(hyperCubeProjection[i], newStatObj);
             statArray.push(newStatObj);
         }

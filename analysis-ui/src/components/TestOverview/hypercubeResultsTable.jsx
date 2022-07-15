@@ -7,13 +7,14 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { default as ReactSelect } from "react-select";
+import { components } from "react-select";
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
 
-query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!, $weightedPassing: Boolean!, $statType: String!, $sliceLevel: Int!) {
-    getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing, statType: $statType, sliceLevel: $sliceLevel) 
-
+query getTestOverviewData($eval: String!, $categoryType: String!, $performer: String!, $metadata: String!, $useDidNotAnswer: Boolean!, $weightedPassing: Boolean!, $statType: String!, $sliceLevel: Int!, $sliceType: String!, $sliceKeywords: JSON!) {
+    getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing, statType: $statType, sliceLevel: $sliceLevel, sliceType: $sliceType, sliceKeywords: $sliceKeywords) 
 }`;
 
 const overViewTableFieldsStatic = [
@@ -32,94 +33,167 @@ const overViewTableFieldsStatic = [
     {"title": "SEM", "key": "standardError"}
 ];
 
+const KeywordSelectOption = (props) => {
+    return (
+        <div>
+            <components.Option {...props}>
+                <input type="checkbox" checked={props.isSelected} onChange={() => null}/>{" "}
+                <label className="keyword-label">{props.label}</label>
+            </components.Option>
+        </div>
+    );
+};
+
+const KeywordEmptyContainer = ({ children, ...props }) => {
+    const { getValue, hasValue } = props;
+    const numberSelected = getValue().length;
+    if (!hasValue) {
+        return (
+            <components.ValueContainer {...props}>
+                {children}
+            </components.ValueContainer>
+        );
+    }
+
+    let newChildren = [`${numberSelected} items selected`];
+    newChildren.push(children[1]);
+    return (
+        <components.ValueContainer {...props}>
+            {newChildren}
+        </components.ValueContainer>
+    );
+};
+
+let hyperCubeData;
+
 class HyperCubeResultsTable extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            sliceLevel: 1
+            sliceLevel: 1,
+            sliceType: "level",
+            sliceKeywords: []
         }
+
+        this.setKeywords = this.setKeywords.bind(this);
     }
 
     updateSliceLevel(newSliceLevel) {
         this.setState({sliceLevel: newSliceLevel});
     }
 
+    updateSliceViwer(newViewType) {
+        this.setState({"sliceType": newViewType});
+    }
+
+    setKeywords(keywords) {
+        this.setState({"sliceKeywords": keywords});
+    }
+
     render() {
+        const tableTitle = "Overview Stats (" + this.props.state.category + "/" + 
+                this.props.state.performer + "/" + this.props.state.metadata + ")";
+        const notActiveButtonClasses = "btn btn-outline-secondary";
+        const activeButtonClasses = "btn btn-outline-secondary active";
+        let overViewTableFields = [{"title": this.props.hyperCubePivotValue, "key": this.props.hyperCubePivotValue}];
+        overViewTableFields = overViewTableFields.concat(overViewTableFieldsStatic);
+
         return (
-            <Query query={getHyperCubeData} variables={{
-                "eval": this.props.state.eval,
-                "categoryType": this.props.state.category,
-                "performer": this.props.state.performer,
-                "metadata": this.props.state.metadata,
-                "useDidNotAnswer": this.props.state.useDidNotAnswer,
-                "weightedPassing": this.props.state.weightedPassing,
-                "statType": this.props.hyperCubePivotValue,
-                "sliceLevel": this.state.sliceLevel}}>
-            {
-                ({ loading, error, data }) => {
-                    if (loading) return <div>Loading ...</div> 
-                    if (error) return <div>Overview data does not exist for these attributes.</div>
-
-                    const hyperCubeData = data[hyperCubeDataQueryName]["stats"];
-
-                    const tableTitle = "Overview Stats (" + this.props.state.category + "/" + 
-                        this.props.state.performer + "/" + this.props.state.metadata + ")";
-
-                    let overViewTableFields = [{"title": this.props.hyperCubePivotValue, "key": this.props.hyperCubePivotValue}];
-                    overViewTableFields = overViewTableFields.concat(overViewTableFieldsStatic);
-
-                    const notActiveButtonClasses = "btn btn-outline-secondary";
-                    const activeButtonClasses = "btn btn-outline-secondary active";
-
-                    return (
-                        <>
-                            <h4>{tableTitle}</h4>
-                            <div className="overview-results-csv-holder">
-                                <div className="csv-results-child">
-                                    <IconButton onClick={() => {this.props.downloadCSV(hyperCubeData, overViewTableFields, tableTitle)}}>
-                                        <span className="material-icons">
-                                            get_app
-                                        </span>CSV
-                                    </IconButton>
+            <>
+                <h4>{tableTitle}</h4>
+                <div className="overview-results-csv-holder">
+                    <div className="csv-results-child">
+                        <IconButton onClick={() => {this.props.downloadCSV(hyperCubeData, overViewTableFields, tableTitle)}}>
+                            <span className="material-icons">
+                                get_app
+                            </span>CSV
+                        </IconButton>
+                    </div>
+                </div>
+                {this.props.hyperCubePivotValue === "slice" &&
+                    <div className="overview-results-slice-chooser">
+                        <div className="metadata-group btn-group" role="group">
+                            <button className={this.state.sliceType === "level" ? 'btn btn-primary active' : 'btn btn-secondary'} type="button"
+                                    onClick={() => this.updateSliceViwer("level")}>Level</button>
+                            <button className={this.state.sliceType === "keyword" ? 'btn btn-primary active' : 'btn btn-secondary'} type="button"
+                                    onClick={() => this.updateSliceViwer("keyword")}>Keyword</button>
+                        </div>
+                        {this.state.sliceType === "level" &&
+                            <>
+                                <span className="slice-header">Slice level: </span>
+                                <div className="btn-group me-2" role="group">
+                                    {this.props.numberSliceArray.map((sliceNum, key) =>
+                                        <button key={'slice_level_' + key} type="button" className={this.state.sliceLevel === sliceNum ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(sliceNum)}>{sliceNum}</button>
+                                    )}
                                 </div>
+                            </>
+                        }
+                        {this.state.sliceType === "keyword" &&
+                            <div className="slice-keywords-chooser">
+                                <ReactSelect
+                                    onChange={this.setKeywords}
+                                    options={this.props.sliceKeywords}
+                                    value={this.state.sliceKeywords}
+                                    isMulti
+                                    hideSelectedOptions={false}
+                                    closeMenuOnSelect={false}
+                                    components={{
+                                        Option: KeywordSelectOption,
+                                        ValueContainer: KeywordEmptyContainer
+                                    }}
+                                />
                             </div>
-                            {this.props.hyperCubePivotValue === "slice" &&
-                                <div className="overview-results-slice-chooser">
-                                    <span className="slice-header">Slice level: </span>
-                                    <div className="btn-group me-2" role="group">
-                                        <button type="button" className={this.state.sliceLevel === 1 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(1)}>1</button>
-                                        <button type="button" className={this.state.sliceLevel === 2 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(2)}>2</button>
-                                        <button type="button" className={this.state.sliceLevel === 3 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(3)}>3</button>
-                                        <button type="button" className={this.state.sliceLevel === 4 ? activeButtonClasses : notActiveButtonClasses} onClick={()=>this.updateSliceLevel(4)}>4</button>
-                                    </div>
-                                </div>
-                            }
-                            <Table className="score-table" aria-label="simple table" stickyHeader>
-                                <TableHead>
-                                    <TableRow>
-                                        {overViewTableFields.map((field, key) =>
-                                            <TableCell key={'overfiew_header_cell' + key}>{field.title}</TableCell>
-                                        )}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {hyperCubeData.map((hyperCell, hyperKey) =>
-                                        <TableRow key={'hyper_row_' + hyperKey} classes={{ root: 'TableRow'}}>
-                                            {overViewTableFields.map((field, fieldKey) => 
-                                                <TableCell key={'hyper_row_cell_' + hyperKey + fieldKey}>
-                                                    {hyperCell[field["key"]]}
-                                                </TableCell>
+                        }
+                    </div>
+                }
+                <Query query={getHyperCubeData} variables={{
+                    "eval": this.props.state.eval,
+                    "categoryType": this.props.state.category,
+                    "performer": this.props.state.performer,
+                    "metadata": this.props.state.metadata,
+                    "useDidNotAnswer": this.props.state.useDidNotAnswer,
+                    "weightedPassing": this.props.state.weightedPassing,
+                    "statType": this.props.hyperCubePivotValue,
+                    "sliceLevel": this.state.sliceLevel,
+                    "sliceType": this.state.sliceType,
+                    "sliceKeywords": this.state.sliceKeywords }}>
+                {
+                    ({ loading, error, data }) => {
+                        if (loading) return <div>Loading ...</div> 
+                        if (error) return <div>Overview data does not exist for these attributes.</div>
+
+                        hyperCubeData = data[hyperCubeDataQueryName]["stats"];
+
+                        return (
+                            <>
+                                
+                                <Table className="score-table" aria-label="simple table" stickyHeader>
+                                    <TableHead>
+                                        <TableRow>
+                                            {overViewTableFields.map((field, key) =>
+                                                <TableCell key={'overfiew_header_cell' + key}>{field.title}</TableCell>
                                             )}
                                         </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </>
-                    )
+                                    </TableHead>
+                                    <TableBody>
+                                        {hyperCubeData.map((hyperCell, hyperKey) =>
+                                            <TableRow key={'hyper_row_' + hyperKey} classes={{ root: 'TableRow'}}>
+                                                {overViewTableFields.map((field, fieldKey) => 
+                                                    <TableCell key={'hyper_row_cell_' + hyperKey + fieldKey}>
+                                                        {hyperCell[field["key"]]}
+                                                    </TableCell>
+                                                )}
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </>
+                        )
+                    }
                 }
-            }
-            </Query>
+                </Query>
+            </>
         );
     }
 }
