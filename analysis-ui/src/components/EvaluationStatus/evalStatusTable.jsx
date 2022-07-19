@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Query, useQuery } from 'react-apollo';
+import { Query, useQuery, useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Select from 'react-select';
 import EvalStatusConfigureModal from './evalStatusConfigure';
@@ -11,7 +11,6 @@ const CSV_URL_SCENE_SUFFIX = "_Scenes.csv";
 const CSV_URL_RESULTS_SUFFIX = "_Results.csv";
 const EvaluationStatusQuery = "getEvaluationStatus";
 const getLinkStatusQueryName = "getLinkStatus";
-const completedEvals = ["2", "3", "3.5", "3.75", "4"];
 
 const get_evaluation_status = gql`
     query getEvaluationStatus($eval: String!, $evalName: String!){
@@ -23,6 +22,53 @@ const get_link_status = gql`
         getLinkStatus(url: $url)
     }`;
 
+const completed_evals_mutation = gql`
+    mutation updateCompletedEvals($evalNum: String!){
+        updateCompletedEvals(evalNum: $evalNum)
+    }`;
+
+const get_completed_evals = gql`
+    query getCompletedEvals{
+        getCompletedEvals
+    }`;
+
+function EvalStatusSetter ({currentEval, setCompletedEvals}) {
+
+    const [updateCompletedEvalsCall] = useMutation(completed_evals_mutation);
+    const {loading, error, data, refetch} = useQuery(get_completed_evals);
+
+    const updateCompletedEvals = async () => {
+        await updateCompletedEvalsCall({ variables: {
+            evalNum: currentEval.toString()
+        }});
+        refetch();
+    };
+
+    const checkIfComplete = () => {
+        return data['getCompletedEvals']['completedEvals'].includes(currentEval.toString());
+    }
+
+    useEffect(() => {
+        const setCompleted = async () => {
+            refetch();
+            if(data !== undefined && data['getCompletedEvals']['completedEvals'] !== undefined) {
+                setCompletedEvals(data['getCompletedEvals']['completedEvals']);
+            }
+        }
+        setCompleted();
+    }, [data]);
+
+    if (loading) return <p>Loading</p>;
+    if (error) return <p>Error</p>;
+    return (
+        <div>
+            <input type="checkbox" className='eval-complete-checkbox' id="eval-complete" name="eval-complete"
+                onClick={() => updateCompletedEvals()} checked={checkIfComplete()}/>
+            <label htmlFor="eval-complete" className='eval-complete-text'>Eval Complete</label>
+        </div>
+    )
+}
+    
 function ConfigureEval ({statusObj, testTypes, performers, metadatas, updateStatusObjHandler, evalName}) {
 
     const [modalShow, setModalShow] = React.useState(false);
@@ -107,11 +153,13 @@ class EvalStatusTable extends React.Component {
             currentEval: props.evaluationOptions[0],
             counter: props.counter,
             currentUser: props.currentUser,
-            evalNumber: props.evaluationOptions[0].label.replace(/[^0-9.]/g,'')
+            evalNumber: props.evaluationOptions[0].label.replace(/[^0-9.]/g,''),
+            completedEvals: []
         }
 
         this.selectEvaluation = this.selectEvaluation.bind(this);
         this.updateTableRefresh = this.updateTableRefresh.bind(this);
+        this.setCompletedEvals = this.setCompletedEvals.bind(this);
     }
 
     selectEvaluation(target){
@@ -162,16 +210,21 @@ class EvalStatusTable extends React.Component {
         return historyIngested + " / " + typeTotal + "(" + percentComplete + "%)";
     }
 
+    setCompletedEvals(completedEvals) {
+        this.setState({
+            completedEvals: completedEvals
+        });
+    }
+
     render() {
         const setRefetch = refetch => {this.refetch = refetch};
-        if(!completedEvals.includes(this.state.evalNumber)) {
+        if(!this.state.completedEvals.includes(this.state.evalNumber)) {
             this.props.continueUpdating();
             if(this.state.counter !== this.props.counter)
                 this.reloadTable();
         }
         else
             this.props.stopUpdating();
-        
         return (
             <div className="home-container">
                 <div className="home-navigation-container">
@@ -212,7 +265,10 @@ class EvalStatusTable extends React.Component {
                                             <CSVDownloadLink linkText={"Download Results"} url={CSV_URL_PREFIX + this.state.evalNumber + CSV_URL_RESULTS_SUFFIX} evalNumber={this.state.evalNumber}/>
                                             <div className="eval-button-holder">
                                                 {this.state.currentUser.admin === true &&
-                                                    <CreateCSV/>
+                                                        <>
+                                                            <EvalStatusSetter currentEval={this.state.evalNumber} setCompletedEvals={this.setCompletedEvals}/>
+                                                            <CreateCSV/>
+                                                        </>
                                                 }
                                                 <ConfigureEval statusObj={evalStatus.statusObj} testTypes={testTypes} performers={evalStatus.performers}
                                                     metadatas={evalStatus.metadatas} updateStatusObjHandler={this.updateTableRefresh} evalName={this.state.currentEval.label}/>
