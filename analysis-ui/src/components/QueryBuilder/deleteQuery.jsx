@@ -11,7 +11,7 @@ const DELETE_QUERY = gql`
         }
   }`;
 
-function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, currentUser, getSavedQueries, getSavedQueriesName, clearOrCloseTabsOnDeleteQuery, resetLoadQuerySelections}) {
+function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, currentUser, getSavedQueries, getSavedQueriesName, clearOrCloseTabsOnDeleteQuery, resetLoadQuerySelections, setShowDeleteQuery}) {
     const [totalUserQueries, setTotalUserQueries] = useState('');
     const [deleteQueryCall] = useMutation(DELETE_QUERY, getSavedQueries !== null ? {
         refetchQueries: [
@@ -42,6 +42,7 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
     }
 
     const getTotalUserQueries = () => {
+        console.log(selectedQueries)
         if (deleteFromQueryTabId !== null) {
             setTotalUserQueries('this');
             return;
@@ -49,6 +50,7 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
         let count = 0;
         selectedQueries.forEach(item => count += (item.query.user.id === currentUser.id ? 1 : 0));
         setTotalUserQueries(count);
+        setShowDeleteQuery(count > 0);
         
     }
 
@@ -58,7 +60,7 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
 
     useEffect(() => {
         getTotalUserQueries();
-    }, [show])
+    }, [selectedQueries])
 
 
     return (
@@ -99,19 +101,21 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
     );
 }
 
-function DeleteQuery ({selectedQueries, deleteFromQueryTabId, currentUser, getSavedQueries, getSavedQueriesName, showText, clearOrCloseTabsOnDeleteQuery, resetLoadQuerySelections}) {
+function DeleteQuery ({selectedQueries, deleteFromQueryTabId, currentUser, getSavedQueries, getSavedQueriesName, showText, clearOrCloseTabsOnDeleteQuery, resetLoadQuerySelections, showDeleteQuery, setShowDeleteQuery}) {
 
     const [modalShow, setModalShow] = useState(false);
 
-
     return (
         <>
-            <a href="#deleteQueryLink" onClick={() => setModalShow(true)} className="icon-link">
-                <span className="material-icons icon-margin-left" style={!showText ? {fontSize: '35px', margin: '-5px'} : {}}>
-                    delete_forever
-                </span>
-                { showText && <span className="icon-link-text">Delete</span> }
-            </a>
+            {
+                ((resetLoadQuerySelections !== null && showDeleteQuery) || (resetLoadQuerySelections === null)) &&
+                <a href="#deleteQueryLink" onClick={() => setModalShow(true)} className="icon-link">
+                    <span className="material-icons icon-margin-left" style={!showText ? {fontSize: '35px', margin: '-6px', marginRight: '-35px'} : {}}>
+                        delete_forever
+                    </span>
+                    { showText && <span className="icon-link-text">Delete</span> }
+                </a>
+            }
 
             <DeleteQueryModal
                 show={modalShow}
@@ -123,6 +127,7 @@ function DeleteQuery ({selectedQueries, deleteFromQueryTabId, currentUser, getSa
                 getSavedQueriesName={getSavedQueriesName}
                 clearOrCloseTabsOnDeleteQuery={clearOrCloseTabsOnDeleteQuery}
                 resetLoadQuerySelections={resetLoadQuerySelections}
+                setShowDeleteQuery={setShowDeleteQuery}
             />
         </>
     );

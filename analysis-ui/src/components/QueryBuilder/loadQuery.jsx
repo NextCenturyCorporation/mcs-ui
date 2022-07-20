@@ -34,6 +34,7 @@ function LoadQueryPage({currentUser, loadQueryHandler, clearOrCloseTabsOnDeleteQ
     const [activeTab, setActiveTab] = useState("load_all_queries");
     const [search, setSearch] = useState("");
     const [selectedQueries, setSelectedQueries] = useState([]);
+    const [showDeleteQuery, setShowDeleteQuery] = useState(false);
 
     const loadQuery = () => {
         let queries = selectedQueries;
@@ -95,10 +96,11 @@ function LoadQueryPage({currentUser, loadQueryHandler, clearOrCloseTabsOnDeleteQ
                             <div className="load-query-search-load-line">
                                 <LoadQuerySearchBar setSearch={setSearch}/>
                                 <span>
-                                    <a href='#selected' data-toggle="tooltip" style={{marginRight: '-5px'}}
+                                    <a href='#selected' data-toggle="tooltip" className={showDeleteQuery ? 'delete-active' : ''}
                                     title='Selecting one query will replace the current query tab. Selecting more than one query will append multiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
                                     <DeleteQuery selectedQueries={selectedQueries} deleteFromQueryTabId={null} currentUser={currentUser} getSavedQueries={LOAD_SAVED_QUERIES} getSavedQueriesName={getSavedQueriesName}
-                                        showText={false} clearOrCloseTabsOnDeleteQuery={clearOrCloseTabsOnDeleteQuery} resetLoadQuerySelections={() => setSelectedQueries([])}/>
+                                        showText={false} clearOrCloseTabsOnDeleteQuery={clearOrCloseTabsOnDeleteQuery} resetLoadQuerySelections={() => setSelectedQueries([])}
+                                        showDeleteQuery={showDeleteQuery} setShowDeleteQuery={setShowDeleteQuery}/>
                                     <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>

@@ -850,8 +850,12 @@ ol, ul {
 }
 
 .load-query-search-load-line a {
-    margin: 7.5px 15px;
+    margin: 7.5px 45px;
     color: grey;
+}
+
+.load-query-search-load-line a.delete-active {
+    margin: 7.5px -35px;
 }
 
 .load-query-search-load-line a:hover {
