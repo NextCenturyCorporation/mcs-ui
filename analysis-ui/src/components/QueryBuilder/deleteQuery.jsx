@@ -42,7 +42,6 @@ function DeleteQueryModal({show, onHide, selectedQueries, deleteFromQueryTabId, 
     }
 
     const getTotalUserQueries = () => {
-        console.log(selectedQueries)
         if (deleteFromQueryTabId !== null) {
             setTotalUserQueries('this');
             return;
