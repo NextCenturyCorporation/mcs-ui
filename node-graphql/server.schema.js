@@ -153,7 +153,8 @@ const mcsTypeDefs = gql`
     updateSceneHistoryRemoveFlag(catTypePair: String, testNum: Int, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(catTypePair: String, testNum: Int, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, groupBy: JSON, sortBy: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
-    updateQuery(queryObj: JSON, groupBy: JSON, sortBy: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
+    updateQuery(queryObj: JSON, groupBy: JSON, sortBy: JSON, name: String, description: String, createdDate: Float, _id: String) : savedQueryObj
+    updateQueryNameAndDescriptionOnly(name: String, description: String, createdDate: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
     setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
     createCSV(collectionName: String, eval: String): JSON
@@ -664,6 +665,13 @@ const mcsResolvers = {
                 queryObj: args["queryObj"],
                 groupBy: args["groupBy"],
                 sortBy: args["sortBy"],
+                name: args["name"],
+                description: args["description"],
+                createdDate: args["createdDate"]
+            }});
+        },
+        updateQueryNameAndDescriptionOnly: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').update({_id: mongoDb.ObjectID(args["_id"])}, {$set: {
                 name: args["name"],
                 description: args["description"],
                 createdDate: args["createdDate"]
