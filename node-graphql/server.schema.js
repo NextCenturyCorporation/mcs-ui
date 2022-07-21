@@ -159,7 +159,7 @@ const mcsTypeDefs = gql`
     setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
     createCSV(collectionName: String, eval: String): JSON
     updateAdminUser(username: String, isAdmin: Boolean): JSON
-    updateCompletedEvals(evalNum: String) : JSON
+    updateCompletedEvals(completedEvals: [String]) : JSON
   }
 `;
 
@@ -649,13 +649,8 @@ const mcsResolvers = {
                 });
                 completedEvals = await mcsDB.db.collection('completedEvals').findOne();
             }
-            const index = completedEvals['completedEvals'].indexOf(args['evalNum']);
-            if (index === -1)
-                completedEvals['completedEvals'].push(args['evalNum']);
-            else
-                completedEvals['completedEvals'].splice(index, 1);
             return await mcsDB.db.collection('completedEvals').update({"_id": completedEvals["_id"]}, {$set: {
-                completedEvals: completedEvals['completedEvals']
+                completedEvals: args["completedEvals"]
             }});
         },
         updateAdminUser: async(obj, args, context, infow) => { 

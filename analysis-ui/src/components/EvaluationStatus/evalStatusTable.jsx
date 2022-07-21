@@ -23,8 +23,8 @@ const get_link_status = gql`
     }`;
 
 const completed_evals_mutation = gql`
-    mutation updateCompletedEvals($evalNum: String!){
-        updateCompletedEvals(evalNum: $evalNum)
+    mutation updateCompletedEvals($completedEvals: [String]!){
+        updateCompletedEvals(completedEvals: $completedEvals)
     }`;
 
 const get_completed_evals = gql`
@@ -38,9 +38,16 @@ function EvalStatusSetter ({currentEval, setCompletedEvals}) {
     const {loading, error, data, refetch} = useQuery(get_completed_evals);
 
     const updateCompletedEvals = async () => {
+        let completedEvals = data['getCompletedEvals']['completedEvals'];
+        const index = completedEvals.indexOf(currentEval);
+        if (index === -1)
+            completedEvals.push(currentEval);
+        else
+            completedEvals.splice(index, 1);
         await updateCompletedEvalsCall({ variables: {
-            evalNum: currentEval.toString()
+            completedEvals: completedEvals
         }});
+        setCompletedEvals(completedEvals);
         refetch();
     };
 
