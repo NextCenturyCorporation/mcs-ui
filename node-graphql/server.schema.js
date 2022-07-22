@@ -176,8 +176,12 @@ const mcsResolvers = {
                 .toArray().then(result => {return result});
         },
         getCompletedEvals: async(obj, args, context, infow) => {
-            return await mcsDB.db.collection('completedEvals').findOne()
-                .then(result => {return result});
+            const completedEvals = await mcsDB.db.collection('completedEvals').findOne().then(result => {return result});
+            if(completedEvals === null) {
+                return {"completedEvals": []};
+            } else {
+                return completedEvals;
+            }
         },
         getLinkStatus: async(obj, args, context, infow) => {
             return await urlExist(args["url"]);
