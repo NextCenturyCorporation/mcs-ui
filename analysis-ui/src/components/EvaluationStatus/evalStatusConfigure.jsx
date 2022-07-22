@@ -38,6 +38,8 @@ const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performer
     };
 
     const addParams = () => {
+        if(!testType)
+            return;
         if(statusObj[testType.value] !== undefined) {
             statusObj[testType.value]["metadata"] = metadata;
             statusObj[testType.value]["performers"] = performer;
@@ -51,12 +53,11 @@ const EvalStatusConfigureModal = ({show, onHide, statusObj, testTypes, performer
             
             statusObj[testType.value] = testTypeObj;
         }
-
         tempStatusObj = cloneDeep(statusObj);
     };
 
     const updatePerformersMetadata = (e) => {
-        if(statusObj[e.value] !== undefined) {
+        if(statusObj[e.value] !== undefined && statusObj[e.value].metadata !== null && statusObj[e.value].performers !== null) {
             setMetadata([...statusObj[e.value]["metadata"]]);
             setPerformer([...statusObj[e.value]["performers"]]);
         } else {

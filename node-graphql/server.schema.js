@@ -120,6 +120,7 @@ const mcsTypeDefs = gql`
 
   type Query {
     msc_eval: [Source]
+    getCompletedEvals: JSON
     getHistoryCollectionMapping: JSON
     getSceneCollectionMapping: JSON
     getEvalHistory(eval: String, categoryType: String, testNum: Int) : [History]
@@ -159,6 +160,7 @@ const mcsTypeDefs = gql`
     setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
     createCSV(collectionName: String, eval: String): JSON
     updateAdminUser(username: String, isAdmin: Boolean): JSON
+    updateCompletedEvals(completedEvals: [String]) : JSON
   }
 `;
 
@@ -171,6 +173,10 @@ const mcsResolvers = {
         msc_eval: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({})
                 .toArray().then(result => {return result});
+        },
+        getCompletedEvals: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('completedEvals').findOne()
+                .then(result => {return result});
         },
         getLinkStatus: async(obj, args, context, infow) => {
             return await urlExist(args["url"]);
@@ -691,6 +697,18 @@ const mcsResolvers = {
                 console.log(data.toString());
             });
             return {message: "CSV creation launched."};
+        },
+        updateCompletedEvals: async(obj, args, context, infow) => { 
+            let completedEvals = await mcsDB.db.collection('completedEvals').findOne();
+            if (completedEvals === null) {
+                await mcsDB.db.collection('completedEvals').insertOne({
+                    completedEvals: []
+                });
+                completedEvals = await mcsDB.db.collection('completedEvals').findOne();
+            }
+            return await mcsDB.db.collection('completedEvals').update({"_id": completedEvals["_id"]}, {$set: {
+                completedEvals: args["completedEvals"]
+            }});
         },
         updateAdminUser: async(obj, args, context, infow) => { 
             return await mcsDB.db.collection('users').update(

@@ -1129,6 +1129,16 @@ ol, ul {
     z-index:10;
 }
 
+.eval-complete-checkbox {
+    transform: scale(1.6);
+    margin-right: 10px;
+}
+
+.eval-complete-text {
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
 .csv-results-group-holder {
     padding-right: 200px;
     height: 5px;
@@ -1263,6 +1273,8 @@ ol, ul {
 }
 
 .eval-button-holder {
+    display: flex;
+    flex-direction: row;
     margin-left: 60px;
 }
 
