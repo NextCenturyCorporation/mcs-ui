@@ -70,7 +70,7 @@ function EvalStatusSetter ({currentEval, setCompletedEvals}) {
     return (
         <div>
             <input type="checkbox" className='eval-complete-checkbox' id="eval-complete" name="eval-complete"
-                onClick={() => updateCompletedEvals()} checked={checkIfComplete()}/>
+                onChange={() => updateCompletedEvals()} checked={checkIfComplete()}/>
             <label htmlFor="eval-complete" className='eval-complete-text'>Eval Complete</label>
         </div>
     )
