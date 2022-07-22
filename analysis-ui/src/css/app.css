@@ -279,6 +279,16 @@ ol, ul {
     max-height: 295px;
 }
 
+.slice-keywords-chooser {
+    display: inline-block;
+    position: relative;
+    width: 350px;
+}
+
+.keyword-label {
+    font-size: 12px;
+}
+
 .score-table-div .table, .object-contents .table {
     border: 1px solid black;
     padding: 5px 15px 5px 15px; 
@@ -1450,8 +1460,20 @@ nav.MuiList-root.nav-list.MuiList-padding {
     margin-left: 10px;
 }
 
-.scorecard-holder {
-    margin-top: 40px;
+.overview-nav-link {
+    margin-right: 5px;
+}
+
+.overview-table-container {
+    background-color: white;
+    padding: 15px;
+    border-left: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+.overview-table-container .MuiTableCell-stickyHeader{
+    background-color: white;
 }
 
 .single-scorecard-item {
@@ -1480,6 +1502,20 @@ nav.MuiList-root.nav-list.MuiList-padding {
     position: relative;
     top: -50px;
     z-index: 3;
+}
+
+.overview-results-slice-chooser {
+    height: 5px;
+    float: right;
+    position: relative;
+    top: -35px;
+    z-index: 4;
+    margin-right:25px;
+}
+
+.slice-header {
+    font-weight: bold;
+    padding-right: 8px;
 }
 
 .no-answer-toggle-holder {
