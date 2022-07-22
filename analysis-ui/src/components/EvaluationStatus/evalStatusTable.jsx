@@ -227,8 +227,10 @@ class EvalStatusTable extends React.Component {
         const setRefetch = refetch => {this.refetch = refetch};
         if(!this.state.completedEvals.includes(this.state.evalNumber)) {
             this.props.continueUpdating();
-            if(this.state.counter !== this.props.counter)
+            if(this.state.counter !== this.props.counter) {
+                this.refetch();
                 this.reloadTable();
+            }
         }
         else
             this.props.stopUpdating();
