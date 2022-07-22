@@ -382,17 +382,63 @@ function updateStatObj(hyperCubeObj, statObj) {
     }
 }
 
-function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer) {
+function processStatNameField(statName, sliceLevel) {
+    if(Array.isArray(statName)) {
+        return statName[sliceLevel - 1];
+    } else {
+        return statName;
+    }
+}
+
+function processStatNameKeywords(statName, sliceKeywords) {
+    let sliceKeywordValues = [];
+    for(let i=0; i < sliceKeywords.length; i++) {
+        sliceKeywordValues.push(sliceKeywords[i]["value"]);
+    }
+
+    const containsAll = sliceKeywordValues.every(element => statName.includes(element));
+
+    if(containsAll && sliceKeywordValues.length > 0) {
+        let statStr = "";
+
+        for(let i=0; i < sliceKeywordValues.length; i++) {
+            statStr += sliceKeywordValues[i];
+
+            if(i < sliceKeywordValues.length - 1) {
+                statStr += ", ";
+            }
+        }
+
+        return statStr;
+    } else {
+        return null;
+    }
+}
+
+function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, statName, sliceLevel, sliceType, sliceKeywords) {
     let statArray = [];
     let testType = hyperCubeProjection[0]["_id"]["testType"];
 
     for(let i = 0; i < hyperCubeProjection.length; i++) {
-        let statObj = statArray.find(element => element.hyperCubeID === hyperCubeProjection[i]["_id"]["hypercube_id"]);
+        let statObj;
+        let newStatName;
+
+        if(sliceType === "level" || sliceType === null) {
+            newStatName = processStatNameField(hyperCubeProjection[i]["_id"][statId], sliceLevel);
+            statObj = statArray.find(element => element[statName] === newStatName);
+        } else {
+            newStatName = processStatNameKeywords(hyperCubeProjection[i]["_id"][statId], sliceKeywords);
+
+            if(newStatName === null) {
+                continue;
+            }
+            statObj = statArray.find(element => element[statName] === newStatName);
+        }
+
         if(statObj !== undefined) {
             updateStatObj(hyperCubeProjection[i], statObj);
         } else {
             let newStatObj = {
-                "hyperCubeID": hyperCubeProjection[i]["_id"]["hypercube_id"],
                 "correct_plausible": 0,
                 "correct_implausible": 0,
                 "incorrect_plausible": 0,
@@ -400,15 +446,15 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer) {
                 "did_not_answer_plausible": 0,
                 "did_not_answer_implausible": 0
             };
+            newStatObj[statName] = newStatName;
             updateStatObj(hyperCubeProjection[i], newStatObj);
             statArray.push(newStatObj);
         }
     }
 
-    statArray.sort((a, b) => (a.hyperCubeID > b.hyperCubeID) ? 1 : -1);
+    statArray.sort((a, b) => (a[statName] > b[statName]) ? 1 : -1);
 
     let totalStatObj = {
-        "hyperCubeID": "Totals",
         "correct_plausible": 0,
         "correct_implausible": 0,
         "incorrect_plausible": 0,
@@ -416,6 +462,8 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer) {
         "did_not_answer_plausible": 0,
         "did_not_answer_implausible": 0
     };
+    totalStatObj[statName] = "Totals";
+
     for(let j = 0; j < statArray.length; j++) {
         totalStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
         totalStatObj["correct_implausible"] += statArray[j]["correct_implausible"];

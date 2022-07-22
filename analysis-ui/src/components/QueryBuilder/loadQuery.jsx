@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
+import DeleteQuery from './deleteQuery';
 
 const getSavedQueriesName = "getSavedQueries";
 
@@ -29,10 +30,11 @@ function LoadQuerySearchBar({setSearch}) {
     )
 }
     
-function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
+function LoadQueryPage({currentUser, loadQueryHandler, clearOrCloseTabsOnDeleteQuery}) {
     const [activeTab, setActiveTab] = useState("load_all_queries");
     const [search, setSearch] = useState("");
     const [selectedQueries, setSelectedQueries] = useState([]);
+    const [showDeleteQuery, setShowDeleteQuery] = useState(false);
 
     const loadQuery = () => {
         let queries = selectedQueries;
@@ -41,7 +43,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
 
     const manageSelectedQueries = (query, key, remove) => {
         if (remove)
-            setSelectedQueries(selectedQueries.filter(item => key != item.key));
+            setSelectedQueries(selectedQueries.filter(item => key !== item.key));
         else
             setSelectedQueries([...selectedQueries, {'query': query, 'key': key}]);
     }
@@ -66,7 +68,7 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     }
 
     const isSelected = (key) => {
-        return selectedQueries.some((element) => element.key == key)
+        return selectedQueries.some((element) => element.key === key)
     }
 
     return (
@@ -94,8 +96,11 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
                             <div className="load-query-search-load-line">
                                 <LoadQuerySearchBar setSearch={setSearch}/>
                                 <span>
-                                    <a href='#selected' data-toggle="tooltip" 
+                                    <a href='#selected' data-toggle="tooltip" className={showDeleteQuery ? 'delete-active' : ''}
                                     title='Selecting one query will replace the current query tab. Selecting more than one query will append multiple queries to the end of the tab list.'>({selectedQueries.length}) Selected</a>
+                                    <DeleteQuery selectedQueries={selectedQueries} deleteFromQueryTabId={null} currentUser={currentUser} getSavedQueries={LOAD_SAVED_QUERIES} getSavedQueriesName={getSavedQueriesName}
+                                        showText={false} clearOrCloseTabsOnDeleteQuery={clearOrCloseTabsOnDeleteQuery} resetLoadQuerySelections={() => setSelectedQueries([])}
+                                        showDeleteQuery={showDeleteQuery} setShowDeleteQuery={setShowDeleteQuery}/>
                                     <button type="button" onClick={() => loadQuery()}>Load Selected</button>
                                 </span>
                             </div>
@@ -147,11 +152,12 @@ function LoadQueryPage({show, onHide, currentUser, loadQueryHandler}) {
     );
 }
 
-function LoadQuery ({currentUser, loadQueryHandler}) {
+function LoadQuery ({currentUser, loadQueryHandler, clearOrCloseTabsOnDeleteQuery}) {
     return (
         <LoadQueryPage
             currentUser = {currentUser}
             loadQueryHandler = {loadQueryHandler}
+            clearOrCloseTabsOnDeleteQuery = {clearOrCloseTabsOnDeleteQuery}
         />
     );
     

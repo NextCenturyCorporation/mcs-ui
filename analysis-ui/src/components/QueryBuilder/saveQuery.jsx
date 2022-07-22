@@ -34,7 +34,7 @@ function SaveQueryModal({show, onHide, queryObj, currentUser, queryId, updateQue
             description: queryDesc,
             createdDate: (new Date()).valueOf()
         } }).then((result) => {
-            updateQueryNameHandler(queryId, queryName, result.data[SAVE_QUERY_NAME]["_id"]);
+            updateQueryNameHandler(queryId, queryName, result.data[SAVE_QUERY_NAME]["_id"], currentUser.id, queryDesc);
             resetSaveForm();
             onHide();
         });

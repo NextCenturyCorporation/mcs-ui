@@ -32,6 +32,18 @@ class EvalStatusPage extends React.Component {
         clearInterval(this.intervalMethod);
     }
 
+    stopUpdating = () => {
+        if (this.intervalMethod !== null) {
+            clearInterval(this.intervalMethod);
+            this.intervalMethod = null;
+        }
+    }
+
+    continueUpdating = () => {
+        if (this.intervalMethod === null)
+            this.intervalMethod = setInterval(this.incrementCounter, 2000);
+    }
+
     render() {
         return (
             <Query query={scene_field_aggregation} variables={{"fieldName": "eval"}}>
@@ -45,7 +57,7 @@ class EvalStatusPage extends React.Component {
 
                     return (
                         <EvalStatusTable evaluationOptions={evaluationOptions} counter={this.state.counter} 
-                            currentUser={this.props.currentUser}/>
+                            currentUser={this.props.currentUser} stopUpdating={this.stopUpdating} continueUpdating={this.continueUpdating}/>
                     )
                 }
             }

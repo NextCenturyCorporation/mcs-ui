@@ -3,6 +3,8 @@ import QueryLineItem from './queryLine';
 import QueryResults from './queryResults';
 import SaveQuery from './saveQuery';
 import CancelPresentation from '@material-ui/icons/CancelPresentation';
+import DeleteQuery from './deleteQuery';
+import UpdateQuery from './updateQuery';
 
 const ParamDisplayByOperator =({queryLine}) => {
     if(queryLine.functionOperator === "between" || queryLine.functionOperator === "and" || queryLine.functionOperator === "or") {
@@ -40,7 +42,7 @@ class ComplexQueryBuilder extends React.Component {
     }
 
     clearQuery = () => {
-        this.props.updateQueryObjForTab([], null, null, this.props.queryId, "Query " + this.props.queryId, "");
+        this.props.updateQueryObjForTab([], null, null, this.props.queryId, "Query " + this.props.queryId, "", "", {});
     }
 
     removeQueryRow = (key) => {
@@ -71,6 +73,16 @@ class ComplexQueryBuilder extends React.Component {
                         <span className="material-icons icon-margin-left">settings_backup_restore</span>
                         <span className="icon-link-text">Clear</span>
                     </a>
+                    {this.props.currentUser !== null && this.props.currentUser.id === this.props.queryUserId &&
+                        <>
+                            <UpdateQuery queryName={this.props.name} queryDescription={this.props.description} queryObj={this.props.saveQueryObject}
+                                queryMongoId={this.props.queryMongoId} updateTabsOnUpdateQuery={this.props.updateTabsOnUpdateQuery} 
+                                groupBy={this.props.groupBy} sortBy={this.props.sortBy}/>
+                            <DeleteQuery selectedQueries={[]} deleteFromQueryTabId={this.props.currentTabMongoId} currentUser={this.props.currentUser}
+                                getSavedQueries={null} getSavedQueriesName={null} showText={true} clearOrCloseTabsOnDeleteQuery={this.props.clearOrCloseTabsOnDeleteQuery}
+                                resetLoadQuerySelections={null}/>
+                        </>
+                    }
                     {this.props.numberTabs > 1 && 
                         <a href="#closeTabLink" onClick={this.closeTab} className="icon-link close-tab-link">
                             <CancelPresentation/>

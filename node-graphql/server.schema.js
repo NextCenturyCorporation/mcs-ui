@@ -120,6 +120,7 @@ const mcsTypeDefs = gql`
 
   type Query {
     msc_eval: [Source]
+    getCompletedEvals: JSON
     getHistoryCollectionMapping: JSON
     getSceneCollectionMapping: JSON
     getEvalHistory(eval: String, categoryType: String, testNum: Int) : [History]
@@ -145,19 +146,22 @@ const mcsTypeDefs = gql`
     getEvalTestTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
-    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean): JSON
+    getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean, statType: String, sliceLevel: Int, sliceType: String, sliceKeywords: JSON): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
+    getTestTypeOverviewData(eval: String, categoryType: String): JSON
   }
 
   type Mutation {
     updateSceneHistoryRemoveFlag(catTypePair: String, testNum: Int, flagRemove: Boolean) : updateObject
     updateSceneHistoryInterestFlag(catTypePair: String, testNum: Int, flagInterest: Boolean) : updateObject
     saveQuery(user: JSON, queryObj: JSON, groupBy: JSON, sortBy: JSON, name: String, description: String, createdDate: Float) : savedQueryObj
-    updateQuery(queryObj: JSON, groupBy: JSON, sortBy: JSON, name: String, description: String, createdData: Float, _id: String) : savedQueryObj
+    updateQuery(queryObj: JSON, groupBy: JSON, sortBy: JSON, name: String, description: String, createdDate: Float, _id: String) : savedQueryObj
+    updateQueryNameAndDescriptionOnly(name: String, description: String, createdDate: Float, _id: String) : savedQueryObj
     deleteQuery(_id: String) : savedQueryObj
     setEvalStatusParameters(eval: String, evalStatusParams: JSON) : JSON
     createCSV(collectionName: String, eval: String): JSON
     updateAdminUser(username: String, isAdmin: Boolean): JSON
+    updateCompletedEvals(completedEvals: [String]) : JSON
   }
 `;
 
@@ -170,6 +174,10 @@ const mcsResolvers = {
         msc_eval: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({})
                 .toArray().then(result => {return result});
+        },
+        getCompletedEvals: async(obj, args, context, infow) => {
+            return await mcsDB.db.collection('completedEvals').findOne()
+                .then(result => {return result});
         },
         getLinkStatus: async(obj, args, context, infow) => {
             return await urlExist(args["url"]);
@@ -233,6 +241,29 @@ const mcsResolvers = {
         getEvalByTest: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({'test': args["test"]})
                 .toArray().then(result => {return result});
+        },
+        getTestTypeOverviewData: async(obj, args, context, infow) => {
+            let result = await mcsDB.db.collection(args.eval).findOne({'category_type': args["categoryType"]});
+
+            let sliceKeywords = [];
+            let sliceNumber = 0;
+            let getAllSliceKeywords = async function() {
+                newSliceKeywords = await mcsDB.db.collection(args.eval).distinct("slices." + sliceNumber, {"category_type": args["categoryType"]});
+                sliceKeywords = sliceKeywords.concat(newSliceKeywords);
+
+                if(newSliceKeywords.length > 0) {
+                    sliceNumber++;
+                    await getAllSliceKeywords();
+                }
+            }
+
+            await getAllSliceKeywords();
+
+            return {
+                "testType": result.test_type,
+                "sliceNumber": sliceNumber,
+                "sliceKeywords": sliceKeywords
+            };
         },
         getEvalByBlock: async(obj, args, context, infow) => {
             return await mcsDB.db.collection('msc_eval').find({'block': args["block"]})
@@ -523,7 +554,6 @@ const mcsResolvers = {
 
             const projectObject = {
                 "correct": "$score.score",
-                "hypercube_id": "$scene_goal_id",
                 "groundTruth": "$score.ground_truth",
                 "testType": "$test_type",
                 "description": "$score.score_description"
@@ -535,6 +565,12 @@ const mcsResolvers = {
                 projectObject["scoreWorth"] = {"$literal": 1};
             }
 
+            if(args.statType === "hyperCubeID") {
+                projectObject["hypercube_id"] = "$scene_goal_id";
+            } else if(args.statType === "slice") {
+                projectObject["slices"] = "$slices";
+            }
+
             if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
                 projectObject["hypercube_id"] = "$category_type"
             }
@@ -543,7 +579,11 @@ const mcsResolvers = {
                 {"$match": searchObject}, {"$group": {"_id": projectObject, "count": {"$sum": 1}}
             }]).toArray();
 
-            return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer);
+            if(args.statType === "hyperCubeID") {
+                return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "hypercube_id", "hyperCubeID", null, null, null);
+            } else {
+                return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "slices", "slice", args.sliceLevel,  args.sliceType, args.sliceKeywords);
+            }
         },
         getScoreCardData: async(obj, args, context, infow) =>{
             const searchObject = {
@@ -669,6 +709,13 @@ const mcsResolvers = {
                 createdDate: args["createdDate"]
             }});
         },
+        updateQueryNameAndDescriptionOnly: async (obj, args, context, infow) => {
+            return await mcsDB.db.collection('savedQueries').update({_id: mongoDb.ObjectID(args["_id"])}, {$set: {
+                name: args["name"],
+                description: args["description"],
+                createdDate: args["createdDate"]
+            }});
+        },
         deleteQuery: async (obj, args, context, infow) => {
             return await mcsDB.db.collection('savedQueries').remove({_id:  mongoDb.ObjectID(args["_id"])});
         },
@@ -683,6 +730,18 @@ const mcsResolvers = {
                 console.log(data.toString());
             });
             return {message: "CSV creation launched."};
+        },
+        updateCompletedEvals: async(obj, args, context, infow) => { 
+            let completedEvals = await mcsDB.db.collection('completedEvals').findOne();
+            if (completedEvals === null) {
+                await mcsDB.db.collection('completedEvals').insertOne({
+                    completedEvals: []
+                });
+                completedEvals = await mcsDB.db.collection('completedEvals').findOne();
+            }
+            return await mcsDB.db.collection('completedEvals').update({"_id": completedEvals["_id"]}, {$set: {
+                completedEvals: args["completedEvals"]
+            }});
         },
         updateAdminUser: async(obj, args, context, infow) => { 
             return await mcsDB.db.collection('users').update(

@@ -279,6 +279,16 @@ ol, ul {
     max-height: 295px;
 }
 
+.slice-keywords-chooser {
+    display: inline-block;
+    position: relative;
+    width: 350px;
+}
+
+.keyword-label {
+    font-size: 12px;
+}
+
 .score-table-div .table, .object-contents .table {
     border: 1px solid black;
     padding: 5px 15px 5px 15px; 
@@ -850,8 +860,12 @@ ol, ul {
 }
 
 .load-query-search-load-line a {
-    margin: 7.5px 15px;
+    margin: 7.5px 45px;
     color: grey;
+}
+
+.load-query-search-load-line a.delete-active {
+    margin: 7.5px -35px;
 }
 
 .load-query-search-load-line a:hover {
@@ -865,6 +879,7 @@ ol, ul {
     border: solid 1px #0a7bc6;
     background-color: #58abff;
     color: white;
+    margin-left: -35px
 }
 
 .query-tab-controls button {
@@ -981,7 +996,8 @@ ol, ul {
     width: 95%;
 }
 
-.load-query-table {
+
+.load-query-table, .delete-query-table {
     border-collapse: collapse;
     margin: 1px 40px;
     font-size: 0.9em;
@@ -991,7 +1007,11 @@ ol, ul {
     display: block;
 }
 
-.load-query-table thead tr {
+.delete-query-table {
+    height: 40vh;
+}
+
+.load-query-table thead tr, .delete-query-table thead tr {
     text-align: left;
     font-weight: bold;
     text-decoration: 1.5px underline;
@@ -999,24 +1019,24 @@ ol, ul {
     text-underline-offset: 2px;
 }
 
-.load-query-table tr {
+.load-query-table tr, .delete-query-table tr {
     cursor: default;
 }
 
-.load-query-table th, .load-query-table td {
+.load-query-table th, .load-query-table td, .delete-query-table th, .delete-query-table td {
     padding: 12px 15px;
     text-align: left;
     border: 0px solid;
 }
 
-.load-query-table th {
+.load-query-table th, .delete-query-table th {
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: white;
 }
 
-.load-query-table th::after {
+.load-query-table th::after, .delete-query-table th::after {
     content: '';
     width: 100%;
     height: 0.1px;
@@ -1026,7 +1046,7 @@ ol, ul {
     background: rgb(174, 174, 174);
 }
 
-.load-query-table td {
+.load-query-table td, .delete-query-table td {
     padding: 12px 15px;
     border-bottom: 1px solid rgb(174, 174, 174)
 }
@@ -1051,7 +1071,7 @@ ol, ul {
     background-color: #aad2ee75 !important;
 }
 
-.load-query-table tbody tr:nth-child(even) {
+.load-query-table tbody tr:nth-child(even), .delete-query-table tbody tr:nth-child(even) {
     background-color: #f3f3f3cb;
 }
 
@@ -1067,15 +1087,15 @@ ol, ul {
     column-width: 1vw;
 }
 
-.load-query-table .name {
+.load-query-table .name, .delete-query-table .name {
     column-width: 50vw;
 }
 
-.load-query-table .date {
+.load-query-table .date, .delete-query-table .date {
     column-width: 10vw;
 }
 
-.load-query-table .comment {
+.load-query-table .comment, .delete-query-table .comment {
     column-width: 28vw;
 }
 
@@ -1117,6 +1137,16 @@ ol, ul {
     right: 30px;
     position: absolute;
     z-index:10;
+}
+
+.eval-complete-checkbox {
+    transform: scale(1.6);
+    margin-right: 10px;
+}
+
+.eval-complete-text {
+    margin-right: 10px;
+    margin-top: 5px;
 }
 
 .csv-results-group-holder {
@@ -1253,6 +1283,8 @@ ol, ul {
 }
 
 .eval-button-holder {
+    display: flex;
+    flex-direction: row;
     margin-left: 60px;
 }
 
@@ -1428,8 +1460,20 @@ nav.MuiList-root.nav-list.MuiList-padding {
     margin-left: 10px;
 }
 
-.scorecard-holder {
-    margin-top: 40px;
+.overview-nav-link {
+    margin-right: 5px;
+}
+
+.overview-table-container {
+    background-color: white;
+    padding: 15px;
+    border-left: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+.overview-table-container .MuiTableCell-stickyHeader{
+    background-color: white;
 }
 
 .single-scorecard-item {
@@ -1458,6 +1502,20 @@ nav.MuiList-root.nav-list.MuiList-padding {
     position: relative;
     top: -50px;
     z-index: 3;
+}
+
+.overview-results-slice-chooser {
+    height: 5px;
+    float: right;
+    position: relative;
+    top: -35px;
+    z-index: 4;
+    margin-right:25px;
+}
+
+.slice-header {
+    font-weight: bold;
+    padding-right: 8px;
 }
 
 .no-answer-toggle-holder {
