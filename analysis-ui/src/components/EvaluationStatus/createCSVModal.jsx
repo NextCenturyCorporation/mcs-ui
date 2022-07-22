@@ -30,21 +30,10 @@ function CreateCSVModal({show, onHide}) {
 
     const launchCSVCreate = () => {
         if(csvCollection !== undefined && csvCollection !== null) {
-            let csvParts = csvCollection.value.split('.');
-
-            // Handle Eval Numbers with a decimal
-            let evalName = "";
-            for(let i=1; i < csvParts.length; i++) {
-                if(i === 1) {
-                    evalName = evalName + csvParts[i];
-                } else {
-                    evalName = evalName + "." + csvParts[i];
-                }
-            }
 
             launchCreateCSVCall({ variables: { 
-                collectionName: csvParts[0],
-                eval: evalName
+                collectionName: csvCollection.value,
+                eval: csvCollection.label
             } }).then(() => {
                 onHide();
             });
