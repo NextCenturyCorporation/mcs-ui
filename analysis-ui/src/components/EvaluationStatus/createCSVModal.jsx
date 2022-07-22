@@ -29,7 +29,6 @@ function CreateCSVModal({show, onHide}) {
     }
 
     const launchCSVCreate = () => {
-        console.log(csvCollection);
         if(csvCollection !== undefined && csvCollection !== null) {
 
             launchCreateCSVCall({ variables: { 
