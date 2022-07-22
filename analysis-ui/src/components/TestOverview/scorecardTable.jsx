@@ -37,7 +37,7 @@ const scorecardFieldsLatest = [
     {"title": "Ramp Went Up Abandoned", "key": "totalRampWentUpAbandoned"},
     {"title": "Ramp Went Down Abandoned", "key": "totalRampWentDownAbandoned"},
     {"title": "Ramp Fell Off", "key": "totalRampFellOff"},
-    {"title": "Correct Platform", "key": "totalCorrectPlatform"},
+    {"title": "Correct Platform Side", "key": "totalCorrectPlatform"},
     {"title": "Correct Door Opened", "key": "totalCorrectDoorOpened"},
     {"title": "Fastest Path", "key": "totalFastestPath"},
     {"title": "Move Tool Success (Push/Rotate/etc)", "key": "totalMoveToolSuccess"},
