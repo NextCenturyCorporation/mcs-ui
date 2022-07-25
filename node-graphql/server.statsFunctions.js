@@ -415,6 +415,17 @@ function processStatNameKeywords(statName, sliceKeywords) {
     }
 }
 
+function getEmptyStatsObject() {
+    return {
+        "correct_plausible": 0,
+        "correct_implausible": 0,
+        "incorrect_plausible": 0,
+        "incorrect_implausible": 0,
+        "did_not_answer_plausible": 0,
+        "did_not_answer_implausible": 0
+    };
+}
+
 function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, statName, sliceLevel, sliceType, sliceKeywords) {
     let statArray = [];
     let testType = hyperCubeProjection[0]["_id"]["testType"];
@@ -438,14 +449,7 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
         if(statObj !== undefined) {
             updateStatObj(hyperCubeProjection[i], statObj);
         } else {
-            let newStatObj = {
-                "correct_plausible": 0,
-                "correct_implausible": 0,
-                "incorrect_plausible": 0,
-                "incorrect_implausible": 0,
-                "did_not_answer_plausible": 0,
-                "did_not_answer_implausible": 0
-            };
+            let newStatObj = getEmptyStatsObject();
             newStatObj[statName] = newStatName;
             updateStatObj(hyperCubeProjection[i], newStatObj);
             statArray.push(newStatObj);
@@ -454,15 +458,14 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
 
     statArray.sort((a, b) => (a[statName] > b[statName]) ? 1 : -1);
 
-    let totalStatObj = {
-        "correct_plausible": 0,
-        "correct_implausible": 0,
-        "incorrect_plausible": 0,
-        "incorrect_implausible": 0,
-        "did_not_answer_plausible": 0,
-        "did_not_answer_implausible": 0
-    };
+    let totalStatObj = getEmptyStatsObject();
     totalStatObj[statName] = "Totals";
+
+    let totalPlausibleStatObj = getEmptyStatsObject()
+    totalPlausibleStatObj[statName] = "Totals Plausible";
+
+    let totalImplausibleStatObj = getEmptyStatsObject()
+    totalImplausibleStatObj[statName] = "Totals Implausible";
 
     for(let j = 0; j < statArray.length; j++) {
         totalStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
@@ -471,8 +474,22 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
         totalStatObj["incorrect_implausible"] += statArray[j]["incorrect_implausible"];
         totalStatObj["did_not_answer_plausible"] += statArray[j]["did_not_answer_plausible"];
         totalStatObj["did_not_answer_implausible"] += statArray[j]["did_not_answer_implausible"];
+
+        if(testType === "intuitive physics") {
+            totalPlausibleStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
+            totalPlausibleStatObj["incorrect_plausible"] += statArray[j]["incorrect_plausible"];
+            totalPlausibleStatObj["did_not_answer_plausible"] += statArray[j]["did_not_answer_plausible"];
+            totalImplausibleStatObj["correct_implausible"] += statArray[j]["correct_implausible"];
+            totalImplausibleStatObj["incorrect_implausible"] += statArray[j]["incorrect_implausible"];
+            totalImplausibleStatObj["did_not_answer_implausible"] += statArray[j]["did_not_answer_implausible"];
+        }
     }
+
     statArray.push(totalStatObj);
+    if(testType === "intuitive physics") {
+        statArray.push(totalPlausibleStatObj);
+        statArray.push(totalImplausibleStatObj);
+    }
 
     return {
         "testType": testType,
