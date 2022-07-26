@@ -63,7 +63,8 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
         return ["Evaluation 4 Scenes",
                 "Evaluation 3.75 Scenes",
                 "Evaluation 3.5 Scenes",
-                "Evaluation 3 Scenes"].indexOf(evalSceneName) === -1;
+                "Evaluation 3 Scenes",
+                "Evaluation 2 Scenes"].indexOf(evalSceneName) === -1;
     }
 
     const getSceneLink = (currentScene) => {
