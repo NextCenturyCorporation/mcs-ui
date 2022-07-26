@@ -59,6 +59,14 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
         setCurrentObjectNum(objectKey);
     }
 
+    const isPostEval4 = (evalSceneName) => {
+        return ["Evaluation 4 Scenes",
+                "Evaluation 3.75 Scenes",
+                "Evaluation 3.5 Scenes",
+                "Evaluation 3 Scenes",
+                "Evaluation 2 Scenes"].indexOf(evalSceneName) === -1;
+    }
+
     const getSceneLink = (currentScene) => {
         let sceneName = currentScene.name;
 
@@ -66,9 +74,12 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
             sceneName =  currentScene.name.replace("juliett", "juliett_rerun")
         }
 
-        if(currentScene.eval !== undefined && currentScene.eval === "Evaluation 4 Scenes"
-            && currentScene.goal.category !== 'agents') {
-            // Goal ID is part of debug file names for Eval 4
+        if(currentScene.eval !== undefined && ((currentScene.eval === "Evaluation 4 Scenes"
+            && currentScene.goal.category !== 'agents') || isPostEval4(currentScene.eval))) {
+            // Goal ID is part of debug file names for Eval 4 except for agency.
+            //
+            // Goal ID is part of debug file names for Eval 5
+            // for all scenes including agency, assume this won't change
             sceneName = sceneName.concat("_", currentScene.goal.sceneInfo.id[0])
         }
 
