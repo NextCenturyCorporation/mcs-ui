@@ -212,22 +212,29 @@ class Scenes extends React.Component {
         this.setState({syncVideos: value});
     }
 
-    upOneScene = () => {
-        if(this.state.currentSceneNum-1 > 0)
-            this.changeScene(this.state.currentSceneNum-1, false, true);
+    getSceneIndex = (scenes) => {
+        return scenes.findIndex(element => element["scene_num"] === this.state.currentSceneNum);
     }
 
-    downOneScene = (numOfScenes, checkState) => {
+    upOneScene = (scenes) => {
+        const sceneIndex = this.getSceneIndex(scenes);
+        if(sceneIndex > 0)
+            this.changeScene(scenes[sceneIndex - 1]["scene_num"], false, true);
+    }
+
+    downOneScene = (scenes, checkState) => {
+        const sceneIndex = this.getSceneIndex(scenes);
         if((checkState && this.state.playAll) || !checkState) {
-            if (this.state.currentSceneNum < numOfScenes) {
-                this.changeScene(this.state.currentSceneNum+1, true, true);
+            if (sceneIndex < scenes.length - 1) {
+                this.changeScene(scenes[sceneIndex + 1]["scene_num"], true, true);
             }
         }
     }
 
-    onPlaybackEnded = (numScenes, checkState) => {
-        this.downOneScene(numScenes, checkState);
-        if(this.state.syncVideos && ((!this.state.playAll) || this.state.currentSceneNum === numScenes)) {
+    onPlaybackEnded = (scenes, checkState) => {
+        const sceneIndex = this.getSceneIndex(scenes);
+        this.downOneScene(scenes, checkState);
+        if(this.state.syncVideos && ((!this.state.playAll) || sceneIndex === scenes.length-1)) {
             this.setSyncVideos(false);
         }
     }
@@ -522,12 +529,12 @@ class Scenes extends React.Component {
                                     if (loading) return <div>Loading ...</div> 
                                     if (error) return <div>Error</div>
                                     
-                                    const scenes = data[sceneQueryName];
-                                    const scenesInOrder = _.sortBy(scenes, "scene_num");
+                                    let scenes = data[sceneQueryName];
+                                    let scenesInOrder = _.sortBy(scenes, "scene_num");
                                     const numOfScenes = scenesInOrder.length;
-
+                                    const lastSceneNum = scenesInOrder[scenesInOrder.length - 1]["scene_num"];
                                     if(scenesInOrder.length > 0) {
-                                        if(scenesInOrder.length < this.state.currentSceneNum) {
+                                        if(this.state.currentSceneNum > lastSceneNum) {
                                             this.changeScene(scenesInOrder[0]["scene_num"]);
                                         }
 
@@ -580,7 +587,7 @@ class Scenes extends React.Component {
                                                             <div>
                                                                 <div><b>Scene:</b> {this.state.currentSceneNum}</div>
                                                                 <video id="interactiveMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_visual")} width="525" height="350" controls="controls" 
-                                                                    onEnded={() => this.onPlaybackEnded(numOfScenes, true)} onLoadedData={this.setSceneViewLoaded}/>
+                                                                    onEnded={() => this.onPlaybackEnded(scenesInOrder, true)} onLoadedData={this.setSceneViewLoaded}/>
                                                             </div>
                                                             <div>
                                                                 <div><b>Top Down Plot</b></div>
@@ -598,7 +605,7 @@ class Scenes extends React.Component {
                                                         <div className="eval-movie-row">
                                                             {this.state[depthMapLSPropName] &&
                                                                 <div>
-                                                                    <video id="depthMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_depth")}        width="525" height="350" controls="controls" onLoadedData={this.setDepthLoaded}/>
+                                                                    <video id="depthMoviePlayer" className="eval-movie" src={this.getVideoFileName(scenesByPerformer, "_depth")} width="525" height="350" controls="controls" onLoadedData={this.setDepthLoaded}/>
                                                                     <div><b>Depth</b></div>
                                                                 </div>
                                                             }
@@ -611,9 +618,8 @@ class Scenes extends React.Component {
                                                             }
                                                         </div>
                                                         <div className="playback-btns-passive">
-                                                            <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} numOfScenes={numOfScenes} setStateObject={this.setStateObject}
-                                                                playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed}
-                                                                setSyncVideos={this.setSyncVideos}/>
+                                                            <PlaybackButtons ref={this.playBackButtons} upOneScene={this.upOneScene} downOneScene={this.downOneScene} scenes={scenesInOrder}
+                                                                setStateObject={this.setStateObject} playAllState={this.state.playAll} playAll={this.playAll} setSceneSpeed={this.setSceneSpeed} speed={this.state.speed} setSyncVideos={this.setSyncVideos}/>
                                                         </div>
                                                         { (!this.isPreEval4(this.getSceneHistoryItem(scenesByPerformer)["eval"])) &&
                                                             <div className="scene-text"><a href={
@@ -633,7 +639,7 @@ class Scenes extends React.Component {
                                                                 ref={this.playBackButtons}
                                                                 upOneScene={this.upOneScene}
                                                                 downOneScene={this.downOneScene}
-                                                                numOfScenes={numOfScenes}
+                                                                scenes={scenesInOrder}
                                                                 playAll={this.playAll}
                                                                 playAllState={this.state.playAll}
                                                                 setSceneSpeed={this.setSceneSpeed}

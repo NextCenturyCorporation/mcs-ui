@@ -70,8 +70,8 @@ function ScoreTable({columns, currentPerformerScenes, currentSceneNum,
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                {currentPerformerScenes !== undefined && _.values(currentPerformerScenes).sort(getSorting(sortOption.sortOrder, sortOption.sortBy)).map((scoreObj, rowKey) => 
-                    <TableRow classes={{ root: 'TableRow'}} id={'score_table_row_scene_' + (parseInt(rowKey) + 1)} className="pointer-on-hover" key={'performer_score_row_' + rowKey} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
+                {currentPerformerScenes !== undefined && _.values(currentPerformerScenes).sort(getSorting(sortOption.sortOrder, sortOption.sortBy)).map((scoreObj, rowKey) =>
+                    <TableRow classes={{ root: 'TableRow'}} id={'score_table_row_scene_' + scoreObj['scene_num']} className="pointer-on-hover" key={'performer_score_row_' + scoreObj['scene_num']} hover selected={currentSceneNum === scoreObj.scene_num} onClick={()=> changeSceneHandler(scoreObj.scene_num)}> 
                         {columns.map((col, colKey) => (
                             <TableCell key={"performer_score_row_" + rowKey + "_col_" + colKey}>
                                 {col.title === 'Evaluation Score' &&
