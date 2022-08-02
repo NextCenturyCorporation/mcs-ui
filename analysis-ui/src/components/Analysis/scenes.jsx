@@ -482,6 +482,7 @@ class Scenes extends React.Component {
                     let scenesByMetadata = _.groupBy(sortedScenes, "metadata");
                     let metadataList = Object.keys(scenesByMetadata);
                     let performerList = _.uniq(_.map(sortedScenes, "performer"));
+                    performerList.sort((a, b) => (a > b) ? 1 : -1);
 
                     let initialMetadataLevel = metadataList[0];
 
