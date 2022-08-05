@@ -54,10 +54,10 @@ const createComplexMongoQuery = function(queryObj){
                 let extraChecks = [];
                 for(let i = 0; i < inObjList.length; i++) {
                     if(isNaN(inObjList[i])){
-                        if(inObjList[i].toLowerCase() === "true") {
+                        if(typeof inObjList[i] !== "boolean" && inObjList[i].toLowerCase() === "true") {
                             inObjList[i] = true;
                         }
-                        if(inObjList[i].toLowerCase() === "false") {
+                        if(typeof inObjList[i] !== "boolean" && inObjList[i].toLowerCase() === "false") {
                             inObjList[i] = false;
                         }
                     } else {
