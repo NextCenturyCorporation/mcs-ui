@@ -3,7 +3,7 @@ import { convertValueToString } from './displayTextUtils';
 import PlaybackButtons from './playbackButtons';
 
 const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topDownLink, depthLink, segLink, sceneHistoryItem, 
-    upOneScene, downOneScene, numOfScenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed,
+    upOneScene, downOneScene, scenes, playAll, playAllState, setSceneSpeed, setTopDownLoaded, setSceneViewLoaded, speed,
     displayDepth, displaySeg, setDepthLoaded, setSegLoaded, setSyncVideos, onPlaybackEnded}, ref) => {
     const [currentTime, setCurrentTime] = useState(0);
     const [currentStep, setCurrentStep] = useState(0);
@@ -108,7 +108,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                     <div className="interactive-movie-holder">
                         <video id="interactiveMoviePlayer" className="interactive-vid" ref={scenePlayer}
                         src={sceneVidLink} controls="controls" onTimeUpdate={highlightStep} onLoadedData={initializeStepView} 
-                        onEnded={() => onPlaybackEnded(numOfScenes, true)}/>
+                        onEnded={() => onPlaybackEnded(scenes, true)}/>
                     </div>
                     {displayDepth &&
                         <div className="depth-holder">
@@ -140,7 +140,7 @@ const InteractiveScenePlayer = React.forwardRef(({evaluation, sceneVidLink, topD
                 </div>
             </div>
             <div className="playback-btns-interactive">
-                <PlaybackButtons ref={ref} upOneScene={upOneScene} downOneScene={downOneScene} numOfScenes={numOfScenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed} setSyncVideos={setSyncVideos}/>
+                <PlaybackButtons ref={ref} upOneScene={upOneScene} downOneScene={downOneScene} scenes={scenes} playAll={playAll} setSceneSpeed={setSceneSpeed} playAllState={playAllState} speed={speed} setSyncVideos={setSyncVideos}/>
             </div>
         </div>
     );

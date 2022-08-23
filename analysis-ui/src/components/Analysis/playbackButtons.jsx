@@ -64,9 +64,6 @@ class PlaybackButtons extends React.Component {
                 document.getElementById(depthMovieName).playbackRate = this.state.paused ? 0 : this.props.speed.slice(0, -1);
             }
         });
-
-
-        this.props.setSyncVideos(false);
     }
 
     setLoop = reset => {
@@ -144,12 +141,12 @@ class PlaybackButtons extends React.Component {
     render() {
         return (
             <div id="playbackButtons" className="movie-playback-buttons-holder">
-            <button className="movie-playback-button" style={{borderRadius: '10px 0px 0px 10px'}} onClick={this.props.upOneScene}>
+            <button className="movie-playback-button" style={{borderRadius: '10px 0px 0px 10px'}} onClick={()=>this.props.upOneScene(this.props.scenes)}>
                 <span style={{color:defaultColor}} className="material-icons">
                     arrow_upward
                 </span>
             </button>
-            <button className="movie-playback-button" onClick={()=>this.props.downOneScene(this.props.numOfScenes, false)}>
+            <button className="movie-playback-button" onClick={()=>this.props.downOneScene(this.props.scenes, false)}>
                 <span style={{color:defaultColor}} className="material-icons">
                     arrow_downward
                 </span>

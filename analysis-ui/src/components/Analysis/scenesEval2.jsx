@@ -77,6 +77,7 @@ class ScenesEval2 extends React.Component {
             flagInterest: false,
             catTypePair: props.value.cat_type_pair,
             testNum: props.value.test_num,
+            syncVideos: false,
             playAll: false,
             speed: "1x",
             sceneViewLoaded: false,
@@ -162,16 +163,34 @@ class ScenesEval2 extends React.Component {
         this.setState({speed:speed})
     }
 
-    upOneScene = () => {
-        if(this.state.currentSceneNum-1 > 0)
-            this.changeScene(this.state.currentSceneNum-1);
+    setSyncVideos = (value) => {
+        this.setState({syncVideos: value});
     }
 
-    downOneScene = (numOfScenes, checkState) => {
+    getSceneIndex = (scenes) => {
+        return scenes.findIndex(element => element["scene_num"] === this.state.currentSceneNum);
+    }
+
+    upOneScene = (scenes) => {
+        const sceneIndex = this.getSceneIndex(scenes);
+        if(sceneIndex > 0)
+            this.changeScene(scenes[sceneIndex - 1]["scene_num"], false, true);
+    }
+
+    downOneScene = (scenes, checkState) => {
+        const sceneIndex = this.getSceneIndex(scenes);
         if((checkState && this.state.playAll) || !checkState) {
-            if (this.state.currentSceneNum < numOfScenes) {
-                this.changeScene(this.state.currentSceneNum+1, true);
+            if (sceneIndex < scenes.length - 1) {
+                this.changeScene(scenes[sceneIndex + 1]["scene_num"], true, true);
             }
+        }
+    }
+
+    onPlaybackEnded = (scenes, checkState) => {
+        const sceneIndex = this.getSceneIndex(scenes);
+        this.downOneScene(scenes, checkState);
+        if(this.state.syncVideos && ((!this.state.playAll) || sceneIndex === scenes.length-1)) {
+            this.setSyncVideos(false);
         }
     }
 
@@ -296,8 +315,10 @@ class ScenesEval2 extends React.Component {
                                                         ref={this.playBackButtons}
                                                         upOneScene={this.upOneScene}
                                                         downOneScene={this.downOneScene}
-                                                        numOfScenes={numOfScenes}
+                                                        scenes={scenesInOrder}
+                                                        setSyncVideos={this.setSyncVideos}
                                                         setVideoSpeedAndPlayTopDown={this.setVideoSpeedAndPlayTopDown}
+                                                        onPlaybackEnded={this.onPlaybackEnded}
                                                         playAll={this.playAll}
                                                         playAllState={this.state.playAll}
                                                         setSceneSpeed={this.setSceneSpeed}
