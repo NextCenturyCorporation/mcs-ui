@@ -44,6 +44,7 @@ const scorecardFieldsLatest = [
     {"title": "Move Tool Failure (Push/Rotate/etc)", "key": "totalMoveToolFailure"},
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"},
+    {"title": "Interact With Agent", "key": "totalInteractWithAgent"},
     {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"}
 ];
 class ScoreCardTable extends React.Component {
