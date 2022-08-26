@@ -652,6 +652,7 @@ const mcsResolvers = {
                 // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
                 "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
+                "totalInteractWithAgent": { "$sum" : "$score.scorecard.interact_with_agent" },
                 "totalWalkedIntoStructures": { "$sum" : "$score.scorecard.walked_into_structures" }
             }
 
