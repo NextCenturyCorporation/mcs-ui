@@ -469,6 +469,14 @@ class Scenes extends React.Component {
         return scoreTableColsPassive;
     }
 
+    getIfNotIncludedInPassingScore = (sceneHistory) => {
+        if(sceneHistory["score"]["weighted_score_worth"] === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     render() {
         return (
             <Query query={mcs_history} variables={
@@ -663,6 +671,11 @@ class Scenes extends React.Component {
                                                 {/* end video logic for interactive scenes */}
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
+                                                    {this.getIfNotIncludedInPassingScore(this.getSceneHistoryItem(scenesByPerformer)) && 
+                                                        <>
+                                                            <span className="scores-header-passing-score">** Current scene is not included in passing score</span>
+                                                        </>
+                                                    }
                                                 </div>
 
                                                 {this.checkIfScenesExist(scenesByPerformer) &&
