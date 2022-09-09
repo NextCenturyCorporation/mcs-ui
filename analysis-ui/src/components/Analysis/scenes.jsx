@@ -671,7 +671,8 @@ class Scenes extends React.Component {
                                                 {/* end video logic for interactive scenes */}
                                                 <div className="scores_header">
                                                     <h3>Scores</h3>
-                                                    {this.getIfNotIncludedInPassingScore(this.getSceneHistoryItem(scenesByPerformer)) && 
+                                                    {(this.checkIfScenesExist(scenesByPerformer) && 
+                                                      this.getIfNotIncludedInPassingScore(this.getSceneHistoryItem(scenesByPerformer))) && 
                                                         <>
                                                             <span className="scores-header-passing-score">** Current scene is not included in passing score</span>
                                                         </>
