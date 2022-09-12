@@ -250,8 +250,11 @@ ol, ul {
 }
 
 .scores_header {
-    display: flex;
     margin: 10px 10px 0 10px;
+}
+
+.scores-header-passing-score {
+    font-size: 10px;
 }
 
 .scenes_header {
