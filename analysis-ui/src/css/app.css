@@ -1551,3 +1551,15 @@ nav.MuiList-root.nav-list.MuiList-padding {
     top: -30px;
 }
 
+.incorrect-scenes-grid {
+    margin: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    grid-auto-rows: 40px;
+    border: 1px solid #dddddd;
+}
+
+.incorrect-scenes-grid div{
+    border: 1px solid #dddddd;
+    padding: 7px 0 0 10px;
+}
