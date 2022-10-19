@@ -7,6 +7,7 @@ import ButtonGroupNavItem from './buttonGroupNavItem';
 import HyperCubeResultsTable from './hypercubeResultsTable';
 import Switch from "react-switch";
 import ScoreCardTable from './scorecardTable';
+import AllIncorrectScenes from './allIncorrectScenes';
 
 const getTestTypeQueryName = "getTestTypeOverviewData";
 const getTestTypeOverviewData = gql`
@@ -160,9 +161,12 @@ class TestOverview extends React.Component {
                                                     <li className="nav-item" >
                                                         <button className={"HyperCubeId" === this.state.currentTab ? 'nav-link overview-nav-link active' : 'nav-link overview-nav-link'} onClick={() => this.toggleTab("HyperCubeId")}>Hyper Cube ID</button>
                                                     </li>
+                                                    <li className="nav-item" >
+                                                        <button className={"AllIncorrect" === this.state.currentTab ? 'nav-link overview-nav-link active' : 'nav-link overview-nav-link'} onClick={() => this.toggleTab("AllIncorrect")}>All Incorrect Scenes</button>
+                                                    </li>
                                                     {testType !== 'agents' &&
                                                         <li className="nav-item" >
-                                                            <button className={"BySlice" === this.state.currentTab ? 'nav-link overview-nav-link active' : 'nav-link overview-nav-link'} onClick={() => this.toggleTab("BySlice")}>By Slice</button>
+                                                            <button className={"BySlice" === this.state.currentTab ? 'nav-link overview-nav-link active' : 'nav-link overview-nav-link'} onClick={() => this.toggleTab("BySlice")}>Results By Slice</button>
                                                         </li>
                                                     }
                                                     {/* Exclude Evaluation 3 Results because we didn't have scorecard functionality yet */}
@@ -181,6 +185,9 @@ class TestOverview extends React.Component {
                                                     }
                                                     {"Scorecard" === this.state.currentTab && 
                                                         <ScoreCardTable state={this.state} downloadCSV={this.downloadCSV}/>
+                                                    }
+                                                    {"AllIncorrect" === this.state.currentTab &&
+                                                        <AllIncorrectScenes state={this.state}/>
                                                     }
                                                 </div>
                                             </>
