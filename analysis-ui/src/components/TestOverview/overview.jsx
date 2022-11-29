@@ -170,7 +170,7 @@ class TestOverview extends React.Component {
                                                         </li>
                                                     }
                                                     {/* Exclude Evaluation 3 Results because we didn't have scorecard functionality yet */}
-                                                    {((testType === "interactive" || testType === "retrieval" || testType === "multi retrieval") && this.state.eval !== "eval_3_results")  &&
+                                                    {((testType === "interactive" || testType === "retrieval" || testType === "multi retrieval" || testType === "imitation") && this.state.eval !== "eval_3_results")  &&
                                                         <li className="nav-item" >
                                                             <button className={"Scorecard" === this.state.currentTab ? 'nav-link overview-nav-link active' : 'nav-link overview-nav-link'} onClick={() => this.toggleTab("Scorecard")}>Scorecard</button>
                                                         </li>
