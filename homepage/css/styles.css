@@ -5,16 +5,14 @@ body {
 .header {
     background-color: rgba(34, 110, 147, 1);
     background-image: url(../img/simple-header-blended-small.png);
-    height: 220px;
     background-size: cover;
-    padding: 60px 30px;
+    padding: 20px 30px;
 }
 
 .header-text {
     font-family: Lato, sans-serif;
     font-size: 85px;
     font-weight: 300;
-    line-height: 85px;
     letter-spacing: 2px;
     color: rgba(255, 255, 255, 1);
     text-align: center;
@@ -22,11 +20,11 @@ body {
 }
 
 .main-text {
-    padding: 24px 48px;
+    padding: 24px;
     font-family: Lato, sans-serif;
     font-weight: 400;
     text-size-adjust: 100%;
-    max-width: 1280;
+    max-width: 1600;
     position: relative;
     left: 50%;
     transform: translate(-50%, 0%);
@@ -102,4 +100,63 @@ body {
     display: block !important;
     visibility: hidden;
     margin-bottom: 10px;
+}
+
+.mcs-navbar button {
+    border: 0px !important;
+    background-color: transparent !important;
+    color: #666666 !important;
+}
+
+.mcs-test-types {
+    display: flex;
+    margin-top:20px;
+}
+
+.mcs-test-types ul{
+    width: 270px;
+}
+
+.mcs-test-types .line-top-divider{
+    border-top: 1px solid #666666 !important;
+}
+
+.mcs-test-types .line-bottom-divider{
+    border-top: 1px solid #666666 !important;
+    border-bottom: 1px solid #666666 !important;
+}
+
+.mcs-test-types li {
+    padding: 10px 0;
+    background-color: #ddd;
+    border-left: 1px solid #666666 !important;
+    border-right: 1px solid #666666 !important;
+}
+
+.type-holder {
+    margin: 0 50px;
+}
+
+.mcs-test-types button{
+    border: 0px !important;
+    width: 100%;
+    background-color: transparent;
+    color: #222222;
+}
+
+.mcs-test-types button:hover{
+    color: #ababab;
+}
+
+.videos-holder {
+    margin-top: 25px;
+    display: flex;
+}
+
+.videos-holder h6{
+    font-weight: bold;
+}
+
+.videos-holder div {
+    padding: 0 75px 0 0;
 }

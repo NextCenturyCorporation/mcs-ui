@@ -2,59 +2,181 @@
     <head>
         <title>MCS Home</title>
         <link rel="stylesheet" href="css/styles.css">
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 
         <link href="https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i&display=swap" rel="stylesheet">
+
+        <script src="js/jquery.min.js"></script>
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+        
     </head>
     <body>
         <div class="header">
             <h1 class="header-text">Machine Common Sense</h1>
         </div>
 
-        <div class="main-text">
-            <div class="intro-text">The Machine Common Sense (MCS) program seeks to address the challenge of machine common sense by pursuing two broad strategies. Both envision machine common sense as a computational service, or as machine commonsense services. The first strategy aims to create a service that learns from experience, like a child, to construct computational models that mimic the core domains of child cognition for objects (intuitive physics), agents (intentional actors), and places (spatial navigation). The second strategy seeks to develop a service that learns from reading the Web, like a research librarian, to construct a commonsense knowledge repository capable of answering natural language and image-based questions about commonsense phenomena. </div>
-
-            <div class="overview-text">
-                <h2>Project Overview and Background</h2>
-                <ul>
-                    <li><a href="https://www.darpa.mil/program/machine-common-sense" target="_blank">DARPA Machine Common Sense Page</a></li>
-                    <li><a href="https://arxiv.org/abs/1810.07528" target="_blank">Concept Paper at Arxiv</a></li>
-                    <li>Proposer's Day <a href="https://www.youtube.com/watch?v=rSrzMGqkU-M" target="_blank">YouTube Video</a></li>
+        <nav class="navbar navbar-expand-lg bg-light">
+             <div class="collapse navbar-collapse justify-content-center mcs-navbar">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#program" type="button" aria-controls="program" aria-selected="true">Program Information</button>
+                    </li>
+                    <li class="nav-item">
+                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#passive" type="button" aria-controls="passive" aria-selected="false">Passive Physics</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#interactive" type="button" aria-controls="interactive" aria-selected="false">Interactive</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agency" type="button" aria-controls="agency" aria-selected="false">Agency</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#technical" type="button" aria-controls="technical" aria-selected="false">Technical Inofrmation</button>
+                    </li>
                 </ul>
-
-                <h2>MCS Program Links</h2>
-                <ul>
-                    <li><a href="https://nextcentury.atlassian.net/wiki/spaces/MCSC/overview" target="_blank">MCS Confluence</a> (requires login)</li>
-                    <li><a href="https://mail.machinecommonsense.com/postorius/lists/" target="_blank">MCS Mailing Lists</a></li>
-                    <li><a href="https://eval.machinecommonsense.com/login" target="_blank">Evaluation Page (requires login)</a></li>
-                    <li><a href="submission.html">Evaluation Submission Page</a></li>
-                </ul>
             </div>
+        </nav>
 
-            <div class="examples-text">
-                <h2>Examples</h2>
-                <div>Violation of expectation examples using IntPhys (<a href="https:/www.intphys.com/" target="_blank">https://intphys.com/</a>)</div>
-            </div>
-        </div>
-
-        <div class="examples-outer-container">
-
-                <div class="example-holder">
-                    <div class="example-image"><img src="img/test_1.gif"></div>
-                    <div class="example-text">Classic IntPhys Example</div>
-                </div>
-                <div class="example-holder">
-                    <div class="example-image"><img src="img/test_2.gif"></div>
-                    <div class="example-text">Stationary occluder with a mobile observer</div>
-                </div>
-                <div class="example-holder">
-                    <div class="example-image"><img src="img/test_3.gif"></div>
-                    <div class="example-text">Occluder drops from top of scene with constant velocity</div>
-                </div>
-                <div class="example-holder">
-                    <div class="example-image"><img src="img/test_4.gif"></div>
-                    <div class="example-text">Occluder falls from top of scene with physics enabled</div>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="program" role="tabpanel" aria-labelledby="program-tab">
+                <div class="main-text">
+                    <div class="intro-text">The Machine Common Sense (MCS) program seeks to address the challenge of machine common sense by pursuing two broad strategies. Both envision machine common sense as a computational service, or as machine commonsense services. The first strategy aims to create a service that learns from experience, like a child, to construct computational models that mimic the core domains of child cognition for objects (intuitive physics), agents (intentional actors), and places (spatial navigation). The second strategy seeks to develop a service that learns from reading the Web, like a research librarian, to construct a commonsense knowledge repository capable of answering natural language and image-based questions about commonsense phenomena. </div>
+        
+                    <div class="overview-text">
+                        <h2>Project Overview and Background</h2>
+                        <ul>
+                            <li><a href="https://www.darpa.mil/program/machine-common-sense" target="_blank">DARPA Machine Common Sense Page</a></li>
+                            <li><a href="https://arxiv.org/abs/1810.07528" target="_blank">Concept Paper at Arxiv</a></li>
+                            <li>Proposer's Day <a href="https://www.youtube.com/watch?v=rSrzMGqkU-M" target="_blank">YouTube Video</a></li>
+                        </ul>
+        
+                        <h2>MCS Program Links</h2>
+                        <ul>
+                            <li><a href="https://nextcentury.atlassian.net/wiki/spaces/MCSC/overview" target="_blank">MCS Confluence</a> (requires login)</li>
+                            <li><a href="https://mail.machinecommonsense.com/postorius/lists/" target="_blank">MCS Mailing Lists</a></li>
+                            <li><a href="https://eval.machinecommonsense.com/login" target="_blank">Evaluation Page (requires login)</a></li>
+                            <li><a href="submission.html">Evaluation Submission Page</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
+            <div class="tab-pane fade" id="passive" role="tabpanel" aria-labelledby="passive-tab">
+                <div class="main-text">
+                    <h3>Passive Physics Tasks</h3>
+                    <div class="mcs-test-types">
+                        <div style="display:flex;">
+                            <ul class="nav flex-column">
+                                <li class="nav-item line-top-divider">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#collisions" type="button" aria-controls="collisions" aria-selected="true">Collisions</button>
+                                </li>
+                                <li class="nav-item line-top-divider">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#gravity" type="button" aria-controls="gravity" aria-selected="false">Gravity Support</button>
+                                </li>
+                                <li class="nav-item line-top-divider">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#objperm" type="button" aria-controls="objperm" aria-selected="false">Object Permanence</button>
+                                </li>
+                                <li class="nav-item line-top-divider">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shapeconst" type="button" aria-controls="shapeconst" aria-selected="false">Shape Constancy</button>
+                                </li>
+                                <li class="nav-item line-bottom-divider">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#spatiotemporal" type="button" aria-controls="spatiotemporal" aria-selected="false">Spatio Temporal Continuity</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="display:flex;" class="tab-content" id="myTabPassiveContent">
+                            <div class="tab-pane fade show active" id="collisions" role="tabpanel" aria-labelledby="collisions-tab">
+                                <div class="type-holder">
+                                    <h4>Collisions</h4>
+                                    <div class="text-description">The collision task will test the performer-agent's commonsense reasoning about how one moving object will launch another object into action if they collide. These objects will be seen to move across the screen, sometimes encountering occluders that they will pass behind. Sometimes a stationary object will be present on screen at the beginning of the scene; sometimes there will be no objects present on screen at the beginning of the scene. Each scene will begin with a moving object entering from off screen. This object will move across the screen, sometimes disappearing behind an occluder as it moves. Each scene will also show an object moving off screen. Sometimes moving and stationary objects will clearly be on the same path, and sometimes these objects will clearly be at different depths (i.e., one object will be closer to the performer-agent than the other). The moving object that enters at the start of the scene may or may not be the same object that moves off screen at the end of the scene. In this way, the movement of one or two objects may or may not violate the principles of causality (i.e., that an object should be launched into motion when contacted by another object, and objects do not spontaneously begin moving on their own). The performer-agent will be required to consider how objects are arranged in depth and whether one object should launch another object into movement.</div>
+                                    <div class="videos-holder">
+                                        <div>
+                                            <h6>Plausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_alpha_0001_08_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+                                        <div>
+                                            <h6>Implausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_alpha_0001_09_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="gravity" role="tabpanel" aria-labelledby="gravity-tab">
+                                <div class="type-holder">
+                                    <h4>Gravity Support</h4>
+                                    <div class="text-description">This task will test AI systems' common sense about the nature of support - the notion that objects must be supported or else they will fall. This task will not assess other types of competencies associated with gravity such as the speed or trajectory of falling objects. Additionally, only an understanding of support will be assessed; tasks will not assess other forces such as friction, momentum, or inertia.  In this task, objects will be placed (not fall) from above, onto another object such that they are either well supported (plausible) or not well supported (implausible).</div>
+                                    <div class="videos-holder">
+                                        <div>
+                                            <h6>Plausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_bravo_0001_04_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+                                        <div>
+                                            <h6>Implausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_bravo_0001_03_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="objperm" role="tabpanel" aria-labelledby="objperm-tab">
+                                <div class="type-holder">
+                                    <h4>Object Permanence</h4>
+                                    <div class="text-description">Object permanence is the understanding that objects or people continue to exist even when they cannot be seen.  This will be tested in a variety of ways.  Objects will be seen to move across the screen, always encountering an occluder that they will move behind. Sometimes the objects will emerge from behind the occluder in turn and move across the entire screen. Sometimes the objects will not re-appear after moving behind an occluder. Sometimes the objects will subsequently be revealed behind the other occluder when the occluder is raised, and sometimes the occluders will be raised to reveal no objects at all. In this way, objects will sometimes appear or disappear in a way that violates object permanence. Some objects will move across the screen in a single plane, perpendicular to the AI’s line of sight. Some objects will move across the screen in straight lines, but beginning and ending in different depth planes.</div>
+                                    <div class="videos-holder">
+                                        <div>
+                                            <h6>Plausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_charlie_0007_35_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+                                        <div>
+                                            <h6>Implausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_charlie_0007_04_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="shapeconst" role="tabpanel" aria-labelledby="shapeconst-tab">
+                                <div class="type-holder">
+                                    <h4>Shape Constancy</h4>
+                                    <div class="text-description">A form of perceptual constancy in which a familiar object tends to retain its perceived shape despite radical changes in the pattern of retinal stimulation resulting from differences in its orientation.   In these scenarios it is expected that a shape that moves behind an occlude will not change into another shape, thus remaining the original shape throughout the trial.</div>
+                                    <div class="videos-holder">
+                                        <div>
+                                            <h6>Plausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_delta_0001_08_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>
+                                        <div>
+                                            <h6>Implausible Scene</h6>
+                                            <video width="350" height="250" controls="controls">
+                                                <source src="https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_delta_0001_03_visual.mp4" type="video/mp4">
+                                            </video>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="spatiotemporal" role="tabpanel" aria-labelledby="spatiotemporal-tab">spatiotemporal</div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="interactive" role="tabpanel" aria-labelledby="interactive-tab">Interactive Tasks</div>
+            <div class="tab-pane fade" id="agency" role="tabpanel" aria-labelledby="agency-tab">Agency Tasks</div>
+            <div class="tab-pane fade" id="technical" role="tabpanel" aria-labelledby="interactive-tab">Technical Information</div>
+          </div>
     </body>
 </html>
