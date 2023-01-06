@@ -347,6 +347,11 @@ export class App extends React.Component {
                             <EvalStatus newState={this.state}/>
                         </Route>
                     </Switch>
+
+                    <div className="mcs-footer">
+                        <div className="footer-text">This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA). The views, opinions and/or findings expressed are those of the author and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.</div>
+                        <div className="footer-link"><a href="https://www.darpa.mil/program/machine-common-sense" target="_blank">DARPA's Machine Common Sense (MCS) Program Page</a></div>
+                    </div>
                 </div>
             </Router>
         );
