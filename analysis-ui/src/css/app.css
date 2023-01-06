@@ -217,7 +217,7 @@ ol, ul {
 }
 
 .layout-board {
-    margin-bottom: 50px;
+    margin-bottom: 10px;
     display: flex;
     background-color: #F8F8F8;
 }
@@ -250,8 +250,11 @@ ol, ul {
 }
 
 .scores_header {
-    display: flex;
     margin: 10px 10px 0 10px;
+}
+
+.scores-header-passing-score {
+    font-size: 10px;
 }
 
 .scenes_header {
@@ -701,7 +704,6 @@ ol, ul {
 
 .home-container {
     background-color: #F8F8F8;
-    height: 100vh;
 }
 
 .charts-container {
@@ -929,6 +931,8 @@ ol, ul {
 
 .query-tab-contents {
     background-color: white;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 10px;
 }
 
 .query-tab-controls {
@@ -1319,7 +1323,6 @@ ol, ul {
 
 .layout {
     background-color: #F8F8F8;
-    height: 100vh;
 }
 
 .scene-container {
@@ -1548,3 +1551,29 @@ nav.MuiList-root.nav-list.MuiList-padding {
     top: -30px;
 }
 
+.incorrect-scenes-grid {
+    margin: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    grid-auto-rows: 40px;
+    border: 1px solid #dddddd;
+}
+
+.incorrect-scenes-grid div{
+    border: 1px solid #dddddd;
+    padding: 7px 0 0 10px;
+}
+
+.mcs-footer {
+    background-color: #F8F8F8;
+    padding-bottom: 15px;
+}
+
+.mcs-footer div{
+    text-align: center;
+    font-size: 10px;
+}
+
+body {
+    background-color: #F8F8F8 !important;
+}

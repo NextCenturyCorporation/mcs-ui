@@ -149,6 +149,7 @@ const mcsTypeDefs = gql`
     getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean, statType: String, sliceLevel: Int, sliceType: String, sliceKeywords: JSON): JSON
     getScoreCardData(eval: String, categoryType: String, performer: String, metadata: String): JSON
     getTestTypeOverviewData(eval: String, categoryType: String): JSON
+    getIncorrectAllPerformers(eval: String, categoryType: String, metadata: String): JSON
   }
 
   type Mutation {
@@ -588,6 +589,50 @@ const mcsResolvers = {
             } else {
                 return processHyperCubeStats(hypercubeStats, args.useDidNotAnswer, "slices", "slice", args.sliceLevel,  args.sliceType, args.sliceKeywords);
             }
+        },
+        getIncorrectAllPerformers: async(obj, args, context, infow) =>{
+            let allIncorrect = [];
+            let sceneNames = [];
+
+            const searchObject = {
+                "category_type": args.categoryType,
+                "metadata": args.metadata
+            };
+
+            const projectObject = {
+                "correct": "$score.score",
+                "test_num": "$test_num",
+                "scene_num": "$scene_num",
+                "name": "$name"
+            };
+
+            // Group test results by test number and scene number regardless of correct/incorrect 
+            const testResults = await mcsDB.db.collection(args.eval).aggregate([
+                {"$match": searchObject}, {"$group": {"_id": projectObject, "count": {"$sum": 1}}
+            }]).toArray();
+
+            // Loop through the groups, ignore the correct groups, for each incorrect group, check to see if 
+            //   there is a corresponding correct group, if there is none, that means all results were incorrect
+            //   add that incorrect group to the array to be returned
+            for(let x=0; x < testResults.length; x++) {
+                if(testResults[x]._id.correct === 0) {
+                    const findCorrect = testResults.find(element => 
+                        element._id.scene_num === testResults[x]._id.scene_num &&
+                        element._id.test_num === testResults[x]._id.test_num &&
+                        element._id.correct === 1);
+                    
+                    if(findCorrect === undefined || findCorrect === null) {
+                        allIncorrect.push(testResults[x]._id);
+                    }
+                }
+
+                sceneNames.push(testResults[x]._id.name);
+            }
+
+            // Remove any duplicates from sceneNames Array
+            sceneNames = [...new Set(sceneNames)];
+
+            return {"allIncorrectScenes": allIncorrect, "totalScenes": sceneNames.length};
         },
         getScoreCardData: async(obj, args, context, infow) =>{
             const searchObject = {
