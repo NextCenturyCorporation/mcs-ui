@@ -120,11 +120,7 @@ class ChartContainer extends React.Component {
     }
 
     getDisplayName() {
-        // if(this.props.eval.value.indexOf("2") < 0 && this.props.eval.value.indexOf("3") < 0) {
-        //     return this.toUpperFirstLetters(this.props.category + " " + this.props.domainType);
-        // } else {
-            return this.toUpperFirstLetters(this.props.domainType);
-        //}
+        return this.toUpperFirstLetters(this.props.domainType);
     }
 
     render() {
