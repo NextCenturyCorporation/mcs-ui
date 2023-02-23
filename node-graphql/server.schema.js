@@ -143,7 +143,7 @@ const mcsTypeDefs = gql`
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String, evalName: String): JSON
     getUsers: JSON
-    getEvalTestTypes(eval: String): JSON
+    getEvalDomainTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
     getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean, statType: String, sliceLevel: Int, sliceType: String, sliceKeywords: JSON): JSON
@@ -496,19 +496,19 @@ const mcsResolvers = {
 
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable, historyCollection: mongoQueryObject.historyCollection};
         },
-        getEvalTestTypes: async(obj, args, context, infow)=> {
+        getEvalDomainTypes: async(obj, args, context, infow)=> {
             return await mcsDB.db.collection(args.eval).aggregate( 
                 [
-                    {"$group": { "_id": { testType: "$test_type", category: "$category" } } }
+                    {"$group": { "_id": { domainType: "$domain_type", category: "$category" } } }
                 ]
             ).toArray();;
         },
         getHomeChartOptions: async(obj, args, context, infow)=> {
             const metadata =  await mcsDB.db.collection(args.eval).distinct(
-                "metadata", {"test_type": args.evalType}).then(result => {return result});
+                "metadata", {"domain_type": args.evalType}).then(result => {return result});
 
             const hasNovelty = await mcsDB.db.collection(args.eval.replace("results", "scenes")).find({
-                "goal.sceneInfo.untrained.any": true, "goal.sceneInfo.secondaryType": args.evalType}).count() > 0;
+                "goal.sceneInfo.untrained.any": true, "goal.sceneInfo.domainType": args.evalType}).count() > 0;
             
             return getChartOptions(args.evalType, metadata, hasNovelty);
         },
@@ -522,7 +522,7 @@ const mcsResolvers = {
             };
 
             let searchObject = {
-                "test_type": args.evalType
+                "domain_type": args.evalType
             };
 
             if(args.metadata !== "total" && args.metadata !== undefined && args.metadata !== null) {

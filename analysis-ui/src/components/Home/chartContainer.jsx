@@ -51,12 +51,12 @@ class ChartContainer extends React.Component {
         }
     }
 
-    toUpperFirstLetters(testType) {
-        const testTypeArray = testType.split(" ");
-        for (let i = 0; i < testTypeArray.length; i++) {
-            testTypeArray[i] = testTypeArray[i].charAt(0).toUpperCase() + testTypeArray[i].slice(1);
+    toUpperFirstLetters(domainType) {
+        const domainTypeArray = domainType.split(" ");
+        for (let i = 0; i < domainTypeArray.length; i++) {
+            domainTypeArray[i] = domainTypeArray[i].charAt(0).toUpperCase() + domainTypeArray[i].slice(1);
         }
-        return testTypeArray.join(" ");
+        return domainTypeArray.join(" ");
     }
 
     toggleChartOptions(target) {
@@ -81,10 +81,10 @@ class ChartContainer extends React.Component {
 
     getChartLegendLabel() {
         let numPercentLabel = this.props.isPercent ? "% " : "Number of ";
-        let testLabel = this.props.testType.toLowerCase() === 'interactive' ? "Goal Achieved " : "Correct ";
+        let testLabel = this.props.domainType.toLowerCase().includes('interactive') ? "Goal Achieved " : "Correct ";
 
         if(this.state.isPlausibility) {
-            testLabel = this.props.testType.toLowerCase() === 'agents' ? "Expectness " : "Plausibility ";
+            testLabel = this.props.domainType.toLowerCase().includes('agents') ? "Expectness " : "Plausibility ";
         }
 
         if(this.state.isNovelty) {
@@ -120,11 +120,11 @@ class ChartContainer extends React.Component {
     }
 
     getDisplayName() {
-        if(this.props.eval.value.indexOf("2") < 0 && this.props.eval.value.indexOf("3") < 0) {
-            return this.toUpperFirstLetters(this.props.category + " " + this.props.testType);
-        } else {
-            return this.toUpperFirstLetters(this.props.testType);
-        }
+        // if(this.props.eval.value.indexOf("2") < 0 && this.props.eval.value.indexOf("3") < 0) {
+        //     return this.toUpperFirstLetters(this.props.category + " " + this.props.domainType);
+        // } else {
+            return this.toUpperFirstLetters(this.props.domainType);
+        //}
     }
 
     render() {
@@ -141,18 +141,18 @@ class ChartContainer extends React.Component {
                             defaultValue={this.state.chartOption}
                         />
                     </div>
-                    {this.props.testType.toLowerCase() !== 'agents' &&
+                    {this.props.domainType.toLowerCase() !== 'agents' &&
                         <div className="chart-weight-toggle">
                             <ToggleButtonGroup type="checkbox" value={this.state.isWeighted} onChange={this.handleWeightedToggle}>
-                                <ToggleButton variant="secondary" value={true}>{this.props.testType.toLowerCase() === 'agents' ? 'Paired' : 'Weighted'}</ToggleButton>
-                                <ToggleButton variant="secondary" value={false}>{this.props.testType.toLowerCase() === 'agents' ? 'Unpaired' : 'Unweighted'}</ToggleButton>
+                                <ToggleButton variant="secondary" value={true}>{this.props.domainType.toLowerCase() === 'passive agents' ? 'Paired' : 'Weighted'}</ToggleButton>
+                                <ToggleButton variant="secondary" value={false}>{this.props.domainType.toLowerCase() === 'passive agents' ? 'Unpaired' : 'Unweighted'}</ToggleButton>
                             </ToggleButtonGroup>
                         </div>
                     }
                 </div>
                 <Query query={get_home_chart} variables={{
                         "eval": this.props.eval.value,
-                        "evalType": this.props.testType,
+                        "evalType": this.props.domainType,
                         "isPercent": this.props.isPercent,
                         "metadata": this.state.metadata,
                         "isPlausibility": this.state.isPlausibility,
