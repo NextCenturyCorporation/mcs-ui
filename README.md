@@ -63,7 +63,7 @@ docker exec -it mcs-mongo bash
 gunzip -c data_con_backup_all.tar.gz | tar xopf -
 # Unzip and import necessary collections
 gunzip -c data_con_backup_except_eval.tar.gz | tar xopf -
-mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs ./data_con_backup_except_eval/mcs
+mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs ./data_con_except_eval/mcs
 # Then download whichever collections you'd like to have locally
 gunzip -c data_con_backup_scenes_<eval_num>.tar.gz | tar xopf -
 gunzip -c data_con_backup_results_<eval_num>.tar.gz | tar xopf -
