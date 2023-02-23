@@ -67,8 +67,8 @@ mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs
 # Then download whichever collections you'd like to have locally
 gunzip -c data_con_backup_scenes_<eval_num>.tar.gz | tar xopf -
 gunzip -c data_con_backup_results_<eval_num>.tar.gz | tar xopf -
-mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs ./data_con_backup_scenes_<eval_num>/mcs
-mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs ./data_con_backup_results_<eval_num>/mcs
+mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs ./data_con_scenes_<eval_num>/mcs
+mongorestore -u mongomcs --authenticationDatabase mcs -p mongomcspassword -d mcs ./data_con_results_<eval_num>/mcs
 ```
 
 ### 4: Rebuild UI
