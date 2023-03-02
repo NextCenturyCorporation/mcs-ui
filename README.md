@@ -8,6 +8,11 @@ UI Applications for MCS.
 ```
 docker build --tag node-graphql node-graphql/.
 docker build --tag node-graphql-staging node-graphql/. --build-arg PORT_ARG=9111
+
+NOTE: IF you are on a MAC with a M1 CHIP you need to build the graphql end points with these commands:
+docker build --tag node-graphql node-graphql/. --build-arg BUILD_ENV=ARM
+docker build --tag node-graphql-staging node-graphql/. --build-arg PORT_ARG=9111 --build-arg BUILD_ENV=ARM
+
 docker build --tag analysis-ui analysis-ui/.
 docker build --tag analysis-ui-staging analysis-ui/. --build-arg PORT_ARG=2000
 

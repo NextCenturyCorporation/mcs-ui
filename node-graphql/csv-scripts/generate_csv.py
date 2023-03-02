@@ -35,8 +35,6 @@ def create_csv_file(db_index, eval_name, db_string, bucket_name):
         db_index + " --type=csv --out=" + csv_file_name + " --fieldFile=" + 
         keys_file + " -d=mcs")
 
-    print(csv_file_name)
-    print(bucket_name)
     upload_csv_file(csv_file_name, bucket_name)
 
 
