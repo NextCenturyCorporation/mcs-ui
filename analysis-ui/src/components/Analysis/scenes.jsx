@@ -470,7 +470,7 @@ class Scenes extends React.Component {
     }
 
     getIfNotIncludedInPassingScore = (sceneHistory) => {
-        if(sceneHistory["score"]["weighted_score_worth"] === 0) {
+        if(sceneHistory != null && sceneHistory["score"]["weighted_score_worth"] === 0) {
             return true;
         }
 
