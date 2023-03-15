@@ -46,7 +46,8 @@ const scorecardFieldsLatest = [
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"},
     {"title": "Interact With Agent", "key": "totalInteractWithAgent"},
-    {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"}
+    {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"},
+    {"title": "Interact With Blob First", "key": "totalInteractWithBlobFirst"}
 ];
 class ScoreCardTable extends React.Component {
 
