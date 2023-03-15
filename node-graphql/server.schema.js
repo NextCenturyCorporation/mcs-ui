@@ -694,6 +694,11 @@ const mcsResolvers = {
                         ]
                     }
                 },
+                "totalPickupNonTarget": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.pickup_non_target", 1, 0 ]
+                    }
+                },
                 // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
                 "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },

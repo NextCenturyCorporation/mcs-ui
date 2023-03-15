@@ -42,6 +42,7 @@ const scorecardFieldsLatest = [
     {"title": "Fastest Path", "key": "totalFastestPath"},
     {"title": "Move Tool Success (Push/Rotate/etc)", "key": "totalMoveToolSuccess"},
     {"title": "Move Tool Failure (Push/Rotate/etc)", "key": "totalMoveToolFailure"},
+    {"title": "Pickup Non-Target", "key": "totalPickupNonTarget"},
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"},
     {"title": "Interact With Agent", "key": "totalInteractWithAgent"},
