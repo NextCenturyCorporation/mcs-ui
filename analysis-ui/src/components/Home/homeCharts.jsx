@@ -98,14 +98,14 @@ class HomeCharts extends React.Component {
                             if (error) return <div>Error</div>
 
                             let domainTypes = data[evalDomainTypes];
-                            domainTypes.sort((a, b) => (a._id.domainType > b._id.domainType) ? 1 : -1);
+                            domainTypes.sort();
                             
                             return (
                                 <div className='charts-container'>
                                     {
                                         domainTypes.map(domainType =>
                                             <Query query={get_home_chart_options} variables={
-                                                {"eval": this.state.currentEval.value, "evalType": domainType._id.domainType}} key={"home_chart_" + domainType._id.domainType}>
+                                                {"eval": this.state.currentEval.value, "evalType": domainType}} key={"home_chart_" + domainType}>
                                             {
                                                 ({ loading, error, data }) => {
                                                     if (loading) return <div>No stats yet</div> 
@@ -114,7 +114,7 @@ class HomeCharts extends React.Component {
                                                     const chartOptions = data[homeChartOptions]
 
                                                     return (
-                                                        <ChartContainer domainType={domainType._id.domainType} category={domainType._id.category} isPercent={this.state.numPercentToggle === 'percent'} 
+                                                        <ChartContainer domainType={domainType} isPercent={this.state.numPercentToggle === 'percent'} 
                                                             eval={this.state.currentEval} chartOptions={chartOptions} useDidNotAnswer={this.state.useDidNotAnswer}/>
 
                                                     )

@@ -497,11 +497,7 @@ const mcsResolvers = {
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable, historyCollection: mongoQueryObject.historyCollection};
         },
         getEvalDomainTypes: async(obj, args, context, infow)=> {
-            return await mcsDB.db.collection(args.eval).aggregate( 
-                [
-                    {"$group": { "_id": { domainType: "$domain_type", category: "$category" } } }
-                ]
-            ).toArray();;
+            return await mcsDB.db.collection(args["eval"]).distinct("domain_type").then(result => {return result});
         },
         getHomeChartOptions: async(obj, args, context, infow)=> {
             const metadata =  await mcsDB.db.collection(args.eval).distinct(
