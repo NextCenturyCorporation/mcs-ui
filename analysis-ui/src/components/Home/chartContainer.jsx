@@ -162,6 +162,7 @@ class ChartContainer extends React.Component {
 
                             let chartData = data[getHomeChart]
                             const performers = this.getChartKeys(chartData.data);
+                            performers.sort()
 
                             return (
                                 <ResultsChart chartKeys={performers} chartData={this.checkDataForUndefined(chartData.data, performers)} 

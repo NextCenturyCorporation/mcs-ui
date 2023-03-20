@@ -50,10 +50,12 @@ const scorecardFieldsLatest = [
     {"title": "Rotate Tool Failures", "key": "totalRotateToolFailure"},
     {"title": "Torque Tool Successes", "key": "totalTorqueToolSuccess"},
     {"title": "Torque Tool Failures", "key": "totalTorqueToolFailure"},
+    {"title": "Pickup Non-Target", "key": "totalPickupNonTarget"},
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"},
     {"title": "Interact With Agent", "key": "totalInteractWithAgent"},
-    {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"}
+    {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"},
+    {"title": "Interact With Blob First", "key": "totalInteractWithBlobFirst"}
 ];
 class ScoreCardTable extends React.Component {
 

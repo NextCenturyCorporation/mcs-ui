@@ -682,10 +682,20 @@ const mcsResolvers = {
                 "totalRotateToolFailure": { "$sum" : "$score.scorecard.tool_usage.RotateObject_failed" },
                 "totalTorqueToolSuccess": { "$sum" : "$score.scorecard.tool_usage.TorqueObject" },
                 "totalTorqueToolFailure": { "$sum" : "$score.scorecard.tool_usage.TorqueObject_failed" },
+                "totalPickupNonTarget": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.pickup_non_target", 1, 0 ]
+                    }
+                },
                 // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
                 "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
                 "totalInteractWithAgent": { "$sum" : "$score.scorecard.interact_with_agent" },
+                "totalInteractWithBlobFirst": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.interacted_with_blob_first", 1, 0 ]
+                    }
+                },
                 "totalWalkedIntoStructures": { "$sum" : "$score.scorecard.walked_into_structures" }
             }
 
