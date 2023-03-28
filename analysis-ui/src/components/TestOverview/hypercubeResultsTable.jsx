@@ -9,6 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
+import SlicesFullChart from './sliceBarChartFull';
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
@@ -164,10 +165,9 @@ class HyperCubeResultsTable extends React.Component {
                         if (error) return <div>Overview data does not exist for these attributes.</div>
 
                         hyperCubeData = data[hyperCubeDataQueryName]["stats"];
-
                         return (
                             <>
-                                
+
                                 <Table className="score-table" aria-label="simple table" stickyHeader>
                                     <TableHead>
                                         <TableRow>
@@ -188,6 +188,8 @@ class HyperCubeResultsTable extends React.Component {
                                         )}
                                     </TableBody>
                                 </Table>
+                                
+                                <SlicesFullChart/>
                             </>
                         )
                     }
