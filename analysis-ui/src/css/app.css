@@ -730,6 +730,14 @@ ol, ul {
     overflow: visible !important;
 }
 
+.flex-chart-left {
+    display: flex;
+}
+
+.flex-chart-left svg{
+    overflow: visible !important;
+}
+
 .results-chart-container {
     height: 900px;
     width: 900px;

@@ -30,7 +30,7 @@ const MyGroupedBar = ({ data, keys} ) => {
         groupMode="grouped"
         maxValue={1.0}
         height={500}
-        width={900}
+        width={800}
         indexBy={"performer"}
         margin={{ top: 60, right: 110, bottom: 60, left: 80 }}
         padding={0.2}
@@ -72,35 +72,6 @@ const MyGroupedBar = ({ data, keys} ) => {
     />;
 };
 
-/**
- * 
- *         layers={[
-            "grid",
-            "axes",
-            "bars",
-            "markers",
-            "legends",
-            "annotations",
-            (props) => <ValueOutside props={props}/>
-          ]}
-
-                  legends={[
-            {
-                dataFrom: 'keys',
-                anchor: 'top',
-                direction: 'row',
-                justify: false,
-                translateX: 10,
-                translateY: -20,
-                itemsSpacing: 2,
-                itemWidth: 70,
-                itemHeight: 10,
-                itemDirection: 'left-to-right',
-                itemOpacity: 0.85,
-                symbolSize: 20,
-            }
-        ]}
- */
 
 
 /* MCS-1598: TODO: NEED TO MAKE BETTER LEGEND, 
@@ -131,8 +102,8 @@ class SlicesFullChart extends React.Component {
         console.log(this.state.data)
         console.log(this.state.keys)
         return (
-            <div style={this.state.styles} className="flex-chart-center">
-                <div className="results-chart-container">
+            <div style={this.state.styles} className="flex-chart-left">
+                <div>
                     <MyGroupedBar data={this.state.fakeData} keys={this.state.someKeys}/>
                 </div>
           </div>

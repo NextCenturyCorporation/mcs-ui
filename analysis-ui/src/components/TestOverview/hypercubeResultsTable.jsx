@@ -189,7 +189,8 @@ class HyperCubeResultsTable extends React.Component {
                                     </TableBody>
                                 </Table>
                                 
-                                <SlicesFullChart/>
+                                {this.props.hyperCubePivotValue !== "hyperCubeID" && <SlicesFullChart/>}
+                                
                             </>
                         )
                     }
