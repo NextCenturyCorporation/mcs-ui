@@ -40,7 +40,7 @@ const MyGroupedBar = ({ data, keys} ) => {
         labelFormat={d => <tspan></tspan>}
         axisLeft={{
             tickRotation: 0,
-            legend: 'Hit Rate',
+            legend: 'Mean',
             legendOffset: -45,
             legendPosition: 'middle'
         }}
@@ -74,7 +74,7 @@ const MyGroupedBar = ({ data, keys} ) => {
 
 
 
-/* MCS-1598: TODO: NEED TO MAKE BETTER LEGEND, 
+/* MCS-1598: TODO: 
 SEE IF CHART TYPE WORKS FOR SWITCHING UP DATA,
 HOOK IN REAL DATA,
 COLORS? */
@@ -88,23 +88,22 @@ class SlicesFullChart extends React.Component {
 
         this.state = { 
             style: {fontFamily: "Lato", textAlign: "center"},
-            fakeData: [
+            /*fakeData: [
                 {performer: "mess", "object moves off screen first object": 0.7223, "object moves off screen second object": 0.4550}, 
                 {performer: "cora", "object moves off screen first object": 0.423, "object moves off screen second object": 0.4550}, 
             ],
-            someKeys: ["object moves off screen first object", "object moves off screen second object"]
+            someKeys: ["object moves off screen first object", "object moves off screen second object"],
+            realData: []*/
         }
+
     }
 
 
     render() {
-
-        console.log(this.state.data)
-        console.log(this.state.keys)
         return (
             <div style={this.state.styles} className="flex-chart-left">
                 <div>
-                    <MyGroupedBar data={this.state.fakeData} keys={this.state.someKeys}/>
+                    <MyGroupedBar data={this.props.data} keys={this.props.keys}/>
                 </div>
           </div>
         );

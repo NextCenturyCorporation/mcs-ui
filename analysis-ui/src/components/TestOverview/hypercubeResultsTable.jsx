@@ -66,6 +66,7 @@ const KeywordEmptyContainer = ({ children, ...props }) => {
 };
 
 let hyperCubeData;
+let chartData;
 
 class HyperCubeResultsTable extends React.Component {
 
@@ -90,6 +91,33 @@ class HyperCubeResultsTable extends React.Component {
 
     setKeywords(keywords) {
         this.setState({"sliceKeywords": keywords});
+    }
+
+    setChartData(data, performer) {
+        let newData = []
+        let keys = []
+        let ignoreSlices = ["Totals", "Totals Plausible", "Totals Implausible"]
+        let newItem = {
+            performer: performer
+        }
+        data.forEach(item =>{
+            if('slice' in item && (!ignoreSlices.includes(item['slice'])) &&
+                'mean' in item && item['mean'] !== "NaN") {
+                let sliceName = item['slice']
+
+                newItem[sliceName] = parseFloat(item['mean'])
+                keys.push(sliceName)
+            }
+        })
+
+        if(keys.length > 0) {
+            newData.push(newItem)
+        }
+
+        return {
+            data: newData,
+            keys: keys
+        }
     }
 
     render() {
@@ -165,6 +193,7 @@ class HyperCubeResultsTable extends React.Component {
                         if (error) return <div>Overview data does not exist for these attributes.</div>
 
                         hyperCubeData = data[hyperCubeDataQueryName]["stats"];
+                        chartData = this.setChartData(hyperCubeData, this.props.state.performer)
                         return (
                             <>
 
@@ -188,8 +217,7 @@ class HyperCubeResultsTable extends React.Component {
                                         )}
                                     </TableBody>
                                 </Table>
-                                
-                                {this.props.hyperCubePivotValue !== "hyperCubeID" && <SlicesFullChart/>}
+                                {this.props.hyperCubePivotValue !== "hyperCubeID" && <SlicesFullChart data={chartData.data} keys={chartData.keys}/>}
                                 
                             </>
                         )
