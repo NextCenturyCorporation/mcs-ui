@@ -1,27 +1,6 @@
 import React from 'react';
-import { Bar, BarDatum } from '@nivo/bar';
-import { generateCountriesData} from '@nivo/generators'
+import { Bar } from '@nivo/bar';
 
-//const data = [{"slice": "object moves off screen first object", value: 0.7275},
-//{"slice": "object moves off screen second object", "value": 0.4550}]
-//const keys = ["object moves off screen first object", "object moves off screen second object" ]
-const commonProps = {
-    width: 900,
-        height: 500,
-        margin: { top: 60, right: 110, bottom: 60, left: 80 },
-        data: [{slice: "object moves off screen first object", value: 0.7275},
-        {slice: "object moves off screen second object", value: 0.4550}],
-        indexBy: 'country',
-        keys: [],
-        padding: 0.2,
-        labelTextColor: 'inherit:darker(1.4)',
-        labelSkipWidth: 16,
-        labelSkipHeight: 16,
-
-    }
-
-// data, keys, chartIndex, maxVal, legendLabel, isPercent, incorrectData}) => 
-//
 //colors={["#00A0D2", "#444D5D", "#D95555", "#8A55D9", "#999D5D"]}
 const MyGroupedBar = ({ data, keys} ) => {
     return <Bar 
@@ -73,18 +52,11 @@ const MyGroupedBar = ({ data, keys} ) => {
 };
 
 
-
-/* MCS-1598: TODO: 
-SEE IF CHART TYPE WORKS FOR SWITCHING UP DATA,
-HOOK IN REAL DATA,
-COLORS? */
-
+/* MCS-1598: TODO: and/or clause, chart colors? */
 class SlicesFullChart extends React.Component {
 
     constructor(props) {
         super(props);
-
-
 
         this.state = { 
             style: {fontFamily: "Lato", textAlign: "center"},
@@ -92,8 +64,7 @@ class SlicesFullChart extends React.Component {
                 {performer: "mess", "object moves off screen first object": 0.7223, "object moves off screen second object": 0.4550}, 
                 {performer: "cora", "object moves off screen first object": 0.423, "object moves off screen second object": 0.4550}, 
             ],
-            someKeys: ["object moves off screen first object", "object moves off screen second object"],
-            realData: []*/
+            someKeys: ["object moves off screen first object", "object moves off screen second object"],*/
         }
 
     }
