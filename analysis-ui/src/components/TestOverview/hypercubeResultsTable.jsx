@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
-import SlicesFullChart from './sliceBarChartFull';
+import SlicesChart from './sliceBarChart';
 
 const hyperCubeDataQueryName = "getTestOverviewData";
 const getHyperCubeData = gql`
@@ -110,9 +110,7 @@ class HyperCubeResultsTable extends React.Component {
             }
         })
 
-        if(keys.length > 0) {
-            newData.push(newItem)
-        }
+        newData.push(newItem)
 
         return {
             data: newData,
@@ -217,7 +215,7 @@ class HyperCubeResultsTable extends React.Component {
                                         )}
                                     </TableBody>
                                 </Table>
-                                {this.props.hyperCubePivotValue !== "hyperCubeID" && <SlicesFullChart data={chartData.data} keys={chartData.keys}/>}
+                                {this.props.hyperCubePivotValue !== "hyperCubeID" && <SlicesChart data={chartData.data} keys={chartData.keys}/>}
                                 
                             </>
                         )

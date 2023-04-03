@@ -1,7 +1,6 @@
 import React from 'react';
 import { Bar } from '@nivo/bar';
 
-//colors={["#00A0D2", "#444D5D", "#D95555", "#8A55D9", "#999D5D"]}
 const MyGroupedBar = ({ data, keys} ) => {
     return <Bar 
         data={data} 
@@ -51,20 +50,13 @@ const MyGroupedBar = ({ data, keys} ) => {
     />;
 };
 
-
-/* MCS-1598: TODO: and/or clause, chart colors? */
-class SlicesFullChart extends React.Component {
+class SlicesChart extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = { 
-            style: {fontFamily: "Lato", textAlign: "center"},
-            /*fakeData: [
-                {performer: "mess", "object moves off screen first object": 0.7223, "object moves off screen second object": 0.4550}, 
-                {performer: "cora", "object moves off screen first object": 0.423, "object moves off screen second object": 0.4550}, 
-            ],
-            someKeys: ["object moves off screen first object", "object moves off screen second object"],*/
+            style: {fontFamily: "Lato", textAlign: "center"}
         }
 
     }
@@ -81,4 +73,4 @@ class SlicesFullChart extends React.Component {
     }
 }
 
-export default SlicesFullChart;
+export default SlicesChart;
