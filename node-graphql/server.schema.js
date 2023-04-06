@@ -143,7 +143,7 @@ const mcsTypeDefs = gql`
     getScenesAndHistoryTypes: [dropDownObj]
     getEvaluationStatus(eval: String, evalName: String): JSON
     getUsers: JSON
-    getEvalTestTypes(eval: String): JSON
+    getEvalDomainTypes(eval: String): JSON
     getHomeChartOptions(eval: String, evalType: String): JSON
     getHomeChart(eval: String, evalType: String, isPercent: Boolean, metadata: String, isPlausibility: Boolean, isNovelty: Boolean, isWeighted: Boolean, useDidNotAnswer: Boolean): JSON
     getTestOverviewData(eval: String, categoryType: String, performer: String, metadata: String, useDidNotAnswer: Boolean, weightedPassing: Boolean, statType: String, sliceLevel: Int, sliceType: String, sliceKeywords: JSON): JSON
@@ -496,19 +496,15 @@ const mcsResolvers = {
 
             return {results: results, sceneMap: sceneFieldLabelMapTable, historyMap: historyFieldLabelMapTable, historyCollection: mongoQueryObject.historyCollection};
         },
-        getEvalTestTypes: async(obj, args, context, infow)=> {
-            return await mcsDB.db.collection(args.eval).aggregate( 
-                [
-                    {"$group": { "_id": { testType: "$test_type", category: "$category" } } }
-                ]
-            ).toArray();;
+        getEvalDomainTypes: async(obj, args, context, infow)=> {
+            return await mcsDB.db.collection(args["eval"]).distinct("domain_type").then(result => {return result});
         },
         getHomeChartOptions: async(obj, args, context, infow)=> {
             const metadata =  await mcsDB.db.collection(args.eval).distinct(
-                "metadata", {"test_type": args.evalType}).then(result => {return result});
+                "metadata", {"domain_type": args.evalType}).then(result => {return result});
 
             const hasNovelty = await mcsDB.db.collection(args.eval.replace("results", "scenes")).find({
-                "goal.sceneInfo.untrained.any": true, "goal.sceneInfo.secondaryType": args.evalType}).count() > 0;
+                "goal.sceneInfo.untrained.any": true, "goal.sceneInfo.domainType": args.evalType}).count() > 0;
             
             return getChartOptions(args.evalType, metadata, hasNovelty);
         },
@@ -522,7 +518,7 @@ const mcsResolvers = {
             };
 
             let searchObject = {
-                "test_type": args.evalType
+                "domain_type": args.evalType
             };
 
             if(args.metadata !== "total" && args.metadata !== undefined && args.metadata !== null) {
@@ -672,32 +668,30 @@ const mcsResolvers = {
                 "totalRampFellOff": { "$sum" : "$score.scorecard.ramp_actions.ramp_fell_off" },
                 // end ramp stats
                 // start tool use stats
-                "totalMoveToolSuccess": { 
-                    "$sum" : {
-                        "$add": [
-                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject", 0] }
-                        ]
-                    }
-                },
-                "totalMoveToolFailure": { 
-                    "$sum" : {
-                        "$add": [
-                            { "$ifNull": ["$score.scorecard.tool_usage.MoveObject_failed", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.PushObject_failed", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.PullObject_failed", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.RotateObject_failed", 0] },
-                            { "$ifNull": ["$score.scorecard.tool_usage.TorqueObject_failed", 0] }
-                        ]
+                "totalMoveToolSuccess": { "$sum" : "$score.scorecard.tool_usage.MoveObject" },
+                "totalMoveToolFailure": { "$sum" : "$score.scorecard.tool_usage.MoveObject_failed" },
+                "totalPushToolSuccess": { "$sum" : "$score.scorecard.tool_usage.PushObject" },
+                "totalPushToolFailure": { "$sum" : "$score.scorecard.tool_usage.PushObject_failed" },
+                "totalPullToolSuccess": { "$sum" : "$score.scorecard.tool_usage.PullObject" },
+                "totalPullToolFailure": { "$sum" : "$score.scorecard.tool_usage.PullObject_failed" },
+                "totalRotateToolSuccess": { "$sum" : "$score.scorecard.tool_usage.RotateObject" },
+                "totalRotateToolFailure": { "$sum" : "$score.scorecard.tool_usage.RotateObject_failed" },
+                "totalTorqueToolSuccess": { "$sum" : "$score.scorecard.tool_usage.TorqueObject" },
+                "totalTorqueToolFailure": { "$sum" : "$score.scorecard.tool_usage.TorqueObject_failed" },
+                "totalPickupNonTarget": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.pickup_non_target", 1, 0 ]
                     }
                 },
                 // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
                 "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
                 "totalInteractWithAgent": { "$sum" : "$score.scorecard.interact_with_agent" },
+                "totalInteractWithBlobFirst": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.interacted_with_blob_first", 1, 0 ]
+                    }
+                },
                 "totalWalkedIntoStructures": { "$sum" : "$score.scorecard.walked_into_structures" }
             }
 

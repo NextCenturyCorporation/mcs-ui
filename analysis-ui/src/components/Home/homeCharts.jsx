@@ -6,10 +6,10 @@ import Select from 'react-select';
 import ChartContainer from './chartContainer';
 import Switch from "react-switch";
 
-const evalTestTypes = "getEvalTestTypes";
-const get_eval_test_types = gql`
-    query getEvalTestTypes($eval: String!){
-        getEvalTestTypes(eval: $eval) 
+const evalDomainTypes = "getEvalDomainTypes";
+const get_eval_domain_types = gql`
+    query getEvalDomainTypes($eval: String!){
+        getEvalDomainTypes(eval: $eval) 
     }`;
 
 const homeChartOptions = "getHomeChartOptions";
@@ -91,21 +91,21 @@ class HomeCharts extends React.Component {
                     </div>
                 </div>
                 {this.state.currentEval !== '' &&
-                    <Query query={get_eval_test_types} variables={{"eval": this.state.currentEval.value}}>
+                    <Query query={get_eval_domain_types} variables={{"eval": this.state.currentEval.value}}>
                     {
                         ({ loading, error, data }) => {
                             if (loading) return <div></div> 
                             if (error) return <div>Error</div>
 
-                            let testTypes = data[evalTestTypes];
-                            testTypes.sort((a, b) => (a._id.testType < b._id.testType) ? 1 : -1);
+                            let domainTypes = data[evalDomainTypes];
+                            domainTypes.sort();
                             
                             return (
                                 <div className='charts-container'>
                                     {
-                                        testTypes.map(testType =>
+                                        domainTypes.map(domainType =>
                                             <Query query={get_home_chart_options} variables={
-                                                {"eval": this.state.currentEval.value, "evalType": testType._id.testType}} key={"home_chart_" + testType._id.testType}>
+                                                {"eval": this.state.currentEval.value, "evalType": domainType}} key={"home_chart_" + domainType}>
                                             {
                                                 ({ loading, error, data }) => {
                                                     if (loading) return <div>No stats yet</div> 
@@ -114,7 +114,7 @@ class HomeCharts extends React.Component {
                                                     const chartOptions = data[homeChartOptions]
 
                                                     return (
-                                                        <ChartContainer testType={testType._id.testType} category={testType._id.category} isPercent={this.state.numPercentToggle === 'percent'} 
+                                                        <ChartContainer domainType={domainType} isPercent={this.state.numPercentToggle === 'percent'} 
                                                             eval={this.state.currentEval} chartOptions={chartOptions} useDidNotAnswer={this.state.useDidNotAnswer}/>
 
                                                     )
