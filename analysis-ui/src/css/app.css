@@ -719,6 +719,22 @@ ol, ul {
     margin: 10px 25px;
     min-height:150px;
 }
+/*
+.row .bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+*/
+
+.flex-test {
+    display: flex;
+    column-gap: 2em;
+}
+
+.flex-test svg{
+    overflow: visible !important;
+}
 
 .flex-chart-center {
     display: flex;

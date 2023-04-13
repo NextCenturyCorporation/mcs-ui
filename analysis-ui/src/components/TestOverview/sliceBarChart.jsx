@@ -1,8 +1,10 @@
 import React from 'react';
-import { Bar } from '@nivo/bar';
+import { Bar, BarCanvas } from '@nivo/bar';
 
-const MyGroupedBar = ({ data, keys} ) => {
-    return <Bar 
+// TODO: MCS-1598: sort and color stuff
+// also add annotations for SEM +/-
+const MyGroupedBar = ({ data, keys, leftLegendTitle} ) => {
+    return <Bar
         data={data} 
         keys={keys}
         groupMode="grouped"
@@ -10,15 +12,16 @@ const MyGroupedBar = ({ data, keys} ) => {
         height={500}
         width={800}
         indexBy={"performer"}
-        margin={{ top: 60, right: 110, bottom: 60, left: 80 }}
+        margin={{ top: 100, right: 110, bottom: 60, left: 80 }}
         padding={0.2}
+        innerPadding={5}
         labelTextColor={'inherit:darker(1.4)'}
         labelSkipWidth={16}
         labelSkipHeight={16}    
         labelFormat={d => <tspan></tspan>}
         axisLeft={{
             tickRotation: 0,
-            legend: 'Mean',
+            legend: leftLegendTitle,
             legendOffset: -45,
             legendPosition: 'middle'
         }}
@@ -34,11 +37,11 @@ const MyGroupedBar = ({ data, keys} ) => {
         legends={[
             {
                 dataFrom: 'keys',
-                anchor: 'top-right',
+                anchor: 'top',
                 direction: 'column',
                 justify: false,
-                translateX: 150,
-                translateY: 0,
+                translateX: 0,
+                translateY: -60,
                 itemsSpacing: 2,
                 itemWidth: 180,
                 itemHeight: 20,
@@ -61,14 +64,12 @@ class SlicesChart extends React.Component {
 
     }
 
-
     render() {
+
         return (
-            <div style={this.state.styles} className="flex-chart-left">
-                <div>
-                    <MyGroupedBar data={this.props.data} keys={this.props.keys}/>
-                </div>
-          </div>
+            <div style={this.state.styles}>
+                    <MyGroupedBar data={this.props.data} keys={this.props.keys} leftLegendTitle={this.props.leftLegendTitle}/>
+            </div>
         );
     }
 }

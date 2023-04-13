@@ -66,7 +66,8 @@ const KeywordEmptyContainer = ({ children, ...props }) => {
 };
 
 let hyperCubeData;
-let chartData;
+let meanChartData;
+let semChartData;
 
 class HyperCubeResultsTable extends React.Component {
 
@@ -93,7 +94,7 @@ class HyperCubeResultsTable extends React.Component {
         this.setState({"sliceKeywords": keywords});
     }
 
-    setChartData(data, performer) {
+    setChartData(data, performer, leftLegendKey) {
         let newData = []
         let keys = []
         let ignoreSlices = ["Totals", "Totals Plausible", "Totals Implausible"]
@@ -102,16 +103,15 @@ class HyperCubeResultsTable extends React.Component {
         }
         data.forEach(item =>{
             if('slice' in item && (!ignoreSlices.includes(item['slice'])) &&
-                'mean' in item && item['mean'] !== "NaN") {
+                leftLegendKey in item && item[leftLegendKey] !== "NaN") {
                 let sliceName = item['slice']
 
-                newItem[sliceName] = parseFloat(item['mean'])
+                newItem[sliceName] = parseFloat(item[leftLegendKey])
                 keys.push(sliceName)
             }
         })
 
         newData.push(newItem)
-
         return {
             data: newData,
             keys: keys
@@ -191,7 +191,9 @@ class HyperCubeResultsTable extends React.Component {
                         if (error) return <div>Overview data does not exist for these attributes.</div>
 
                         hyperCubeData = data[hyperCubeDataQueryName]["stats"];
-                        chartData = this.setChartData(hyperCubeData, this.props.state.performer)
+                        meanChartData = this.setChartData(hyperCubeData, this.props.state.performer, "mean")
+                        // semChartData = this.setChartData(hyperCubeData, this.props.state.performer, "standardError")
+                        // <SlicesChart data={semChartData.data} keys={semChartData.keys} leftLegendTitle={semChartData.leftLegend}/>
                         return (
                             <>
 
@@ -215,7 +217,11 @@ class HyperCubeResultsTable extends React.Component {
                                         )}
                                     </TableBody>
                                 </Table>
-                                {this.props.hyperCubePivotValue !== "hyperCubeID" && <SlicesChart data={chartData.data} keys={chartData.keys}/>}
+                                {this.props.hyperCubePivotValue !== "hyperCubeID" && 
+                                <div className="flex-test">
+                                    <SlicesChart data={meanChartData.data} keys={meanChartData.keys} leftLegendTitle="Mean"/>
+                                </div>
+                                }
                                 
                             </>
                         )
