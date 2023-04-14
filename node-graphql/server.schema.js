@@ -332,17 +332,32 @@ const mcsResolvers = {
                 metadataArray.push({label: metadatas[i], value: metadatas[i]});
             }
 
+            const evalNumber = parseInt(args.eval.replace(/[^0-9]/g, ''));
+            let sceneStatGroupStr = "$goal.sceneInfo.tertiaryType";
+            if( evalNumber >= 5) {
+                sceneStatGroupStr = "$goal.sceneInfo.domainType";
+            }
+
             const evalStats = await mcsDB.db.collection(evalHistoryCollection).aggregate([
                 {"$group": 
                     {"_id": {
                         "performer": "$performer", 
                         "metadata": "$metadata",
-                        "category_type": "$category_type"
+                        "category_type": "$category_type",
+                        "domain_type": "$domain_type"
                     }, 
                     "count": {"$sum": 1}}
                 }]).toArray();
 
             const sceneStats = await mcsDB.db.collection(evalSceneCollection).aggregate([
+                {"$group": 
+                    {"_id": {
+                        "sceneType": sceneStatGroupStr
+                    }, 
+                    "count": {"$sum": 1}}
+                }]).toArray();
+                
+            const sceneCategoryTypeStats = await mcsDB.db.collection(evalSceneCollection).aggregate([
                 {"$group": 
                     {"_id": {
                         "sceneType": "$goal.sceneInfo.tertiaryType"
@@ -355,7 +370,8 @@ const mcsResolvers = {
                 evalStats: evalStats,
                 performers: performersArray,
                 metadatas: metadataArray,
-                sceneStats: sceneStats
+                sceneStats: sceneStats,
+                sceneCategoryTypeStats: sceneCategoryTypeStats
             };
         },
         getCollectionFields: async(obj, args, context, infow) => {
