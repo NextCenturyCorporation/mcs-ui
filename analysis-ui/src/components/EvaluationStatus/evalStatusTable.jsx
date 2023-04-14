@@ -5,6 +5,7 @@ import Select from 'react-select';
 import EvalStatusConfigureModal from './evalStatusConfigure';
 import CreateCSVModal from './createCSVModal';
 import {RESOURCES_URL} from '../../services/config';
+import _ from "lodash";
 
 const CSV_URL_PREFIX = RESOURCES_URL + "/csv-db-files/Evaluation_";
 const CSV_URL_SCENE_SUFFIX = "_Scenes.csv";
@@ -196,19 +197,36 @@ class EvalStatusTable extends React.Component {
         });
     }
 
-    calculateCellValue(evalStatus, type, performer, metadata) {
+    calculateCellValue(evalStatus, type, rowLabel, headerLabel, rows, evalGroups) {
         let typeTotal = 0;
-        for(let i=0; i < evalStatus.sceneStats.length; i++) {
-            if(type === evalStatus.sceneStats[i]._id.sceneType) {
-                typeTotal = evalStatus.sceneStats[i].count;
-            }
-        }
-
         let historyIngested = 0;
-        for(let i=0; i < evalStatus.evalStats.length; i++) {
-            if(type === evalStatus.evalStats[i]._id.category_type && performer === evalStatus.evalStats[i]._id.performer &&
-                metadata === evalStatus.evalStats[i]._id.metadata) {
-                    historyIngested = evalStatus.evalStats[i].count;
+
+        if(rows === "performers") {
+            for(let i=0; i < evalStatus.sceneStats.length; i++) {
+                if(type === evalStatus.sceneStats[i]._id.sceneType) {
+                    typeTotal = evalStatus.sceneStats[i].count;
+                }
+            }
+
+            for(let i=0; i < evalStatus.evalStats.length; i++) {
+                if(type === evalStatus.evalStats[i]._id.category_type && rowLabel === evalStatus.evalStats[i]._id.performer &&
+                    headerLabel === evalStatus.evalStats[i]._id.metadata) {
+                        historyIngested = evalStatus.evalStats[i].count;
+                }
+            }
+        } else {
+            const categoryTypeTotals = evalStatus.sceneCategoryTypeStats;
+            for(let i=0; i < categoryTypeTotals.length; i++) {
+                if(rowLabel === categoryTypeTotals[i]._id.sceneType) {
+                    typeTotal = categoryTypeTotals[i].count;
+                }
+            }
+
+            const groupToProcess = evalGroups[type];
+            for(let i=0; i < groupToProcess.length; i++) {
+                if(rowLabel === groupToProcess[i]._id["category_type"] && headerLabel === groupToProcess[i]._id["performer"]) {
+                    historyIngested = groupToProcess[i].count;
+                }
             }
         }
 
@@ -221,6 +239,24 @@ class EvalStatusTable extends React.Component {
         this.setState({
             completedEvals: completedEvals
         });
+    }
+
+    getTableRowsArray(sceneTypeKeyValue, rows, evalGroups) {
+        if(rows === "performers") {
+            return sceneTypeKeyValue[rows];
+        } else {
+            let rowArray = [];
+            const groupToProcess = evalGroups[sceneTypeKeyValue.label];
+            for(let i=0; i < groupToProcess.length; i++) {
+                rowArray.push({
+                    "label": groupToProcess[i]._id["category_type"],
+                    "value": groupToProcess[i]._id["category_type"]
+                })
+            }
+            rowArray = _.uniqBy(rowArray, 'label')
+            rowArray.sort((a, b) => (a.value > b.value) ? 1 : -1);
+            return rowArray;
+        }
     }
 
     render() {
@@ -265,6 +301,17 @@ class EvalStatusTable extends React.Component {
                             }
 
                             testTypes.sort((a, b) => (a.value > b.value) ? 1 : -1);
+                            var evalNumber = parseInt(this.state.currentEval.value.replace(/[^0-9]/g, ''));
+
+                            let headers = "metadata";
+                            let rows = "performers";
+
+                            if(evalNumber >= 5) {
+                                headers = "performers";
+                                rows = "category_type";
+                            }
+
+                            let evalGroups = _.groupBy(evalStatus.evalStats, "_id.domain_type");
 
                             return (
                                 <>
@@ -287,7 +334,7 @@ class EvalStatusTable extends React.Component {
                                     <div className="eval-stats-body">
                                         {evalStatus.statusObj.length > 0 && 
                                             <div className="charts-container eval-charts-container">
-                                                {Object.entries(evalStatus.statusObj[0].evalStatusParams).map(([sceneTypeKey, sceneTypeKeyValue]) => (
+                                                {Object.entries(evalStatus.statusObj[0].evalStatusParams).sort().map(([sceneTypeKey, sceneTypeKeyValue]) => (
                                                     <div className='chart-home-container' key={"table_holder_" + sceneTypeKey}>
                                                         <div className='chart-header'>
                                                             <div className='chart-header-label count-header-size'>
@@ -296,24 +343,24 @@ class EvalStatusTable extends React.Component {
                                                             </div>
                                                         </div>
                                                         {
-                                                            sceneTypeKeyValue.metadata !== null && sceneTypeKeyValue.performers !== null &&
+                                                            sceneTypeKeyValue[headers]!== null && sceneTypeKeyValue[rows] !== null &&
                                                             <div className="eval-chart-table">
                                                                 <table>
                                                                     <tbody>
                                                                         <tr>
                                                                             <th></th>
-                                                                            {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
-                                                                                <th key={"header_" + sceneTypeKey + metaKey}>
-                                                                                    {metadata.label}
+                                                                            {(sceneTypeKeyValue[headers]).map((header, headerKey) => (
+                                                                                <th key={"header_" + sceneTypeKey + headerKey}>
+                                                                                    {header.label}
                                                                                 </th>
                                                                             ))}
                                                                         </tr>
-                                                                        {sceneTypeKeyValue.performers.map((performer, performerKey) => (
-                                                                            <tr key={"performer_row_" + sceneTypeKey + performerKey}>
-                                                                                <td>{performer.label}</td>
-                                                                                {sceneTypeKeyValue.metadata.map((metadata, metaKey) => (
-                                                                                    <td key={"performer_row_" + sceneTypeKey + performerKey + metaKey}>
-                                                                                        {this.calculateCellValue(evalStatus, sceneTypeKeyValue.label, performer.label, metadata.label)}
+                                                                        {(this.getTableRowsArray(sceneTypeKeyValue, rows, evalGroups)).map((row, rowKey) => (
+                                                                            <tr key={"performer_row_" + sceneTypeKey + rowKey}>
+                                                                                <td>{row.label}</td>
+                                                                                {(sceneTypeKeyValue[headers]).map((header, metaKey) => (
+                                                                                    <td key={"performer_row_" + sceneTypeKey + rowKey + metaKey}>
+                                                                                        {this.calculateCellValue(evalStatus, sceneTypeKeyValue.label, row.label, header.label, rows, evalGroups)}
                                                                                     </td>
                                                                                 ))}
                                                                             </tr>
