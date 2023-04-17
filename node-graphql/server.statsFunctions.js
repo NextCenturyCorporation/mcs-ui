@@ -457,7 +457,11 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
     }
 
     statArray.sort((a, b) => (a[statName] > b[statName]) ? 1 : -1);
-
+    // make sure if this is by slice level and slice ends in a number, we sort by that numerical value as well
+    if(sliceType === "level") {
+        statArray.sort((a, b) => /\d+$/.test(a.slice) - /\d+$/.test(b.slice) || a.slice.localeCompare(b.slice, undefined, { numeric: true }));
+    }
+    
     let totalStatObj = getEmptyStatsObject();
     totalStatObj[statName] = "Totals";
 

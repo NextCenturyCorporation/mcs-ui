@@ -127,7 +127,6 @@ class HyperCubeResultsTable extends React.Component {
 
             }
         })
-        newData.sort((a, b) => /\d+$/.test(a.slice) - /\d+$/.test(b.slice) || a.slice.localeCompare(b.slice, undefined, { numeric: true }));
         return newData;
     }
 
