@@ -66,8 +66,7 @@ const KeywordEmptyContainer = ({ children, ...props }) => {
 };
 
 let hyperCubeData;
-let meanChartData;
-let semChartData;
+let chartData;
 
 class HyperCubeResultsTable extends React.Component {
 
@@ -94,28 +93,42 @@ class HyperCubeResultsTable extends React.Component {
         this.setState({"sliceKeywords": keywords});
     }
 
-    setChartData(data, performer, leftLegendKey) {
+    setChartData(data) {
+        let barColors = [ "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
+        "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"].reverse()
+        let defaultColor = "#1f77b4"
         let newData = []
-        let keys = []
         let ignoreSlices = ["Totals", "Totals Plausible", "Totals Implausible"]
-        let newItem = {
-            performer: performer
-        }
         data.forEach(item =>{
+ 
             if('slice' in item && (!ignoreSlices.includes(item['slice'])) &&
-                leftLegendKey in item && item[leftLegendKey] !== "NaN") {
-                let sliceName = item['slice']
+                "mean" in item && item["mean"] !== "NaN") {
+                let newItem = {}
 
-                newItem[sliceName] = parseFloat(item[leftLegendKey])
-                keys.push(sliceName)
+                newItem["slice"] = item["slice"]
+                newItem["value"] = parseFloat(item["mean"])
+                if(item["standardError"] !== "NaN") {
+                    newItem["errorY"] = [
+                        parseFloat(item["standardError"]), 
+                        parseFloat(item["standardError"])
+                    ]
+                } else {
+                    newItem["errorY"] = [0, 0]
+                }
+
+                let newColor = barColors.pop()
+                // if for whatever reason we're out of colors, use the blue color
+                // from original colors array
+                if(newColor == undefined) {
+                    newColor = defaultColor
+                }
+                newItem["color"] = newColor
+                newData.push(newItem)
+
             }
         })
 
-        newData.push(newItem)
-        return {
-            data: newData,
-            keys: keys
-        }
+        return newData;
     }
 
     render() {
@@ -191,9 +204,7 @@ class HyperCubeResultsTable extends React.Component {
                         if (error) return <div>Overview data does not exist for these attributes.</div>
 
                         hyperCubeData = data[hyperCubeDataQueryName]["stats"];
-                        meanChartData = this.setChartData(hyperCubeData, this.props.state.performer, "mean")
-                        // semChartData = this.setChartData(hyperCubeData, this.props.state.performer, "standardError")
-                        // <SlicesChart data={semChartData.data} keys={semChartData.keys} leftLegendTitle={semChartData.leftLegend}/>
+                        chartData = this.setChartData(hyperCubeData)
                         return (
                             <>
 
@@ -218,8 +229,8 @@ class HyperCubeResultsTable extends React.Component {
                                     </TableBody>
                                 </Table>
                                 {this.props.hyperCubePivotValue !== "hyperCubeID" && 
-                                <div className="flex-test">
-                                    <SlicesChart data={meanChartData.data} keys={meanChartData.keys} leftLegendTitle="Mean"/>
+                                <div className="flex-chart-left">
+                                    <SlicesChart data={chartData} performer={this.props.state.performer}/>
                                 </div>
                                 }
                                 
