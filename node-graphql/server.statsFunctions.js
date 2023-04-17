@@ -390,6 +390,31 @@ function processStatNameField(statName, sliceLevel) {
     }
 }
 
+function processStatNameKeywords(statName, sliceKeywords) {
+    let sliceKeywordValues = [];
+    for(let i=0; i < sliceKeywords.length; i++) {
+        sliceKeywordValues.push(sliceKeywords[i]["value"]);
+    }
+
+    const containsAll = sliceKeywordValues.every(element => statName.includes(element));
+
+    if(containsAll && sliceKeywordValues.length > 0) {
+        let statStr = "";
+
+        for(let i=0; i < sliceKeywordValues.length; i++) {
+            statStr += sliceKeywordValues[i];
+
+            if(i < sliceKeywordValues.length - 1) {
+                statStr += ", ";
+            }
+        }
+
+        return statStr;
+    } else {
+        return null;
+    }
+}
+
 function getEmptyStatsObject() {
     return {
         "correct_plausible": 0,
@@ -401,47 +426,34 @@ function getEmptyStatsObject() {
     };
 }
 
-function checkForStatObj(statObj, statArray, statName, newStatName, hyperCubeProjection, i) {
-    statObj = statArray.find(element => element[statName] === newStatName);
-
-    if (statObj !== undefined) {
-        updateStatObj(hyperCubeProjection[i], statObj);
-    } else {
-        let newStatObj = getEmptyStatsObject();
-        newStatObj[statName] = newStatName;
-        updateStatObj(hyperCubeProjection[i], newStatObj);
-        statArray.push(newStatObj);
-    }
-    return statObj;
-}
-
 function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, statName, sliceLevel, sliceType, sliceKeywords) {
     let statArray = [];
     let testType = hyperCubeProjection[0]["_id"]["testType"];
 
-    if(sliceType === "level" || sliceType === null) {
-        for(let i = 0; i < hyperCubeProjection.length; i++) {
-            let statObj;
-            let newStatName;
+    for(let i = 0; i < hyperCubeProjection.length; i++) {
+        let statObj;
+        let newStatName;
 
+        if(sliceType === "level" || sliceType === null) {
             newStatName = processStatNameField(hyperCubeProjection[i]["_id"][statId], sliceLevel);
+            statObj = statArray.find(element => element[statName] === newStatName);
+        } else {
+            newStatName = processStatNameKeywords(hyperCubeProjection[i]["_id"][statId], sliceKeywords);
 
-            statObj = checkForStatObj(statObj, statArray, statName, newStatName, hyperCubeProjection, i);
-        }
-    } else {
-        sliceKeywords.forEach(item=> {
-            for(let i = 0; i < hyperCubeProjection.length; i++) {
-                let statObj;
-
-                if(!hyperCubeProjection[i]["_id"]["slices"].includes(item.value)) {
-                    continue
-                }
-
-                let newStatName = item.value;
-
-                statObj = checkForStatObj(statObj, statArray, statName, newStatName, hyperCubeProjection, i);
+            if(newStatName === null) {
+                continue;
             }
-        })
+            statObj = statArray.find(element => element[statName] === newStatName);
+        }
+
+        if(statObj !== undefined) {
+            updateStatObj(hyperCubeProjection[i], statObj);
+        } else {
+            let newStatObj = getEmptyStatsObject();
+            newStatObj[statName] = newStatName;
+            updateStatObj(hyperCubeProjection[i], newStatObj);
+            statArray.push(newStatObj);
+        }
     }
 
     statArray.sort((a, b) => (a[statName] > b[statName]) ? 1 : -1);
@@ -490,4 +502,3 @@ module.exports = {
     getChartData,
     processHyperCubeStats
 };
-
