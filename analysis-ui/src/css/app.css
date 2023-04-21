@@ -730,6 +730,14 @@ ol, ul {
     overflow: visible !important;
 }
 
+.flex-chart-left {
+    display: flex;
+}
+
+.flex-chart-left svg{
+    overflow: visible !important;
+}
+
 .results-chart-container {
     height: 900px;
     width: 900px;
@@ -1576,4 +1584,31 @@ nav.MuiList-root.nav-list.MuiList-padding {
 
 body {
     background-color: #F8F8F8 !important;
+}
+
+.custom-tooltip {
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 2px;
+    padding: 10px;
+    background-color: #F8F8F8;
+}
+
+.slices-chart-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.slices-chart-legend-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.slices-chart-legend {
+    display: inline-block; 
+    text-align: left;
+    color: #808080;
+
 }
