@@ -227,7 +227,7 @@ class HyperCubeResultsTable extends React.Component {
                                         )}
                                     </TableBody>
                                 </Table>
-                                {this.props.hyperCubePivotValue !== "hyperCubeID" && this.state.sliceType === "level" && 
+                                {this.props.hyperCubePivotValue !== "hyperCubeID" && 
                                 <div className="flex-chart-left">
                                     <SlicesChart data={chartData} performer={this.props.state.performer}/>
                                 </div>

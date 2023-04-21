@@ -391,28 +391,76 @@ function processStatNameField(statName, sliceLevel) {
 }
 
 function processStatNameKeywords(statName, sliceKeywords) {
-    let sliceKeywordValues = [];
+    let sliceGroupings = [];
     for(let i=0; i < sliceKeywords.length; i++) {
-        sliceKeywordValues.push(sliceKeywords[i]["value"]);
-    }
-
-    const containsAll = sliceKeywordValues.every(element => statName.includes(element));
-
-    if(containsAll && sliceKeywordValues.length > 0) {
-        let statStr = "";
-
-        for(let i=0; i < sliceKeywordValues.length; i++) {
-            statStr += sliceKeywordValues[i];
-
-            if(i < sliceKeywordValues.length - 1) {
-                statStr += ", ";
-            }
+        if(typeof sliceGroupings[sliceKeywords[i]["value"].split("_")[1]] === 'undefined') {
+            sliceGroupings[sliceKeywords[i]["value"].split("_")[1]] = [sliceKeywords[i]["label"]];
+        } else {
+            sliceGroupings[sliceKeywords[i]["value"].split("_")[1]].push(sliceKeywords[i]["label"])
         }
-
-        return statStr;
-    } else {
-        return null;
     }
+
+    // Remove empty elements in array that were there to help with organizing slices
+    sliceGroupings = sliceGroupings.filter(function(e){return e}); 
+
+    let groupingCombos = [];
+    switch(sliceGroupings.length) {
+        case 1:
+            sliceGroupings[0].forEach(function(a1){
+                groupingCombos.push([a1]);
+            });
+            break;
+        case 2:
+            sliceGroupings[0].forEach(function(a1){
+                sliceGroupings[1].forEach(function(a2){
+                    groupingCombos.push([a1, a2]);
+                });
+            });
+            break;
+        case 3:
+            sliceGroupings[0].forEach(function(a1){
+                sliceGroupings[1].forEach(function(a2){
+                    sliceGroupings[2].forEach(function(a3){
+                        groupingCombos.push([a1, a2, a3]);
+                    });
+                });
+            });
+            break;
+        case 4:
+            sliceGroupings[0].forEach(function(a1){
+                sliceGroupings[1].forEach(function(a2){
+                    sliceGroupings[2].forEach(function(a3){
+                        sliceGroupings[3].forEach(function(a4){
+                            groupingCombos.push([a1, a2, a3, a4]);
+                        });
+                    });
+                });
+            });
+            break;
+        default:
+            break;
+    }
+
+    for(let j=0; j < groupingCombos.length; j++) {
+
+        const containsAll = groupingCombos[j].every(element => statName.includes(element));
+
+        if(containsAll && groupingCombos[j].length > 0) {
+            let statStr = "";
+
+            for(let i=0; i < groupingCombos[j].length; i++) {
+                statStr += groupingCombos[j][i];
+
+                if(i < groupingCombos[j].length - 1) {
+                    statStr += ", ";
+                }
+            }
+
+            return statStr;
+        } 
+    }
+
+    return null;
 }
 
 function getEmptyStatsObject() {

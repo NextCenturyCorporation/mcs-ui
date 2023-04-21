@@ -254,6 +254,9 @@ const mcsResolvers = {
             let sliceNumber = 0;
             let getAllSliceKeywords = async function() {
                 newSliceKeywords = await mcsDB.db.collection(args.eval).distinct("slices." + sliceNumber, {"category_type": args["categoryType"]});
+                for(let i = 0; i < newSliceKeywords.length; i++) {
+                    newSliceKeywords[i] = newSliceKeywords[i] + "_" + sliceNumber;
+                }
                 sliceKeywords = sliceKeywords.concat(newSliceKeywords);
 
                 if(newSliceKeywords.length > 0) {

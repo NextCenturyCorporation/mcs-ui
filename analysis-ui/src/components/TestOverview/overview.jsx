@@ -127,7 +127,7 @@ class TestOverview extends React.Component {
                                 let sliceKeywordsObjArray = [];
                                 for(let i=0; i < sliceKeywords.length; i++) {
                                     sliceKeywordsObjArray.push({
-                                        label: sliceKeywords[i],
+                                        label: sliceKeywords[i].split("_")[0],
                                         value: sliceKeywords[i]
                                     })
                                 }
