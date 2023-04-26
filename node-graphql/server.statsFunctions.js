@@ -527,7 +527,7 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
         totalStatObj["did_not_answer_plausible"] += statArray[j]["did_not_answer_plausible"];
         totalStatObj["did_not_answer_implausible"] += statArray[j]["did_not_answer_implausible"];
 
-        if(testType === "intuitive physics") {
+        if(testType === "intuitive physics" || testType === "passive") {
             totalPlausibleStatObj["correct_plausible"] += statArray[j]["correct_plausible"];
             totalPlausibleStatObj["incorrect_plausible"] += statArray[j]["incorrect_plausible"];
             totalPlausibleStatObj["did_not_answer_plausible"] += statArray[j]["did_not_answer_plausible"];
@@ -538,7 +538,7 @@ function processHyperCubeStats(hyperCubeProjection, includeDoNotAnswer, statId, 
     }
 
     statArray.push(totalStatObj);
-    if(testType === "intuitive physics") {
+    if(testType === "intuitive physics" || testType === "passive") {
         statArray.push(totalPlausibleStatObj);
         statArray.push(totalImplausibleStatObj);
     }
