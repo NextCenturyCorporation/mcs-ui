@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:14
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 ARG PORT_ARG=9100
 ENV PORT=$PORT_ARG
 
-ARG AMD_MONGO_TOOLS_URL=https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian92-x86_64-100.3.1.deb
+ARG AMD_MONGO_TOOLS_URL=https://fastdl.mongodb.org/tools/db/mongodb-database-tools-debian10-x86_64-100.7.0.deb
 ARG ARM_MONGO_TOOLS_URL=https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2004-arm64-100.7.0.deb
 
 ARG BUILD_ENV=AMD
