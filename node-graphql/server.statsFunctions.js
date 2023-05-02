@@ -219,9 +219,16 @@ function getChartData(isPlausibility, isPercent, scoreStats, isWeighted, evalTyp
         let incorrectCategoryStats = [];
 
         for(let i = 0; i < scoreStats.length; i++) {
+            // For passive agent tasks Eval 6+, we want to always weight (or pair) NYU agency
+            // tasks, but want to be able to toggle weighting for other passive agency tasks
+            // (like "seeing leads to knowing")
+            let useWeighted = isWeighted
+            if(scoreStats[i]["_id"]["category_type"].startsWith("agents")) {
+                useWeighted = true
+            }
             const performer = scoreStats[i]["_id"]["performer"];
-            const weightedValue = isWeighted ? scoreStats[i]["_id"]["weight"] : 1;
-            const isCorrect = isWeighted ? scoreStats[i]["_id"]["weight_score"] > 0 : scoreStats[i]["_id"]["correct"];
+            const weightedValue = useWeighted ? scoreStats[i]["_id"]["weight"] : 1;
+            const isCorrect = useWeighted ? scoreStats[i]["_id"]["weight_score"] > 0 : scoreStats[i]["_id"]["correct"];
             // Only Add Correct Items to Totals
             if(isCorrect) {
                 // Update Overall/Total
