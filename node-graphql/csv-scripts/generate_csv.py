@@ -33,7 +33,7 @@ def create_csv_file(db_index, eval_name, db_string, bucket_name):
     os.system("mongoexport --host='mcs-mongo:27017' -u=mongomcs " +
         "--authenticationDatabase=" + db_string + "  -p=mongomcspassword -c=" +
         db_index + " --type=csv --out=" + csv_file_name + " --fieldFile=" + 
-        keys_file + " -d=mcs")
+        keys_file + " -d=" + db_string)
 
     upload_csv_file(csv_file_name, bucket_name)
 
