@@ -18,7 +18,14 @@ query getTestOverviewData($eval: String!, $categoryType: String!, $performer: St
     getTestOverviewData(eval: $eval, categoryType: $categoryType, performer: $performer, metadata: $metadata, useDidNotAnswer: $useDidNotAnswer, weightedPassing: $weightedPassing, statType: $statType, sliceLevel: $sliceLevel, sliceType: $sliceType, sliceKeywords: $sliceKeywords) 
 }`;
 
-const overViewTableFieldsStatic = [
+const overViewTableFieldsInteractiveOnly = [
+    {"title": "Correct", "key": "correct_plausible"},
+    {"title": "Incorrect", "key": "incorrect_plausible"},
+    {"title": "No Answer", "key": "did_not_answer_plausible"},
+    {"title": "Hit Rate", "key": "hitRate"}
+]
+
+const overViewTableFieldsPassiveOnly = [
     {"title": "Correct Plausible", "key": "correct_plausible"},
     {"title": "Incorrect Plausible", "key": "incorrect_plausible"},
     {"title": "No Answer Plausible", "key": "did_not_answer_plausible"},
@@ -26,7 +33,10 @@ const overViewTableFieldsStatic = [
     {"title": "Correct Implausible", "key": "correct_implausible"},
     {"title": "Incorrect Implausible", "key": "incorrect_implausible"},
     {"title": "No Answer Implausible", "key": "did_not_answer_implausible"},
-    {"title": "False Alarm", "key": "falseAlarm"},
+    {"title": "False Alarm", "key": "falseAlarm"}
+]
+
+const overViewTableFieldsStatic = [
     {"title": "Total", "key": "total"},
     {"title": "Mean", "key": "mean"},
     {"title": "dPrime", "key": "dPrime"},
@@ -130,13 +140,20 @@ class HyperCubeResultsTable extends React.Component {
         return newData;
     }
 
+    updateOverviewTableFieldsByTestType(testType, overViewTableFields) {
+        let isPassive = ["agents", "passive", "intuitive physics"].includes(testType);
+        let typeSpecificFields = isPassive ? overViewTableFieldsPassiveOnly : overViewTableFieldsInteractiveOnly
+
+        overViewTableFields = overViewTableFields.concat(typeSpecificFields, overViewTableFieldsStatic)
+        return overViewTableFields;
+    }
+
     render() {
         const tableTitle = "Overview Stats (" + this.props.state.category + "/" + 
                 this.props.state.performer + "/" + this.props.state.metadata + ")";
         const notActiveButtonClasses = "btn btn-outline-secondary";
         const activeButtonClasses = "btn btn-outline-secondary active";
         let overViewTableFields = [{"title": this.props.hyperCubePivotValue, "key": this.props.hyperCubePivotValue}];
-        overViewTableFields = overViewTableFields.concat(overViewTableFieldsStatic);
 
         return (
             <>
@@ -202,6 +219,8 @@ class HyperCubeResultsTable extends React.Component {
                         if (loading) return <div>Loading ...</div> 
                         if (error) return <div>Overview data does not exist for these attributes.</div>
 
+                        let testType = data[hyperCubeDataQueryName]["testType"];
+                        overViewTableFields = this.updateOverviewTableFieldsByTestType(testType, overViewTableFields)
                         hyperCubeData = data[hyperCubeDataQueryName]["stats"];
                         chartData = this.setChartData(hyperCubeData)
                         return (
