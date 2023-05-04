@@ -123,6 +123,13 @@ class ChartContainer extends React.Component {
         return this.toUpperFirstLetters(this.props.domainType);
     }
 
+    displayWeightedToggle() {
+        // toggling weighting for passive agency only applies in
+        // Evals 6 and 7
+        return (this.props.domainType.toLowerCase() !== 'passive agents' ||
+            ["Evaluation 6 Results", "Evaluation 7 Results"].includes(this.props.eval.label));
+    }
+
     render() {
         return (
             <div className='chart-home-container'>
@@ -137,14 +144,16 @@ class ChartContainer extends React.Component {
                             defaultValue={this.state.chartOption}
                         />
                     </div>
-                    {this.props.domainType.toLowerCase() !== 'passive agents' &&
+
+                    {this.displayWeightedToggle() &&
                         <div className="chart-weight-toggle">
                             <ToggleButtonGroup type="checkbox" value={this.state.isWeighted} onChange={this.handleWeightedToggle}>
-                                <ToggleButton variant="secondary" value={true}>{this.props.domainType.toLowerCase() === 'passive agents' ? 'Paired' : 'Weighted'}</ToggleButton>
-                                <ToggleButton variant="secondary" value={false}>{this.props.domainType.toLowerCase() === 'passive agents' ? 'Unpaired' : 'Unweighted'}</ToggleButton>
+                                <ToggleButton variant="secondary" value={true}>Weighted</ToggleButton>
+                                <ToggleButton variant="secondary" value={false}>Unweighted</ToggleButton>
                             </ToggleButtonGroup>
                         </div>
                     }
+
                 </div>
                 <Query query={get_home_chart} variables={{
                         "eval": this.props.eval.value,
