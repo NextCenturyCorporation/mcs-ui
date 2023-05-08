@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { LinkContainer } from 'react-router-bootstrap';
 import Search from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
+import _ from "lodash";
 
 const GET_FIELD_AGG = gql`
     query getFieldAggregation($fieldName: String!){
@@ -107,7 +108,7 @@ class NavListItem extends React.Component {
                     button
                     selected={this.checkSelected()}
                     onClick={() => this.updateState(listItemValue, this.props.stateName)}>
-                    <ListItemText primary={listItemlabel} />
+                    <ListItemText primary={_.startCase(listItemlabel)} />
                 </ListItem>
             </LinkContainer>
         )
