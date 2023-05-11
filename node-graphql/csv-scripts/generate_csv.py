@@ -12,8 +12,11 @@ KEYS_INDEX = "collection_keys"
 def upload_csv_file(csv_file_name, bucket_name):
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
-    bucket.upload_file(Filename=csv_file_name, Key=EVALUATION_PREFIX + csv_file_name)
-
+    bucket.upload_file(Filename=csv_file_name, Key=EVALUATION_PREFIX + csv_file_name,
+        ExtraArgs={
+            "CacheControl": "max-age=0"
+        }
+    )
 
 def create_csv_file(db_index, eval_name, db_string, bucket_name):
     client = MongoClient('mongodb://mongomcs:mongomcspassword@mcs-mongo:27017/' + db_string)

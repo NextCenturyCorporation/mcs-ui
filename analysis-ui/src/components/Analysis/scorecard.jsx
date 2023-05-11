@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'
 
@@ -40,7 +40,7 @@ function ScoreCardModal({show, onHide, scorecardObject, currentSceneNum}) {
             <Modal.Body>
                 <div className="scene-table-div">
                     {scorecardObject !== undefined && Object.keys(scorecardObject).map((objectKey, key) => 
-                        <>
+                        <Fragment key={key}>
                             {isValueNonNullObject(scorecardObject, objectKey) &&
                                 <>
                                     {Object.keys(scorecardObject[objectKey]).length > 0 &&
@@ -66,7 +66,7 @@ function ScoreCardModal({show, onHide, scorecardObject, currentSceneNum}) {
                                     </div>
                                 </>
                             }
-                        </>
+                        </Fragment>
                     )}
                 </div>
             </Modal.Body>
