@@ -8,6 +8,18 @@ import boto3
 EVALUATION_PREFIX = 'csv-db-files/'
 KEYS_INDEX = "collection_keys"
 
+# For the following step array fields, we want to save the
+# value contained in the first step, and ignore other
+# "steps." fields
+STEPS_OUTPUT_FIELDS_TO_SAVE = [
+    "steps.output.position.x",
+    "steps.output.position.y",
+    "steps.output.position.z",
+    "steps.output.rotation",
+    "steps.output.target.position.x",
+    "steps.output.target.position.y",
+    "steps.output.target.position.z"
+]
 
 def upload_csv_file(csv_file_name, bucket_name):
     s3 = boto3.resource('s3')
@@ -29,7 +41,14 @@ def create_csv_file(db_index, eval_name, db_string, bucket_name):
     f = open(keys_file, 'w')
     for doc in keys_doc:
         for key in doc["keys"]:
-            f.write(key + "\n")
+            # ignore keys that start with "steps." unless they
+            # are in STEPS_OUTPUT_FIELDS_TO_SAVE
+            if(key.startswith("steps.") is False):
+                f.write(key + "\n")
+            elif(key in STEPS_OUTPUT_FIELDS_TO_SAVE):
+                key = key[:6] + "0." + key[6:]
+                f.write(key + "\n")
+
     f.close()
 
     csv_file_name = eval_name.replace(" ", "_") + ".csv"
