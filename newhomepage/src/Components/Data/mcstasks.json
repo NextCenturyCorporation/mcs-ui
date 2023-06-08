@@ -1,0 +1,148 @@
+{
+    "task" : [
+        {
+            "id": "ObjectPermanence",
+            "name": "Passive Object Permanence",
+            "header": "Objects persist, even when occluded",
+            "subheader": "Passive recognition that objects do not appear or disappear behind occluders",
+            "htmlText": "<p>Object permanence is the understanding that objects continue to exist even when they can no longer be seen (or otherwise detected by the senses). The development of this aspect of common sense was first observed by Piaget in interactive experiments. He demonstrated that infants' ability to retrieve a hidden object undergoes protracted development, even if the infant has observed the hiding event. Baillargeon and her colleagues used looking-time tasks to provide evidence taken to mean that even relatively young infants demonstrate this type of common sense (e.g., Baillargeon, 1986; Baillargeon, Spelke, & Wasserman, 1985). In such studies, infants are tested to see if they look more at implausible scenes-such as when an object spontaneously disappears while occluded-or at plausible scenes, such as when an object continues to exist even while occluded. Longer looking times at implausible scenes have been considered evidence that infants understand that real objects cannot behave in this way.</p><p>The evaluation of object permanence in AI systems involves both interactive and passive tasks. In interactive object permanence tasks, AI systems must retrieve objects hidden in containers or behind occluders. In passive object permanence tasks, AI systems are shown scenes in which occluded objects sometimes behave normally, but other times spontaneously disappear (or sometimes spontaneously appear in a previously occluded space). At the conclusion of these scenes, the AI systems must provide a judgment about the plausibility of the just-witnessed scene.</p>",
+            "hypercubeImageCaption": "Object Permanence Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of a Passive Object Permanence Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_charlie_0001_01_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R., Spelke, E. S., & Wasserman, S. (1985). Object permanence in 5-month-old infants. Cognition, 20, 191-208."
+                },
+                {
+                    "refText": "Baillargeon, R. (1986). Representing the existence and the location of hidden objects: Object permanence in 6- and 8-month-old infants. Cognition, 23, 21-41."
+                }
+            ]
+        },
+        {
+            "id": "Collisions",
+            "name": "Collisions",
+            "header": "Inanimate objects change motion when contacted and only when contacted Solid objects do not occupy the same space",
+            "subheader": "Passive recognition that one object causes another to move, (collision, Passive Plausible/Implausible)",
+            "htmlText": "<p>During early childhood, children develop an intuitive understanding of collisions through their everyday experiences and interactions with the physical world. Around 8 to 12 months, children begin to develop a sense of object permanence, which is the understanding that objects continue to exist even when they are out of sight. This basic understanding sets the foundation for comprehending collisions because they realize that objects can collide even when they are not in direct contact. As children continue to explore their environment, they start to understand cause and effect relationships. They learn that certain actions lead to specific outcomes. Through play and experimentation, they begin to grasp that when two objects collide, it can result in different effects, such as objects bouncing off each other or falling down.</p><p>AI common sense understanding of collision refers to an AI system's ability to comprehend and reason about the basic principles and consequences of physical collisions between objects. It involves understanding concepts such as momentum, energy transfer, forces, and the resulting effects on the objects involved. In the context of AI, common sense understanding of collision implies that the AI system can make predictions and infer outcomes based on its understanding of the underlying physics principles. It should be able to recognize that when two objects collide, they exert forces on each other, and their velocities and directions can change. The AI system should also be aware of concepts like conservation of momentum and conservation of kinetic energy. With this common sense understanding, an AI system can simulate and predict the outcomes of collisions accurately. It can answer questions like how the velocities of objects change after a collision, whether the collision is elastic or inelastic, and how the objects' masses and initial velocities influence the collision outcome.</p>",
+            "hypercubeImageCaption": "Collisions Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of a Passive Collisions Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_cora_alpha_0001_21_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R., Spelke, E. S., & Wasserman, S. (1985). Object permanence in 5-month-old infants. Cognition, 20, 191-208."
+                },
+                {
+                    "refText": "Baillargeon, R. (1986). Representing the existence and the location of hidden objects: Object permanence in 6- and 8-month-old infants. Cognition, 23, 21-41."
+                }
+            ]
+        },
+        {
+            "id": "GravitySupport",
+            "name": "Gravity Support",
+            "header": "Solid objects are subject to the forces of gravity",
+            "subheader": "Passive recognition that objects need to be supported at the center of mass ",
+            "htmlText": "<p>Children develop an intuitive understanding that solid objects are subject to the forces of gravity. This understanding emerges through a combination of sensory experiences, observations, and cognitive processes. Children observe the consistent patterns of how objects behave in the world. They notice that objects always fall downward and do not float or move upward on their own. This observation helps them develop a mental representation of the force of gravity acting on solid objects.</p><p>The evaluation of Gravity Support in AI systems involves a passive tasks. The AI is shown a scene where an object (asymmetrical/symmetrical) is lowered onto a platform with variing degrees of support. The object either falls or remains on the platform and the AI must decide whether the resulting situation is plausible or not plausible.</p>",
+            "hypercubeImageCaption": "Gravity Support Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of a Gravity Support Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_opics_bravo_0001_17_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R. (2004). Infants' understanding of the physical world. In R. Lerner (Ed.), Handbook of Child Psychology, Volume 2: Cognition, Perception, and Language (6th ed., pp. 181-256). Wiley."
+                },
+                {
+                    "refText": "Gelman, R., & Baillargeon, R. (1983). A review of some Piagetian concepts. In S. G. Paris & H. M. Wellman (Eds.), The nature of the child's tie to the mother (pp. 37-88). Wiley."
+                },
+                {
+                    "refText": "Piaget, J. (1952). The origins of intelligence in children. International Universities Press."
+                }
+            ]
+        },
+        {
+            "id": "ShapeConstancy",
+            "name": "Shape Constancy",
+            "header": "Objects persist, even when occluded",
+            "subheader": "Passive recognition that objects do not appear or disappear behind occluders",
+            "htmlText": "<p>Shape constancy is a cognitive ability that develops during early childhood and refers to the understanding that an object maintains its shape despite changes in its orientation or perspective. It involves perceiving and recognizing an object as the same, regardless of its size, position, or viewing angle. At around 8 to 12 months, children begin to develop basic shape constancy. They can recognize familiar objects even when seen from different angles or partially hidden.</p><p>The evaluation of Shape Constancy in AI systems involves a passive tasks. The AI Systems is shown a scene where objects fall from the ceiling where it's visible to the AI until it lands behind an occluder. The occluder lifts to reveal the objects. The objects may change color and/or shape or stay the same. At the conclusion of these scenes, the AI systems must provide a judgment about the plausibility of the just-witnessed scene.</p>",
+            "hypercubeImageCaption": "Shape Constancy Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of a Shape Constancy Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-5/eval_5_level2_opics_delta_0002_03_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Piaget, J. (1952). The Origins of Intelligence in Children. New York: International Universities Press."
+                },
+                {
+                    "refText": "Flavell, J. H. (1992). Perspectives on Perspective Taking. In H. Beilin & P. B. Pufall (Eds.)."
+                },
+                {
+                    "refText": "Piaget's Theory: Prospects and Possibilities (pp. 105-128). Hillsdale, NJ: Lawrence Erlbaum Associates."
+                },
+                {
+                    "refText": "Piaget, J., & Inhelder, B. (1967). The Child's Conception of Space. London: Routledge & Kegan Paul."
+                }
+            ]
+        },
+        {
+            "id": "SpatioTemporalContinuity",
+            "name": "Spatio Temporal Continuity",
+            "header": "Objects persist, even when occluded",
+            "subheader": "Passive recognition that objects do not appear or disappear behind occluders",
+            "htmlText": "<p>The development of spatio-temporal continuity refers to a child's understanding of how objects and events in the world are connected across space and time. This cognitive ability allows children to perceive and make sense of the world around them. According to Jean Piaget's theory, children go through different stages of cognitive development. During the sensorimotor stage (birth to 2 years), infants gradually develop an understanding of object permanence, which is the understanding that objects continue to exist even when they are out of sight. This development sets the foundation for spatio-temporal continuity, as children begin to realize that objects and events have a continuous existence over time.</p><p>In the Machine Common Sense program, we test Spatio Temporal Continuity using a passive task. The AI System is shown a scene where an object moves across the scene. Sometimes there are two occluders and other times there are none. The object moving across the scene may randomly disappearand the AI systems must provide a judgment about the plausibility of the scene.</p>",
+            "hypercubeImageCaption": "Spatio Temporal Continuity Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of a Spatio Temporal Continuity Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-6/eval_6_level2_cora_victor_0001_06_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Piaget, J. (1952). The Origins of Intelligence in Children. New York: International Universities Press."
+                }
+            ]
+        },
+        {
+            "id": "Artithmetic",
+            "name": "Artithmetic",
+            "header": "Sets of objects can be more, or less, than other sets of objects",
+            "subheader": "After seeing an occluded set accreted or depleted by some amount, AI can choose side of room that has larger amount of reward",
+            "htmlText": "<p>Early childhood is a critical period for the development of number sense in children. Number sense refers to a child's understanding of numbers and their relationships, including counting, quantity, and basic mathematical operations. Around the age of 2, children begin to recognize and name some numbers, typically starting with the numbers 1 to 5. They may point to objects and say, 'Two apples' or 'Three blocks'. Around the age of 4, children develop the ability to establish a one-to-one correspondence between objects and numbers. They can assign one number word to each object in a set, ensuring that none are missed or counted twice.</p><p>Our evaluation of Arithmetic in the  AI Systems involves the development of an interactive force choice task.  In this task the AI System is in a room divided by a raised platform.  The AI starts on the raised platform and watches as object are added or removed to either side of the room. Sometimes an occluder comes down to hide the final tally so that the AI must track the number of objects. The AI must decide which side of the room has the most objects and jump off the platform into that side of the room. The AI systems passes this evaluation if it chooses the side with the most objects and has picked them all up.</p>",
+            "hypercubeImageCaption": "Artithmetic Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of an Artithmetic Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-6/eval_6_level2_opics_delta_0001_06_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Gelman, R., & Gallistel, C.R. (1978). The Child's Understanding of Number. Harvard University Press."
+                },
+                {
+                    "refText": "Mix, K. S. (2002). Counting and Cardinality Skills in Young Children. Early Childhood Research Quarterly, 17(2), 218-235."
+                }
+
+                
+            ]
+        },
+        {
+            "id": "AsymmetricToolUse",
+            "name": "Asymmetric Tool Use",
+            "header": "Object functions can be predicted by their forms ",
+            "subheader": "Use a complex object (T-shaped, L-shaped) to maneuver a reward to become obtainable (use of mental rotation concepts)",
+            "htmlText": "",
+            "hypercubeImageCaption": "Artithmetic Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of an Artithmetic Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-6/eval_6_level2_opics_delta_0001_06_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Gelman, R., & Gallistel, C.R. (1978). The Child's Understanding of Number. Harvard University Press."
+                },
+                {
+                    "refText": "Mix, K. S. (2002). Counting and Cardinality Skills in Young Children. Early Childhood Research Quarterly, 17(2), 218-235."
+                }
+
+                
+            ]
+        }
+        
+    ]
+}
