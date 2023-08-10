@@ -13,7 +13,7 @@ import Scorecard from './scorecard';
 function ScoreTable({columns, currentPerformerScenes, currentSceneNum, 
     changeSceneHandler, scenesInOrder, constantsObject, sortable, isInteractive}) {
 
-    const [sortOption, setSortOption] = useState({sortBy: "", sortOrder: "asc"})
+    const [sortOption, setSortOption] = useState({sortBy: "scene_num", sortOrder: "asc"})
 
     const getSorting = (order, orderBy) => {
         return order === "desc"
