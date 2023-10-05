@@ -484,7 +484,12 @@ const sceneFieldLabelMap = {
     "goal.sceneInfo.targetBehind": "Target Behind",
     "goal.sceneInfo.occludersTrained": "Occluders Trained",
     "goal.sceneInfo.targetHidden": "Target Hidden",
-    "goal.sceneInfo.id": "Cube ID"
+    "goal.sceneInfo.id": "Cube ID",
+    "goal.sceneInfo.containerBaited": "Container Baited",
+    "goal.sceneInfo.containerBaitedIndex": "Container Baited Index",
+    "goal.sceneInfo.landmark": "Landmark",
+    "goal.sceneInfo.landmarkIndex": "Landmark Index",
+    "goal.sceneInfo.landmarkColor": "Landmark Color"
 };
 
 const sceneFieldLabelMapTable = {
@@ -527,7 +532,12 @@ const sceneFieldLabelMapTable = {
     "goal.sceneInfo.movement": "Hypercube Movement",
     "goal.habituation_total": "Habituation Total",
     "goal.answer.choice": "Goal Answer Choice",
-    "goal.sceneInfo.id": "Cube ID"
+    "goal.sceneInfo.id": "Cube ID",
+    "goal.sceneInfo.containerBaited": "Container Baited",
+    "goal.sceneInfo.containerBaitedIndex": "Container Baited Index",
+    "goal.sceneInfo.landmark": "Landmark",
+    "goal.sceneInfo.landmarkIndex": "Landmark Index",
+    "goal.sceneInfo.landmarkColor": "Landmark Color"
 };
 
 const sceneIncludeFieldsTable = [
@@ -571,7 +581,12 @@ const sceneIncludeFieldsTable = [
     "goal.sceneInfo.movement",
     "goal.habituation_total",
     "goal.answer.choice",
-    "goal.sceneInfo.id"
+    "goal.sceneInfo.id",
+    "goal.sceneInfo.containerBaited",
+    "goal.sceneInfo.containerBaitedIndex",
+    "goal.sceneInfo.landmark",
+    "goal.sceneInfo.landmarkIndex",
+    "goal.sceneInfo.landmarkColor"
 ];
 
 module.exports = {
