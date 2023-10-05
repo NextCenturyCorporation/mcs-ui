@@ -73,7 +73,8 @@ const historyFieldLabelMapTable= {
     "score.weighted_score_worth": "Weighted Evaluation Score Value",
     "score.weighted_confidence": "Weighted Score/Confidence",
     "score.weighted_score": "Weighted Evaluation Score",
-    "scene_goal_id": "Cube/Scene Goal ID"
+    "scene_goal_id": "Cube/Scene Goal ID",
+    "start_distance_between_performer_and_target": "Start Distance Between Performer and Target"
 };
 
 const historyFieldLabelMap = {
@@ -99,8 +100,7 @@ const historyFieldLabelMap = {
     "score.weighted_score_worth": "Weighted Evaluation Score Value",
     "score.weighted_confidence": "Weighted Score/Confidence",
     "score.weighted_score": "Weighted Evaluation Score",
-    "scene_goal_id": "Cube/Scene Goal ID",
-    "start_distance_between_performer_and_target": "Start Distance Between Performer and Target"
+    "scene_goal_id": "Cube/Scene Goal ID"
 };
 
 const sceneExcludeFields = [
