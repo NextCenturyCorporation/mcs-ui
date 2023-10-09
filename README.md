@@ -36,13 +36,12 @@ This setup will enable auto updating and refreshing whenever an analysis-ui comp
 
 # UI Setup
 
-### 1: Download Tars from S3
+### 1: Preparation
 
-Download `data_con_backup_all.tar.gz` from mcs-ui EC2 instance. 
-Place inside on the mcs-ui/node-graphl/ directory.
+- Download `data_con_backup_all.tar.gz` from mcs-ui EC2 instance. These instructions assume the tar is in the `mcs-ui/node-graphql/` directory. You might need the UI PEM file; get it from the AWS Secrets Manager dashboard.
+- Get a copy of `account-configs.js` from a teammate and put it in the `mcs-ui/node-graphql` directory.
 
-### 2: Create UI
-Verify that node-graphql/account-configs.js exists. Ask a team member for a copy if it does not.
+### 2: Create and Launch UI
 
 ```
 docker build --tag node-graphql node-graphql/.
@@ -53,7 +52,6 @@ docker build --tag analysis-ui-staging analysis-ui/. --build-arg PORT_ARG=2000
 cd docker_setup
 docker-compose -f docker-compose-dev.yml up -d
 ```
-
 
 ### 3: Copy Mongo Base Collections Backup Tar
 
