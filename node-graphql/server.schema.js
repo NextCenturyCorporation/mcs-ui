@@ -697,12 +697,29 @@ const mcsResolvers = {
                 "totalRotateToolFailure": { "$sum" : "$score.scorecard.tool_usage.RotateObject_failed" },
                 "totalTorqueToolSuccess": { "$sum" : "$score.scorecard.tool_usage.TorqueObject" },
                 "totalTorqueToolFailure": { "$sum" : "$score.scorecard.tool_usage.TorqueObject_failed" },
+                // multi tool use stats
+                "totalToolsUsed": { "$sum" : "$score.scorecard.tool_usage.total_tools_used" },
+                "totalHookedToolRotated": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.tool_usage.is_hooked_rotated", 1, 0 ]
+                    }
+                },
+                "totalStraightToolRotated": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.tool_usage.is_straight_rotated", 1, 0 ]
+                    }
+                },
+                // end tool use stats
+                "totalSteppedInLava": {
+                    "$sum": {
+                        "$cond": [ "$score.scorecard.stepped_in_lava", 1, 0 ]
+                    }
+                },
                 "totalPickupNonTarget": {
                     "$sum": {
                         "$cond": [ "$score.scorecard.pickup_non_target", 1, 0 ]
                     }
                 },
-                // end tool use stats
                 "totalPickupNotPickupable": { "$sum" : "$score.scorecard.pickup_not_pickupable" },
                 "totalInteractWithNonAgent": { "$sum" : "$score.scorecard.interact_with_non_agent" },
                 "totalInteractWithAgent": { "$sum" : "$score.scorecard.interact_with_agent" },
