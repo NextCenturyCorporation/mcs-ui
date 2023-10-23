@@ -169,7 +169,12 @@ db.eval_<eval_num>_results.find()
 
 ## Ingest
 
-First, start your Mongo database and UI. Next, put your scene files in one folder and their corresponding history files in a second folder. Then, from the [mcs-ingest](https://github.com/NextCenturyCorporation/mcs-ingest) repository, activate your python virtual environment and run the following scripts:
+First, start your Mongo database and UI. Second, put your debug scene files in one folder and their corresponding scene history files in another folder. Next, verify the following:
+
+1. Your debug scene files must have an `"evaluation"` property (in the `"debug"` dictionary) of `"Evaluation X Scenes"` (replace `X` with the eval number). Depending on how they were generated, the `"evaluation"` property may be `null`. You can use `sed` to edit all of the files in place, like this: `sed -i 's/"evaluation": null/"evaluation": "Evaluation X Scenes"/' <scenes_folder>/*`
+2. Your scene history files must have an `"evaluation_name"` property of `"eval_X"` (replace `X` with the eval number) and a `"team"` of any non-empty, non-null string. You can use `sed` to edit all of the files in place (see above for a similar example).
+
+Then, from the [mcs-ingest](https://github.com/NextCenturyCorporation/mcs-ingest) repository, activate your python virtual environment and run the following scripts:
 
 ```
 python local_scene_ingest.py --folder <scene_folder>
