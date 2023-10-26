@@ -50,6 +50,12 @@ const scorecardFieldsLatest = [
     {"title": "Rotate Tool Failures", "key": "totalRotateToolFailure"},
     {"title": "Torque Tool Successes", "key": "totalTorqueToolSuccess"},
     {"title": "Torque Tool Failures", "key": "totalTorqueToolFailure"},
+    // Added for Eval 7
+    {"title": "Tools Used In Scene", "key": "totalToolsUsed"},
+    {"title": "Hooked Tools Rotated", "key": "totalHookedToolRotated"},
+    {"title": "Straight Tools Rotated", "key": "totalStraightToolRotated"},
+    {"title": "Stepped In Lava", "key": "totalSteppedInLava"},
+    // End Eval 7 specific fields
     {"title": "Pickup Non-Target", "key": "totalPickupNonTarget"},
     {"title": "Pickup Not Pickupable", "key": "totalPickupNotPickupable"},
     {"title": "Interact With Non Agent", "key": "totalInteractWithNonAgent"},
@@ -57,6 +63,7 @@ const scorecardFieldsLatest = [
     {"title": "Walked Into Structures", "key": "totalWalkedIntoStructures"},
     {"title": "Interact With Blob First", "key": "totalInteractWithBlobFirst"}
 ];
+
 class ScoreCardTable extends React.Component {
 
     getTotalScoreCardValue(scorecardData, key) {
