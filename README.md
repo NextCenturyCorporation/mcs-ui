@@ -165,6 +165,39 @@ db.eval_<eval_num>_scenes.findOne()
 db.eval_<eval_num>_results.find()
 ```
 
-## Acknowledgements
+# Manual Data Manipulation
+
+## Ingest
+
+First, start your Mongo database and UI. Second, put your debug scene files in one folder and their corresponding scene history files in another folder. Next, verify the following:
+
+1. Your debug scene files must have an `"evaluation"` property (in the `"debug"` dictionary) of `"Evaluation X Scenes"` (replace `X` with the eval number). Depending on how they were generated, the `"evaluation"` property may be `null`. You can use `sed` to edit all of the files in place, like this: `sed -i 's/"evaluation": null/"evaluation": "Evaluation X Scenes"/' <scenes_folder>/*`
+2. Your scene history files must have an `"evaluation_name"` property of `"eval_X"` (replace `X` with the eval number) and a `"team"` of any non-empty, non-null string. You can use `sed` to edit all of the files in place (see above for a similar example).
+
+Then, from the [mcs-ingest](https://github.com/NextCenturyCorporation/mcs-ingest) repository, activate your python virtual environment and run the following scripts:
+
+```
+python local_scene_ingest.py --folder <scene_folder>
+python local_history_ingest.py --folder <history_folder>
+```
+
+You may also need to run `update_collection_keys_if_missing.py` afterward:
+
+```
+cd <mcs-ingest>
+cp scripts/update_collection_keys_if_missing.py .
+python update_collection_keys_if_missing.py eval_6_scenes "Evaluation 6 Scenes"
+python update_collection_keys_if_missing.py eval_6_results "Evaluation 6 Results"
+```
+
+## Delete
+
+1. Install the Mongo CLI with (on Linux) `sudo apt-get install mongodb`
+2. Start the Mongo Shell with `mongo`
+3. Run `use_mcs`, then `db.auth(username, password)` (with the correct Mongo MCS username and password -- refer to your `mcs-ui/node-graphql/account-configs.js` file)
+4. To see your collections: `show collections`
+5. To delete a collection (like "eval_x_scenes"): `db.eval_x_scenes.drop()`
+
+# Acknowledgements
 
 This material is based upon work supported by the Defense Advanced Research Projects Agency (DARPA) and Naval Information Warfare Center, Pacific (NIWC Pacific) under Contract No. N6600119C4030. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the DARPA or NIWC Pacific.
