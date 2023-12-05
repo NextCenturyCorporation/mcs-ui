@@ -69,13 +69,14 @@ function SceneDetailsModal({show, onHide, currentSceneNum, currentScene, constan
         if(currentScene.eval !== undefined && (
             (currentScene.eval === "Evaluation 4 Scenes" && currentScene.goal.category !== 'agents') || 
             (currentScene.eval === "Evaluation 5 Scenes") || 
-            (currentScene.eval === "Evaluation 6 Scenes" && currentScene.goal.category === 'agents'))) {
+            (currentScene.eval === "Evaluation 6 Scenes" && currentScene.goal.category === 'agents') ||
+            (currentScene.eval === "Evaluation 7 Scenes" && currentScene.goal.category === 'agents'))) {
             // Goal ID is part of debug file names for Eval 4 except for agency.
             //
             // Goal ID is part of debug file names for Eval 5
             // for all scenes including agency
             //
-            // Goal ID is only part of agency debug file names for Eval 6
+            // Goal ID is only part of agency debug file names for Eval 6 and 7
             sceneName = sceneName.concat("_", currentScene.goal.sceneInfo.id[0])
         }
 
