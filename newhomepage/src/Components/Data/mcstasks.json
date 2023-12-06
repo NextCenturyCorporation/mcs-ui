@@ -1,5 +1,5 @@
 {
-    "task" : [
+    "task": [
         {
             "id": "ObjectPermanence",
             "name": "Passive Object Permanence",
@@ -118,8 +118,6 @@
                 {
                     "refText": "Mix, K. S. (2002). Counting and Cardinality Skills in Young Children. Early Childhood Research Quarterly, 17(2), 218-235."
                 }
-
-                
             ]
         },
         {
@@ -139,10 +137,199 @@
                 {
                     "refText": "Mix, K. S. (2002). Counting and Cardinality Skills in Young Children. Early Childhood Research Quarterly, 17(2), 218-235."
                 }
-
-                
+            ]
+        },
+        {
+            "id": "KnowledgeableAgents",
+            "name": "Knowledgeable Agents",
+            "header": "Agents can convey knowledge, but they can only have knowledge about things or events they have seen or experienced",
+            "subheader": "AI systems are required to seek help from an agent that could have the knowledge needed to help, not from an agent that could not have that knowledge",
+            "htmlText": "<p>Human agents normally have mental states that influence their goal-directed behaviors, and these behaviors can communicate to others the contents of the agents' minds, including their intentions, beliefs, and feelings (Rakison & Poulin-Dubois, 2001). Onishi and Baillargeon (2005) provided some evidence that by fifteen months of age, infants recognize that some of the contents of agents' minds can be inferred by attending to what the agents can see. Specifically, these researchers argued that 15-month-old infants understand that agents who have not seen certain events involving an object can harbor false beliefs about the location of the object. Other research indicates that infants will sometimes take agents' behaviors (e.g., pointing-like behavior) as cues for the location of a target object. For example, Bertenthal et al. (2014) found that by 6 months of age, infants will follow the direction of a human hand pointing toward a target. Thus, during the first year, infants develop abilities that may allow them to distinguish a knowledgeable agent from an ignorant agent, and to use the knowledgeable agent's behavior as a cue to the location of an object.</p><p>The goal of this task is for AI systems to use information from an agent to obtain the target object. In this task, the AI system sees two agents who either can (i.e., has an unobstructed view of) or cannot see (i.e., has an obstructed view of) an event in which a target object is hidden in one of two identical containers placed on the left and right sides of a room. In some test scenes, both agents can see the object being hidden in a container or both are unable to see the object being hidden. In other test scenes, the two agents have different visual experiences; one of the agents can see the hiding event and the other agent is unable to see the hiding event. After the hiding event, both agents turn toward and point at containers. The AI system's goal in this task is to obtain the target object by following the point of only the knowledgeable agent. Doing so entails choosing to step into the left or right side of the room, approaching the container on that side, opening it, and retrieving the target object if it was hidden in that container.</p>",
+            "hypercubeImageCaption": "Knowledgeable Agents Task Hypercube:",
+            "hypercubeImage": "/images/knowledgeableAgents.png",
+            "videoCaption": "Example of a Knowledgeable Agents Task:",
+            "video": "https://resources.machinecommonsense.com/eval-resources-6/eval_6_level2_opics_delta_0001_06_visual.mp4",
+            "reference": [
+                {
+                    "refText": "Bertenthal, B. I., Boyer, T. W., & Harding, S. (2014). When do infants begin to follow a point?. Developmental Psychology, 50(8), 2036."
+                },
+                {
+                    "refText": "Onishi, K. H., & Baillargeon, R. (2005). Do 15-month-old infants understand false beliefs?. Science, 308(5719), 255–258."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209-228."
+                }
+            ]
+        },
+        {
+            "id": "AgentIdentification",
+            "name": "Agent Identification",
+            "header": "Agents share a set of common characteristics",
+            "subheader": "Identify the agent in a scene, approach the agent, and obtain target by requesting it",
+            "htmlText": "<p>Agency entails being able to initiate action in a causal event (Gelman & Spelke, 1981). Like other animated entities, agents have anatomical characteristics that enable specific biological functions, such as limbs for locomotion; they can also have mental states that influence their goal-directed behaviors, for example; and many are able to communicate about their intentions, beliefs, and feelings, in addition to other mental content (Rakison & Poulin-Dubois, 2001). Several characteristics serve as cues to agency, including self-propelled motion, the presence of a face, and the presence of limbs. Woodward (1998) demonstrated that by six months of age, infants can infer agents' goals from their behaviors, and Gergley and Csibra (2003) observed that by their first birthday, infants seem to evaluate the efficiency of an agent's actions.<p/><p>To evaluate if AI systems can identify an agent and discriminate it from a non-agent, a task was designed that required the AI system to retrieve a reward object by first choosing to enter one of two sides of a room. One side of this room contains an agent known (based on training) to possess a reward object and the other side contains either a static object (e.g., a piece of furniture) or an ambiguous blob-shaped object that does not move or have limbs or a face. In some scenes, the agent is seen running back and forth on its side of the room; in other scenes, the agent is standing still. To test generalization, in some scenes, the agent is one that may have been encountered during training; in other scenes, the agent is guaranteed to be unfamiliar to the AI system. Once the AI system chooses to enter the side of the room containing the agent, it can approach the agent and request the reward, at which point the agent produces the reward object and hands it to the AI system.<p/>",
+            "hypercubeImageCaption": "Agent Identification Task Hypercube:",
+            "hypercubeImage": "/images/AgentIdentification.png",
+            "videoCaption": "Example of an Agent Identification Task:",
+            "video": "/videos/AgentIdentification.mp4",
+            "reference": [
+                {
+                    "refText": "Gelman, R., & Spelke, E. S. (1981). The development of thoughts about animate and inanimate objects: Implications for research on social cognition. In J. H. Flavell & L. Ross (Eds.), Social Cognition (pp. 43 - 66). Academic Press."
+                },
+                {
+                    "refText": "Gergely, G., & Csibra, G. (2003). Teleological reasoning in infancy: The naive theory of rational action. Trends in Cognitive Sciences, 7, 287 - 292."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209 - 228."
+                },
+                {
+                    "refText": "Woodward, A. L. (1998). Infants selectively encode the goal object of an actor's reach. Cognition, 69, 1 - 34. "
+                }
+            ]
+        },
+        {
+            "id": "Imitation",
+            "name": "Imitation",
+            "header": "Agents can provide solutions to problems and convey knowledge",
+            "subheader": "Solve a simple problem after viewing an agent model a non-obvious solution (such as touching targets in a specific sequence), demonstrating recognition of the potential value of imitation",
+            "htmlText": "<p>Agency entails being able to initiate action in a causal event (Gelman & Spelke, 1981). Human agents have mental states that reflect their intentions, feelings, and knowledge (Rakison & Poulin-Dubois, 2001). Studies of children's imitation of adult agents have been underway for more than 60 years (Bandura & Walters, 1963), and some of these studies have revealed imitation even in infancy. Specifically, imitation has been observed in 6-month-olds who have just seen an agent model specific behaviors with objects (Barr et al., 1996) and 14-month-olds can imitate such behaviors one week after seeing them modeled (Meltzoff, 1988).<p/><p>In this task, the goal is to obtain a reward task. The AI systems must imitate an agent who knows how to render a reward object accessible. In each test scene, the AI system sees the agent approach a row of three distinctive containers and open either one or two containers in a specific order, which causes a reward object to be delivered into the room. The AI system then is allowed to interact with the containers; it must perform the same actions in the same sequence as the agent in order to render the reward accessible. Sometimes the agent is one the AI system may have encountered during training and in other scenes, the agent is guaranteed to be unfamiliar to the AI system. The test scenes vary in whether the AI system and the containers remain in the same locations after the agent models the container-opening behavior, or if the AI system, containers, or both are transported to new locations after the behavior is modeled. These last two manipulations allow evaluation of the extent to which the AI system's behaviors imitate the agent's container-opening behavior, versus simply opening containers at random or in a sequence dictated by something other than the agent's behavior. Once the AI has successfully imitated the agent's specific container-opening behaviors, a reward becomes available for the AI system to retrieve.<p/>",
+            "hypercubeImageCaption": "Agent Identification Task Hypercube:",
+            "hypercubeImage": "/images/Imitation.png",
+            "videoCaption": "Example of an Imitation Task:",
+            "video": "/videos/Imitation.mp4",
+            "reference": [
+                {
+                    "refText": "Bandura, A., & Walters, R. H. (1963). Social learning and personality development. Holt, Rinehart & Winston."
+                },
+                {
+                    "refText": "Barr, R., Dowden, A., & Hayne, H. (1996). Developmental changes in deferred imitation by 6- to 24-month-old infants. Infant Behavior and Development, 19, 159 - 170."
+                },
+                {
+                    "refText": "Gelman, R., & Spelke, E. S. (1981). The development of thoughts about animate and inanimate objects: Implications for research on social cognition. In J. H. Flavell & L. Ross (Eds.), Social Cognition (pp. 43 - 66). Academic Press."
+                },
+                {
+                    "refText": "Meltzoff, A. N. (1988). Infant imitation after a 1-week delay: Long-term memory for novel acts and multiple stimuli. Developmental Psychology, 24, 470 - 476."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209 - 228."
+                }
+            ]
+        },
+        {
+            "id": "SpatialReference",
+            "name": "Spatial Reference",
+            "header": "Agents can provide solutions to problems and convey knowledge",
+            "subheader": "Use spatial reference information from agents only, not from objects",
+            "htmlText": "<p>Human agents normally have mental states that influence their goal-directed behaviors, and many are able to communicate about the contents of their minds, including their intentions, beliefs, and feelings (Rakison & Poulin-Dubois, 2001). Woodward (1998) demonstrated that by six months of age, infants infer agents' goals or the targets of their actions. Other work suggests that infants will take as cues for the location of a target or reward the actions (e.g., pointing-like behavior) of agents but not of non-agents. For example, Johnson et al. (1998) found that 12-month-old infants followed the gaze of an ambiguous object if that object had a face or engaged in contingent interactions with the infant. Bertenthal et al. (2014) found that while both 4- and 6-month-old infants would follow the direction of a human hand pointing toward a target, only 4-month-old infants engaged in the same shift in attention when faced with an ambiguous image seemingly pointing toward a target. Thus, although the ability to follow a pointing-like gesture emerges early in infancy, the recognition of the significance of the difference between a point or a shift in gaze by an agent versus a non-agent develops over the first year.<p/><p>A Spatial Reference task was designed to evaluate if AI systems will consistently use pointing as a source of information from agents, but not from non-agents, to help them locate a reward object. The goal of this task is to obtain the reward object. In this task, an AI system is initially frozen on a platform in a room. From this location, the AI system sees one or two entities at the left and/or right side(s) of the far end of the room. In some scenes, these entities might have previously been encountered in a training set; in other scenes, the entities are guaranteed to be unfamiliar to the AI system. The agents are humanoid and the non-agents are faceless blob-shapes that have a directional protrusion (i.e., a “pointer”). The agent always points to the closed container hiding the reward and the non-agent “points” (i.e., their protrusion is directed) randomly at either of the closed containers. Sometimes, an agent and non-agent point at the same container, and sometimes they point at different containers. In some test scenes, the entities remain motionless and are already pointing at a closed container at the start of the scene. In other test scenes, the entities move; agents are self-propelled and walk-and-point in the direction of the container holding the reward, whereas non-agents are moved by a rotating turntable on which they stand. Once all entities in the room are pointing at a container, the AI system is free to choose to step into the left or right side of the room, whereupon it can approach the container on that side of the room. The AI system's goal is to retrieve the reward object hidden in one of the two containers in the room.<p/>",
+            "hypercubeImageCaption": "Spatial Reference Task Hypercube:",
+            "hypercubeImage": "/images/SpatialReference1.png",
+            "hypercubeImage2": "/images/SpatialReference2.png",
+            "videoCaption": "Example of a Spatial Reference Task:",
+            "video": "/videos/SpatialReference.mp4",
+            "reference": [
+                {
+                    "refText": "Bandura, A., & Walters, R. H. (1963). Social learning and personality development. Holt, Rinehart & Winston."
+                },
+                {
+                    "refText": "Barr, R., Dowden, A., & Hayne, H. (1996). Developmental changes in deferred imitation by 6- to 24-month-old infants. Infant Behavior and Development, 19, 159 - 170."
+                },
+                {
+                    "refText": "Gelman, R., & Spelke, E. S. (1981). The development of thoughts about animate and inanimate objects: Implications for research on social cognition. In J. H. Flavell & L. Ross (Eds.), Social Cognition (pp. 43 - 66). Academic Press."
+                },
+                {
+                    "refText": "Meltzoff, A. N. (1988). Infant imitation after a 1-week delay: Long-term memory for novel acts and multiple stimuli. Developmental Psychology, 24, 470 - 476."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209 - 228."
+                }
+            ]
+        },
+        {
+            "id": "SeeingLeadsToKnowing",
+            "name": "Seeing Leads To Knowing",
+            "header": "Agents only know what they have seen or experienced",
+            "subheader": "An AI system should consider it implausible when an agent appears to intentionally pursue a reward in a location where the agent could not have seen the reward being hidden",
+            "htmlText": "<p>Human agents normally have mental states that influence their goal-directed behaviors, and these behaviors can communicate to others the contents of the agents' minds, including their intentions, beliefs, and feelings (Rakison & Poulin-Dubois, 2001). Onishi and Baillargeon (2005) provided some evidence that by fifteen months of age, infants recognize that some of the contents of agents' minds can be inferred by attending to what the agents can see. Specifically, these researchers argued that 15-month-old infants understand that agents who have not seen certain events involving an object can harbor false beliefs about the location of the object. Although researchers continue to debate the extent to which infants possess the kind of 'theory of mind' that would permit such inferences (Slaughter, 2015; Poulin-Dubois & Yott, 2018), older children are known to have developed this capacity (Leslie, 1994).<p/><p>In this task, AI system's goal is to judge the plausibility of events in which an agent looks for a hidden target. In these events, the agent walks to a centrally located position between four open containers, two of which are in front of the agent and two of which are behind the agent (and out of sight). A reward object is hidden inside one of the four containers via a placer that descends from the ceiling (empty placers descend to the other container so the AI system observing the event knows the agent has a cue that the reward has been hidden). The agent is then seen to approach one of the four containers. On some test scenes, the agent approaches a container where it has seen it being hidden (i.e., a container in front of the agent), on other test scenes the agent approaches a container where it has seen it not being hidden, and on other test scenes the agent approaches a container behind it (which may or may not hide the reward object).  The AI system must judge whether the agent's behavior is plausible or implausible, based on what the agent saw.<p/>",
+            "hypercubeImageCaption": "Seeing Leads to Knowing Task Hypercube:",
+            "hypercubeImage": "/images/SeeingLeadsToKnowing.png",
+            "videoCaption": "Example of a Seeing Leads To Knowing Task:",
+            "video": "/videos/SeeingLeadsToKnowing.mp4",
+            "reference": [
+                {
+                    "refText": "Leslie, A. M. (1994). Pretending and believing: Issues in the theory of ToMM. Cognition, 50, 211-238."
+                },
+                {
+                    "refText": "Onishi, K. H., & Baillargeon, R. (2005). Do 15-month-old infants understand false beliefs?. Science, 308(5719), 255-258."
+                },
+                {
+                    "refText": "Poulin-Dubois, D., & Yott, J. (2018). Probing the depth of infants' theory of mind: Disunity in performance across paradigms. Developmental Science, 21, e12600. https://doi.org/10.1111/desc.12600"
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209-228."
+                },
+                {
+                    "refText": "Slaughter, V. (2015). Theory of mind in infants and young children: A review. Australian Psychologist, 50(3), 169-172."
+                }
+            ]
+        },
+        {
+            "id": "Container",
+            "name": "Container",
+            "header": " Agents can recognize that an unobservable object may be in a container and can update their location relative to features of the environment as they search for that object",
+            "subheader": "Search for an unseen object in a room, opening containers to find the object",
+            "htmlText": "<p>During the first 2 years, infants develop an understanding of containment. From an early age, in passive visual tasks, infants differentiate between possible and impossible containment events–that is, events in which an object is apparently lowered into a container or lowered into a cylinder with a closed top (Hespos & Baillargeon, 2001). In addition, infants seem to recognize the commonalities across containment events before they recognize the commonalities between other types of events, such as support (Casasola & Cohen, 2002). Infants’ appreciation of containers seems to develop further in the second year when searching for objects (Freeman et al., 1980).<p/><p>Many tasks in this battery involve a reward object inside a container and the AI system is required to retrieve that target from the container. The goal of the container task is for the AI system to obtain the target object, which in this task is always out of sight in a container. This task assesses the AI system's ability to 1) determine that an unseen target is in a container, and 2) retrieve the target from the container. In this task, the AI is deposited in a room with no target visible. However, there are 1, 2 or 3 containers, as well as other small objects and pieces of furniture. The AI system must navigate to a container, open it up, and retrieve the target if it is present. This process is repeated until the target is retrieved. To test the AI system’s ability to generalize to new containers, half of the test scenes involved containers that were available in training and half involved containers that were never before seen.<p/>",
+            "hypercubeImageCaption": "Container Task Hypercube:",
+            "hypercubeImage": "/images/Container.png",
+            "videoCaption": "Example of a Container Task:",
+            "video": "/videos/Container.mp4",
+            "reference": [
+                {
+                    "refText": "Casasola, M., & Cohen, L. B. (2002). Infant categorization of containment, support and tight-fit spatial relationships. Developmental science, 5(2), 247-264."
+                },
+                {
+                    "refText": "Freeman, N. H., Lloyd, S., & Sinha, C. G. (1980). Infant search tasks reveal early concepts of containment and canonical usage of objects. Cognition, 8(3), 243-262."
+                },
+                {
+                    "refText": "Hespos, S. J., & Baillargeon, R. (2001). Reasoning about containment events in very young infants. Cognition, 78(3), 207-245."
+                }
+            ]
+        },
+        {
+            "id": "Holes",
+            "name": "Holes",
+            "header": "Agents can navigate to a target, avoid places that are dangerous, update their location relative to the environment, select the most efficient route, and identify another agent that may have the target",
+            "subheader": "Navigate to either a target or an agent that holds the target in a room with holes in the floor that obstruct the AI's path.",
+            "htmlText": "<p>There are three tasks-holes, lava, and ramps-that assess the AI system's ability to navigate an environment to either a seen reward object or a humanoid agent that is presumably holding that target. The environments in these tasks have obstacles that impede the AI's navigation-holes in the floor, lava, or platforms that can only be reached via ramps. Effectively obtaining the target requires planning a route and updating one's own location as the route is traversed.<p/><p>Once infants develop the ability to locomote, their ability to navigate also develops. Novice crawlers and walkers often do not appear to have a destination in mind when they begin a bout of locomotion (Hoch et al., 2020) and by 1½ years of age, infants will choose the more efficient of two paths to reach a goal (Paulus & Sodian, 2015).<p/><p>In the Holes task, the AI system was placed in a room, on a platform. A visible target or a humanoid agent is present in the room, and there are holes in the floor. In some scenes, there are one or two paths through the holes to safely reach the target or agent. In other scenes, there are no holes between the AI and target or agent. Thus, this task primarily assesses the AI system's ability to navigate around the holes, selecting the most efficient path when multiple paths are available, to retrieve the target.<p/><p>On test scenes with an agent, the AI system has to additionally recognize the agent as the source of the target. In some test scenes, there is both an agent and an ambiguous, blob-shaped non-agent visible. To succeed, the AI must approach the agent and not the blob to retrieve the target, thus requiring agent identification.</p>",
+            "hypercubeImageCaption": "Holes Task Hypercube:",
+            "hypercubeImage": "/images/Holes.png",
+            "videoCaption": "Example of a Holes Task:",
+            "video": "/videos/Holes.mp4",
+            "reference": [
+                {
+                    "refText": "Hoch, J. E., Rachwani, J., & Adolph, K. E. (2020). Where infants go: Real-time dynamics of locomotor exploration in crawling and walking infants. Child development, 91(3), 1001-1020."
+                },
+                {
+                    "refText": "Paulus, M., & Sodian, B. (2015). Which way to take? Infants select an efficient path to their goal. Journal of experimental child psychology, 137, 111-124."
+                }
+            ]
+        },
+        {
+            "id": "Lava",
+            "name": "Lava",
+            "header": "Agents can navigate to a target, avoid places that are dangerous, update their location relative to the environment, select the most efficient route, and identify another agent that may have the target ",
+            "subheader": "Navigate to either a target or an agent that holds the target in a room with holes in the floor that obstruct the AI's path.",
+            "htmlText": "<p>There are three tasks–holes, lava, and ramps–that assess the AI system's ability to navigate an environment to either a seen reward object or a humanoid agent that is presumably holding that target. The environments in these tasks have obstacles that impede the AI's navigation–holes in the floor, lava, or platforms that can only be reached via ramps. Effectively obtaining the target requires planning a route and updating one's own location as the route is traversed.<p/><p>Once infants develop the ability to locomote, their ability to navigate also develops. Novice crawlers and walkers often do not appear to have a destination in mind when they begin a bout of locomotion (Hoch et al., 2020) and by 1½ years of age, infants will choose the more efficient of two paths to reach a goal (Paulus & Sodian, 2015).<p/><p>In the Lava task, the AI system was placed in a room, on a platform. A visible target or a humanoid agent is present in the room, and there are patches of lava on the floor. In some scenes, there are one or two paths through the lava to safely reach the target or agent. In other scenes, there is no lava between the AI and target or agent. Thus, this task primarily assesses the AI system's ability to navigate around the lava, selecting the most efficient path when multiple paths are available, to retrieve the target.<p/><p>On test scenes with an agent, the AI system has to additionally recognize the agent as the source of the target. In some test scenes, there is both an agent and an ambiguous, blob-shaped non-agent visible. To succeed, the AI must approach the agent and not the blob to retrieve the target, thus requiring agent identification.<p>",
+            "hypercubeImageCaption": "Lava Task Hypercube:",
+            "hypercubeImage": "/images/Lava.png",
+            "videoCaption": "Example of a Lava Task:",
+            "video": "/videos/Lava.mp4",
+            "reference": [
+                {
+                    "refText": "Hoch, J. E., Rachwani, J., & Adolph, K. E. (2020). Where infants go: Real-time dynamics of locomotor exploration in crawling and walking infants. Child development, 91(3), 1001-1020."
+                },
+                {
+                    "refText": "Paulus, M., & Sodian, B. (2015). Which way to take? Infants select an efficient path to their goal. Journal of experimental child psychology, 137, 111-124."
+                }
             ]
         }
-        
     ]
 }

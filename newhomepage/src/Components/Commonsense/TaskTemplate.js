@@ -3,6 +3,11 @@ import '../Components.css';
 import mcstask from '../Data/mcstasks.json'
 import parse from "html-react-parser";
 
+function getHyperCubeImage2(value) {
+    if (value)
+        return <img className="task-hypercube" src={value} alt="" />
+}
+
 function Places() {
     const windowUrl = window.location.search;
     const params = new URLSearchParams(windowUrl);
@@ -46,6 +51,7 @@ function Places() {
                 <div>
                     <i>{taskObj.hypercubeImageCaption}</i>
                     <img className="task-hypercube" src={taskObj.hypercubeImage} alt="" />
+                    {getHyperCubeImage2(taskObj.hypercubeImage2)}
                 </div>
             </div>
 

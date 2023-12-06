@@ -6,21 +6,14 @@ function Agents() {
     <div className="main-text">
         <h2>Commonsense in the Agents Domain</h2>
         <p>
-        Tasks were designed to evaluate AI common sense about agents, specifically blah blah blah.  
+        Tasks were designed to evaluate AI common sense about agents. Numerous experiments with infants and toddlers have examined their abilities to, for example, distinguish living organisms from inanimate objects, infer the goal of an actor’s behavior, and use living agents as a source of information. Early in life, children imitate social partners and begin to develop an understanding that seeing can lead to knowing. Additionally, some evidence suggests that infants recognize that agents can have idiosyncratic preferences, that they are drawn to prosocial rather than antisocial agents, and that they expect other agents to prefer affiliations with prosocial agents as well.  One of the goals of the MCS program was to evaluate the extent to which AI systems can come to behave as infants, toddlers, and young children do in experimental tasks designed to assess their understanding of agents.
         </p>
-        <h3>List of the tasks (Visual Characteristics of an Agent???):</h3>
-        <li><a href="#">Passive Seeing Leads to Knowing</a></li>
-        <li><a href="#">Interactive Agent Identification</a></li>
-        <li><a href="#">Interactive Social Referencing</a></li>
-        <li><a href="#">Interactive Spatial Reference</a></li>
-        <li><a href="#">Interactive Imitation</a></li>
-        <h3>List of the tasks (Behavioral/Action Cues of an Agent???):</h3>
-        <li><a href="#">Agent/Non-Agent</a></li>
-        <li><a href="#">Agents Approach</a></li>
-        <li><a href="#">Agents Efficient Action Irrational</a></li>
-        <li><a href="#">Agents Imitation</a></li>
-        <li><a href="#">Agents Multiple Agents</a></li>
-        <li><a href="#">Agents Object Preference</a></li>
+        <h3>List of the tasks:</h3>
+        <li><a href="/CommonsenseDomain/Task?TaskId=SeeingLeadsToKnowing">Passive Seeing Leads to Knowing</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=AgentIdentification">Agent Identification</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=SpatialReference">Spatial Reference</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=Imitation">Imitation</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=KnowledgeableAgents">Knowledgeable Agents</a></li>
 
 
     </div>

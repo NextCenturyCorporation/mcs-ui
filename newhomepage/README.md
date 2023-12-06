@@ -31,6 +31,11 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ### `aws s3 sync build/ s3://mcs-newhome` pushes build to s3 bucket
 
+### URL of dev site
+
+`http://mcs-newhome.s3-website-us-east-1.amazonaws.com/Home`
+
+
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
