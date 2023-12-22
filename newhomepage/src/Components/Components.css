@@ -9,6 +9,12 @@ h2 {
     margin: 15px 0;
 }
 
+h3 {
+    font-size: 18px;
+    line-height: 35px;
+    color: rgba(34, 110, 147, 1);
+    margin: 15px 0;
+}
 .clear-fix {
     clear: both;
     display: block;
@@ -669,4 +675,23 @@ nav input {
 .body-text div {
     font-size: 45px;
     font-weight: 600;
+}
+
+
+/* container */
+.responsive-two-column-grid {
+    display:block;
+}
+
+/* columns */
+.responsive-two-column-grid > * {
+    padding:1rem;
+}
+
+/* tablet breakpoint */
+@media (min-width:768px) {
+    .responsive-two-column-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
 }

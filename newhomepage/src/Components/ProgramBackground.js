@@ -14,6 +14,12 @@ function ProgramBackground() {
       </p>
       <p>The Machine Common Sense (MCS) program seeks to address the challenge of machine common sense by pursuing two broad strategies. Both envision machine common sense as a computational service, or as machine commonsense services. The first strategy aims to create a service that learns from experience, like a child, to construct computational models that mimic the core domains of child cognition for objects (intuitive physics), agents (intentional actors), and places (spatial navigation). The second strategy seeks to develop a service that learns from reading the Web, like a research librarian, to construct a commonsense knowledge repository capable of answering natural language and image-based questions about commonsense phenomena.
       </p>
+
+
+      <li><a href="https://www.darpa.mil/program/machine-common-sense">DARPA Machine Common Sense Page</a></li>
+      <li><a href="https://arxiv.org/abs/1810.07528">Concept Paper at Arxiv</a></li>
+      <li><a href="https://www.youtube.com/watch?v=rSrzMGqkU-M">Proposer's Day YouTube Video</a></li>
+
     </div>
   );
 }

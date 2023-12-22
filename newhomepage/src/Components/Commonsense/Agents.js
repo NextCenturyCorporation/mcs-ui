@@ -10,10 +10,16 @@ function Agents() {
         </p>
         <h3>List of the tasks:</h3>
         <li><a href="/CommonsenseDomain/Task?TaskId=SeeingLeadsToKnowing">Passive Seeing Leads to Knowing</a></li>
-        <li><a href="/CommonsenseDomain/Task?TaskId=AgentIdentification">Agent Identification</a></li>
-        <li><a href="/CommonsenseDomain/Task?TaskId=SpatialReference">Spatial Reference</a></li>
-        <li><a href="/CommonsenseDomain/Task?TaskId=Imitation">Imitation</a></li>
-        <li><a href="/CommonsenseDomain/Task?TaskId=KnowledgeableAgents">Knowledgeable Agents</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=AgentIdentification">Interactive Agent Identification</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=KnowledgeableAgents">Interactive Social Referencing</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=SpatialReference">Interactive Spatial Reference</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=Imitation">Interactive Imitation</a></li>
+        <li><a href="/CommonsenseDomain/Task?TaskId=KnowledgeableAgents">Interactive Social Referencing</a></li>
+
+        <p>
+        Additional passive tasks designed to test the behavior of AI systems in tasks analogous to those used to probe infants' understanding of agents.
+        </p>
+        <li><a href="https://www.kanishkgandhi.com/bib">Baby Intuitions Benchmark (BIB)</a></li>
 
 
     </div>

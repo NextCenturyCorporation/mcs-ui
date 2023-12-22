@@ -1,5 +1,6 @@
 import React from 'react';
 import research_dev_psych from '../Images/research_dev_psych.jpg'
+import example_code from '../Images/ExampleCode.png'
 
 import '../Components.css';
 
@@ -79,9 +80,27 @@ function Header() {
                                 </div>
                             </div>
                         </li>
-                        <li><a href="/technicalInfo">Technical Info</a></li>
-                        <li><a href="/internal">Internal</a></li>
+                        <li>
+                            <a href="/Evaluation" className="desktop-item">Technical Info</a>
+                            <input type="checkbox" id="showMega" />
+                            <label htmlFor="showMega" className="mobile-item">Evaluations</label>
 
+                            <div className="mega-box">
+                                <div className="content">
+                                    <div className="row">
+                                        <img className="menu-image" src={example_code} alt="" />
+                                    </div>
+                                    <div className="row half">
+                                        <ul className='mega-links'>
+                                            <li><a href="/TechnicalInfo/ILE">Interactive Learning Environment</a></li>
+                                            <li><a href="/TechnicalInfo/Data">Evaluation Data</a></li>
+                                            <li><a href="/TechnicalInfo/Results">Evaluation Results</a></li>
+                                            <li><a href="/TechnicalInfo/ILEOnline">Interactive Learning Environment Online</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>                        
                     </ul>
                     <label className="btn menu-btn" htmlFor="menu-btn"> <i className="fa fa-bars"></i> </label>
 

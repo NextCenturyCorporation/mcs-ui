@@ -11,7 +11,10 @@ import Home from './Components/Home'
 import Internal from './Components/Internal'
 import Performers from './Components/Performers'
 import ProgramBackground from './Components/ProgramBackground'
-import TechnicalInfo from './Components/TechnicalInfo'
+import Data from './Components/TechnicalInfo/Data'
+import ILE from './Components/TechnicalInfo/ILE'
+import ILEOnline from './Components/TechnicalInfo/ILEOnline'
+import Results from './Components/TechnicalInfo/Results'
 import AgentsDomain from './Components/Commonsense/Agents'
 import ObjectsDomain from './Components/Commonsense/Objects'
 import PlacesDomain from './Components/Commonsense/Places'
@@ -40,7 +43,10 @@ root.render(
         <Route path="/ProgramBackground" Component={ProgramBackground} />
         <Route path="/Performers" Component={Performers} />
         <Route path="/Evaluation" Component={Evaluation} />
-        <Route path="/TechnicalInfo" Component={TechnicalInfo} />
+        <Route path="/TechnicalInfo/Data" Component={Data} />
+        <Route path="/TechnicalInfo/ILE" Component={ILE} />
+        <Route path="/TechnicalInfo/ILEOnline" Component={ILEOnline} />
+        <Route path="/TechnicalInfo/Results" Component={Results} />
         <Route path="/Internal" Component={Internal} />
         <Route path="/CommonsenseDomain/Agents" Component={AgentsDomain} />
         <Route path="/CommonsenseDomain/Objects" Component={ObjectsDomain} />
