@@ -591,7 +591,7 @@ const mcsResolvers = {
                 projectObject["slices"] = "$slices";
             }
 
-            if(args.categoryType.toLowerCase().indexOf("agents") > -1) {
+            if((args.categoryType.toLowerCase().indexOf("agents") > -1) && (args.categoryType.toLowerCase() !== "knowledgeable agents")) {
                 projectObject["hypercube_id"] = "$category_type"
             }
 
