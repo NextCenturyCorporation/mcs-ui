@@ -4,14 +4,17 @@ import '../Components.css';
 function Data() {
   return (
     <div className="main-text">
-      <h2>Evaluation Analysis UI</h2>
+      <h2>Evaluation Results</h2>
       
-      <h3>Eval 7</h3>
-        <h4>Evaluation Data</h4>
-      <h3>Eval 6</h3>
-        <h4>Evaluation Data</h4>
-      <h3>Eval 5</h3>
-        <h4>Evaluation Data</h4>
+      <h3>Evaluation 7</h3>
+        <li><a href="/files/results/Evaluation_7_Scenes.zip">Evaluation Scenes</a></li>
+        <li><a href="/files/results/Evaluation_7_Results.zip">Evaluation Results</a></li>
+      <h3>Evaluation 6</h3>
+        <li><a href="/files/results/Evaluation_6_Scenes.zip">Evaluation Scenes</a></li>
+        <li><a href="/files/results/Evaluation_6_Results.zip">Evaluation Results</a></li>
+      <h3>Evaluation 5</h3>
+        <li><a href="/files/results/Evaluation_5_Scenes.zip">Evaluation Scenes</a></li>
+        <li><a href="/files/results/Evaluation_5_Results.zip">Evaluation Results</a></li>
 
     </div>
   );
