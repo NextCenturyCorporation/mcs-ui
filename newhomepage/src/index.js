@@ -14,6 +14,8 @@ import ProgramBackground from './Components/ProgramBackground'
 import Data from './Components/TechnicalInfo/Data'
 import ILE from './Components/TechnicalInfo/ILE'
 import ILEOnline from './Components/TechnicalInfo/ILEOnline'
+import EvalPipeline from './Components/TechnicalInfo/EvalPipeline'
+import EvalAnalysisUI from './Components/TechnicalInfo/EvalAnalysisUI'
 import Results from './Components/TechnicalInfo/Results'
 import AgentsDomain from './Components/Commonsense/Agents'
 import ObjectsDomain from './Components/Commonsense/Objects'
@@ -47,6 +49,8 @@ root.render(
         <Route path="/TechnicalInfo/ILE" Component={ILE} />
         <Route path="/TechnicalInfo/ILEOnline" Component={ILEOnline} />
         <Route path="/TechnicalInfo/Results" Component={Results} />
+        <Route path="/TechnicalInfo/EvalPipeline" Component={EvalPipeline} />
+        <Route path="/TechnicalInfo/EvalAnalysisUI" Component={EvalAnalysisUI} />
         <Route path="/Internal" Component={Internal} />
         <Route path="/CommonsenseDomain/Agents" Component={AgentsDomain} />
         <Route path="/CommonsenseDomain/Objects" Component={ObjectsDomain} />

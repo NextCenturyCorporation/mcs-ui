@@ -93,9 +93,11 @@ function Header() {
                                     <div className="row half">
                                         <ul className='mega-links'>
                                             <li><a href="/TechnicalInfo/ILE">Interactive Learning Environment</a></li>
+                                            <li><a href="/TechnicalInfo/ILEOnline">Interactive Learning Environment Online</a></li>
                                             <li><a href="/TechnicalInfo/Data">Evaluation Data</a></li>
                                             <li><a href="/TechnicalInfo/Results">Evaluation Results</a></li>
-                                            <li><a href="/TechnicalInfo/ILEOnline">Interactive Learning Environment Online</a></li>
+                                            <li><a href="/TechnicalInfo/EvalPipeline">Evaluation Pipeline</a></li>
+                                            <li><a href="/TechnicalInfo/EvalAnalysisUI">Evaluation Analysis UI</a></li>
                                         </ul>
                                     </div>
                                 </div>

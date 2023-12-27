@@ -10,7 +10,7 @@ function ILE() {
             <div class="responsive-two-column-grid">
                 <div>
                     <p>The Interactive Learning Environment(ILE) allowed teams to create and run their own set of test scenes to train on
-                        concepts core to common sense reasoning, like physics, occlusion, navigation, localization, agency, and more. Evaluation scenes will be
+                        concepts core to common sense reasoning, like physics, occlusion, navigation, localization, agency, and more. Evaluation scenes are
                         comprised of combinations of these concepts, and the simulation environment (or the "world") is the same for both training (via the ILE) and testing.</p>
 
                     <h3>MCS AI2-Thor</h3>
