@@ -11,12 +11,11 @@ import Home from './Components/Home'
 import Internal from './Components/Internal'
 import Performers from './Components/Performers'
 import ProgramBackground from './Components/ProgramBackground'
-import Data from './Components/TechnicalInfo/Data'
+import DataResults from './Components/TechnicalInfo/DataResults'
 import ILE from './Components/TechnicalInfo/ILE'
 import ILEOnline from './Components/TechnicalInfo/ILEOnline'
 import EvalPipeline from './Components/TechnicalInfo/EvalPipeline'
 import EvalAnalysisUI from './Components/TechnicalInfo/EvalAnalysisUI'
-import Results from './Components/TechnicalInfo/Results'
 import AgentsDomain from './Components/Commonsense/Agents'
 import ObjectsDomain from './Components/Commonsense/Objects'
 import PlacesDomain from './Components/Commonsense/Places'
@@ -45,10 +44,9 @@ root.render(
         <Route path="/ProgramBackground" Component={ProgramBackground} />
         <Route path="/Performers" Component={Performers} />
         <Route path="/Evaluation" Component={Evaluation} />
-        <Route path="/TechnicalInfo/Data" Component={Data} />
+        <Route path="/TechnicalInfo/DataResults" Component={DataResults} />
         <Route path="/TechnicalInfo/ILE" Component={ILE} />
         <Route path="/TechnicalInfo/ILEOnline" Component={ILEOnline} />
-        <Route path="/TechnicalInfo/Results" Component={Results} />
         <Route path="/TechnicalInfo/EvalPipeline" Component={EvalPipeline} />
         <Route path="/TechnicalInfo/EvalAnalysisUI" Component={EvalAnalysisUI} />
         <Route path="/Internal" Component={Internal} />
