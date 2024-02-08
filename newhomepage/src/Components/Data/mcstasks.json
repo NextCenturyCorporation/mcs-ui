@@ -621,7 +621,7 @@
             "name": "Interactive Collision",
             "header": "Inanimate objects in motion have predictable trajectories, and the positions of stationary objects only change if they are contacted by another object",
             "subheader": "Predict the final resting place of a ball that might or might not have been launched following contact with another, moving ball<p/>",
-            "htmlText": "<p>This task combines commonsense reasoning about collisions and the ability to anticipate the trajectory of moving objects. Infants' perception of the causality of launching events progresses from young infants' attention only to continuous movement in one direction when viewing causal and non-causal launching events (Cohen & Amsel,1998) to by 6 months infants' recognizing the difference between causal and non-causal collisions (Leslie, 1982, 1984; Oakes & Cohen, 1990). At the same time, infants' are developing the ability to anticipate the trajectory of moving objects.<mark>For example, by xx months infants recognize that an object that moves behind an occluder will emerge on the other side, anticipating the reappearance of the object (citations), and by xx months infants will adjust their arm movement when reaching out to grab a moving object (citations).<mark> This interactive collision task asks how the AI combines reasoning about collisions with the ability to anticipate the trajectory of a moving object under conditions of occlusion.<p/><p>The goal of the interactive collision task is to obtain a target object. In this task, the AI system sees the target object being approached by, and in some cases contacted by, a second object. The event is occluded and the AI must decide whether the target object can be retrieved on the left or right side of the room. In some test scenes the AI system can see the collision between the two objects, or the lack of a collision (the moving object moves on a path behind the reward object, not touching it). In other test scenes, the collision or lack of collision happens behind an occluder. In all scenes, an occluder is lowered and the AI must infer the final location of the target object.<p/>",
+            "htmlText": "<p>Infants differentiate between casual and non-causal collision events by 6 months of age (Leslie, 1982, 1984; Oakes & Cohen, 1990). This ability is preceded by an earlier stage in which infants seem to notice only continuous movement in one direction (Cohen & Amsel,1998) and across the first year infants become able to recognize the difference between causal and non-causal events in more complex situations (Cohen & Oakes, 1993).</p><p>In this task, AI systems must make plausibility judgments about events in which one or two objects appear to move across the screen. The key event involves one object entering the scene and approaching an object at rest in the center of the scene. After the first object contacts the second object, the first object stops moving and the second object is launched into motion, traveling across the scene and out of view. This canonical, plausible collision event is contrasted with plausible no-collision events (e.g., a single object that moves across the screen, sometimes in front of another object that is on the stage but not on the path of the first object) and implausible events (e.g., the second object beginning to move even if it was not contacted by the first object). In some test scenes, the collision (or non-collision) occurs behind an occluder and in other test scenes the collision (or non-collision) is fully visible.</p>",
             "hypercubeImageCaption": "Interactive Collision Task Hypercube:",
             "hypercubeImage": "/images/InteractiveCollision.png",
             "videoCaption": "Example of an Interactive Collision Task:",
@@ -681,32 +681,44 @@
         {
             "id": "Solidity",
             "name": "Solidity",
-            "header": "",
-            "subheader": "",
-            "htmlText": "",
+            "header": "Solid objects do not occupy the same space",
+            "subheader": "Obtain a reward by using knowledge that a solid object, when dropped, will land on–rather than pass through–another solid object",
+            "htmlText": "<p>One feature of a sophisticated object concept is the recognition that multiple solid objects cannot occupy the same space (Spelke et al., 1992). As a result, when a solid object falls, it will land on–rather than pass through–solid surfaces in its way. Using a looking time procedure, Spelke et al. (1992) found that 4-month-old infants looked longer when a ball appeared to pass through a solid surface (impossibly) than when it landed on that solid surface. Spelke et al. interpreted these looking behaviors to indicate that infants were surprised to see the impossible event, and therefore must understand solidity.</p><p>The test of AI systems’ understanding of solidity takes place in a room bisected by a long platform on which the AI is standing. A second, smaller platform is attached to either the left or right of the main platform. Initially, the AI system sees a partial occluder lowering, obstructing the view of the platforms, and the target object being lowered by a placer either directly above a location where there is no platform or directly above the second, smaller platform.After the placer retreats, the AI system is allowed to retrieve the object by opening one of three doors in the occluder–the door in the middle to retrieve the target ball on the platform, or the left or right door to retrieve the ball on the floor.</p>",
             "hypercubeImageCaption": "Solidity Task Hypercube:",
             "hypercubeImage": "/images/Solidity.png",
             "videoCaption": "Example of a Solidity Task:",
             "video": "/videos/Solidity.mp4",
             "reference": [
                 {
-                    "refText": "???"
+                    "refText": "Spelke, E. S., Breinlinger, K., Macomber, J., & Jacobson, K. (1992). Origins of knowledge. Psychological Review, 99(4), 605-632."
                 }
             ]
         },
         {
             "id": "ToolUse",
             "name": "Tool Use",
-            "header": "",
-            "subheader": "",
-            "htmlText": "",
+            "header": "Object functions can be predicted by their forms",
+            "subheader": "Use a simply symmetrical object as a tool, to push or maneuver a target object so that it becomes accessible",
+            "htmlText": "<p>Tool use is characteristic of the great apes (van Schaik & Pradhan, 2003), and the continuous emergence of tool use in human development has been traced to its nascent beginnings in infancy (Lockman, 2000). Zelazo and Kearsley (1980) documented the emergence of functional play in toddlers between 12 and 15 months of age, and Willatts (1984) reported that even 9-month-old infants will manipulate a support holding an object in order to retrieve the object. By 14 months of age, some infants plan ahead when they grasp tools in order to accomplish a self-directed goal (McCarty et al., 2001).</p><p>In experimental scenes in this task, AI systems must use a symmetrical, bar-shaped tool that is present in the room in order to retrieve a target object. The target in these scenes cannot be accessed directly, because it is located in the middle of a large \"pool of lava,\" a region of the room known to be dangerous (i.e., an AI system that steps into this lava pool will experience the forced end of the trial shortly thereafter). As a result, the only way to retrieve the target in these scenes is to use the provided tool. In some scenes, the tool might have been previously encountered in a training set; in other scenes, the tool is guaranteed to be unfamiliar to the AI system. Finally, in some scenes, the tool is oriented so that it does not need to be manipulated prior to being used; simply pushing the tool will render the target accessible. In other scenes, the tool needs to be rotated 45 or 90 degrees before it can be effectively used.</p>",
             "hypercubeImageCaption": "Tool Use Task Hypercube:",
             "hypercubeImage": "/images/ToolUse.png",
             "videoCaption": "Example of a Tool Use Task:",
             "video": "/videos/ToolUse.mp4",
             "reference": [
                 {
-                    "refText": "???"
+                    "refText": "Lockman, J. L. (2000). A perception-action perspective on tool use development. Child Development, 71(1), 137-144."
+                },
+                {
+                    "refText": "McCarty, M. E., Clifton, R. K., & Collard, R. R. (2001). The beginnings of tool use by infants and toddlers. Infancy, 2(2), 233-256."
+                },
+                {
+                    "refText": "van Schaik, C. P., & Pradhan, G. R. (2003). A model for tool-use traditions in primates: Implications for the coevolution of culture and cognition. Journal of Human Evolution, 44, 645 - 664."
+                },
+                {
+                    "refText": "Willatts, P. (1984). The stage-IV infant's solution of problems requiring the use of supports. Infant Behavior and Development, 7, 125-134."
+                },
+                {
+                    "refText": "Zelazo, P. R., & Kearsley, R. B. (1980). The emergence of functional play in infants: Evidence for a major cognitive transition. Journal of Applied Developmental Psychology, 1, 95-117."
                 }
             ]
         }
