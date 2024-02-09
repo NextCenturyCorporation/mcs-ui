@@ -14,7 +14,6 @@ function Agents() {
         <li><a href="/CommonsenseDomain/Task?TaskId=KnowledgeableAgents">Interactive Social Referencing</a></li>
         <li><a href="/CommonsenseDomain/Task?TaskId=SpatialReference">Interactive Spatial Reference</a></li>
         <li><a href="/CommonsenseDomain/Task?TaskId=Imitation">Interactive Imitation</a></li>
-        <li><a href="/CommonsenseDomain/Task?TaskId=KnowledgeableAgents">Interactive Social Referencing</a></li>
 
         <p>
         Additional passive tasks designed to test the behavior of AI systems in tasks analogous to those used to probe infants' understanding of agents.
