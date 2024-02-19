@@ -20,7 +20,7 @@ function Header() {
                         <label className="btn cancel-btn" htmlFor="cancel-btn"> <i className="fa fa-times"></i> </label>
                         <li><a href="/Home">Home</a></li>
                         <li><a href="/ProgramBackground">Program Background</a></li>
-                        <li>
+{/*                         <li>
                             <a href="" className="desktop-item">Performers</a>
                             <input type="checkbox" id="showMega" />
                             <label htmlFor="showMega" className="mobile-item">Performers</label>
@@ -28,37 +28,19 @@ function Header() {
                             <div className="mega-box">
                                 <div className="content">
                                     <div className="row thirds">
-                                        <header>CORA</header>
-                                        <ul className='mega-links'>
-                                            <li><a href="/CORA/Team">Team</a></li>
-                                            <li><a href="/CORA/Process">Process</a></li>
-                                            <li><a href="/CORA/Highlights">Highlights</a></li>
-                                            <li><a href="/CORA/Results">Results</a></li>
-                                        </ul>
+                                        <header><a href="/CORA/Team">CORA</a></header>
                                     </div>
                                     <div className="row thirds">
-                                        <header>MESS</header>
-                                        <ul className='mega-links'>
-                                            <li><a href="/MESS/Team">Team</a></li>
-                                            <li><a href="/MESS/Process">Process</a></li>
-                                            <li><a href="/MESS/Highlights">Highlights</a></li>
-                                            <li><a href="/MESS/Results">Results</a></li>
-                                        </ul>
+                                        <header><a href="/MESS/Team">MESS</a></header>
                                     </div>
                                     <div className="row thirds">
-                                        <header>OPICS</header>
-                                        <ul className='mega-links'>
-                                            <li><a href="/OPICS/Team">Team</a></li>
-                                            <li><a href="/OPICS/Process">Process</a></li>
-                                            <li><a href="/OPICS/Highlights">Highlights</a></li>
-                                            <li><a href="/OPICS/Results">Results</a></li>
-                                        </ul>
+                                        <header><a href="/OPICS/Team">OPICS</a></header>
                                     </div>
 
 
                                 </div>
                             </div>
-                        </li>
+                        </li> */}
                         <li>
                             <a href="/Evaluation" className="desktop-item">Evaluations</a>
                             <input type="checkbox" id="showMega" />
@@ -93,10 +75,10 @@ function Header() {
                                     <div className="row half">
                                         <ul className='mega-links'>
                                             <li><a href="/TechnicalInfo/ILE">Interactive Learning Environment</a></li>
-                                            <li><a href="/TechnicalInfo/ILEOnline">Interactive Learning Environment Online</a></li>
+                                            {/* <li><a href="/TechnicalInfo/ILEOnline">Interactive Learning Environment Online</a></li> */}
                                             <li><a href="/TechnicalInfo/DataResults">Evaluation Data/Results</a></li>
-                                            <li><a href="/TechnicalInfo/EvalPipeline">Evaluation Pipeline</a></li>
-                                            <li><a href="/TechnicalInfo/EvalAnalysisUI">Evaluation Analysis UI</a></li>
+                                            {/* <li><a href="/TechnicalInfo/EvalPipeline">Evaluation Pipeline</a></li> */}
+                                            {/* <li><a href="/TechnicalInfo/EvalAnalysisUI">Evaluation Analysis UI</a></li> */}
                                         </ul>
                                     </div>
                                 </div>
