@@ -168,7 +168,7 @@
             "hypercubeImageCaption": "Knowledgeable Agents Task Hypercube:",
             "hypercubeImage": "/images/knowledgeableAgents.png",
             "videoCaption": "Example of a Knowledgeable Agents Task:",
-            "video": "/videos/knowledgeableAgents.mp4",
+            "video": "/videos/KnowledgeableAgents.mp4",
             "reference": [
                 {
                     "refText": "Bertenthal, B. I., Boyer, T. W., & Harding, S. (2014). When do infants begin to follow a point? Developmental Psychology, 50(8), 2036."
