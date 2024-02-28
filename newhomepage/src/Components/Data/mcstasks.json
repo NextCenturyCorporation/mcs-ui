@@ -436,10 +436,10 @@
             "header": "Objects can be tracked over spatial displacement",
             "subheader": "AI systems are required to track a reward object that has been placed in one of several containers on a turntable that rotates away from its initial position",
             "htmlText": "<p>Spatial mapping has been studied in both non-human animals (Regolin et al., 2005) and young children between the ages of 1 and 5 years (McCrink et al., 2017; West & McCrink, 2021). These tasks often involve showing a child an object being hidden in one of several linearly arranged locations (e.g., in containers), after which the set of hiding locations is surreptitiously rotated 90 degrees. In such spatial mapping tasks using video-based or live-action protocols, even 2-year-old (McCrink et al., 2017; West & McCrink, 2021) and 2½-year-old (Barth & Call, 2006) children can track the spatial location of the hidden object over the rotational displacement. The introduction of a cue or landmark can help children find hidden objects in ambiguous conditions (DeLoache, 1986).<p/><p>Tasks were created that required AI systems to track the movement of a target object in a container set. The AI system first observed a set of 1 to 5 containers, arranged in a line on a circular, rotatable platform. After one of the containers was baited with the target object, the platform rotated or the AI system was passively moved to a new location, providing the AI system with a different view of the container set. Accurately finding the target object required the AI to keep track of the baited container across the rotation. On some test scenes, one of the containers was a different color than the other containers, providing a landmark. On some test scenes the platform and containers were occluded, so the rotating could not be directly observed but had to be inferred from the change in view or the AI system's registration of its own movement.<p/>",
-            "hypercubeImageCaption": "Ramp Task Hypercube:",
-            "hypercubeImage": "/images/Ramp.png",
-            "videoCaption": "Example of a Ramp Task:",
-            "video": "/videos/Ramp.mp4",
+            "hypercubeImageCaption": "Set Rotation Task Hypercube:",
+            "hypercubeImage": "/images/SetRotation.png",
+            "videoCaption": "Example of a Set Rotation Task:",
+            "video": "/videos/SetRotation.mp4",
             "reference": [
                 {
                     "refText": "Barth, J., & Call, J. (2006). Tracking the displacement of objects: A series of tasks with great apes (Pan troglodytes, Pan paniscus, Gorilla gorilla, and Pongo pygmaeus) and young children (Homo sapiens). Journal of Experimental Psychology: Animal Behavior Processes, 32(3), 239-252."
