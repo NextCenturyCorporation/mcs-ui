@@ -1,0 +1,744 @@
+{
+    "task": [
+        {
+            "id": "ObjectPermanence",
+            "name": "Passive Object Permanence",
+            "header": "Objects persist, even when occluded",
+            "subheader": "Passive recognition that objects do not appear or disappear behind occluders",
+            "htmlText": "<p>Object permanence is the understanding that objects continue to exist even when they can no longer be seen (or otherwise detected by the senses). The development of this aspect of common sense was first observed by Piaget in interactive experiments. He demonstrated that infants' ability to retrieve a hidden object undergoes protracted development, even if the infant has observed the hiding event. Baillargeon and her colleagues used looking-time tasks to provide evidence taken to mean that even relatively young infants demonstrate this type of common sense (e.g., Baillargeon, 1986; Baillargeon, Spelke, & Wasserman, 1985). In such studies, infants are tested to see if they look more at implausible scenes-such as when an object spontaneously disappears while occluded-or at plausible scenes, such as when an object continues to exist even while occluded. Longer looking times at implausible scenes have been considered evidence that infants understand that real objects cannot behave in this way.<p/><p>The goal of this evaluation of object permanence is to judge whether or not observed events are plausible. In these test scenes, the AI systems view scenes in which occluded objects sometimes behave normally, but other times spontaneously disappear (or sometimes spontaneously appear in a previously occluded space). At the conclusion of these scenes, the AI systems must provide a judgment about the plausibility of the just-witnessed scene.<p/>",
+            "hypercubeImageCaption": "Object Permanence Hypercube:",
+            "hypercubeImage": "/images/PassiveObjectPermanence.png",
+            "videoCaption": "Example of a Passive Object Permanence Task:",
+            "video": "/videos/PassiveObjectPermanence.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R., Spelke, E. S., & Wasserman, S. (1985). Object permanence in 5-month-old infants. Cognition, 20, 191-208."
+                },
+                {
+                    "refText": "Baillargeon, R. (1986). Representing the existence and the location of hidden objects: Object permanence in 6- and 8-month-old infants. Cognition, 23, 21-41."
+                }
+            ]
+        },
+        {
+            "id": "Collisions",
+            "name": "Collisions",
+            "header": "One object can be launched into motion when it is hit by another object",
+            "subheader": "Provide a plausibility rating for scenes in which a collision may or may not have occurred",
+            "htmlText": "<p>Infants differentiate between casual and non-causal collision events by 6 months of age (Leslie, 1982, 1984; Oakes & Cohen, 1990). This ability is preceded by an earlier stage in which infants seem to notice only continuous movement in one direction (Cohen & Amsel,1998) and across the first year infants become able to recognize the difference between causal and non-causal events in more complex situations (Cohen & Oakes, 1993).<p/><p>In this task, AI systems must make plausibility judgments about events in which one or two objects appear to move across the screen. The key event involves one object entering the scene and approaching an object at rest in the center of the scene. After the first object contacts the second object, the first object stops moving and the second object is launched into motion, traveling across the scene and out of view. This canonical, plausible collision event is contrasted with plausible no-collision events (e.g., a single object that moves across the screen, sometimes in front of another object that is on the stage but not on the path of the first object) and implausible events (e.g., the second object beginning to move even if it was not contacted by the first object). In some test scenes, the collision (or non-collision) occurs behind an occluder and in other test scenes the collision (or non-collision) is fully visible.<p/>",
+            "hypercubeImageCaption": "Collisions Hypercube:",
+            "hypercubeImage": "/images/Collisions.png",
+            "videoCaption": "Example of a Collisions Task:",
+            "video": "/videos/Collisions.mp4",
+            "reference": [
+                {
+                    "refText": "Cohen, L. B., & Amsel, G. (1998). Precursors to infants' perception of the causality of a simple event. Infant behavior and development, 21(4), 713-731."
+                },
+                {
+                    "refText": "Cohen, L. B., & Oakes, L. M. (1993). How infants perceive a simple causal event. Developmental Psychology, 29(3), 421."
+                },
+                {
+                    "refText": "Leslie, A. M. (1982). The perception of causality in infants. Perception, 11(2), 173-186."
+                },
+                {
+                    "refText": "Leslie, A. M. (1984). Spatiotemporal continuity and the perception of causality in infants. Perception, 13(3), 287-305."
+                },
+                {
+                    "refText": "Oakes, L. M., & Cohen, L. B. (1990). Infant perception of a causal event. Cognitive Development, 5(2), 193-207."
+                }
+            ]
+        },
+        {
+            "id": "ShapeConstancy",
+            "name": "Shape Constancy",
+            "header": "Solid objects do not spontaneously change shape",
+            "subheader": "Passive recognition that even in the face of possible sensory/perceptual changes, a solid object does not change shape spontaneously if no forces bear on the object. This holds true even for objects hidden behind occluders.",
+            "htmlText": "<p>One aspect of object permanence is understanding that in the absence of internal or external forces acting on a solid object, objects do not change shape spontaneously. We perceive a solid object to have an unchanging shape, even in some cases where a change in perspective provides our eyes with information specifying a changed shape. Although some early evidence indicated by the age of 2 months infants exhibit such shape constancy for solid objects (Bower, 1966; Day & McKenzie, 1973), subsequent research found that 2.5-month-olds did not provide evidence that constant shape could be perceived across static views of an object seen from various perspectives (Caron, Caron, & Carlson, 1978). Later work resolved these discrepant findings to some degree, by demonstrating that when faced with dynamic rather than static images of objects, four-month-old infants perceive the unchanging 3D shape of objects despite changes in the retinal images informing them about those objects (Kellman, 1984; Moore & Johnson, 2008).<p/><p>This task assessed the AI's shape constancy by asking it to judge whether scenes were plausible or implausible. In this task, the scenes involve the following sequence of events: two occluders are raised to reveal an empty stage, the occluders are lowered to their original positions, one or two objects move behind them, the occluders are raised to reveal objects that have either changed or have not changed shape. In all scenes, the AI is able to see the shape of the objects prior to occlusion. In plausible scenes, the shapes are the same before and after occlusion. In implausible scenes, the shapes are revealed at the end of the scene to have spontaneously changed while the objects were behind the occluders. Some of the objects in this task could have been previously encountered in a training set, but other objects are guaranteed to be unfamiliar to the AI system.<p/>",
+            "hypercubeImageCaption": "Shape Constancy Hypercube:",
+            "hypercubeImage": "/images/ShapeConstancy.png",
+            "videoCaption": "Example of a Shape Constancy Task:",
+            "video": "/videos/ShapeConstancy.mp4",
+            "reference": [
+                {
+                    "refText": "Bower, T. G. R. (1966). Slant perception and shape constancy in infants. Science, 151(3712), 832-834."
+                },
+                {
+                    "refText": "Caron, A. J., Caron, R. F., & Carlson, V. R. (1978). Do infants see objects or retinal images? Shape constancy revisited. Infant Behavior and Development, 1, 229-243."
+                },
+                {
+                    "refText": "Day, R. H., & McKenzie, B. E. (1973). Perceptual shape constancy in early infancy. Perception, 2, 315-320."
+                },
+                {
+                    "refText": "Kellman, P. J. (1984). Perception of three-dimensional form by human infants. Perception & Psychophysics, 36(4), 353-358."
+                },
+                {
+                    "refText": "Moore, D. S., & Johnson, S. P. (2008). Mental rotation in human infants: A sex difference. Psychological Science, 19(11), 1063-1066."
+                }
+            ]
+        },
+        {
+            "id": "SpatioTemporalContinuity",
+            "name": "Spatio Temporal Continuity",
+            "header": "Objects move in 3D space and persist behind occluders, never spontaneously appearing or disappearing",
+            "subheader": "Passive recognition that, all else being equal, objects move in smooth and continuous ways, not appearing or disappearing spontaneously and not materializing or dematerializing when behind occluders",
+            "htmlText": "<p>One aspect of a mature object concept is the recognition that, in the absence of significant friction or interactions with other objects, moving objects move on continuous and uninterrupted paths. They do not appear or disappear spontaneously, either in full view or while behind occluders. Although Piaget demonstrated that infants' understanding of object permanence undergoes protracted development, studies employing looking-time methods have provided evidence suggesting that even relatively young infants have a nascent understanding of object permanence (e.g., Baillargeon, 1986; Baillargeon, Spelke, & Wasserman, 1985). Moreover, Spelke et al. (1995) demonstrated that 4-month-old infants appeared to be sensitive to the continuity of object motion. In this study, infants seemed to recognize when the movement of an object violated spatiotemporal continuity by jumping instantaneously from one location to another in a way that objects never do.<p/><p>To assess the AI systems’ recognition of violations of spatio-temporal continuity, a task was developed in which the AI was required to judge whether observed events are plausible. The AI system views scenes in which objects move across the field of view. In some scenes, a pair of occluders are raised prior to any objects entering the frame, revealing that there are no other objects behind the occluders. Other scenes are completely unoccluded. In plausible scenes, an object moves smoothly along a continuous path, either in full view or occasionally behind occluders. In implausible scenes without occluders, the moving object spontaneously disappears in one location and then reappears a moment later at a location slightly further along its original path. In implausible scenes with occluders, the moving object is seen moving behind one occluder and then a little later emerging from behind the second occluder, without having appeared between the two occluders. At the conclusion of these scenes, the AI system must provide a judgment about the plausibility of the just-witnessed scene. To test generalization, some of the objects in these scenes could have been previously encountered in a training set, but other objects are guaranteed to be unfamiliar to the AI system. <p/>",
+            "hypercubeImageCaption": "Spatio Temporal Continuity Hypercube:",
+            "hypercubeImage": "/images/SpatioTemporalContinuity.png",
+            "videoCaption": "Example of a Spatio Temporal Continuity Task:",
+            "video": "/videos/SpatioTemporalContinuity.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R., Spelke, E. S., & Wasserman, S. (1985). Object permanence in 5-month-old infants. Cognition, 20, 191-208."
+                },
+                {
+                    "refText": "Baillargeon, R. (1986). Representing the existence and the location of hidden objects: Object permanence in 6- and 8-month-old infants. Cognition, 23, 21-41."
+                },
+                {
+                    "refText": "Spelke, E. S., Kestenbaum, R., Simons, D. J., & Wein, D. (1995). Spatiotemporal continuity, smoothness of motion and object identity in infancy. British journal of developmental psychology, 13(2), 113-142."
+                }
+            ]
+        },
+        {
+            "id": "Arithmetic",
+            "name": "Arithmetic",
+            "header": "Sets of objects can be more or less than other sets of objects",
+            "subheader": "AI systems must choose the side of a room that contains more target objects rather than the side that contains fewer target objects after seeing the set on one side accreted or depleted by a discrete number of objects",
+            "htmlText": "<p>Early studies of numerical cognition in infants revealed that by the age of 6 months, infants can discriminate sets containing 2 versus 3 elements (Starkey & Cooper, 1980). Later studies (Xu & Spelke, 2000) indicated that 6-month-olds can discriminate large sets that vary by a factor of 2 (e.g., 8 versus 16 elements) and that 7-month-olds can discriminate small from large sets if the latter set contains 4 times the elements in the former set (Cordes & Brannon, 2009). Further, some data have been interpreted to mean that 5-month-olds can compute the results of simple arithmetic operations on sets containing small numbers of items (Wynn, 1992). Follow-up research suggested that infants' performances in tests of arithmetic competence reflect the presence of representations of discrete objects rather than the presence of a symbolic integer model of number (Uller et al., 1999), but the subsequent finding that infants add and subtract numbers greater than object-tracking limits weighs against this interpretation (McCrink & Wynn, 2004). Although the findings regarding infants' addition to and subtraction from small sets of objects remain open to different interpretations, the findings themselves are robust (Christodoulou, Lac, & Moore, 2017).<p/><p>The goal of this task is to retrieve the largest possible number of target objects. AI systems initially stand on a platform bisecting a room. On one side of the platform at the far end of the room are either 0 target objects (in addition conditions) or 4 target objects (in subtraction conditions). In some test scenes, all objects and actions remain visible to the AI system. In other test scenes, an occluder descends to obscure the view of the lower half of the far end of the room; this occluder is short enough to allow AI systems to see any target objects subsequently added to or subtracted from the object-sets previously seen in the room. One or more placers then descend from the ceiling. In addition conditions, these placers hold 0 - 4 target objects that are deposited on the side of the room containing zero objects. In subtraction conditions, these placers do not hold any target objects as they descend, but after reaching the four target objects on one side of the room, they are seen re-ascending, holding 0 - 4 target objects. In this way, 0 - 4 objects are added to an empty set in every addition scene and 0 - 4 target objects are subtracted from a 4-object set in every subtraction condition. In all scenes, the other side of the room contains a fixed number of either 1 or 2 target objects. The AI system must choose to get off of the platform to enter the right or left side of the room and then navigate to any target objects on that side of the room, collecting each one. Given their goal, AI systems with the necessary arithmetic competence should choose the side of the room that has more target objects after the addition or subtraction operations. In occluded test scenes, the AI system must make its choice based on a comparison of the number of objects calculated to be on each side of the room, even though these objects cannot be seen at the time the choice is made.<p/>",
+            "hypercubeImageCaption": "Arithmetic Hypercube:",
+            "hypercubeImage": "/images/Arithmetic.png",
+            "videoCaption": "Example of an Arithmetic Task:",
+            "video": "/videos/Arithmetic.mp4",
+            "reference": [
+                {
+                    "refText": "Christodoulou, J., Lac, A., & Moore, D. S. (2017). Babies and math: A meta-analysis of infants' simple arithmetic competence. Developmental Psychology, 53(8), 1405-1417."
+                },
+                {
+                    "refText": "Cordes, S., & Brannon, E. M. (2009). Crossing the divide: Infants discriminate small from large numerosities. Developmental Psychology,45(6), 1583-1594."
+                },
+                {
+                    "refText": "McCrink, K., & Wynn, K. (2004). Large-number addition and subtraction by 9-month-old infants. Psychological Science, 15(11), 776-781."
+                },
+                {
+                    "refText": "Starkey, P., & Cooper, R. G., Jr. (1980). Perception of numbers by human infants. Science, 210, 1033–1035."
+                },
+                {
+                    "refText": "Uller, C., Carey, S., Huntley-Fenner, G., & Klatt, L. (1999). What representations might underlie infant numerical knowledge? Cognitive Development, 14, 1-36."
+                },
+                {
+                    "refText": "Wynn, K. (1992). Addition and subtraction by human infants. Nature, 358, 749-750."
+                },
+                {
+                    "refText": "Xu, F., & Spelke, E. S. (2000). Large number discrimination in 6-month-old infants. Cognition, 74(1), B1-B11."
+                }
+            ]
+        },
+        {
+            "id": "AsymmetricToolUse",
+            "name": "Asymmetric Tool Use",
+            "header": "Object functions can be predicted by their forms ",
+            "subheader": "Use an asymmetrical, L-shaped object as a tool, to push or maneuver a target object so that it becomes accessible",
+            "htmlText": "<p>Tool use is characteristic of the great apes (van Schaik & Pradhan, 2003), and the continuous emergence of tool use in human development has been traced to its nascent beginnings in infancy (Lockman, 2000). Zelazo & Kearsley (1980) documented the emergence of functional play in toddlers between 12 and 15 months of age, and Willatts (1984) reported that even 9-month-old infants will manipulate a support holding an object in order to retrieve the object. Later research that was focused specifically on tool use revealed that by 14 months of age, some infants provide evidence that they are planning ahead when they grasp tools in order to accomplish a self-directed goal (McCarty et al., 2001).<p/><p>In experimental scenes in this task, AI systems must use an asymmetrical, L-shaped tool that is present in the room in order to retrieve a target object. The target in these scenes cannot be accessed directly, because it is located in the middle of a large \"pool of lava,\" a region of the room known to be dangerous (i.e., an AI system that steps into this lava pool will experience the forced end of the trial shortly thereafter). As a result, the only way to retrieve the target in these scenes is to use the provided tool. In some scenes, the tool is oriented so that it does not need to be manipulated prior to being used; simply pulling the tool will render the target accessible. In other scenes, the tool needs to be rotated 45 or 90 degrees before it can be effectively used.<p/>",
+            "hypercubeImageCaption": "Asymmetric Tool Use Hypercube:",
+            "hypercubeImage": "/images/AsymmetricToolUse.png",
+            "videoCaption": "Example of an Asymmetric Tool Use Task:",
+            "video": "/videos/AsymmetricToolUse.mp4",
+            "reference": [
+                {
+                    "refText": "Lockman, J. L. (2000). A perception-action perspective on tool use development. Child Development, 71(1), 137-144."
+                },
+                {
+                    "refText": "McCarty, M. E., Clifton, R. K., & Collard, R. R. (2001). The beginnings of tool use by infants and toddlers. Infancy, 2(2), 233-256."
+                },
+                {
+                    "refText": "van Schaik, C. P., & Pradhan, G. R. (2003). A model for tool-use traditions in primates: Implications for the coevolution of culture and cognition. Journal of Human Evolution, 44, 645 - 664."
+                },
+                {
+                    "refText": "Willatts, P. (1984). The stage-IV infant's solution of problems requiring the use of supports. Infant Behavior and Development, 7, 125-134."
+                },
+                {
+                    "refText": "Zelazo, P. R., & Kearsley, R. B. (1980). The emergence of functional play in infants: Evidence for a major cognitive transition. Journal of Applied Developmental Psychology, 1, 95-117."
+                }
+            ]
+        },
+        {
+            "id": "KnowledgeableAgents",
+            "name": "Knowledgeable Agents",
+            "header": "Agents can convey knowledge, but they can only have knowledge about things or events they have seen or experienced",
+            "subheader": "AI systems are required to seek help from an agent that could have the knowledge needed to help, not from an agent that could not have that knowledge",
+            "htmlText": "<p>Human agents normally have mental states that influence their goal-directed behaviors, and these behaviors can communicate to others the contents of the agents' minds, including their intentions, beliefs, and feelings (Rakison & Poulin-Dubois, 2001). Onishi and Baillargeon (2005) provided some evidence that by fifteen months of age, infants recognize that some of the contents of agents' minds can be inferred by attending to what the agents can see. Specifically, these researchers argued that 15-month-old infants understand that agents who have not seen certain events involving an object can harbor false beliefs about the location of the object. Other research indicates that infants will sometimes take agents' behaviors (e.g., pointing-like behavior) as cues for the location of a target object. For example, Bertenthal et al. (2014) found that by 6 months of age, infants will follow the direction of a human hand pointing toward a target. Thus, before they reach their first birthday, infants develop abilities that may allow them to distinguish a knowledgeable agent from an ignorant agent, and to use the knowledgeable agent's behavior as a cue to the location of an object.</p><p>In this task, AI systems  must use information from an agent to obtain a target object. he AI system initially sees two agents who either can see (i.e., has an unobstructed view of) or cannot see (i.e., has an obstructed view of) an event in which a target object is hidden in one of two identical containers placed on the left and right sides of a room. In half of the test scenes, both agents can see the object being hidden in a container. In the other half of the test scenes, the two agents have different visual experiences; one of the agents can see the hiding event and the other agent is unable to see the hiding event. After the hiding event, both agents turn toward and point at containers. The AI system's goal in this task is to obtain the target object by following the point of only the knowledgeable agent. Doing so entails choosing to step into the left or right side of the room, approaching the container on that side, opening it, and retrieving the target object if it was hidden in that container.</p>",
+            "hypercubeImageCaption": "Knowledgeable Agents Task Hypercube:",
+            "hypercubeImage": "/images/knowledgeableAgents.png",
+            "videoCaption": "Example of a Knowledgeable Agents Task:",
+            "video": "/videos/KnowledgeableAgents.mp4",
+            "reference": [
+                {
+                    "refText": "Bertenthal, B. I., Boyer, T. W., & Harding, S. (2014). When do infants begin to follow a point? Developmental Psychology, 50(8), 2036."
+                },
+                {
+                    "refText": "Onishi, K. H., & Baillargeon, R. (2005). Do 15-month-old infants understand false beliefs?. Science, 308(5719), 255-258."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209-228."
+                }
+            ]
+        },
+        {
+            "id": "AgentIdentification",
+            "name": "Agent Identification",
+            "header": "Agents share a set of common characteristics",
+            "subheader": "Identify the agent in a scene, approach the agent, and obtain target by requesting it",
+            "htmlText": "<p>Agency entails being able to initiate action in a causal event (Gelman & Spelke, 1981). Like other animated entities, agents have anatomical characteristics that enable specific biological functions, such as limbs for locomotion; they can also have mental states that influence their goal-directed behaviors, for example; and many are able to communicate about their intentions, beliefs, and feelings, in addition to other mental content (Rakison & Poulin-Dubois, 2001). Several characteristics serve as cues to agency, including self-propelled motion, the presence of a face, and the presence of limbs. Woodward (1998) demonstrated that by six months of age, infants can infer agents' goals from their behaviors, and Gergley and Csibra (2003) observed that by their first birthday, infants seem to evaluate the efficiency of an agent's actions.<p/><p>To evaluate if AI systems can identify an agent and discriminate it from a non-agent, a task was designed that required the AI system to retrieve a target object by first choosing to enter one of two sides of a room. One side of this room contains an agent known (based on training) to possess a target object and the other side contains either a static object (e.g., a piece of furniture) or an ambiguous blob-shaped object that does not move or have limbs or a face. In some scenes, the agent is seen running back and forth on its side of the room; in other scenes, the agent is standing still. To test generalization, in some scenes, the agent is one that may have been encountered during training; in other scenes, the agent is guaranteed to be unfamiliar to the AI system. Once the AI system chooses to enter the side of the room containing the agent, it can approach the agent and request the target, at which point the agent produces the target object and hands it to the AI system.<p/>",
+            "hypercubeImageCaption": "Agent Identification Task Hypercube:",
+            "hypercubeImage": "/images/AgentIdentification.png",
+            "videoCaption": "Example of an Agent Identification Task:",
+            "video": "/videos/AgentIdentification.mp4",
+            "reference": [
+                {
+                    "refText": "Gelman, R., & Spelke, E. S. (1981). The development of thoughts about animate and inanimate objects: Implications for research on social cognition. In J. H. Flavell & L. Ross (Eds.), Social Cognition (pp. 43 - 66). Academic Press."
+                },
+                {
+                    "refText": "Gergely, G., & Csibra, G. (2003). Teleological reasoning in infancy: The naive theory of rational action. Trends in Cognitive Sciences, 7, 287 - 292."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209 - 228."
+                },
+                {
+                    "refText": "Woodward, A. L. (1998). Infants selectively encode the goal object of an actor's reach. Cognition, 69, 1 - 34. "
+                }
+            ]
+        },
+        {
+            "id": "Imitation",
+            "name": "Imitation",
+            "header": "Agents can provide solutions to problems and convey knowledge",
+            "subheader": "Solve a simple problem after viewing an agent model a non-obvious solution (such as touching targets in a specific sequence), demonstrating recognition of the potential value of imitation",
+            "htmlText": "<p>Agency entails being able to initiate action in a causal event (Gelman & Spelke, 1981). Human agents have mental states that reflect their intentions, feelings, and knowledge (Rakison & Poulin-Dubois, 2001). Studies of children's imitation of adult agents have been underway for more than 60 years (Bandura & Walters, 1963), and some of these studies have revealed imitation even in infancy. Specifically, imitation has been observed in 6-month-olds who have just seen an agent model specific behaviors with objects (Barr et al., 1996) and 14-month-olds can imitate such behaviors one week after seeing them modeled (Meltzoff, 1988).<p/><p>In this task, the goal is to obtain a target object. The AI system must imitate an agent who knows how to render the target object accessible. In each test scene, the AI system sees the agent approach a row of three distinctive containers and open either one or two containers in a specific order, which causes a target object to be delivered into the room. The AI system then is allowed to interact with the containers; it must perform the same actions in the same sequence as the agent in order to render the target object accessible. Sometimes the agent is one the AI system may have encountered during training and in other scenes, the agent is guaranteed to be unfamiliar to the AI system. The test scenes vary in whether the AI system and the containers remain in the same locations after the agent models the container-opening behavior, or if the AI system, containers, or both are transported to new locations after the behavior is modeled. These last two manipulations allow evaluation of the extent to which the AI system's behaviors imitate the agent's container-opening behavior, versus simply opening containers at random or in a sequence dictated by something other than the agent's behavior. Once the AI has successfully imitated the agent's specific container-opening behaviors, a target becomes available for the AI system to retrieve.<p/>",
+            "hypercubeImageCaption": "Agent Identification Task Hypercube:",
+            "hypercubeImage": "/images/Imitation.png",
+            "videoCaption": "Example of an Imitation Task:",
+            "video": "/videos/Imitation.mp4",
+            "reference": [
+                {
+                    "refText": "Bandura, A., & Walters, R. H. (1963). Social learning and personality development. Holt, Rinehart & Winston."
+                },
+                {
+                    "refText": "Barr, R., Dowden, A., & Hayne, H. (1996). Developmental changes in deferred imitation by 6- to 24-month-old infants. Infant Behavior and Development, 19, 159 - 170."
+                },
+                {
+                    "refText": "Gelman, R., & Spelke, E. S. (1981). The development of thoughts about animate and inanimate objects: Implications for research on social cognition. In J. H. Flavell & L. Ross (Eds.), Social Cognition (pp. 43 - 66). Academic Press."
+                },
+                {
+                    "refText": "Meltzoff, A. N. (1988). Infant imitation after a 1-week delay: Long-term memory for novel acts and multiple stimuli. Developmental Psychology, 24, 470 - 476."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209 - 228."
+                }
+            ]
+        },
+        {
+            "id": "SpatialElimination",
+            "name": "Spatial Elimination",
+            "header": "Objects can be located in space by a logical process of elimination",
+            "subheader": "AI systems must determine where an occluded object must be located given that only one of two occluders in the room is big enough to fully occlude the object.",
+            "htmlText": "<p>Object permanence is the understanding that objects exist even when they cannot be seen (or otherwise detected by the senses). The development of this aspect of common sense was first observed by Piaget in interactive experiments. He demonstrated that infants' ability to retrieve a hidden object undergoes protracted development, even if the infant has observed the hiding event. Baillargeon and colleagues used looking time procedures to assess if infants remember that an object was hidden and if they represent features of the hidden object, such as its size (Baillargeon & DeVos, 1991; Hespos & Baillargeon, 2001). In these studies, infants as young as 3 ½ months seemed to have accurate expectations about whether the height of an occluder would be sufficient to fully obscure a view of an object of a known height. Given the ability to infer that an object of a known size could not be hidden behind an occluder that is shorter or narrower than the object, infants should be able to locate which occluder an object could be behind, using a logical process of elimination.</p><p>A Spatial Elimination task was designed to evaluate if AI systems can use a logical process of elimination to find a target object hidden behind one of two occluders. In this task, an AI system, initially located on a platform bisecting a room, can see two occluders, one each in the left and right sides of the room. In some scenes, only one of the occluders is large enough to fully hide the target object. In such scenes, if the AI system cannot see the target anywhere in the room (including partially hidden behind a too-small occluder), the AI should approach the large-enough occlude to retrieve the target object from behind it. Task scenes assess either the AI system's reasoning about height by using occluders that are too short to hide the target, or the AI system's reasoning about width by using occluders that are too narrow to hide the target.</p>",
+            "hypercubeImageCaption": "Spatial Elimination Task Hypercube:",
+            "hypercubeImage": "/images/SpatialElimination.png",
+            "videoCaption": "Example of a Spatial Elimination Task:",
+            "video": "/videos/SpatialElimination.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R., & DeVos, J. (1991). Object permanence in young infants: Further evidence. Cognitive Development, 62, 1227-1246."
+                },
+                {
+                    "refText": "Hespos, S. J., & Baillargeon, R. (2001). Infants' knowledge about occlusion and containment events: A surprising discrepancy. Psychological Science, 12(2), 141-147."
+                }
+            ]
+        },        
+        {
+            "id": "SpatialReference",
+            "name": "Spatial Reference",
+            "header": "Agents can provide solutions to problems and convey knowledge",
+            "subheader": "Use spatial reference information from agents only, not from objects",
+            "htmlText": "<p>Human agents normally have mental states that influence their goal-directed behaviors, and many are able to communicate about the contents of their minds, including their intentions, beliefs, and feelings (Rakison & Poulin-Dubois, 2001). Woodward (1998) demonstrated that by six months of age, infants infer agents' goals or the targets of their actions. Other work suggests that infants will take as cues for the location of a target the actions (e.g., pointing-like behavior) of agents but not of non-agents. For example, Johnson et al. (1998) found that 12-month-old infants followed the gaze of an ambiguous object if that object had a face or engaged in contingent interactions with the infant. Bertenthal et al. (2014) found that while both 4- and 6-month-old infants would follow the direction of a human hand pointing toward a target, only 4-month-old infants engaged in the same shift in attention when faced with an ambiguous image seemingly pointing toward a target. Thus, although the ability to follow a pointing-like gesture emerges early in infancy, the recognition of the significance of the difference between a point or a shift in gaze by an agent versus a non-agent develops over the first year.<p/><p>A Spatial Reference task was designed to evaluate if AI systems will consistently use pointing as a source of information from agents, but not from non-agents, to help them locate a target object. The goal of this task is to obtain the target object. In this task, an AI system is initially frozen on a platform bisecting a room. From this location, the AI system sees one or two entities at the left and/or right side(s) of the far end of the room. In some scenes, these entities might have previously been encountered in a training set; in other scenes, the entities are guaranteed to be unfamiliar to the AI system. The agents are humanoid and the non-agents are faceless blob-shapes that have a directional protrusion (i.e., a “pointer”). The agent always points to the closed container hiding the target object and the non-agent “points” (i.e., their protrusion is directed) randomly at either of the closed containers. Sometimes, an agent and non-agent point at the same container, and sometimes they point at different containers. In some test scenes, the entities remain motionless and are already pointing at a closed container at the start of the scene. In other test scenes, the entities move; agents are self-propelled and walk-and-point in the direction of the container holding the target, whereas non-agents are moved by a rotating turntable on which they stand. Once all entities in the room are pointing at a container, the AI system is free to choose to step into the left or right side of the room, whereupon it can approach the container on that side of the room. The AI system's goal is to retrieve the target object hidden in one of the two containers in the room. <p/>",
+            "hypercubeImageCaption": "Spatial Reference Task Hypercube:",
+            "hypercubeImage": "/images/SpatialReference1.png",
+            "hypercubeImage2": "/images/SpatialReference2.png",
+            "videoCaption": "Example of a Spatial Reference Task:",
+            "video": "/videos/SpatialReference.mp4",
+            "reference": [
+                {
+                    "refText": "Bertenthal, B. I., Boyer, T. W., & Harding, S. (2014). When do infants begin to follow a point? Developmental Psychology, 50(8), 2036."
+                },
+                {
+                    "refText": "Johnson, S., Slaughter, V., & Carey, S. (1998). Whose gaze will infants follow? The elicitation of gaze‐following in 12‐month‐olds. Developmental Science, 1(2), 233-238."
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209 - 228."
+                },
+                {
+                    "refText": "Woodward, A. L. (1998). Infants selectively encode the goal object of an actor's reach. Cognition, 69, 1 - 34."
+                }
+            ]
+        },
+        {
+            "id": "SeeingLeadsToKnowing",
+            "name": "Seeing Leads To Knowing",
+            "header": "Agents only know what they have seen or experienced",
+            "subheader": "An AI system should consider it implausible when an agent appears to intentionally pursue a target object in a location where the agent could not have seen the target object being hidden",
+            "htmlText": "<p>Human agents normally have mental states that influence their goal-directed behaviors, and these behaviors can communicate to others the contents of the agents' minds, including their intentions, beliefs, and feelings (Rakison & Poulin-Dubois, 2001). Onishi and Baillargeon (2005) provided some evidence that by fifteen months of age, infants recognize that some of the contents of agents' minds can be inferred by attending to what the agents can see. Specifically, these researchers argued that 15-month-old infants understand that agents who have not seen certain events involving an object can harbor false beliefs about the location of the object. Although researchers continue to debate the extent to which infants possess the kind of \"theory of mind\" that would permit such inferences (Slaughter, 2015; Poulin-Dubois & Yott, 2018), older children are known to have developed this capacity (Leslie, 1994). Other research suggests that 14-month-old infants are able to represent an agent's visual experience (Sodian et al., 2007) and can use that representation to follow an agent's gaze to the subject of the agent's attention (Dunphy-Lelii & Wellman, 2004).<p/><p>In this task, the AI system's goal is to judge the plausibility of events in which an agent looks for a hidden target. The events have the following sequence: 1) the agent is seen to walk to a centrally located position between four open containers, two of which are in front of the agent and two of which are behind the agent (and therefore out of sight), 2) a placer holding a target object then descends from the ceiling and hides the object inside one of the four containers; to signal to the AI system that the agent has been cued that the target object has been hidden, empty placers descend simultaneously to the other three containers, 3) the agent is then seen to approach one of the four containers. In some test scenes, the agent approaches a container where it has seen the target object being hidden (i.e., in a container in front of the agent), in other test scenes, the agent approaches a container where it has not seen the target object hidden (i.e., in the other container in front of the agent), and in other test scenes the agent turns around and approaches a container behind it (sometimes even when the agent was observed to have seen the target being placed in one of the containers in front of it). The AI system must judge whether the agent's behavior is plausible or implausible, based on what the agent saw.<p/>",
+            "hypercubeImageCaption": "Seeing Leads to Knowing Task Hypercube:",
+            "hypercubeImage": "/images/SeeingLeadsToKnowing.png",
+            "videoCaption": "Example of a Seeing Leads To Knowing Task:",
+            "video": "/videos/SeeingLeadsToKnowing.mp4",
+            "reference": [
+                {
+                    "refText": "Dunphy-Lelii, S., & Wellman, H. W. (2004). Infants' understanding of occlusion of others' line-of-sight: Implications for an emerging theory of mind. European Journal of Developmental Psychology, 1(1), 49-66."
+                },
+                {
+                    "refText": "Leslie, A. M. (1994). Pretending and believing: Issues in the theory of ToMM. Cognition, 50, 211-238."
+                },
+                {
+                    "refText": "Onishi, K. H., & Baillargeon, R. (2005). Do 15-month-old infants understand false beliefs?. Science, 308(5719), 255-258."
+                },
+                {
+                    "refText": "Poulin-Dubois, D., & Yott, J. (2018). Probing the depth of infants' theory of mind: Disunity in performance across paradigms. Developmental Science, 21, e12600. https://doi.org/10.1111/desc.12600 "
+                },
+                {
+                    "refText": "Rakison, D. H., & Poulin-Dubois, D. (2001). Developmental origin of the animate-inanimate distinction. Psychological Bulletin, 127, 209-228."
+                },
+                {
+                    "refText": "Slaughter, V. (2015). Theory of mind in infants and young children: A review. Australian Psychologist, 50(3), 169-172."
+                },
+                {
+                    "refText": "Sodian, B., Thoermer, C., & Metz, U. (2007). Now I see it but you don't: 14-month-olds can represent another person's visual perspective. Developmental Science, 10(2), 199-204."
+                }
+            ]
+        },
+        {
+            "id": "Container",
+            "name": "Container",
+            "header": " Agents can recognize that an unobservable object may be in a container and can update their location relative to features of the environment as they search for that object",
+            "subheader": "Search for an unseen object in a room, opening containers to find the object",
+            "htmlText": "<p>During the first 2 years, infants develop an understanding of containment. From an early age, in passive visual tasks, infants differentiate between possible and impossible containment events-that is, events in which an object is apparently lowered into a container or lowered into a cylinder with a closed top (Hespos & Baillargeon, 2001). In addition, infants seem to recognize the commonalities across containment events before they recognize the commonalities between other types of events, such as support (Casasola & Cohen, 2002). Infants' appreciation of containers seems to develop further in the second year when searching for objects (Freeman et al., 1980).<p/><p>Many tasks in this battery involve a target object inside a container and the AI system is required to retrieve that target from the container. The goal of the container task is for the AI system to obtain the target object, which in this task is always out of sight in a container. This task assesses the AI system's ability to 1) determine that an unseen target is in a container, and 2) retrieve the target from the container. In this task, the AI is deposited in a room with no target visible. However, there are 1, 2 or 3 containers, as well as other small objects and pieces of furniture. The AI system must navigate to a container, open it up, and retrieve the target if it is present. This process is repeated until the target is retrieved. To test the AI system's ability to generalize to new containers, half of the test scenes involved containers that were available in training and half involved containers that were never before seen.<p/>",
+            "hypercubeImageCaption": "Container Task Hypercube:",
+            "hypercubeImage": "/images/Container.png",
+            "videoCaption": "Example of a Container Task:",
+            "video": "/videos/Container.mp4",
+            "reference": [
+                {
+                    "refText": "Casasola, M., & Cohen, L. B. (2002). Infant categorization of containment, support and tight-fit spatial relationships. Developmental science, 5(2), 247-264."
+                },
+                {
+                    "refText": "Freeman, N. H., Lloyd, S., & Sinha, C. G. (1980). Infant search tasks reveal early concepts of containment and canonical usage of objects. Cognition, 8(3), 243-262."
+                },
+                {
+                    "refText": "Hespos, S. J., & Baillargeon, R. (2001). Reasoning about containment events in very young infants. Cognition, 78(3), 207-245."
+                }
+            ]
+        },
+        {
+            "id": "Holes",
+            "name": "Holes",
+            "header": "Agents can navigate to a target, avoid places that are dangerous, update their location relative to the environment, select the most efficient route, and identify another agent that may have the target",
+            "subheader": "Navigate to either a target or an agent that holds the target in a room with holes in the floor that obstruct the AI's path.",
+            "htmlText": "<p>There are three tasks-holes, lava, and ramps-that assess the AI system's ability to navigate an environment to either a seen target object or a humanoid agent that is presumably holding that target. The environments in these tasks have obstacles that impede the AI's navigation-holes in the floor, lava, or platforms that can only be reached via ramps. Effectively obtaining the target requires planning a route and updating one's own location as the route is traversed.</p><p>Once infants develop the ability to locomote, their ability to navigate also develops. Novice crawlers and walkers often do not appear to have a destination in mind when they begin a bout of locomotion (Hoch et al., 2020) and by 1½ years of age, infants will choose the more efficient of two paths to reach a goal (Paulus & Sodian, 2015).</p><p>In the Holes task, the AI system was placed in a room, on a platform. A visible target or a humanoid agent is present in the room, and there are holes in the floor. In some scenes, there are one or two paths through the holes to safely reach the target or agent. In other scenes, there are no holes between the AI and target or agent. Thus, this task primarily assesses the AI system's ability to navigate around the holes, selecting the most efficient path when multiple paths are available, to retrieve the target.</p><p>On test scenes with an agent, the AI system has to additionally recognize the agent as the source of the target. In some test scenes, there is both an agent and an ambiguous, blob-shaped non-agent visible. To succeed, the AI must approach the agent and not the blob to retrieve the target, thus requiring agent identification.</p>",
+            "hypercubeImageCaption": "Holes Task Hypercube:",
+            "hypercubeImage": "/images/Holes.png",
+            "videoCaption": "Example of a Holes Task:",
+            "video": "/videos/Holes.mp4",
+            "reference": [
+                {
+                    "refText": "Hoch, J. E., Rachwani, J., & Adolph, K. E. (2020). Where infants go: Real-time dynamics of locomotor exploration in crawling and walking infants. Child development, 91(3), 1001-1020."
+                },
+                {
+                    "refText": "Paulus, M., & Sodian, B. (2015). Which way to take? Infants select an efficient path to their goal. Journal of experimental child psychology, 137, 111-124."
+                }
+            ]
+        },
+        {
+            "id": "Lava",
+            "name": "Lava",
+            "header": "Agents can navigate to a target, avoid places that are dangerous, update their location relative to the environment, select the most efficient route, and identify another agent that may have the target ",
+            "subheader": "Navigate to either a target or an agent that holds the target in a room with lava that obstruct the AI's path.",
+            "htmlText": "<p>There are three tasks-holes, lava, and ramps-that assess the AI system's ability to navigate an environment to either a seen target object or a humanoid agent that is presumably holding that target. The environments in these tasks have obstacles that impede the AI's navigation-holes in the floor, lava, or platforms that can only be reached via ramps. Effectively obtaining the target requires planning a route and updating one's own location as the route is traversed.<p/><p>Once infants develop the ability to locomote, their ability to navigate also develops. Novice crawlers and walkers often do not appear to have a destination in mind when they begin a bout of locomotion (Hoch et al., 2020) and by 1½ years of age, infants will choose the more efficient of two paths to reach a goal (Paulus & Sodian, 2015).<p/><p>In the Lava task, the AI system was placed in a room, on a platform. A visible target or a humanoid agent is present in the room, and there are patches of lava on the floor. In some scenes, there are one or two paths through the lava to safely reach the target or agent. In other scenes, there is no lava between the AI and target or agent. Thus, this task primarily assesses the AI system's ability to navigate around the lava, selecting the most efficient path when multiple paths are available, to retrieve the target.<p/><p>On test scenes with an agent, the AI system has to additionally recognize the agent as the source of the target. In some test scenes, there is both an agent and an ambiguous, blob-shaped non-agent visible. To succeed, the AI must approach the agent and not the blob to retrieve the target, thus requiring agent identification.<p/>",
+            "hypercubeImageCaption": "Lava Task Hypercube:",
+            "hypercubeImage": "/images/Lava.png",
+            "videoCaption": "Example of a Lava Task:",
+            "video": "/videos/Lava.mp4",
+            "reference": [
+                {
+                    "refText": "Hoch, J. E., Rachwani, J., & Adolph, K. E. (2020). Where infants go: Real-time dynamics of locomotor exploration in crawling and walking infants. Child development, 91(3), 1001-1020."
+                },
+                {
+                    "refText": "Paulus, M., & Sodian, B. (2015). Which way to take? Infants select an efficient path to their goal. Journal of experimental child psychology, 137, 111-124."
+                }
+            ]
+        },
+        {
+            "id": "Obstacle",
+            "name": "Obstacle",
+            "header": "Agents can navigate around obstacles to retrieve an object and update their location relative to features of the environment",
+            "subheader": "Search in a room to find an object that may be visible behind an obstacle (e.g., an open bookcase).",
+            "htmlText": "<p>Using a variation of the detour paradigm used with animals (Kabadayi et al., 2018), research has revealed that across the first two years, infants become better able to retrieve objects by reaching or moving around barriers (Lockman & Adams, 2001).<p/><p>The Obstacle Tasks were used to examine AI commonsense about how to navigate around obstacles and barriers to obtain a target object. The AI system was placed in a room with the target object visible, either behind or in front of an obstacle. There were other small objects and furniture in the room. The AI system had to navigate to the object.<p/>",
+            "hypercubeImageCaption": "Obstacle Task Hypercube:",
+            "hypercubeImage": "/images/Obstacle.png",
+            "videoCaption": "Example of an Obstacle Task:",
+            "video": "/videos/Obstacle.mp4",
+            "reference": [
+                {
+                    "refText": "Kabadayi, C., Bobrowicz, K., & Osvath, M. (2018). The detour paradigm in animal cognition. Animal cognition, 21, 21-35."
+                },
+                {
+                    "refText": "Lockman, J. J., & Adams, C. D. (2001). Going around transparent and grid-like barriers: detour ability as a perception-action skill. Developmental Science, 4(4), 463-471."
+                }
+            ]
+        },
+        {
+            "id": "Occluder",
+            "name": "Occluder",
+            "header": "Objects exist in 3D space, and persist, even when occluded",
+            "subheader": "Search in a room to obtain a target object that may be invisible behind an occluder, using depth relations to infer possible locations of the target object",
+            "htmlText": "<p>Searching for a hidden object requires understanding that objects can be arranged in depth (i.e., one object can be behind another) and understanding object permanence (i.e., objects continue to exist even when they can no longer be seen or otherwise detected by the senses). Object permanence was first observed by Piaget in interactive experiments. He demonstrated that infants' ability to retrieve a hidden object undergoes protracted development, even if the infant has observed the hiding event. However, even when 2 ½- to 3-year-old children do not directly observe the hiding event, they search for objects behind potentially occluding objects (DeLoache 1989).<p/><p>The goal of this task was to obtain a target object that in some scenes was hidden behind an occluding object (e.g., a large piece of furniture) that might or might not have previously been encountered during training. The AI system was placed in a room that contained a target object and 1 - 3 occluding objects. On half of the test scenes, the target was out of sight. In those scenes, the AI system needed to look behind potential occluders until the target object was located and obtained.<p/>",
+            "hypercubeImageCaption": "Occluder Task Hypercube:",
+            "hypercubeImage": "/images/Occluder.png",
+            "videoCaption": "Example of an Occluder Task:",
+            "video": "/videos/OccluderMAKE.mp4",
+            "reference": [
+                {
+                    "refText": "DeLoache, J. S. (1989). Young children's understanding of the correspondence between a scale model and a larger space. Cognitive Development, 4(2), 121-139."
+                }
+            ]
+        },
+        {
+            "id": "Ramp",
+            "name": "Ramp",
+            "header": "Agents can navigate to a target, avoid places that are dangerous, update their location relative to the environment, select the most efficient route, and identify another agent that may have the target",
+            "subheader": "Navigate to either a target or an agent that holds the target in a room with ramps and platforms.",
+            "htmlText": "<p>There are three tasks-holes, lava, and ramps-that assess the AI system's ability to navigate an environment to either a seen target object or a humanoid agent that is presumably holding that target. The environments in these tasks have obstacles that impede the AI's navigation-holes in the floor, lava, or platforms that can only be reached via ramps. Effectively obtaining the target requires planning a route and updating one's own location as the route is traversed.<p/><p>Once infants develop the ability to locomote, their ability to navigate also develops. Novice crawlers and walkers often do not appear to have a destination in mind when they begin a bout of locomotion (Hoch et al., 2020) and by 1½ years of age, infants will choose the more efficient of two paths to reach a goal (Paulus & Sodian, 2015).  Infants' ability to navigate slopes or ramps has been of particular interest (Adolph et al., 1993); across infancy, the ability to effectively navigate up or down a ramp is related to motor experience.<p/><p>In the Ramp task, the AI system was placed in a room, on a platform. A visible target or a humanoid agent is present in the room, perhaps on the same level as the AI or perhaps on a platform or surface that can only be reached by traversing up or down a ramp. Thus, this task primarily assesses the AI system's ability to navigate using ramps to retrieve the target.<p/><p>On test scenes with an agent, the AI system has to additionally recognize the agent as the source of the target. In some test scenes, there is both an agent and an ambiguous, blob-shaped non-agent visible. To succeed, the AI must approach the agent and not the blob to retrieve the target, thus requiring agent identification.<p/>",
+            "hypercubeImageCaption": "Ramp Task Hypercube:",
+            "hypercubeImage": "/images/Ramp.png",
+            "videoCaption": "Example of a Ramp Task:",
+            "video": "/videos/Ramp.mp4",
+            "reference": [
+                {
+                    "refText": "Adolph, K. E., Eppler, M. A., & Gibson, E. J. (1993). Crawling versus walking infants' perception of affordances for locomotion over sloping surfaces. Child development, 64(4), 1158-1174."
+                },
+                {
+                    "refText": "Hoch, J. E., Rachwani, J., & Adolph, K. E. (2020). Where infants go: Real-time dynamics of locomotor exploration in crawling and walking infants. Child development, 91(3), 1001-1020."
+                },
+                {
+                    "refText": "Paulus, M., & Sodian, B. (2015). Which way to take? Infants select an efficient path to their goal. Journal of experimental child psychology, 137, 111-124."
+                }
+            ]
+        },
+        {
+            "id": "SetRotation",
+            "name": "Set Rotation/Hidden Set Rotation",
+            "header": "Objects can be tracked over spatial displacement",
+            "subheader": "AI systems are required to track a reward object that has been placed in one of several containers on a turntable that rotates away from its initial position",
+            "htmlText": "<p>Spatial mapping has been studied in both non-human animals (Regolin et al., 2005) and young children between the ages of 1 and 5 years (McCrink et al., 2017; West & McCrink, 2021). These tasks often involve showing a child an object being hidden in one of several linearly arranged locations (e.g., in containers), after which the set of hiding locations is surreptitiously rotated 90 degrees. In such spatial mapping tasks using video-based or live-action protocols, even 2-year-old (McCrink et al., 2017; West & McCrink, 2021) and 2½-year-old (Barth & Call, 2006) children can track the spatial location of the hidden object over the rotational displacement. The introduction of a cue or landmark can help children find hidden objects in ambiguous conditions (DeLoache, 1986).<p/><p>Tasks were created that required AI systems to track the movement of a target object in a container set. The AI system first observed a set of 1 to 5 containers, arranged in a line on a circular, rotatable platform. After one of the containers was baited with the target object, the platform rotated or the AI system was passively moved to a new location, providing the AI system with a different view of the container set. Accurately finding the target object required the AI to keep track of the baited container across the rotation. On some test scenes, one of the containers was a different color than the other containers, providing a landmark. On some test scenes the platform and containers were occluded, so the rotating could not be directly observed but had to be inferred from the change in view or the AI system's registration of its own movement.<p/>",
+            "hypercubeImageCaption": "Set Rotation Task Hypercube:",
+            "hypercubeImage": "/images/SetRotation.png",
+            "videoCaption": "Example of a Set Rotation Task:",
+            "video": "/videos/SetRotation.mp4",
+            "reference": [
+                {
+                    "refText": "Barth, J., & Call, J. (2006). Tracking the displacement of objects: A series of tasks with great apes (Pan troglodytes, Pan paniscus, Gorilla gorilla, and Pongo pygmaeus) and young children (Homo sapiens). Journal of Experimental Psychology: Animal Behavior Processes, 32(3), 239-252."
+                },
+                {
+                    "refText": "DeLoache, J. S. (1986). Memory in very young children: Exploitation of cues to the location of a hidden object. Cognitive Development, 1(2), 123-137. "
+                },
+                {
+                    "refText": "McCrink, K., Perez, J., & Baruch, E. (2017). Number prompts left-to-right spatial mapping in toddlerhood. Developmental Psychology, 53(7), 1256-1264."
+                },
+                {
+                    "refText": "Regolin, L., Garzotto, B., Rugani, R., Pagni, P., & Vallortigara, G. (2005). Working memory in the chick: Parallel and lateralized mechanisms for encoding of object- and position-speciﬁc information. Behavioural Brain Research, 157(1), 1-9."
+                },
+                {
+                    "refText": "West, E., & McCrink, K. (2021). Eye tracking lateralized spatial associations in early childhood. Journal of Cognition and Development, 22(5), 678-694."
+                }
+            ]
+        },
+        {
+            "id": "ShellGame",
+            "name": "Shell Game",
+            "header": "Objects can be tracked over spatial displacement",
+            "subheader": "AI systems are required to track a target object that has been placed in one of several containers either before or after the container is moved.",
+            "htmlText": "<p>In a series of interactive experiments, Piaget (1954) asked if infants can track objects over spatial displacement. After studying if they could retrieve an object first hidden in one location and then moved to a second location, he reported that infants develop the ability to find the hidden object after a visible displacement sooner than after an invisible displacement. Subsequent work by other researchers involved manipulations such as using inverted or upright cups as hiding locations (Freeman, Lloyd, & Sinha (1980), three hiding locations rather than two (Barth & Call, 2006), and relevant displacements such as switching a cup containing an object with an empty cup versus irrelevant displacements such as switching two cups that are empty and leaving a baited cup untouched (Sophian, 1984). These studies largely confirmed Piaget's observation that the development of the ability to track objects over spatial displacement is protracted, with some 15-month-olds already succeeding at some tracking tasks (Freeman et al., 1980) and some 30-month-olds still failing at other tracking tasks (Sophian, 1984).</p><p>For the MCS program, tasks were created that required AI systems to find a target object that they had previously seen hidden in a container that either did or did not undergo displacement following the hiding event. Some task scenes involved the use of two hiding locations (i.e., containers), whereas other task scenes involved the use of three such locations. Likewise, three different transposition types were tested: a simple lateral movement of a container, a lateral substitution involving replacing a laterally moved container with another container, and a simple crossing of one container in front of another container. After observing the movements of the containers, the AI systems were given the opportunity to choose which container to approach and open. If the correct container was opened, the target object could be retrieved from inside it.</p>",
+            "hypercubeImageCaption": "Shell Game Task Hypercube:",
+            "hypercubeImage": "/images/ShellGame.png",
+            "videoCaption": "Example of a Shell Game Task:",
+            "video": "/videos/ShellGame.mp4",
+            "reference": [
+                {
+                    "refText": "Barth, J., & Call, J. (2006). Tracking the displacement of objects: A series of tasks with great apes (Pan troglodytes, Pan paniscus, Gorilla gorilla, and Pongo pygmaeus) and young children (Homo sapiens). Journal of Experimental Psychology: Animal Behavior Processes, 32(3), 239-252."
+                },
+                {
+                    "refText": "Freeman, N. H., Lloyd, S., & Sinha, C. G. (1980). Infant search tasks reveal early concepts of containment and canonical usage of objects. Cognition, 8(3), 243-262."
+                },
+                {
+                    "refText": "Piaget, J. (1954). The construction of reality in the child. Basic Books."
+                },
+                {
+                    "refText": "Sophian, C. (1984). Spatial transpositions and the early development of search. Developmental Psychology, 20(1), 21-28."
+                }
+            ]
+        },
+        {
+            "id": "SpatialReorientation",
+            "name": "Spatial Reorientation",
+            "header": "Agents can use geometric cues and landmarks to orient themselves in space ",
+            "subheader": "After reorientation, do AIs navigate to the location of a target, using either the shape of the room (geometric cues) or other features (e.g., colored wall) to orient themselves in space?",
+            "htmlText": "<p>Effectively updating one's location in space, particularly after being disoriented, requires first encoding geometric information (such as the shape of the room) and/or the presence and location of landmarks (such as a piece of furniture or a colored wall), and then translating one's current view to match the memory of that information. Even during their first year, infants begin to use landmarks to find a target they have seen hidden (Acredolo & Evans, 1980). When orienting themselves in space, however, young children's use of landmarks is more controversial. Some evidence suggests that toddlers rely on landmarks in their spatial orienting (Acredolo, 1978), but other studies have found that geometric cues are used earlier than landmarks (Hermer & Spelke, 1996). Still other work suggests that young children's reliance on geometric cues or landmarks depends on the size of the space in which they are being tested (Learmonth et al., 2008).<p/><p>Tasks were created that required AI systems to find a reward object after they were disoriented. Specifically, the AI would observe the target object being hidden, then the AI would be disoriented, and then the AI would be given the opportunity to find the target. In some tasks scenes, there was a geometric cue to the location of the hidden target; the room was trapezoidal. If the AI encoded whether it was at the short or long wall when the hiding occurred, this information could be used to reorient and find the target. Other task scenes involved a stable landmark; one of the walls was a different color from the others. If the AI can use such landmarks, the location of the colored wall should help with reorientation and obtaining the target. Finally, some test scenes involved unstable landmarks (a piece of furniture).<p/>",
+            "hypercubeImageCaption": "Spatial Reorientation Task Hypercube:",
+            "hypercubeImage": "/images/SpatialReorientation.png",
+            "videoCaption": "Example of a Spatial Reorientation Task:",
+            "video": "/videos/SpatialReorientation.mp4",
+            "reference": [
+                {
+                    "refText": "Acredolo, L. P., & Evans, D. (1980). Developmental changes in the effects of landmarks on infant spatial behavior. Developmental psychology, 16(4), 312."
+                },
+                {
+                    "refText": "Acredolo, L. P. (1978). Development of spatial orientation in infancy. Developmental Psychology, 14(3), 224."
+                },
+                {
+                    "refText": "Hermer, L., & Spelke, E. (1996). Modularity and development: The case of spatial reorientation. Cognition, 61(3), 195-232."
+                },
+                {
+                    "refText": "Learmonth, A. E., Newcombe, N. S., Sheridan, N., & Jones, M. (2008). Why size counts: Children's spatial reorientation in large and small enclosures. Developmental Science, 11(3), 414-426."
+                }
+            ]
+        },
+        {
+            "id": "GravitySupport",
+            "name": "Gravity Support",
+            "header": "Objects must be sufficiently supported or they will fall",
+            "subheader": "Provide a plausibility rating for scenes in which one object is placed on (or near) a potential supporting object",
+            "htmlText": "<p>One effect of gravity on objects is that they fall unless they are sufficiently supported. A number of studies show that infants are sensitive to events that involve different amounts of support. Specifically, by 4 ½ months, infants look longer at events in which an object that is insufficiently supported does not fall than at events in which an object that is sufficiently supported does not fall (Needham & Baillargeon, 1993). This pattern has been interpreted as meaning that infants' expectations have been violated when the insufficiently supported object does not fall.<p/><p>In this task, AI systems were required to give plausibility ratings for events in which a symmetric or asymmetric object was lowered to rest on top of or near a supporting object. On some test events, the object that was lowered did not fall and on other test events the object did fall. AI systems observed events that were plausible (i.e., a fully supported object did not fall or an inadequately supported object fell) and events that were implausible (i.e., a fully supported object fell or an inadequately supported object did not fall).<p/>",
+            "hypercubeImageCaption": "Gravity Support Task Hypercube:",
+            "hypercubeImage": "/images/GravitySupport.png",
+            "videoCaption": "Example of a Gravity Support Task:",
+            "video": "/videos/GravitySupport.mp4",
+            "reference": [
+                {
+                    "refText": "Needham, A., & Baillargeon, R. (1993). Intuitions about support in 4.5-month-old infants. Cognition, 47(2), 121-148."
+                }
+            ]
+        },
+        {
+            "id": "InteractiveObjectPermanence",
+            "name": "Interactive Object Permanence",
+            "header": "Objects persist, even when occluded",
+            "subheader": "Obtain a target object after observing it being hidden behind an occluder",
+            "htmlText": "<p>Object permanence is the understanding that objects continue to exist even when they can no longer be seen (or otherwise detected by the senses). The development of this aspect of common sense was first observed by Piaget in interactive experiments. He demonstrated that infants' ability to retrieve a hidden object undergoes protracted development, even if the infant has observed the hiding event. Baillargeon and her colleagues used looking-time tasks to provide evidence taken to mean that even relatively young infants demonstrate this type of common sense (e.g., Baillargeon, 1986; Baillargeon, Spelke, & Wasserman, 1985). In such studies, infants are tested to see if they look more at implausible scenes–such as when an object spontaneously disappears while occluded–or at plausible scenes, such as when an object continues to exist even while occluded. Longer looking times at implausible scenes have been considered evidence that infants understand that real objects cannot behave in this way.<p/><p>In this interactive object permanence task, the goal is to retrieve a target object. The AI system observes a target object appearing in the test scene and then disappearing behind an occluding structure, such as a wall or piece of furniture. The AI system must retrieve the no-longer-visible target object by navigating around the occluding structure.<p/>",
+            "hypercubeImageCaption": "Interactive Object Permanence Task Hypercube:",
+            "hypercubeImage": "/images/InteractiveObjectPermanence.png",
+            "videoCaption": "Example of an Interactive Object Permanence Task:",
+            "video": "/videos/InteractiveObjectPermanence.mp4",
+            "reference": [
+                {
+                    "refText": "Baillargeon, R., Spelke, E. S., & Wasserman, S. (1985). Object permanence in 5-month-old infants. Cognition, 20, 191-208"
+                },
+                {
+                    "refText": "Baillargeon, R. (1986). Representing the existence and the location of hidden objects: Object permanence in 6- and 8-month-old infants. Cognition, 23, 21-41."
+                }
+            ]
+        },
+        {
+            "id": "SupportRelations",
+            "name": "Support Relations",
+            "header": "Objects must be sufficiently supported or they will fall",
+            "subheader": "Retrieve a target object after seeing it placed on (or near) a potential supporting object",
+            "htmlText": "<p>One effect of gravity on objects is that they fall unless they are sufficiently supported. A number of studies show that infants are sensitive to events that involve different amounts of support. Specifically, by 4 ½ months, infants look longer at events in which an object that is insufficiently supported does not fall than at events in which an object that is sufficiently supported does not fall (Needham & Baillargeon, 1993). This pattern has been interpreted as meaning that infants' expectations have been violated when the insufficiently supported object does not fall.<p/><p>The goal of this task is for the AI system to predict where a target object can be obtained after observing it placed on, partially on, or near a platform. In this task, the target is first seen sitting on either a symmetric or asymmetric object. AI systems then observe placers descending from the ceiling, lowering the object (with the target on it) toward the platform, and positioning it so that it is fully supported, partially supported, or not supported by the platform. An occluder then descends and obstructs the AI system's view of the scene, and the placers are seen ascending, indicating that the object and target are now subject to the force of gravity. An object fully supported by the platform will remain on the platform, while an object not supported by the platform will fall to the floor below. An object partially supported by the platform might fall to the floor below if it is insufficiently supported. After seeing these events, the AI system must choose where to retrieve the object—which remains occluded. The AI system can look for the target on the platform (e.g., if it predicts the object was fully supported by the platform), or on the floor to the left or right of the platform (e.g., if it predicts the object was insufficiently supported by the platform and probably fell to the floor). The AI system will only be able to successfully retrieve the target if it chooses to look for the object in the correct location.<p/>",
+            "hypercubeImageCaption": "Support Relations Task Hypercube:",
+            "hypercubeImage": "/images/SupportRelations.png",
+            "videoCaption": "Example of a Support Relations Task:",
+            "video": "/videos/SupportRelations.mp4",
+            "reference": [
+                {
+                    "refText": "Needham, A., & Baillargeon, R. (1993). Intuitions about support in 4.5-month-old infants. Cognition, 47(2), 121-148."
+                }
+            ]
+        },
+        {
+            "id": "MovingTargetPrediction",
+            "name": "Moving Target Prediction",
+            "header": "Objects have trajectories that can be anticipated",
+            "subheader": "Anticipate the location of a moving object and proceed to that location in order to intercept the object",
+            "htmlText": "<p>Tracking moving objects requires anticipating their trajectories. The study of infant object motion perception and tracking has revealed that even very young infants can anticipate the reappearance of a moving object after it disappears behind an occluder (von Hofsten et al., 2007). Infants’ ability to move their eyes in anticipation of when and where a moving object will reappear continues to develop across the first year (Gredebäck & von Hofsten, 2004), and even 2-year-old children are not completely accurate at anticipating where they can obtain an object that is moving behind an occluder (Keen et al., 2008). Nonetheless, even 4.5-month-olds have provided evidence that they can sometimes use a predictive strategy to accurately reach for fast-moving, non-occluded objects where they will be located in the near future (von Hofsten, 1980).<p/><p>The goal of this task is for the AI system to retrieve a moving target object, which requires predicting where it will be located in the near future. The AI system sees the target object launched into the room from a location somewhere on the left or right wall of the room. The AI system must move to a location where it anticipates the moving target will soon be located, so as to intercept the object as it moves. The test scenes vary in the speed of the moving target object and the object's trajectory. Also, in some test scenes, the AI system can access the entire room, but in other test scenes, the AI system cannot access regions of the room beyond a narrow strip of territory that bisects the room. In the latter scenes, the AI system can only obtain the target object during the brief period when the object is crossing that strip.<p/>",
+            "hypercubeImageCaption": "Moving Target Prediction Task Hypercube:",
+            "hypercubeImage": "/images/MovingTargetPrediction.png",
+            "videoCaption": "Example of a Moving Target Prediction Task:",
+            "video": "/videos/MovingTargetPrediction.mp4",
+            "reference": [
+                {
+                    "refText": "Gredeback, G., & von Hofsten, C. (2004). Infants' evolving representations of object motion during occlusion: A longitudinal study of 6- to 12-month-old infants. Infancy, 6(2), 165-184."
+                },
+                {
+                    "refText": "Keen, R., Berthier, N., Sylvia, M. R., Butler, S., Prunty, P. K., & Baker, R. K. (2008). Toddlers' use of cues in a search task. Infant and Child Development: An International Journal of Research and Practice, 17(3), 249-267. "
+                },
+                {
+                    "refText": "von Hofsten, C. (1980). Predictive reaching for moving objects by human infants. Journal of Experimental Child Psychology, 30(3), 369-382."
+                },
+                {
+                    "refText": "von Hofsten, C., Kochukhova, O., & Rosander, K. (2007). Predictive tracking over occlusions by 4‐month‐old infants. Developmental Science, 10(5), 625-640."
+                }
+            ]
+        },
+        {
+            "id": "NumberComparison",
+            "name": "Number Comparison",
+            "header": "Sets of objects can be more or less than other sets of objects",
+            "subheader": "AI systems must choose the side of a room that contains more target objects",
+            "htmlText": "<p>Early studies of numerical cognition in infants revealed that by the age of 6 months, infants can discriminate sets containing 2 versus 3 elements (Starkey & Cooper, 1980). Later studies (Xu & Spelke, 2000) indicated that 6-month-olds can discriminate large sets that vary by a factor of 2 (e.g., 8 versus 16 elements) and that 7-month-olds can discriminate small from large sets if the latter set contains 4 times the number of elements in the former set (Cordes & Brannon, 2009).</p><p>The goal of this task is to retrieve the largest possible number of target objects. AI systems initially stand on a platform bisecting a room, and there are 1 or 2 target objects on one side of the platform and between 0 and 4 target objects on the other side of the platform. The AI system must choose to get off of the platform to enter the right or left side of the room and then navigate to any target objects on that side of the room, collecting each one. Given their goal, AI systems with common sense should choose the side of the room that has more target objects. In some test scenes, all target objects are still visible when the AI system makes its choice. In other test scenes, all target objects are obscured by an occluder shortly after they are first seen, so the AI system must make its choice based on a comparison of the number of objects on each side of the room, even though these objects can no longer be seen.</p>  ",
+            "hypercubeImageCaption": "Number Comparison Task Hypercube:",
+            "hypercubeImage": "/images/NumberComparison.png",
+            "videoCaption": "Example of a Number Comparison Task:",
+            "video": "/videos/NumberComparison.mp4",
+            "reference": [
+                {
+                    "refText": "Cordes, S., & Brannon, E. M. (2009). Crossing the divide: Infants discriminate small from large numerosities. Developmental Psychology,45(6), 1583-1594."
+                },
+                {
+                    "refText": "Starkey, P., & Cooper, R. G., Jr. (1980). Perception of numbers by human infants. Science, 210, 1033–1035."
+                },
+                {
+                    "refText": "Xu, F., & Spelke, E. S. (2000). Large number discrimination in 6-month-old infants. Cognition, 74(1), B1-B11."
+                }
+            ]
+        },
+        {
+            "id": "OccludedTrajectory",
+            "name": "Occluded Trajectory",
+            "header": "Objects have trajectories that can be anticipated",
+            "subheader": "AI systems must predict if a reward ball will come to rest on the left or right side of a room after seeing the start-but not finish-of the ball's path through the room",
+            "htmlText": "<p>Tracking moving objects requires anticipating their trajectories. This may be especially difficult when the object moves behind an occluder. The study of infant object motion perception and tracking has revealed that even very young infants can anticipate the reappearance of a moving object after it disappears behind an occluder (von Hofsten et al., 2007), although their ability to track a moving object after it has been occluded depends on factors such as how long the object is occluded (Bremner et al., 2007). Infants’ ability to move their eyes in anticipation of when and where a moving object will reappear continues to develop across the first year (Gredebäck & von Hofsten, 2004), and even 2-year-old children are not completely accurate at anticipating where they can obtain an object that is moving behind an occluder (Keen et al., 2008).</p><p>The goal of this task was for AI systems to retrieve a target object that moved from one location to another in the room. In these scenes, the AI system could see the target object when it started moving, but the target’s movement was soon occluded. Thus, the AI system must predict the target object’s final resting place in a room, even though most of the target object's movement occurs under conditions of occlusion. In these test scenes, the AI system first sees the target begin to move and then an occluder is lowered to obstruct the AI system’s view of the target's continued movement. The AI system must choose whether to retrieve the target on the left or the right side of the room; once the system's choice is made, it cannot get to the other side of the room. Therefore, based only on the trajectory seen at the very beginning of its movement, the AI system must predict if the target object will be coming to rest on the right or the left side of the room.</p>",
+            "hypercubeImageCaption": "Occluded Trajectory Task Hypercube:",
+            "hypercubeImage": "/images/OccludedTrajectory.png",
+            "videoCaption": "Example of a Occluded Trajectory Task:",
+            "video": "/videos/OccludedTrajectory.mp4",
+            "reference": [
+                {
+                    "refText": "Bremner, J. G., Johnson, S. P., Slater, A., Mason, U., Cheshire, A., & Spring, J. (2007). Conditions for young infants' failure to perceive trajectory continuity. Developmental Science, 10(5), 613-624."
+                },
+                {
+                    "refText": "Gredeback, G., & von Hofsten, C. (2004). Infants' evolving representations of object motion during occlusion: A longitudinal study of 6-to 12-month-old infants. Infancy, 6(2), 165-184."
+                },
+                {
+                    "refText": "Keen, R., Berthier, N., Sylvia, M. R., Butler, S., Prunty, P. K., & Baker, R. K. (2008). Toddlers' use of cues in a search task. Infant and Child Development: An International Journal of Research and Practice, 17(3), 249-267."
+                },
+                {
+                    "refText": "von Hofsten, C., Kochukhova, O., & Rosander, K. (2007). Predictive tracking over occlusions by 4-month-old infants. Developmental Science, 10(5), 625-640."
+                }
+            ]
+        },
+        {
+            "id": "InteractiveCollision",
+            "name": "Interactive Collision",
+            "header": "Inanimate objects at rest on a stable surface only begin to move when contacted by another, moving object",
+            "subheader": "Obtain a target object that may or may not have been launched into motion via a collision with another object",
+            "htmlText": "<p>This task combines commonsense reasoning about collisions and the ability to anticipate the trajectory of moving objects. Infants’ perception of the causality of launching events progresses from younger infants’ (before 6 month of age) attention only to continuous movement in one direction when viewing causal and non-causal launching events (Cohen & Amsel,1998) to older infants (by 6 months of age) recognizing the difference between causal and non-causal collisions (Leslie, 1982, 1984; Oakes & Cohen, 1990). At the same time, infants are developing the ability to anticipate the trajectory of moving objects. For example, even very young infants can anticipate the reappearance of a moving object after it disappears behind an occluder (Nelson, 1971; von Hofsten et al., 2007), although their ability to track a moving object after it has been occluded depends on factors such as how long the object is occluded (Bremner et al., 2007). Infants’ ability to move their eyes in anticipation of when and where a moving object will reappear continues to develop across the first year (Gredebäck & von Hofsten, 2004), and even 2-year-old children are not completely accurate at anticipating where they can obtain an object that is moving behind an occluder (Keen et al., 2008). This interactive collision task asks how the AI combines reasoning about collisions with the ability to anticipate the trajectory of a moving object under conditions of occlusion. </p><p>The goal of the interactive collision task is to obtain a target object. In this task, the AI system sees the target object being approached by, and in some cases contacted by, a second object. The event is occluded and the AI must decide whether the target object can be retrieved on the left or right side of the room. In some test scenes the AI system can see the collision between the two objects, or the lack of a collision (the moving object moves on a path behind the target object, not touching it). In other test scenes, the collision or lack of collision happens behind an occluder. In all scenes, an occluder is lowered and the AI must infer the final location of the target object.</p>",
+            "hypercubeImageCaption": "Interactive Collision Task Hypercube:",
+            "hypercubeImage": "/images/InteractiveCollision.png",
+            "videoCaption": "Example of an Interactive Collision Task:",
+            "video": "/videos/InteractiveCollision.mp4",
+            "reference": [
+                {
+                    "refText": "Cohen, L. B., & Amsel, G. (1998). Precursors to infants' perception of the causality of a simple event. Infant behavior and development, 21(4), 713-731."
+                },
+                {
+                    "refText": "Bremner, J. G., Johnson, S. P., Slater, A., Mason, U., Cheshire, A., & Spring, J. (2007). Conditions for young infants’ failure to perceive trajectory continuity. Developmental Science, 10(5), 613-624."
+                },
+                {
+                    "refText": "Gredeback, G., & von Hofsten, C. (2004). Infants' evolving representations of object motion during occlusion: A longitudinal study of 6-to 12-month-old infants. Infancy, 6(2), 165-184."
+                },
+                {
+                    "refText": "Keen, R., Berthier, N., Sylvia, M. R., Butler, S., Prunty, P. K., & Baker, R. K. (2008). Toddlers' use of cues in a search task. Infant and Child Development: An International Journal of Research and Practice, 17(3), 249-267."
+                },
+                {
+                    "refText": "Leslie, A. M. (1982). The perception of causality in infants. Perception, 11(2), 173-186."
+                },
+                {
+                    "refText": "Leslie, A. M. (1984). Spatiotemporal continuity and the perception of causality in infants. Perception, 13(3), 287-305."
+                },
+                {
+                    "refText": "Nelson, K. E. (1971). Accommodation of visual tracking patterns in human infants to object movement patterns. Journal of Experimental Child Psychology, 12, 182-196. "
+                },
+                {
+                    "refText": "Oakes, L. M., & Cohen, L. B. (1990). Infant perception of a causal event. Cognitive Development, 5(2), 193-207."
+                }
+            ]
+        },
+        {
+            "id": "SecondaryToolUse",
+            "name": "Secondary Tool Use",
+            "header": "Object functions can be predicted by their forms",
+            "subheader": "Use an object as a tool to make another object accessible, and use the second object as a tool to push or maneuver a reward object so that it becomes accessible",
+            "htmlText": "<p>Tool use is characteristic of the great apes (van Schaik & Pradhan, 2003), and the continuous emergence of tool use in human development has been traced to its nascent beginnings in infancy (Lockman, 2000). Zelazo & Kearsley (1980) documented the emergence of functional play in toddlers between 12 and 15 months of age, and Willatts (1984) reported that even 9-month-old infants will manipulate a support holding an object in order to retrieve the object. Later research that was focused specifically on tool use revealed that by 14 months of age, some infants provide evidence that they are planning ahead when they grasp tools in order to accomplish a self-directed goal (McCarty et al., 2001).<p/><p>The goal of the secondary tool use task is to retrieve a target object located in a room. In this task's experimental scenes, the target cannot be accessed directly, because it is located in the middle of a large 'pool of lava,' a region of the room known to be dangerous (i.e., an AI system that steps into this lava pool will experience the forced end of the trial shortly thereafter). As a result, the only way to retrieve the target in these scenes is to use one or more tools provided in the room. Each scene contains one symmetric, bar-shaped tool that can be accessed directly and one asymmetric L-shaped tool that is located in a pool of lava and that can only be accessed using the bar-shaped tool. In some test trials, these tools could have been previously encountered in a training set, but in other test trials, the tools are guaranteed to be unfamiliar to the AI system. Critically, in some scenes, the bar-shaped tool is of a sufficient size and shape to allow retrieval of the target object using that tool alone. In other scenes, the bar-shaped tool is not sufficient to retrieve the target object, but is sufficient to retrieve the L-shaped tool; in these scenes, the bar-shaped tool must be used to render the L-shaped tool accessible, after which the L-shaped tool can be used to retrieve the target object.<p/>",
+            "hypercubeImageCaption": "Secondary Tool Use Task Hypercube:",
+            "hypercubeImage": "/images/SecondaryToolUse.png",
+            "videoCaption": "Example of a Secondary Tool Use Task:",
+            "video": "/videos/SecondaryToolUse.mp4",
+            "reference": [
+                {
+                    "refText": "Lockman, J. L. (2000). A perception-action perspective on tool use development. Child Development, 71(1), 137-144."
+                },
+                {
+                    "refText": "McCarty, M. E., Clifton, R. K., & Collard, R. R. (2001). The beginnings of tool use by infants and toddlers. Infancy, 2(2), 233-256."
+                },
+                {
+                    "refText": "van Schaik, C. P., & Pradhan, G. R. (2003). A model for tool-use traditions in primates: Implications for the coevolution of culture and cognition. Journal of Human Evolution, 44, 645 - 664."
+                },
+                {
+                    "refText": "Willatts, P. (1984). The stage-IV infant's solution of problems requiring the use of supports. Infant Behavior and Development, 7, 125-134."
+                },
+                {
+                    "refText": "Zelazo, P. R., & Kearsley, R. B. (1980). The emergence of functional play in infants: Evidence for a major cognitive transition. Journal of Applied Developmental Psychology, 1, 95-117."
+                }
+            ]
+        },
+        {
+            "id": "Solidity",
+            "name": "Solidity",
+            "header": "Solid objects do not occupy the same space",
+            "subheader": "Obtain a reward by using knowledge that a solid object, when dropped, will land on–rather than pass through–another solid object",
+            "htmlText": "<p>One feature of a sophisticated object concept is the recognition that multiple solid objects cannot occupy the same space (Spelke et al., 1992). As a result, when a solid object falls, it will land on–rather than pass through–solid surfaces in its way. Using a looking time procedure, Spelke et al. (1992) found that 4-month-old infants looked longer when a ball appeared to pass through a solid surface (impossibly) than when it landed on that solid surface. Spelke et al. interpreted these looking behaviors to indicate that infants were surprised to see the impossible event, and therefore must understand solidity.</p><p>The test of AI systems’ understanding of solidity takes place in a room bisected by a long platform on which the AI is standing. A second, smaller platform is attached to either the left or right of the main platform. Initially, the AI system sees a target object being lowered by a placer. The target object is lowered either directly above a location where there is no platform or directly above the second, smaller platform. Before the placer releases the target object, an occluder is lowered, obscuring the AI system's view of the entire room. After the placer retreats, the AI system is allowed to retrieve the object by opening one of three doors in the occluder–the door in the middle to retrieve the target ball on the platform, or the left or right door to retrieve the ball on the floor.</p>",
+            "hypercubeImageCaption": "Solidity Task Hypercube:",
+            "hypercubeImage": "/images/Solidity.png",
+            "videoCaption": "Example of a Solidity Task:",
+            "video": "/videos/Solidity.mp4",
+            "reference": [
+                {
+                    "refText": "Spelke, E. S., Breinlinger, K., Macomber, J., & Jacobson, K. (1992). Origins of knowledge. Psychological Review, 99(4), 605-632."
+                }
+            ]
+        },
+        {
+            "id": "ToolUse",
+            "name": "Tool Use",
+            "header": "Object functions can be predicted by their forms",
+            "subheader": "Use a simply symmetrical object as a tool, to push or maneuver a target object so that it becomes accessible",
+            "htmlText": "<p>Tool use is characteristic of the great apes (van Schaik & Pradhan, 2003), and the continuous emergence of tool use in human development has been traced to its nascent beginnings in infancy (Lockman, 2000). Zelazo and Kearsley (1980) documented the emergence of functional play in toddlers between 12 and 15 months of age, and Willatts (1984) reported that even 9-month-old infants will manipulate a support holding an object in order to retrieve the object. By 14 months of age, some infants plan ahead when they grasp tools in order to accomplish a self-directed goal (McCarty et al., 2001).</p><p>In experimental scenes in this task, AI systems must use a symmetrical, bar-shaped tool that is present in the room in order to retrieve a target object. The target in these scenes cannot be accessed directly, because it is located in the middle of a large \"pool of lava,\" a region of the room known to be dangerous (i.e., an AI system that steps into this lava pool will experience the forced end of the trial shortly thereafter). As a result, the only way to retrieve the target in these scenes is to use the provided tool. In some scenes, the tool might have been previously encountered in a training set; in other scenes, the tool is guaranteed to be unfamiliar to the AI system. Finally, in some scenes, the tool is oriented so that it does not need to be manipulated prior to being used; simply pushing the tool will render the target accessible. In other scenes, the tool needs to be rotated 45 or 90 degrees before it can be effectively used.</p>",
+            "hypercubeImageCaption": "Tool Use Task Hypercube:",
+            "hypercubeImage": "/images/ToolUse.png",
+            "videoCaption": "Example of a Tool Use Task:",
+            "video": "/videos/ToolUse.mp4",
+            "reference": [
+                {
+                    "refText": "Lockman, J. L. (2000). A perception-action perspective on tool use development. Child Development, 71(1), 137-144."
+                },
+                {
+                    "refText": "McCarty, M. E., Clifton, R. K., & Collard, R. R. (2001). The beginnings of tool use by infants and toddlers. Infancy, 2(2), 233-256."
+                },
+                {
+                    "refText": "van Schaik, C. P., & Pradhan, G. R. (2003). A model for tool-use traditions in primates: Implications for the coevolution of culture and cognition. Journal of Human Evolution, 44, 645 - 664."
+                },
+                {
+                    "refText": "Willatts, P. (1984). The stage-IV infant's solution of problems requiring the use of supports. Infant Behavior and Development, 7, 125-134."
+                },
+                {
+                    "refText": "Zelazo, P. R., & Kearsley, R. B. (1980). The emergence of functional play in infants: Evidence for a major cognitive transition. Journal of Applied Developmental Psychology, 1, 95-117."
+                }
+            ]
+        }
+    ]
+}
