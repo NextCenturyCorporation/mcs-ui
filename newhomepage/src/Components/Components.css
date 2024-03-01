@@ -257,6 +257,7 @@ p {
     width: 525px;
     height: 350px;
     border: 1px black solid;
+    object-fit: contain;
 }
 
 

@@ -8,10 +8,10 @@ function Objects() {
             <p>
             Tasks were designed to assess AI systems' common sense about objects. Many scientific studies have examined infants' 
             understanding that objects continue to exist when they can no longer be seen (object permanence), and the facts that 
-            objects are solid, subject to gravity, can be tracked as they move through space, among other things. Young children 
-            also develop a commonsense understanding of tool use, interactions between objects (i.e., collisions), and the 
-            numerical properties of sets of objects. As part of the MCS program, tasks were developed to assess AI common sense 
-            in these areas, using as inspiration experimental work conducted with infants and young children.
+            objects are solid, subject to gravity, and can be tracked as they move through space, among other things. Young children 
+            also develop a commonsense understanding of tool use, interactions between objects (i.e., collisions), and the numerical 
+            properties of sets of objects. As part of the MCS program, tasks were developed to assess AI common sense in these areas, 
+            using as inspiration experimental work conducted with infants and young children.
             </p>
 
             <div className="float-left-50">
